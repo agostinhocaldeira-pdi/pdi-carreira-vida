@@ -1,12 +1,15 @@
-import { useState } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { Book, Smile, Frown, Meh, ChevronDown, ChevronUp } from "lucide-react";
 import { toast } from "sonner";
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 
 const DiarioSection = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -18,11 +21,22 @@ const DiarioSection = () => {
     gratidao: "",
     data: new Date().toISOString().split("T")[0],
   });
+  const [selectedMonth, setSelectedMonth] = useState(() => {
+    const now = new Date();
+    return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
+  });
+  const [entradas, setEntradas] = useState<any[]>([]);
+
+  useEffect(() => {
+    const stored = JSON.parse(localStorage.getItem("diario") || "[]");
+    setEntradas(stored);
+  }, []);
 
   const handleSave = () => {
-    const entradas = JSON.parse(localStorage.getItem("diario") || "[]");
-    entradas.push({ ...entrada, id: Date.now() });
-    localStorage.setItem("diario", JSON.stringify(entradas));
+    const stored = JSON.parse(localStorage.getItem("diario") || "[]");
+    stored.push({ ...entrada, id: Date.now() });
+    localStorage.setItem("diario", JSON.stringify(stored));
+    setEntradas(stored);
     toast.success("Entrada do diário salva!");
     
     // Reset
@@ -34,6 +48,93 @@ const DiarioSection = () => {
       gratidao: "",
       data: new Date().toISOString().split("T")[0],
     });
+  };
+
+  const monthOptions = useMemo(() => {
+    const options = [];
+    const now = new Date();
+    for (let i = 0; i < 12; i++) {
+      const date = new Date(now.getFullYear(), now.getMonth() - i, 1);
+      const value = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
+      const label = date.toLocaleDateString("pt-BR", { year: "numeric", month: "long" });
+      options.push({ value, label });
+    }
+    return options;
+  }, []);
+
+  const chartData = useMemo(() => {
+    const [year, month] = selectedMonth.split("-");
+    const daysInMonth = new Date(Number(year), Number(month), 0).getDate();
+    
+    const data = [];
+    for (let day = 1; day <= daysInMonth; day++) {
+      const dateStr = `${year}-${month}-${String(day).padStart(2, "0")}`;
+      const entry = entradas.find((e) => e.data === dateStr);
+      
+      let humorValue = null;
+      if (entry) {
+        if (entry.humor === "feliz") humorValue = 3;
+        else if (entry.humor === "neutro") humorValue = 2;
+        else if (entry.humor === "triste") humorValue = 1;
+      }
+      
+      data.push({
+        dia: day,
+        humor: humorValue,
+        entry: entry || null,
+      });
+    }
+    return data;
+  }, [entradas, selectedMonth]);
+
+  const CustomTooltip = ({ active, payload }: any) => {
+    if (active && payload && payload[0] && payload[0].payload.entry) {
+      const entry = payload[0].payload.entry;
+      return (
+        <Card className="w-[300px] shadow-lg border-2">
+          <CardHeader className="pb-3">
+            <CardTitle className="text-sm">
+              {new Date(entry.data).toLocaleDateString("pt-BR", { 
+                day: "2-digit", 
+                month: "long", 
+                year: "numeric" 
+              })}
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="pt-0">
+            <ScrollArea className="h-[200px] pr-4">
+              <div className="space-y-3 text-sm">
+                {entry.reflexoes && (
+                  <div>
+                    <p className="font-semibold text-primary">Reflexões:</p>
+                    <p className="text-muted-foreground">{entry.reflexoes}</p>
+                  </div>
+                )}
+                {entry.avancos && (
+                  <div>
+                    <p className="font-semibold text-primary">Avanços e Conquistas:</p>
+                    <p className="text-muted-foreground">{entry.avancos}</p>
+                  </div>
+                )}
+                {entry.habitos && (
+                  <div>
+                    <p className="font-semibold text-primary">Hábitos Realizados:</p>
+                    <p className="text-muted-foreground">{entry.habitos}</p>
+                  </div>
+                )}
+                {entry.gratidao && (
+                  <div>
+                    <p className="font-semibold text-primary">Gratidão:</p>
+                    <p className="text-muted-foreground">{entry.gratidao}</p>
+                  </div>
+                )}
+              </div>
+            </ScrollArea>
+          </CardContent>
+        </Card>
+      );
+    }
+    return null;
   };
 
   return (
@@ -54,6 +155,58 @@ const DiarioSection = () => {
                   day: "numeric" 
                 })}
               </CardDescription>
+              
+              {/* Gráfico de histórico de humor */}
+              <div className="mt-6 space-y-4">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-lg font-semibold">Histórico de Humor</h3>
+                  <Select value={selectedMonth} onValueChange={setSelectedMonth}>
+                    <SelectTrigger className="w-[200px]">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {monthOptions.map((option) => (
+                        <SelectItem key={option.value} value={option.value}>
+                          {option.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                
+                <div className="h-[300px] w-full">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <LineChart data={chartData}>
+                      <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
+                      <XAxis 
+                        dataKey="dia" 
+                        label={{ value: "Dia", position: "insideBottom", offset: -5 }}
+                        className="text-xs"
+                      />
+                      <YAxis 
+                        domain={[0, 4]}
+                        ticks={[1, 2, 3]}
+                        tickFormatter={(value) => {
+                          if (value === 1) return "Triste";
+                          if (value === 2) return "Neutro";
+                          if (value === 3) return "Feliz";
+                          return "";
+                        }}
+                        className="text-xs"
+                      />
+                      <Tooltip content={<CustomTooltip />} />
+                      <Line 
+                        type="monotone" 
+                        dataKey="humor" 
+                        stroke="hsl(var(--primary))" 
+                        strokeWidth={2}
+                        dot={{ fill: "hsl(var(--primary))", r: 4 }}
+                        connectNulls={false}
+                      />
+                    </LineChart>
+                  </ResponsiveContainer>
+                </div>
+              </div>
             </div>
             <CollapsibleTrigger asChild>
               <Button variant="ghost" size="sm">
