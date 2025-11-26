@@ -14,16 +14,114 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      support_messages: {
+        Row: {
+          created_at: string | null
+          id: string
+          is_admin_response: boolean | null
+          message: string
+          ticket_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          is_admin_response?: boolean | null
+          message: string
+          ticket_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          is_admin_response?: boolean | null
+          message?: string
+          ticket_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "support_messages_ticket_id_fkey"
+            columns: ["ticket_id"]
+            isOneToOne: false
+            referencedRelation: "support_tickets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      support_tickets: {
+        Row: {
+          category: Database["public"]["Enums"]["support_category"]
+          created_at: string | null
+          id: string
+          question: string
+          status: string | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          category: Database["public"]["Enums"]["support_category"]
+          created_at?: string | null
+          id?: string
+          question: string
+          status?: string | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          category?: Database["public"]["Enums"]["support_category"]
+          created_at?: string | null
+          id?: string
+          question?: string
+          status?: string | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_roles: {
+        Row: {
+          created_at: string | null
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "user"
+      support_category:
+        | "progresso"
+        | "diario"
+        | "plano_de_vida"
+        | "mao_na_massa"
+        | "ferramentas"
+        | "outros"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +248,16 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "user"],
+      support_category: [
+        "progresso",
+        "diario",
+        "plano_de_vida",
+        "mao_na_massa",
+        "ferramentas",
+        "outros",
+      ],
+    },
   },
 } as const
