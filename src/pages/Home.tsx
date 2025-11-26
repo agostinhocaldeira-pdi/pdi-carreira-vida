@@ -41,7 +41,7 @@ const Home = () => {
   return (
     <div className="min-h-screen bg-gradient-subtle">
       {/* Header */}
-      <header className="bg-gradient-to-r from-card via-card to-primary/5 border-b shadow-elegant sticky top-0 z-10 backdrop-blur-sm">
+      <header className="bg-gradient-to-r from-card via-card to-primary/5 border-b shadow-elegant backdrop-blur-sm">
         <div className="container mx-auto px-4 py-6">
           {/* Top row - Logo, Quote and Actions */}
           <div className="flex items-start justify-between gap-4 mb-4">
