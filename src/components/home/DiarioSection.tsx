@@ -40,6 +40,17 @@ const DiarioSection = () => {
     );
   }, [selectedDate]);
 
+  // Verificar se todos os campos estão preenchidos
+  const isFormComplete = useMemo(() => {
+    return !!(
+      entrada.humor &&
+      entrada.reflexoes.trim() &&
+      entrada.avancos.trim() &&
+      entrada.habitos.trim() &&
+      entrada.gratidao.trim()
+    );
+  }, [entrada]);
+
   useEffect(() => {
     const stored = JSON.parse(localStorage.getItem("diario") || "[]");
     setEntradas(stored);
@@ -602,8 +613,8 @@ const DiarioSection = () => {
           />
         </div>
 
-        <Button onClick={handleSave} className="w-full" size="lg" disabled={!isToday}>
-          {entradas.some((e) => e.data === entrada.data) ? "Atualizar Entrada" : "Salvar Entrada"}
+        <Button onClick={handleSave} className="w-full" size="lg" disabled={!isToday || !isFormComplete}>
+          {entradas.some((e) => e.data === entrada.data) ? "Atualizar reflexões do dia" : "Salvar reflexões do dia"}
         </Button>
           </CardContent>
         </CollapsibleContent>
