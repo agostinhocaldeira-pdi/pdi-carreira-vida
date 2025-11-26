@@ -6,8 +6,9 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { Compass, Heart, Target, Lightbulb, ChevronDown, ChevronUp } from "lucide-react";
+import { Compass, Heart, Target, Lightbulb, ChevronDown, ChevronUp, ArrowRight, Edit } from "lucide-react";
 import { toast } from "sonner";
+import { Link } from "react-router-dom";
 
 interface PlanoDeVidaProps {
   onTabChange?: (tab: string) => void;
@@ -18,6 +19,7 @@ const PlanoDeVida = ({ onTabChange, onOpenChange }: PlanoDeVidaProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("quem-sou");
   const [vvd, setVvd] = useState("");
+  const [isEditingVvd, setIsEditingVvd] = useState(true);
   const [valores, setValores] = useState("");
   const [objetivo, setObjetivo] = useState({
     texto: "",
@@ -27,7 +29,12 @@ const PlanoDeVida = ({ onTabChange, onOpenChange }: PlanoDeVidaProps) => {
 
   const handleSaveVvd = () => {
     localStorage.setItem("vvd", vvd);
+    setIsEditingVvd(false);
     toast.success("Visão de Vida Desejada salva!");
+  };
+
+  const handleEditVvd = () => {
+    setIsEditingVvd(true);
   };
 
   const handleSaveObjetivo = () => {
@@ -103,10 +110,34 @@ const PlanoDeVida = ({ onTabChange, onOpenChange }: PlanoDeVidaProps) => {
                   value={vvd}
                   onChange={(e) => setVvd(e.target.value)}
                   rows={4}
+                  disabled={!isEditingVvd}
                 />
-                <Button onClick={handleSaveVvd} size="sm" variant="outline">
-                  Cadastrar VVD
-                </Button>
+                <div className="flex items-center justify-between gap-4">
+                  <Link 
+                    to="/ferramentas" 
+                    className="flex items-center gap-2 text-sm text-primary hover:underline"
+                  >
+                    Entenda como criar seu VVD
+                    <ArrowRight className="w-4 h-4" />
+                  </Link>
+                  
+                  <div className="flex gap-2">
+                    {!isEditingVvd && (
+                      <Button onClick={handleEditVvd} size="sm" variant="outline">
+                        <Edit className="w-4 h-4 mr-2" />
+                        Editar
+                      </Button>
+                    )}
+                    <Button 
+                      onClick={handleSaveVvd} 
+                      size="sm" 
+                      variant="outline"
+                      disabled={!vvd.trim() || !isEditingVvd}
+                    >
+                      Salvar
+                    </Button>
+                  </div>
+                </div>
               </div>
 
               {/* Valores */}
