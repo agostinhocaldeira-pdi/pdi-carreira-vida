@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Rocket, Plus, Trash2 } from "lucide-react";
+import { Rocket, Plus, Trash2, Pencil, Check, X } from "lucide-react";
 import { toast } from "sonner";
 
 const MaoNaMassa = () => {
@@ -32,6 +32,13 @@ const MaoNaMassa = () => {
     status: "a-fazer",
   });
 
+  const [editandoId, setEditandoId] = useState<number | null>(null);
+  const [acaoEditada, setAcaoEditada] = useState<{
+    acao: string;
+    periodicidade: string;
+    status: string;
+  } | null>(null);
+
   const handleAddAcao = () => {
     if (!novaAcao.acao) {
       toast.error("Preencha a ação");
@@ -46,6 +53,31 @@ const MaoNaMassa = () => {
   const handleRemoveAcao = (id: number) => {
     setAcoes(acoes.filter((acao) => acao.id !== id));
     toast.success("Ação removida!");
+  };
+
+  const handleStartEdit = (acao: any) => {
+    setEditandoId(acao.id);
+    setAcaoEditada({
+      acao: acao.acao,
+      periodicidade: acao.periodicidade,
+      status: acao.status,
+    });
+  };
+
+  const handleCancelEdit = () => {
+    setEditandoId(null);
+    setAcaoEditada(null);
+  };
+
+  const handleSaveEdit = (id: number) => {
+    if (!acaoEditada) return;
+
+    setAcoes(acoes.map((acao) => 
+      acao.id === id ? { ...acao, ...acaoEditada } : acao
+    ));
+    setEditandoId(null);
+    setAcaoEditada(null);
+    toast.success("Ação atualizada!");
   };
 
   const handleSaveMeta = () => {
@@ -204,6 +236,7 @@ const MaoNaMassa = () => {
                     <SelectContent>
                       <SelectItem value="a-fazer">A fazer</SelectItem>
                       <SelectItem value="pendente">Pendente</SelectItem>
+                      <SelectItem value="em-andamento">Em andamento</SelectItem>
                       <SelectItem value="concluido">Concluído</SelectItem>
                     </SelectContent>
                   </Select>
@@ -222,32 +255,118 @@ const MaoNaMassa = () => {
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {acoes.map((acao) => (
-                        <TableRow key={acao.id}>
-                          <TableCell>{acao.acao}</TableCell>
-                          <TableCell className="capitalize">{acao.periodicidade}</TableCell>
-                          <TableCell>
-                            <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                              acao.status === "concluido" 
-                                ? "bg-green-100 text-green-800" 
-                                : acao.status === "pendente"
-                                ? "bg-yellow-100 text-yellow-800"
-                                : "bg-blue-100 text-blue-800"
-                            }`}>
-                              {acao.status === "concluido" ? "Concluído" : acao.status === "pendente" ? "Pendente" : "A fazer"}
-                            </span>
-                          </TableCell>
-                          <TableCell>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => handleRemoveAcao(acao.id)}
-                            >
-                              <Trash2 className="w-4 h-4 text-destructive" />
-                            </Button>
-                          </TableCell>
-                        </TableRow>
-                      ))}
+                      {acoes.map((acao) => {
+                        const isEditing = editandoId === acao.id;
+                        
+                        return (
+                          <TableRow key={acao.id}>
+                            <TableCell>
+                              {isEditing ? (
+                                <Input
+                                  value={acaoEditada?.acao || ""}
+                                  onChange={(e) => setAcaoEditada({ ...acaoEditada!, acao: e.target.value })}
+                                />
+                              ) : (
+                                acao.acao
+                              )}
+                            </TableCell>
+                            <TableCell>
+                              {isEditing ? (
+                                <Select
+                                  value={acaoEditada?.periodicidade || ""}
+                                  onValueChange={(value) => setAcaoEditada({ ...acaoEditada!, periodicidade: value })}
+                                >
+                                  <SelectTrigger>
+                                    <SelectValue />
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    <SelectItem value="diariamente">Diariamente</SelectItem>
+                                    <SelectItem value="semanalmente">Semanalmente</SelectItem>
+                                    <SelectItem value="mensalmente">Mensalmente</SelectItem>
+                                    <SelectItem value="trimestral">Trimestral</SelectItem>
+                                    <SelectItem value="semestral">Semestral</SelectItem>
+                                    <SelectItem value="anual">Anual</SelectItem>
+                                  </SelectContent>
+                                </Select>
+                              ) : (
+                                <span className="capitalize">{acao.periodicidade}</span>
+                              )}
+                            </TableCell>
+                            <TableCell>
+                              {isEditing ? (
+                                <Select
+                                  value={acaoEditada?.status || ""}
+                                  onValueChange={(value) => setAcaoEditada({ ...acaoEditada!, status: value })}
+                                >
+                                  <SelectTrigger>
+                                    <SelectValue />
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    <SelectItem value="a-fazer">A fazer</SelectItem>
+                                    <SelectItem value="pendente">Pendente</SelectItem>
+                                    <SelectItem value="em-andamento">Em andamento</SelectItem>
+                                    <SelectItem value="concluido">Concluído</SelectItem>
+                                  </SelectContent>
+                                </Select>
+                              ) : (
+                                <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                                  acao.status === "concluido" 
+                                    ? "bg-green-100 text-green-800" 
+                                    : acao.status === "pendente"
+                                    ? "bg-yellow-100 text-yellow-800"
+                                    : acao.status === "em-andamento"
+                                    ? "bg-purple-100 text-purple-800"
+                                    : "bg-blue-100 text-blue-800"
+                                }`}>
+                                  {acao.status === "concluido" ? "Concluído" 
+                                    : acao.status === "pendente" ? "Pendente" 
+                                    : acao.status === "em-andamento" ? "Em andamento"
+                                    : "A fazer"}
+                                </span>
+                              )}
+                            </TableCell>
+                            <TableCell>
+                              <div className="flex gap-1">
+                                {isEditing ? (
+                                  <>
+                                    <Button
+                                      variant="ghost"
+                                      size="sm"
+                                      onClick={() => handleSaveEdit(acao.id)}
+                                    >
+                                      <Check className="w-4 h-4 text-green-600" />
+                                    </Button>
+                                    <Button
+                                      variant="ghost"
+                                      size="sm"
+                                      onClick={handleCancelEdit}
+                                    >
+                                      <X className="w-4 h-4 text-destructive" />
+                                    </Button>
+                                  </>
+                                ) : (
+                                  <>
+                                    <Button
+                                      variant="ghost"
+                                      size="sm"
+                                      onClick={() => handleStartEdit(acao)}
+                                    >
+                                      <Pencil className="w-4 h-4" />
+                                    </Button>
+                                    <Button
+                                      variant="ghost"
+                                      size="sm"
+                                      onClick={() => handleRemoveAcao(acao.id)}
+                                    >
+                                      <Trash2 className="w-4 h-4 text-destructive" />
+                                    </Button>
+                                  </>
+                                )}
+                              </div>
+                            </TableCell>
+                          </TableRow>
+                        );
+                      })}
                     </TableBody>
                   </Table>
                 </div>
