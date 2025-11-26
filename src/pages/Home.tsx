@@ -63,14 +63,17 @@ const Home = () => {
             </div>
             
             <div className="flex items-center gap-2">
-              <Button variant="ghost" size="sm" className="gap-2">
-                <LogIn className="w-4 h-4" />
-                <span className="hidden sm:inline">Login</span>
-              </Button>
-              <Button variant="outline" size="sm" className="gap-2">
-                <User className="w-4 h-4" />
-                <span className="hidden sm:inline">Perfil</span>
-              </Button>
+              {!userName ? (
+                <Button variant="ghost" size="sm" className="gap-2">
+                  <LogIn className="w-4 h-4" />
+                  <span className="hidden sm:inline">Login</span>
+                </Button>
+              ) : (
+                <Button variant="outline" size="sm" className="gap-2">
+                  <User className="w-4 h-4" />
+                  <span className="hidden sm:inline">Perfil</span>
+                </Button>
+              )}
             </div>
           </div>
 
