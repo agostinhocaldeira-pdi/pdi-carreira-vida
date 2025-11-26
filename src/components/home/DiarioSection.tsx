@@ -21,10 +21,7 @@ const DiarioSection = () => {
     gratidao: "",
     data: new Date().toISOString().split("T")[0],
   });
-  const [selectedMonth, setSelectedMonth] = useState(() => {
-    const now = new Date();
-    return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
-  });
+  const [selectedPeriod, setSelectedPeriod] = useState("30dias");
   const [entradas, setEntradas] = useState<any[]>([]);
 
   useEffect(() => {
@@ -50,25 +47,27 @@ const DiarioSection = () => {
     });
   };
 
-  const monthOptions = useMemo(() => {
-    const options = [];
-    const now = new Date();
-    for (let i = 0; i < 12; i++) {
-      const date = new Date(now.getFullYear(), now.getMonth() - i, 1);
-      const value = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
-      const label = date.toLocaleDateString("pt-BR", { year: "numeric", month: "long" });
-      options.push({ value, label });
-    }
-    return options;
-  }, []);
+  const periodOptions = [
+    { value: "30dias", label: "30 dias" },
+    { value: "trimestre", label: "Trimestre" },
+    { value: "semestre", label: "Semestre" },
+    { value: "ano", label: "Ano" },
+  ];
 
   const chartData = useMemo(() => {
-    const [year, month] = selectedMonth.split("-");
-    const daysInMonth = new Date(Number(year), Number(month), 0).getDate();
+    const now = new Date();
+    let numDays = 30;
+    
+    if (selectedPeriod === "30dias") numDays = 30;
+    else if (selectedPeriod === "trimestre") numDays = 90;
+    else if (selectedPeriod === "semestre") numDays = 180;
+    else if (selectedPeriod === "ano") numDays = 365;
     
     const data = [];
-    for (let day = 1; day <= daysInMonth; day++) {
-      const dateStr = `${year}-${month}-${String(day).padStart(2, "0")}`;
+    for (let i = numDays - 1; i >= 0; i--) {
+      const date = new Date(now);
+      date.setDate(date.getDate() - i);
+      const dateStr = date.toISOString().split("T")[0];
       const entry = entradas.find((e) => e.data === dateStr);
       
       let humorValue = null;
@@ -79,13 +78,21 @@ const DiarioSection = () => {
       }
       
       data.push({
-        dia: day,
+        dia: date.getDate(),
+        data: dateStr,
         humor: humorValue,
         entry: entry || null,
       });
     }
     return data;
-  }, [entradas, selectedMonth]);
+  }, [entradas, selectedPeriod]);
+  
+  const chartHeight = useMemo(() => {
+    if (selectedPeriod === "30dias") return 300;
+    if (selectedPeriod === "trimestre") return 350;
+    if (selectedPeriod === "semestre") return 400;
+    return 450;
+  }, [selectedPeriod]);
 
   const CustomTooltip = ({ active, payload }: any) => {
     if (active && payload && payload[0] && payload[0].payload.entry) {
@@ -160,12 +167,12 @@ const DiarioSection = () => {
               <div className="mt-6 space-y-4">
                 <div className="flex items-center justify-between">
                   <h3 className="text-lg font-semibold">Histórico de Humor</h3>
-                  <Select value={selectedMonth} onValueChange={setSelectedMonth}>
+                  <Select value={selectedPeriod} onValueChange={setSelectedPeriod}>
                     <SelectTrigger className="w-[200px]">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      {monthOptions.map((option) => (
+                      {periodOptions.map((option) => (
                         <SelectItem key={option.value} value={option.value}>
                           {option.label}
                         </SelectItem>
@@ -174,7 +181,7 @@ const DiarioSection = () => {
                   </Select>
                 </div>
                 
-                <div className="h-[300px] w-full">
+                <div className="w-full" style={{ height: `${chartHeight}px` }}>
                   <ResponsiveContainer width="100%" height="100%">
                     <LineChart data={chartData}>
                       <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
