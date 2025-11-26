@@ -21,18 +21,39 @@ const PlanoDeVida = ({ onTabChange, onOpenChange }: PlanoDeVidaProps) => {
   const [vvd, setVvd] = useState("");
   const [isEditingVvd, setIsEditingVvd] = useState(true);
   const [valores, setValores] = useState("");
+  const [isEditingValores, setIsEditingValores] = useState(true);
+  const [areasVida, setAreasVida] = useState([
+    { area: "Carreira", notaAtual: "", notaDesejada: "" },
+    { area: "Saúde", notaAtual: "", notaDesejada: "" },
+    { area: "Relacionamentos", notaAtual: "", notaDesejada: "" },
+    { area: "Finanças", notaAtual: "", notaDesejada: "" },
+    { area: "Lazer", notaAtual: "", notaDesejada: "" },
+  ]);
+  const [isEditingAreas, setIsEditingAreas] = useState(true);
   const [objetivo, setObjetivo] = useState({
     texto: "",
     dataAlvo: "",
     conexaoVvd: "",
   });
 
-  // Carregar VVD salvo do localStorage
+  // Carregar dados salvos do localStorage
   useEffect(() => {
     const savedVvd = localStorage.getItem("vvd");
     if (savedVvd) {
       setVvd(savedVvd);
       setIsEditingVvd(false);
+    }
+
+    const savedValores = localStorage.getItem("valores");
+    if (savedValores) {
+      setValores(savedValores);
+      setIsEditingValores(false);
+    }
+
+    const savedAreas = localStorage.getItem("areasVida");
+    if (savedAreas) {
+      setAreasVida(JSON.parse(savedAreas));
+      setIsEditingAreas(false);
     }
   }, []);
 
@@ -45,6 +66,36 @@ const PlanoDeVida = ({ onTabChange, onOpenChange }: PlanoDeVidaProps) => {
   const handleEditVvd = () => {
     setIsEditingVvd(true);
   };
+
+  const handleSaveValores = () => {
+    localStorage.setItem("valores", valores);
+    setIsEditingValores(false);
+    toast.success("Valores salvos!");
+  };
+
+  const handleEditValores = () => {
+    setIsEditingValores(true);
+  };
+
+  const handleSaveAreas = () => {
+    localStorage.setItem("areasVida", JSON.stringify(areasVida));
+    setIsEditingAreas(false);
+    toast.success("Áreas da Vida salvas!");
+  };
+
+  const handleEditAreas = () => {
+    setIsEditingAreas(true);
+  };
+
+  const updateArea = (index: number, field: 'notaAtual' | 'notaDesejada', value: string) => {
+    const newAreas = [...areasVida];
+    newAreas[index][field] = value;
+    setAreasVida(newAreas);
+  };
+
+  const isAreasComplete = areasVida.every(
+    (area) => area.notaAtual.trim() !== "" && area.notaDesejada.trim() !== ""
+  );
 
   const handleSaveObjetivo = () => {
     const objetivos = JSON.parse(localStorage.getItem("objetivos") || "[]");
@@ -158,7 +209,24 @@ const PlanoDeVida = ({ onTabChange, onOpenChange }: PlanoDeVidaProps) => {
                   value={valores}
                   onChange={(e) => setValores(e.target.value)}
                   rows={3}
+                  disabled={!isEditingValores}
                 />
+                <div className="flex items-center justify-end gap-2">
+                  {!isEditingValores && (
+                    <Button onClick={handleEditValores} size="sm" variant="outline">
+                      <Edit className="w-4 h-4 mr-2" />
+                      Editar
+                    </Button>
+                  )}
+                  <Button 
+                    onClick={handleSaveValores} 
+                    size="sm" 
+                    variant="outline"
+                    disabled={!valores.trim() || !isEditingValores}
+                  >
+                    Salvar
+                  </Button>
+                </div>
               </div>
 
               {/* Áreas da Vida */}
@@ -174,19 +242,53 @@ const PlanoDeVida = ({ onTabChange, onOpenChange }: PlanoDeVidaProps) => {
                       </tr>
                     </thead>
                     <tbody>
-                      {["Carreira", "Saúde", "Relacionamentos", "Finanças", "Lazer"].map((area) => (
-                        <tr key={area} className="border-t">
-                          <td className="p-3 text-sm">{area}</td>
+                      {areasVida.map((area, index) => (
+                        <tr key={area.area} className="border-t">
+                          <td className="p-3 text-sm">{area.area}</td>
                           <td className="p-3">
-                            <Input type="number" min="0" max="10" className="w-20" placeholder="0-10" />
+                            <Input 
+                              type="number" 
+                              min="0" 
+                              max="10" 
+                              className="w-20" 
+                              placeholder="0-10"
+                              value={area.notaAtual}
+                              onChange={(e) => updateArea(index, 'notaAtual', e.target.value)}
+                              disabled={!isEditingAreas}
+                            />
                           </td>
                           <td className="p-3">
-                            <Input type="number" min="0" max="10" className="w-20" placeholder="0-10" />
+                            <Input 
+                              type="number" 
+                              min="0" 
+                              max="10" 
+                              className="w-20" 
+                              placeholder="0-10"
+                              value={area.notaDesejada}
+                              onChange={(e) => updateArea(index, 'notaDesejada', e.target.value)}
+                              disabled={!isEditingAreas}
+                            />
                           </td>
                         </tr>
                       ))}
                     </tbody>
                   </table>
+                </div>
+                <div className="flex items-center justify-end gap-2">
+                  {!isEditingAreas && (
+                    <Button onClick={handleEditAreas} size="sm" variant="outline">
+                      <Edit className="w-4 h-4 mr-2" />
+                      Editar
+                    </Button>
+                  )}
+                  <Button 
+                    onClick={handleSaveAreas} 
+                    size="sm" 
+                    variant="outline"
+                    disabled={!isAreasComplete || !isEditingAreas}
+                  >
+                    Salvar
+                  </Button>
                 </div>
               </div>
             </div>
