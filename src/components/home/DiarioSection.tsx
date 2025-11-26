@@ -7,12 +7,17 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Book, Smile, Frown, Meh, ChevronDown, ChevronUp } from "lucide-react";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Book, Smile, Frown, Meh, ChevronDown, ChevronUp, CalendarIcon } from "lucide-react";
 import { toast } from "sonner";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
+import { format } from "date-fns";
+import { cn } from "@/lib/utils";
 
 const DiarioSection = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [entrada, setEntrada] = useState({
     humor: "",
     reflexoes: "",
@@ -28,6 +33,33 @@ const DiarioSection = () => {
     const stored = JSON.parse(localStorage.getItem("diario") || "[]");
     setEntradas(stored);
   }, []);
+
+  // Carregar entrada da data selecionada
+  useEffect(() => {
+    const dateStr = selectedDate.toISOString().split("T")[0];
+    const stored = JSON.parse(localStorage.getItem("diario") || "[]");
+    const existingEntry = stored.find((e: any) => e.data === dateStr);
+    
+    if (existingEntry) {
+      setEntrada({
+        humor: existingEntry.humor || "",
+        reflexoes: existingEntry.reflexoes || "",
+        avancos: existingEntry.avancos || "",
+        habitos: existingEntry.habitos || "",
+        gratidao: existingEntry.gratidao || "",
+        data: dateStr,
+      });
+    } else {
+      setEntrada({
+        humor: "",
+        reflexoes: "",
+        avancos: "",
+        habitos: "",
+        gratidao: "",
+        data: dateStr,
+      });
+    }
+  }, [selectedDate]);
 
   const generateMockData = () => {
     const mockEntradas = [];
@@ -92,20 +124,20 @@ const DiarioSection = () => {
 
   const handleSave = () => {
     const stored = JSON.parse(localStorage.getItem("diario") || "[]");
-    stored.push({ ...entrada, id: Date.now() });
+    const existingIndex = stored.findIndex((e: any) => e.data === entrada.data);
+    
+    if (existingIndex >= 0) {
+      // Atualizar entrada existente
+      stored[existingIndex] = { ...stored[existingIndex], ...entrada };
+      toast.success("Entrada do diário atualizada!");
+    } else {
+      // Criar nova entrada
+      stored.push({ ...entrada, id: Date.now() });
+      toast.success("Entrada do diário salva!");
+    }
+    
     localStorage.setItem("diario", JSON.stringify(stored));
     setEntradas(stored);
-    toast.success("Entrada do diário salva!");
-    
-    // Reset
-    setEntrada({
-      humor: "",
-      reflexoes: "",
-      avancos: "",
-      habitos: "",
-      gratidao: "",
-      data: new Date().toISOString().split("T")[0],
-    });
   };
 
   const periodOptions = [
@@ -466,7 +498,33 @@ const DiarioSection = () => {
 
         {/* Reflexões */}
         <div className="space-y-2">
-          <Label htmlFor="reflexoes">Reflexões do Dia</Label>
+          <div className="flex items-center justify-between gap-4">
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="outline"
+                  className={cn(
+                    "justify-start text-left font-normal",
+                    !selectedDate && "text-muted-foreground"
+                  )}
+                >
+                  <CalendarIcon className="mr-2 h-4 w-4" />
+                  {selectedDate ? format(selectedDate, "dd/MM/yyyy") : "Selecionar data"}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0" align="start">
+                <Calendar
+                  mode="single"
+                  selected={selectedDate}
+                  onSelect={(date) => date && setSelectedDate(date)}
+                  initialFocus
+                  className="pointer-events-auto"
+                />
+              </PopoverContent>
+            </Popover>
+            
+            <Label htmlFor="reflexoes" className="flex-1">Reflexões do Dia</Label>
+          </div>
           <Textarea
             id="reflexoes"
             placeholder="O que você aprendeu ou percebeu hoje?"
@@ -513,7 +571,7 @@ const DiarioSection = () => {
         </div>
 
         <Button onClick={handleSave} className="w-full" size="lg">
-          Salvar Entrada
+          {entradas.some((e) => e.data === entrada.data) ? "Atualizar Entrada" : "Salvar Entrada"}
         </Button>
           </CardContent>
         </CollapsibleContent>
