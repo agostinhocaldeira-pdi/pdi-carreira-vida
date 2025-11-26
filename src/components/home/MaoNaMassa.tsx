@@ -5,7 +5,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Rocket } from "lucide-react";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Rocket, Plus, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 
 const MaoNaMassa = () => {
@@ -13,11 +14,39 @@ const MaoNaMassa = () => {
     texto: "",
     dataAlvo: "",
     medicao: "",
-    acoes: "",
     inicio: "",
     periodicidade: "",
     passos: "",
   });
+
+  const [acoes, setAcoes] = useState<Array<{
+    id: number;
+    acao: string;
+    periodicidade: string;
+    status: string;
+  }>>([]);
+
+  const [novaAcao, setNovaAcao] = useState({
+    acao: "",
+    periodicidade: "",
+    status: "a-fazer",
+  });
+
+  const handleAddAcao = () => {
+    if (!novaAcao.acao) {
+      toast.error("Preencha a ação");
+      return;
+    }
+
+    setAcoes([...acoes, { ...novaAcao, id: Date.now() }]);
+    setNovaAcao({ acao: "", periodicidade: "", status: "a-fazer" });
+    toast.success("Ação adicionada!");
+  };
+
+  const handleRemoveAcao = (id: number) => {
+    setAcoes(acoes.filter((acao) => acao.id !== id));
+    toast.success("Ação removida!");
+  };
 
   const handleSaveMeta = () => {
     if (!meta.texto || !meta.dataAlvo) {
@@ -26,7 +55,7 @@ const MaoNaMassa = () => {
     }
 
     const metas = JSON.parse(localStorage.getItem("metas") || "[]");
-    metas.push({ ...meta, id: Date.now(), concluida: false });
+    metas.push({ ...meta, acoes, id: Date.now(), concluida: false });
     localStorage.setItem("metas", JSON.stringify(metas));
     toast.success("Meta cadastrada com sucesso!");
     
@@ -35,11 +64,11 @@ const MaoNaMassa = () => {
       texto: "",
       dataAlvo: "",
       medicao: "",
-      acoes: "",
       inicio: "",
       periodicidade: "",
       passos: "",
     });
+    setAcoes([]);
   };
 
   return (
@@ -118,15 +147,111 @@ const MaoNaMassa = () => {
               </Select>
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="acoes">Ações</Label>
-              <Textarea
-                id="acoes"
-                placeholder="Liste as ações necessárias para alcançar esta meta"
-                value={meta.acoes}
-                onChange={(e) => setMeta({ ...meta, acoes: e.target.value })}
-                rows={3}
-              />
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <Label>Ações</Label>
+                <Button 
+                  type="button" 
+                  variant="outline" 
+                  size="sm"
+                  onClick={handleAddAcao}
+                >
+                  <Plus className="w-4 h-4 mr-2" />
+                  Adicionar Ação
+                </Button>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-3 p-4 bg-muted/30 rounded-lg">
+                <div className="space-y-2">
+                  <Label htmlFor="nova-acao" className="text-xs">Nova Ação</Label>
+                  <Input
+                    id="nova-acao"
+                    placeholder="Descreva a ação"
+                    value={novaAcao.acao}
+                    onChange={(e) => setNovaAcao({ ...novaAcao, acao: e.target.value })}
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="nova-periodicidade" className="text-xs">Periodicidade</Label>
+                  <Select
+                    value={novaAcao.periodicidade}
+                    onValueChange={(value) => setNovaAcao({ ...novaAcao, periodicidade: value })}
+                  >
+                    <SelectTrigger id="nova-periodicidade">
+                      <SelectValue placeholder="Selecione" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="diariamente">Diariamente</SelectItem>
+                      <SelectItem value="semanalmente">Semanalmente</SelectItem>
+                      <SelectItem value="mensalmente">Mensalmente</SelectItem>
+                      <SelectItem value="trimestral">Trimestral</SelectItem>
+                      <SelectItem value="semestral">Semestral</SelectItem>
+                      <SelectItem value="anual">Anual</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="novo-status" className="text-xs">Status</Label>
+                  <Select
+                    value={novaAcao.status}
+                    onValueChange={(value) => setNovaAcao({ ...novaAcao, status: value })}
+                  >
+                    <SelectTrigger id="novo-status">
+                      <SelectValue placeholder="Selecione" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="a-fazer">A fazer</SelectItem>
+                      <SelectItem value="pendente">Pendente</SelectItem>
+                      <SelectItem value="concluido">Concluído</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              {acoes.length > 0 && (
+                <div className="rounded-lg border">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Ação</TableHead>
+                        <TableHead>Periodicidade</TableHead>
+                        <TableHead>Status</TableHead>
+                        <TableHead className="w-[100px]">Ações</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {acoes.map((acao) => (
+                        <TableRow key={acao.id}>
+                          <TableCell>{acao.acao}</TableCell>
+                          <TableCell className="capitalize">{acao.periodicidade}</TableCell>
+                          <TableCell>
+                            <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                              acao.status === "concluido" 
+                                ? "bg-green-100 text-green-800" 
+                                : acao.status === "pendente"
+                                ? "bg-yellow-100 text-yellow-800"
+                                : "bg-blue-100 text-blue-800"
+                            }`}>
+                              {acao.status === "concluido" ? "Concluído" : acao.status === "pendente" ? "Pendente" : "A fazer"}
+                            </span>
+                          </TableCell>
+                          <TableCell>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => handleRemoveAcao(acao.id)}
+                            >
+                              <Trash2 className="w-4 h-4 text-destructive" />
+                            </Button>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+              )}
             </div>
 
             <div className="space-y-2">
