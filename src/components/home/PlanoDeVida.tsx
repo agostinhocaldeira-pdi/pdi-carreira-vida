@@ -30,6 +30,11 @@ const PlanoDeVida = () => {
     setObjetivo({ texto: "", dataAlvo: "", conexaoVvd: "" });
   };
 
+  const handleAtivarMaoNaMassa = () => {
+    localStorage.setItem("maoNaMassaAtivado", "true");
+    toast.success("Mão na Massa ativado! Agora você pode cadastrar suas metas.");
+  };
+
   return (
     <Card className="shadow-medium">
       <CardHeader>
@@ -176,7 +181,7 @@ const PlanoDeVida = () => {
                 />
               </div>
 
-              <Button variant="outline" className="w-full">
+              <Button variant="outline" className="w-full" onClick={handleAtivarMaoNaMassa}>
                 Criar Análise FF (Forças e Fraquezas)
               </Button>
             </div>
