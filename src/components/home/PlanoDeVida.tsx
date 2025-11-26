@@ -295,21 +295,31 @@ const PlanoDeVida = ({ onTabChange, onOpenChange }: PlanoDeVidaProps) => {
                     </tbody>
                   </table>
                 </div>
-                <div className="flex items-center justify-end gap-2">
-                  {!isEditingAreas && (
-                    <Button onClick={handleEditAreas} size="sm" variant="outline">
-                      <Edit className="w-4 h-4 mr-2" />
-                      Editar
-                    </Button>
-                  )}
-                  <Button 
-                    onClick={handleSaveAreas} 
-                    size="sm" 
-                    variant="outline"
-                    disabled={!isAreasComplete || !isEditingAreas}
+                <div className="flex items-center justify-between gap-4">
+                  <Link 
+                    to="/ferramentas" 
+                    className="flex items-center gap-2 text-sm text-primary hover:underline"
                   >
-                    Salvar
-                  </Button>
+                    Acessar a Roda da Vida
+                    <ArrowRight className="w-4 h-4" />
+                  </Link>
+                  
+                  <div className="flex gap-2">
+                    {!isEditingAreas && (
+                      <Button onClick={handleEditAreas} size="sm" variant="outline">
+                        <Edit className="w-4 h-4 mr-2" />
+                        Editar
+                      </Button>
+                    )}
+                    <Button 
+                      onClick={handleSaveAreas} 
+                      size="sm" 
+                      variant="outline"
+                      disabled={!isAreasComplete || !isEditingAreas}
+                    >
+                      Salvar
+                    </Button>
+                  </div>
                 </div>
               </div>
             </div>
