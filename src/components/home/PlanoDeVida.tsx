@@ -215,9 +215,14 @@ const PlanoDeVida = ({ onTabChange, onOpenChange }: PlanoDeVidaProps) => {
                 />
               </div>
 
-              <Button variant="outline" className="w-full">
-                Cadastrar
-              </Button>
+              <div className="flex gap-3">
+                <Button variant="outline" className="flex-1">
+                  Cadastrar
+                </Button>
+                <Button variant="outline" className="flex-1">
+                  Ferramenta de Habilidades (FF)
+                </Button>
+              </div>
             </div>
           </TabsContent>
           </Tabs>
