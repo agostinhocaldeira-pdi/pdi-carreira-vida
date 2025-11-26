@@ -294,6 +294,23 @@ const DiarioSection = () => {
                   day: "numeric" 
                 })}
               </CardDescription>
+            </div>
+            <CollapsibleTrigger asChild>
+              <Button variant="ghost" size="sm">
+                {isOpen ? (
+                  <>
+                    <ChevronUp className="w-4 h-4 mr-2" />
+                    Minimizar
+                  </>
+                ) : (
+                  <>
+                    <ChevronDown className="w-4 h-4 mr-2" />
+                    Expandir
+                  </>
+                )}
+              </Button>
+            </CollapsibleTrigger>
+          </div>
               
               {/* Gráfico de histórico de humor */}
               <div className="mt-6 space-y-4">
@@ -414,23 +431,6 @@ const DiarioSection = () => {
                   </div>
                 </div>
               </div>
-            </div>
-            <CollapsibleTrigger asChild>
-              <Button variant="ghost" size="sm">
-                {isOpen ? (
-                  <>
-                    <ChevronUp className="w-4 h-4 mr-2" />
-                    Minimizar
-                  </>
-                ) : (
-                  <>
-                    <ChevronDown className="w-4 h-4 mr-2" />
-                    Expandir
-                  </>
-                )}
-              </Button>
-            </CollapsibleTrigger>
-          </div>
         </CardHeader>
         <CollapsibleContent>
           <CardContent className="space-y-6">
