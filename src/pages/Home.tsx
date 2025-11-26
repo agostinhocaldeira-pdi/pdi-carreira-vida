@@ -5,6 +5,7 @@ import { Progress } from "@/components/ui/progress";
 import { Link } from "react-router-dom";
 import { Target, TrendingUp, BookOpen, MessagesSquare, Book, Sparkles } from "lucide-react";
 import ProgressSection from "@/components/home/ProgressSection";
+import DiarioSection from "@/components/home/DiarioSection";
 import PlanoDeVida from "@/components/home/PlanoDeVida";
 import MaoNaMassa from "@/components/home/MaoNaMassa";
 
@@ -44,20 +45,25 @@ const Home = () => {
           <ProgressSection />
         </section>
 
-        {/* Plano de Vida Section */}
+        {/* Diário Section */}
         <section className="animate-slide-up" style={{ animationDelay: "0.1s" }}>
+          <DiarioSection />
+        </section>
+
+        {/* Plano de Vida Section */}
+        <section className="animate-slide-up" style={{ animationDelay: "0.2s" }}>
           <PlanoDeVida onTabChange={setActiveTab} />
         </section>
 
         {/* Mão na Massa Section - aparece ao clicar em "Como chegar lá" */}
         {activeTab === "como-chegar" && (
-          <section className="animate-slide-up" style={{ animationDelay: "0.2s" }}>
+          <section className="animate-slide-up" style={{ animationDelay: "0.3s" }}>
             <MaoNaMassa />
           </section>
         )}
 
-        {/* Navegação Section */}
-        <section className="animate-slide-up" style={{ animationDelay: "0.3s" }}>
+        {/* Recursos Section */}
+        <section className="animate-slide-up" style={{ animationDelay: "0.4s" }}>
           <Card className="shadow-medium">
             <CardHeader>
               <CardTitle className="text-2xl flex items-center gap-2">
@@ -67,7 +73,7 @@ const Home = () => {
               <CardDescription>Acesse ferramentas e suporte para sua jornada</CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <Link to="/construcao-guiada">
                   <Card className="hover:shadow-medium transition-all cursor-pointer h-full border-2 hover:border-primary">
                     <CardContent className="pt-6 text-center space-y-3">
@@ -105,20 +111,6 @@ const Home = () => {
                       <h3 className="font-semibold">Suporte</h3>
                       <p className="text-sm text-muted-foreground">
                         Chat de ajuda e orientação
-                      </p>
-                    </CardContent>
-                  </Card>
-                </Link>
-
-                <Link to="/diario">
-                  <Card className="hover:shadow-medium transition-all cursor-pointer h-full border-2 hover:border-primary">
-                    <CardContent className="pt-6 text-center space-y-3">
-                      <div className="w-12 h-12 mx-auto bg-primary/10 rounded-full flex items-center justify-center">
-                        <Book className="w-6 h-6 text-primary" />
-                      </div>
-                      <h3 className="font-semibold">Diário</h3>
-                      <p className="text-sm text-muted-foreground">
-                        Registre reflexões e avanços
                       </p>
                     </CardContent>
                   </Card>
