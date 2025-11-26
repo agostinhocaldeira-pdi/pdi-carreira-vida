@@ -20,7 +20,7 @@ const PlanoDeVida = ({ onTabChange, onOpenChange }: PlanoDeVidaProps) => {
   const [activeTab, setActiveTab] = useState("quem-sou");
   const [vvd, setVvd] = useState("");
   const [isEditingVvd, setIsEditingVvd] = useState(true);
-  const [valores, setValores] = useState("");
+  const [valores, setValores] = useState<string[]>(Array(12).fill(""));
   const [isEditingValores, setIsEditingValores] = useState(true);
   const [areasVida, setAreasVida] = useState([
     { area: "Carreira", notaAtual: "", notaDesejada: "" },
@@ -46,7 +46,7 @@ const PlanoDeVida = ({ onTabChange, onOpenChange }: PlanoDeVidaProps) => {
 
     const savedValores = localStorage.getItem("valores");
     if (savedValores) {
-      setValores(savedValores);
+      setValores(JSON.parse(savedValores));
       setIsEditingValores(false);
     }
 
@@ -68,7 +68,7 @@ const PlanoDeVida = ({ onTabChange, onOpenChange }: PlanoDeVidaProps) => {
   };
 
   const handleSaveValores = () => {
-    localStorage.setItem("valores", valores);
+    localStorage.setItem("valores", JSON.stringify(valores));
     setIsEditingValores(false);
     toast.success("Valores salvos!");
   };
@@ -76,6 +76,14 @@ const PlanoDeVida = ({ onTabChange, onOpenChange }: PlanoDeVidaProps) => {
   const handleEditValores = () => {
     setIsEditingValores(true);
   };
+
+  const updateValor = (index: number, value: string) => {
+    const newValores = [...valores];
+    newValores[index] = value;
+    setValores(newValores);
+  };
+
+  const isValoresComplete = valores.some((valor) => valor.trim() !== "");
 
   const handleSaveAreas = () => {
     localStorage.setItem("areasVida", JSON.stringify(areasVida));
@@ -201,16 +209,19 @@ const PlanoDeVida = ({ onTabChange, onOpenChange }: PlanoDeVidaProps) => {
               </div>
 
               {/* Valores */}
-              <div className="space-y-2">
-                <Label htmlFor="valores">Meus Valores</Label>
-                <Textarea
-                  id="valores"
-                  placeholder="Liste seus principais valores (ex: família, honestidade, crescimento...)"
-                  value={valores}
-                  onChange={(e) => setValores(e.target.value)}
-                  rows={3}
-                  disabled={!isEditingValores}
-                />
+              <div className="space-y-3">
+                <Label>Meus Valores</Label>
+                <div className="grid grid-cols-4 gap-3">
+                  {valores.map((valor, index) => (
+                    <Input
+                      key={index}
+                      placeholder={`Valor ${index + 1}`}
+                      value={valor}
+                      onChange={(e) => updateValor(index, e.target.value)}
+                      disabled={!isEditingValores}
+                    />
+                  ))}
+                </div>
                 <div className="flex items-center justify-end gap-2">
                   {!isEditingValores && (
                     <Button onClick={handleEditValores} size="sm" variant="outline">
@@ -222,7 +233,7 @@ const PlanoDeVida = ({ onTabChange, onOpenChange }: PlanoDeVidaProps) => {
                     onClick={handleSaveValores} 
                     size="sm" 
                     variant="outline"
-                    disabled={!valores.trim() || !isEditingValores}
+                    disabled={!isValoresComplete || !isEditingValores}
                   >
                     Salvar
                   </Button>
