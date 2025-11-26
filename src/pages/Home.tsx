@@ -10,7 +10,7 @@ import MaoNaMassa from "@/components/home/MaoNaMassa";
 
 const Home = () => {
   const [userName, setUserName] = useState("");
-  const [maoNaMassaAtivado, setMaoNaMassaAtivado] = useState(false);
+  const [activeTab, setActiveTab] = useState("quem-sou");
 
   useEffect(() => {
     const user = localStorage.getItem("user");
@@ -18,10 +18,6 @@ const Home = () => {
       const userData = JSON.parse(user);
       setUserName(userData.name);
     }
-    
-    // Verificar se Mão na Massa foi ativado
-    const ativado = localStorage.getItem("maoNaMassaAtivado");
-    setMaoNaMassaAtivado(ativado === "true");
   }, []);
 
   return (
@@ -50,11 +46,11 @@ const Home = () => {
 
         {/* Plano de Vida Section */}
         <section className="animate-slide-up" style={{ animationDelay: "0.1s" }}>
-          <PlanoDeVida />
+          <PlanoDeVida onTabChange={setActiveTab} />
         </section>
 
-        {/* Mão na Massa Section - só aparece após ativar */}
-        {maoNaMassaAtivado && (
+        {/* Mão na Massa Section - aparece ao clicar em "Como chegar lá" */}
+        {activeTab === "como-chegar" && (
           <section className="animate-slide-up" style={{ animationDelay: "0.2s" }}>
             <MaoNaMassa />
           </section>
