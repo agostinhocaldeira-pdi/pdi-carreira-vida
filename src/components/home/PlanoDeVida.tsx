@@ -8,7 +8,12 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Compass, Heart, Target, Lightbulb } from "lucide-react";
 import { toast } from "sonner";
 
-const PlanoDeVida = () => {
+interface PlanoDeVidaProps {
+  onTabChange?: (tab: string) => void;
+}
+
+const PlanoDeVida = ({ onTabChange }: PlanoDeVidaProps) => {
+  const [activeTab, setActiveTab] = useState("quem-sou");
   const [vvd, setVvd] = useState("");
   const [valores, setValores] = useState("");
   const [objetivo, setObjetivo] = useState({
@@ -30,9 +35,9 @@ const PlanoDeVida = () => {
     setObjetivo({ texto: "", dataAlvo: "", conexaoVvd: "" });
   };
 
-  const handleAtivarMaoNaMassa = () => {
-    localStorage.setItem("maoNaMassaAtivado", "true");
-    toast.success("Mão na Massa ativado! Agora você pode cadastrar suas metas.");
+  const handleTabChange = (value: string) => {
+    setActiveTab(value);
+    onTabChange?.(value);
   };
 
   return (
@@ -45,7 +50,7 @@ const PlanoDeVida = () => {
         <CardDescription>Construa sua visão e defina seus objetivos</CardDescription>
       </CardHeader>
       <CardContent>
-        <Tabs defaultValue="quem-sou" className="w-full">
+        <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
           <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="quem-sou">Quem sou Eu</TabsTrigger>
             <TabsTrigger value="para-onde">Para onde vou</TabsTrigger>
@@ -181,7 +186,7 @@ const PlanoDeVida = () => {
                 />
               </div>
 
-              <Button variant="outline" className="w-full" onClick={handleAtivarMaoNaMassa}>
+              <Button variant="outline" className="w-full">
                 Criar Análise FF (Forças e Fraquezas)
               </Button>
             </div>
