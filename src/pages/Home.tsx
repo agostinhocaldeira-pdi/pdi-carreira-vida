@@ -12,6 +12,7 @@ import MaoNaMassa from "@/components/home/MaoNaMassa";
 const Home = () => {
   const [userName, setUserName] = useState("");
   const [activeTab, setActiveTab] = useState("quem-sou");
+  const [planoDeVidaOpen, setPlanoDeVidaOpen] = useState(false);
 
   useEffect(() => {
     const user = localStorage.getItem("user");
@@ -52,11 +53,11 @@ const Home = () => {
 
         {/* Plano de Vida Section */}
         <section className="animate-slide-up" style={{ animationDelay: "0.2s" }}>
-          <PlanoDeVida onTabChange={setActiveTab} />
+          <PlanoDeVida onTabChange={setActiveTab} onOpenChange={setPlanoDeVidaOpen} />
         </section>
 
         {/* Mão na Massa Section - aparece ao clicar em "Como chegar lá" */}
-        {activeTab === "como-chegar" && (
+        {planoDeVidaOpen && activeTab === "como-chegar" && (
           <section className="animate-slide-up" style={{ animationDelay: "0.3s" }}>
             <MaoNaMassa />
           </section>

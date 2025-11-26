@@ -11,9 +11,10 @@ import { toast } from "sonner";
 
 interface PlanoDeVidaProps {
   onTabChange?: (tab: string) => void;
+  onOpenChange?: (isOpen: boolean) => void;
 }
 
-const PlanoDeVida = ({ onTabChange }: PlanoDeVidaProps) => {
+const PlanoDeVida = ({ onTabChange, onOpenChange }: PlanoDeVidaProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("quem-sou");
   const [vvd, setVvd] = useState("");
@@ -42,8 +43,13 @@ const PlanoDeVida = ({ onTabChange }: PlanoDeVidaProps) => {
     onTabChange?.(value);
   };
 
+  const handleOpenChange = (open: boolean) => {
+    setIsOpen(open);
+    onOpenChange?.(open);
+  };
+
   return (
-    <Collapsible open={isOpen} onOpenChange={setIsOpen}>
+    <Collapsible open={isOpen} onOpenChange={handleOpenChange}>
       <Card className="shadow-medium">
         <CardHeader>
           <div className="flex items-center justify-between">
