@@ -216,7 +216,7 @@ const PlanoDeVida = ({ onTabChange, onOpenChange }: PlanoDeVidaProps) => {
               </div>
 
               <Button variant="outline" className="w-full">
-                Criar Análise FF (Forças e Fraquezas)
+                Cadastrar
               </Button>
             </div>
           </TabsContent>
