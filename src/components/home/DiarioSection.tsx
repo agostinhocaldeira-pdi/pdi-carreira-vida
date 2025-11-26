@@ -4,10 +4,12 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Book, Smile, Frown, Meh } from "lucide-react";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { Book, Smile, Frown, Meh, ChevronDown, ChevronUp } from "lucide-react";
 import { toast } from "sonner";
 
 const DiarioSection = () => {
+  const [isOpen, setIsOpen] = useState(false);
   const [entrada, setEntrada] = useState({
     humor: "",
     reflexoes: "",
@@ -35,22 +37,43 @@ const DiarioSection = () => {
   };
 
   return (
-    <Card className="shadow-medium">
-      <CardHeader>
-        <CardTitle className="text-2xl flex items-center gap-2">
-          <Book className="w-6 h-6 text-primary" />
-          Diário
-        </CardTitle>
-        <CardDescription>
-          Registre seu dia: {new Date().toLocaleDateString("pt-BR", { 
-            weekday: "long", 
-            year: "numeric", 
-            month: "long", 
-            day: "numeric" 
-          })}
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="space-y-6">
+    <Collapsible open={isOpen} onOpenChange={setIsOpen}>
+      <Card className="shadow-medium">
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <div className="space-y-1">
+              <CardTitle className="text-2xl flex items-center gap-2">
+                <Book className="w-6 h-6 text-primary" />
+                Diário
+              </CardTitle>
+              <CardDescription>
+                Registre seu dia: {new Date().toLocaleDateString("pt-BR", { 
+                  weekday: "long", 
+                  year: "numeric", 
+                  month: "long", 
+                  day: "numeric" 
+                })}
+              </CardDescription>
+            </div>
+            <CollapsibleTrigger asChild>
+              <Button variant="ghost" size="sm">
+                {isOpen ? (
+                  <>
+                    <ChevronUp className="w-4 h-4 mr-2" />
+                    Minimizar
+                  </>
+                ) : (
+                  <>
+                    <ChevronDown className="w-4 h-4 mr-2" />
+                    Expandir
+                  </>
+                )}
+              </Button>
+            </CollapsibleTrigger>
+          </div>
+        </CardHeader>
+        <CollapsibleContent>
+          <CardContent className="space-y-6">
         {/* Humor */}
         <div className="space-y-3">
           <Label>Como você está se sentindo hoje?</Label>
@@ -132,8 +155,10 @@ const DiarioSection = () => {
         <Button onClick={handleSave} className="w-full" size="lg">
           Salvar Entrada
         </Button>
-      </CardContent>
-    </Card>
+          </CardContent>
+        </CollapsibleContent>
+      </Card>
+    </Collapsible>
   );
 };
 
