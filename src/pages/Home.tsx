@@ -2,8 +2,9 @@ import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
+import { Badge } from "@/components/ui/badge";
 import { Link } from "react-router-dom";
-import { Target, TrendingUp, BookOpen, MessagesSquare, Book, Sparkles } from "lucide-react";
+import { Target, TrendingUp, BookOpen, MessagesSquare, Book, Sparkles, LogIn, User, Zap, Star } from "lucide-react";
 import ProgressSection from "@/components/home/ProgressSection";
 import DiarioSection from "@/components/home/DiarioSection";
 import PlanoDeVida from "@/components/home/PlanoDeVida";
@@ -13,6 +14,17 @@ const Home = () => {
   const [userName, setUserName] = useState("");
   const [activeTab, setActiveTab] = useState("quem-sou");
   const [planoDeVidaOpen, setPlanoDeVidaOpen] = useState(false);
+  const [motivationalQuote, setMotivationalQuote] = useState("");
+
+  const quotes = [
+    "Acredite em si mesmo e todo o resto se encaixará. 💪",
+    "O sucesso é a soma de pequenos esforços repetidos. 🌟",
+    "Sua única limitação é você mesmo. 🚀",
+    "Grandes conquistas exigem tempo. Continue avançando! ⭐",
+    "Cada passo conta na sua jornada de crescimento. 🎯",
+    "O melhor momento para começar é agora. ✨",
+    "Transforme seus sonhos em objetivos e seus objetivos em realidade. 🌈",
+  ];
 
   useEffect(() => {
     const user = localStorage.getItem("user");
@@ -20,21 +32,63 @@ const Home = () => {
       const userData = JSON.parse(user);
       setUserName(userData.name);
     }
+
+    // Seleciona uma frase motivacional baseada no dia
+    const today = new Date().getDate();
+    setMotivationalQuote(quotes[today % quotes.length]);
   }, []);
 
   return (
     <div className="min-h-screen bg-gradient-subtle">
       {/* Header */}
-      <header className="bg-card border-b shadow-soft sticky top-0 z-10">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-2xl font-bold text-primary">PDI - Carreira & Vida</h1>
-              <p className="text-sm text-muted-foreground">Olá, {userName || "Usuário"}!</p>
+      <header className="bg-gradient-to-r from-card via-card to-primary/5 border-b shadow-elegant sticky top-0 z-10 backdrop-blur-sm">
+        <div className="container mx-auto px-4 py-6">
+          {/* Top row - Logo, Quote and Actions */}
+          <div className="flex items-start justify-between gap-4 mb-4">
+            <div className="flex-1">
+              <div className="flex items-center gap-3 mb-2">
+                <div className="w-10 h-10 bg-gradient-primary rounded-lg flex items-center justify-center shadow-glow">
+                  <Sparkles className="w-6 h-6 text-white" />
+                </div>
+                <div>
+                  <h1 className="text-2xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
+                    PDI - Carreira & Vida
+                  </h1>
+                  <p className="text-sm text-muted-foreground flex items-center gap-1">
+                    <Star className="w-3 h-3 fill-primary text-primary" />
+                    Olá, {userName || "Usuário"}!
+                  </p>
+                </div>
+              </div>
             </div>
-            <Button variant="outline" size="sm">
-              Perfil
-            </Button>
+            
+            <div className="flex items-center gap-2">
+              <Button variant="ghost" size="sm" className="gap-2">
+                <LogIn className="w-4 h-4" />
+                <span className="hidden sm:inline">Login</span>
+              </Button>
+              <Button variant="outline" size="sm" className="gap-2">
+                <User className="w-4 h-4" />
+                <span className="hidden sm:inline">Perfil</span>
+              </Button>
+            </div>
+          </div>
+
+          {/* Bottom row - Motivational quote and progress */}
+          <div className="flex items-center justify-between gap-4 p-4 bg-primary/5 rounded-lg border border-primary/10">
+            <div className="flex items-center gap-3 flex-1">
+              <div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0">
+                <Zap className="w-4 h-4 text-primary" />
+              </div>
+              <p className="text-sm font-medium text-foreground/90">
+                {motivationalQuote}
+              </p>
+            </div>
+            
+            <Badge variant="secondary" className="gap-2 px-3 py-1 whitespace-nowrap">
+              <TrendingUp className="w-3 h-3" />
+              Em progresso
+            </Badge>
           </div>
         </div>
       </header>
