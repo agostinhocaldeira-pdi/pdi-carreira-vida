@@ -485,6 +485,37 @@ const DiarioSection = () => {
           </div>
         )}
         
+        {/* Seletor de Data */}
+        <div className="flex items-center gap-4 flex-wrap">
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button
+                variant="outline"
+                className={cn(
+                  "justify-start text-left font-normal",
+                  !selectedDate && "text-muted-foreground"
+                )}
+              >
+                <CalendarIcon className="mr-2 h-4 w-4" />
+                {selectedDate ? format(selectedDate, "dd/MM/yyyy") : "Selecionar data"}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0" align="start">
+              <Calendar
+                mode="single"
+                selected={selectedDate}
+                onSelect={(date) => date && setSelectedDate(date)}
+                initialFocus
+                className="pointer-events-auto"
+              />
+            </PopoverContent>
+          </Popover>
+          
+          <p className="text-sm text-muted-foreground">
+            Altere a data para ver o histórico de dias anteriores
+          </p>
+        </div>
+        
         {/* Humor */}
         <div className="space-y-3">
           <Label>Como você está se sentindo hoje?</Label>
@@ -521,33 +552,7 @@ const DiarioSection = () => {
 
         {/* Reflexões */}
         <div className="space-y-2">
-          <div className="flex items-center justify-between gap-4">
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button
-                  variant="outline"
-                  className={cn(
-                    "justify-start text-left font-normal",
-                    !selectedDate && "text-muted-foreground"
-                  )}
-                >
-                  <CalendarIcon className="mr-2 h-4 w-4" />
-                  {selectedDate ? format(selectedDate, "dd/MM/yyyy") : "Selecionar data"}
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-auto p-0" align="start">
-                <Calendar
-                  mode="single"
-                  selected={selectedDate}
-                  onSelect={(date) => date && setSelectedDate(date)}
-                  initialFocus
-                  className="pointer-events-auto"
-                />
-              </PopoverContent>
-            </Popover>
-            
-            <Label htmlFor="reflexoes" className="flex-1">Reflexões do Dia</Label>
-          </div>
+          <Label htmlFor="reflexoes">Reflexões do Dia</Label>
           <Textarea
             id="reflexoes"
             placeholder="O que você aprendeu ou percebeu hoje?"
