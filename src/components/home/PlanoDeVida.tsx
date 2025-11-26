@@ -5,7 +5,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Compass, Heart, Target, Lightbulb } from "lucide-react";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { Compass, Heart, Target, Lightbulb, ChevronDown, ChevronUp } from "lucide-react";
 import { toast } from "sonner";
 
 interface PlanoDeVidaProps {
@@ -13,6 +14,7 @@ interface PlanoDeVidaProps {
 }
 
 const PlanoDeVida = ({ onTabChange }: PlanoDeVidaProps) => {
+  const [isOpen, setIsOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("quem-sou");
   const [vvd, setVvd] = useState("");
   const [valores, setValores] = useState("");
@@ -41,15 +43,36 @@ const PlanoDeVida = ({ onTabChange }: PlanoDeVidaProps) => {
   };
 
   return (
-    <Card className="shadow-medium">
-      <CardHeader>
-        <CardTitle className="text-2xl flex items-center gap-2">
-          <Compass className="w-6 h-6 text-primary" />
-          Plano de Vida
-        </CardTitle>
-        <CardDescription>Construa sua visão e defina seus objetivos</CardDescription>
-      </CardHeader>
-      <CardContent>
+    <Collapsible open={isOpen} onOpenChange={setIsOpen}>
+      <Card className="shadow-medium">
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <div className="space-y-1">
+              <CardTitle className="text-2xl flex items-center gap-2">
+                <Compass className="w-6 h-6 text-primary" />
+                Plano de Vida
+              </CardTitle>
+              <CardDescription>Construa sua visão e defina seus objetivos</CardDescription>
+            </div>
+            <CollapsibleTrigger asChild>
+              <Button variant="ghost" size="sm">
+                {isOpen ? (
+                  <>
+                    <ChevronUp className="w-4 h-4 mr-2" />
+                    Minimizar
+                  </>
+                ) : (
+                  <>
+                    <ChevronDown className="w-4 h-4 mr-2" />
+                    Expandir
+                  </>
+                )}
+              </Button>
+            </CollapsibleTrigger>
+          </div>
+        </CardHeader>
+        <CollapsibleContent>
+          <CardContent>
         <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
           <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="quem-sou">Quem sou Eu</TabsTrigger>
@@ -191,9 +214,11 @@ const PlanoDeVida = ({ onTabChange }: PlanoDeVidaProps) => {
               </Button>
             </div>
           </TabsContent>
-        </Tabs>
-      </CardContent>
-    </Card>
+          </Tabs>
+        </CardContent>
+        </CollapsibleContent>
+      </Card>
+    </Collapsible>
   );
 };
 
