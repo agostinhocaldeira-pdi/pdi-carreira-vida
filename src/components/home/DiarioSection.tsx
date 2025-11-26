@@ -397,6 +397,22 @@ const DiarioSection = () => {
                     )}
                   </ResponsiveContainer>
                 </div>
+
+                {/* Legenda do gráfico */}
+                <div className="flex items-center justify-center gap-6 mt-4">
+                  <div className="flex items-center gap-2">
+                    <div className="w-4 h-1 rounded" style={{ backgroundColor: 'hsl(var(--primary))' }} />
+                    <span className="text-sm text-muted-foreground">😊 Feliz</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="w-4 h-1 rounded" style={{ backgroundColor: 'hsl(var(--muted-foreground))' }} />
+                    <span className="text-sm text-muted-foreground">😐 Neutro</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="w-4 h-1 rounded" style={{ backgroundColor: 'hsl(var(--destructive))' }} />
+                    <span className="text-sm text-muted-foreground">😔 Triste</span>
+                  </div>
+                </div>
               </div>
             </div>
             <CollapsibleTrigger asChild>
