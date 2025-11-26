@@ -29,6 +29,17 @@ const DiarioSection = () => {
   const [selectedPeriod, setSelectedPeriod] = useState("30dias");
   const [entradas, setEntradas] = useState<any[]>([]);
 
+  // Verificar se a data selecionada é hoje
+  const isToday = useMemo(() => {
+    const today = new Date();
+    const selected = new Date(selectedDate);
+    return (
+      today.getFullYear() === selected.getFullYear() &&
+      today.getMonth() === selected.getMonth() &&
+      today.getDate() === selected.getDate()
+    );
+  }, [selectedDate]);
+
   useEffect(() => {
     const stored = JSON.parse(localStorage.getItem("diario") || "[]");
     setEntradas(stored);
@@ -466,27 +477,39 @@ const DiarioSection = () => {
           </div>
           
           <CardContent className="space-y-6">
+        {!isToday && (
+          <div className="bg-muted/50 border border-muted-foreground/20 rounded-lg p-4 mb-4">
+            <p className="text-sm text-muted-foreground text-center">
+              📅 Você está visualizando uma entrada de outra data. Apenas a data de hoje pode ser editada.
+            </p>
+          </div>
+        )}
+        
         {/* Humor */}
         <div className="space-y-3">
           <Label>Como você está se sentindo hoje?</Label>
-          <RadioGroup value={entrada.humor} onValueChange={(value) => setEntrada({ ...entrada, humor: value })}>
+          <RadioGroup 
+            value={entrada.humor} 
+            onValueChange={(value) => setEntrada({ ...entrada, humor: value })}
+            disabled={!isToday}
+          >
             <div className="flex gap-4">
               <div className="flex items-center space-x-2">
-                <RadioGroupItem value="feliz" id="feliz" />
+                <RadioGroupItem value="feliz" id="feliz" disabled={!isToday} />
                 <Label htmlFor="feliz" className="flex items-center gap-2 cursor-pointer">
                   <Smile className="w-5 h-5 text-primary" />
                   Feliz
                 </Label>
               </div>
               <div className="flex items-center space-x-2">
-                <RadioGroupItem value="neutro" id="neutro" />
+                <RadioGroupItem value="neutro" id="neutro" disabled={!isToday} />
                 <Label htmlFor="neutro" className="flex items-center gap-2 cursor-pointer">
                   <Meh className="w-5 h-5 text-muted-foreground" />
                   Neutro
                 </Label>
               </div>
               <div className="flex items-center space-x-2">
-                <RadioGroupItem value="triste" id="triste" />
+                <RadioGroupItem value="triste" id="triste" disabled={!isToday} />
                 <Label htmlFor="triste" className="flex items-center gap-2 cursor-pointer">
                   <Frown className="w-5 h-5 text-destructive" />
                   Triste
@@ -531,6 +554,7 @@ const DiarioSection = () => {
             value={entrada.reflexoes}
             onChange={(e) => setEntrada({ ...entrada, reflexoes: e.target.value })}
             rows={4}
+            disabled={!isToday}
           />
         </div>
 
@@ -543,6 +567,7 @@ const DiarioSection = () => {
             value={entrada.avancos}
             onChange={(e) => setEntrada({ ...entrada, avancos: e.target.value })}
             rows={3}
+            disabled={!isToday}
           />
         </div>
 
@@ -555,6 +580,7 @@ const DiarioSection = () => {
             value={entrada.habitos}
             onChange={(e) => setEntrada({ ...entrada, habitos: e.target.value })}
             rows={3}
+            disabled={!isToday}
           />
         </div>
 
@@ -567,10 +593,11 @@ const DiarioSection = () => {
             value={entrada.gratidao}
             onChange={(e) => setEntrada({ ...entrada, gratidao: e.target.value })}
             rows={3}
+            disabled={!isToday}
           />
         </div>
 
-        <Button onClick={handleSave} className="w-full" size="lg">
+        <Button onClick={handleSave} className="w-full" size="lg" disabled={!isToday}>
           {entradas.some((e) => e.data === entrada.data) ? "Atualizar Entrada" : "Salvar Entrada"}
         </Button>
           </CardContent>
