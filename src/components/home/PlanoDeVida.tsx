@@ -222,21 +222,31 @@ const PlanoDeVida = ({ onTabChange, onOpenChange }: PlanoDeVidaProps) => {
                     />
                   ))}
                 </div>
-                <div className="flex items-center justify-end gap-2">
-                  {!isEditingValores && (
-                    <Button onClick={handleEditValores} size="sm" variant="outline">
-                      <Edit className="w-4 h-4 mr-2" />
-                      Editar
-                    </Button>
-                  )}
-                  <Button 
-                    onClick={handleSaveValores} 
-                    size="sm" 
-                    variant="outline"
-                    disabled={!isValoresComplete || !isEditingValores}
+                <div className="flex items-center justify-between gap-4">
+                  <Link 
+                    to="/ferramentas" 
+                    className="flex items-center gap-2 text-sm text-primary hover:underline"
                   >
-                    Salvar
-                  </Button>
+                    Descobrir meus valores
+                    <ArrowRight className="w-4 h-4" />
+                  </Link>
+                  
+                  <div className="flex gap-2">
+                    {!isEditingValores && (
+                      <Button onClick={handleEditValores} size="sm" variant="outline">
+                        <Edit className="w-4 h-4 mr-2" />
+                        Editar
+                      </Button>
+                    )}
+                    <Button 
+                      onClick={handleSaveValores} 
+                      size="sm" 
+                      variant="outline"
+                      disabled={!isValoresComplete || !isEditingValores}
+                    >
+                      Salvar
+                    </Button>
+                  </div>
                 </div>
               </div>
 
