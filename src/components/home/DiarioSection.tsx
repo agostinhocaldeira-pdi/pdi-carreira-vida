@@ -29,6 +29,67 @@ const DiarioSection = () => {
     setEntradas(stored);
   }, []);
 
+  const generateMockData = () => {
+    const mockEntradas = [];
+    const now = new Date();
+    const humores = ["feliz", "neutro", "triste"];
+    const reflexoesExemplos = [
+      "Hoje foi um dia produtivo, consegui avançar bastante nos meus objetivos.",
+      "Refleti sobre minhas escolhas e percebi que estou no caminho certo.",
+      "Aprendi uma lição importante sobre paciência e perseverança.",
+      "Sinto que estou crescendo a cada dia, mesmo nos desafios.",
+    ];
+    const avancosExemplos = [
+      "Completei 3 tarefas importantes do meu PDI.",
+      "Consegui manter o foco durante todo o dia.",
+      "Avancei significativamente no meu projeto principal.",
+      "Superei um obstáculo que me bloqueava há dias.",
+    ];
+    const habitosExemplos = [
+      "Meditação, exercício físico, leitura",
+      "Caminhada matinal, diário, estudo",
+      "Yoga, alimentação saudável, networking",
+      "Exercício, planejamento do dia, gratidão",
+    ];
+    const gratidaoExemplos = [
+      "Grato pela saúde e pela família que me apoia.",
+      "Agradeço pelas oportunidades que surgiram hoje.",
+      "Grato pelo aprendizado constante e crescimento.",
+      "Agradeço pela paz e equilíbrio na minha vida.",
+    ];
+
+    // Gerar entradas para os últimos 365 dias
+    for (let i = 0; i < 365; i++) {
+      // Pular alguns dias aleatoriamente para simular realidade
+      if (Math.random() > 0.7) continue;
+
+      const date = new Date(now);
+      date.setDate(date.getDate() - i);
+      const dateStr = date.toISOString().split("T")[0];
+
+      // Distribuição de humor com tendência positiva
+      const rand = Math.random();
+      let humor;
+      if (rand < 0.5) humor = "feliz";
+      else if (rand < 0.8) humor = "neutro";
+      else humor = "triste";
+
+      mockEntradas.push({
+        id: Date.now() + i,
+        data: dateStr,
+        humor,
+        reflexoes: reflexoesExemplos[Math.floor(Math.random() * reflexoesExemplos.length)],
+        avancos: avancosExemplos[Math.floor(Math.random() * avancosExemplos.length)],
+        habitos: habitosExemplos[Math.floor(Math.random() * habitosExemplos.length)],
+        gratidao: gratidaoExemplos[Math.floor(Math.random() * gratidaoExemplos.length)],
+      });
+    }
+
+    localStorage.setItem("diario", JSON.stringify(mockEntradas));
+    setEntradas(mockEntradas);
+    toast.success("Dados mockados gerados com sucesso! (365 dias)");
+  };
+
   const handleSave = () => {
     const stored = JSON.parse(localStorage.getItem("diario") || "[]");
     stored.push({ ...entrada, id: Date.now() });
@@ -238,18 +299,27 @@ const DiarioSection = () => {
               <div className="mt-6 space-y-4">
                 <div className="flex items-center justify-between">
                   <h3 className="text-lg font-semibold">Histórico de Humor</h3>
-                  <Select value={selectedPeriod} onValueChange={setSelectedPeriod}>
-                    <SelectTrigger className="w-[200px]">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {periodOptions.map((option) => (
-                        <SelectItem key={option.value} value={option.value}>
-                          {option.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <div className="flex gap-2">
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      onClick={generateMockData}
+                    >
+                      Gerar Dados Teste
+                    </Button>
+                    <Select value={selectedPeriod} onValueChange={setSelectedPeriod}>
+                      <SelectTrigger className="w-[200px]">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {periodOptions.map((option) => (
+                          <SelectItem key={option.value} value={option.value}>
+                            {option.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
                 </div>
                 
                 <div className="h-[300px] w-full">
