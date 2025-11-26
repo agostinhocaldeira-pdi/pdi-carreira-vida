@@ -86,13 +86,6 @@ const DiarioSection = () => {
     }
     return data;
   }, [entradas, selectedPeriod]);
-  
-  const chartHeight = useMemo(() => {
-    if (selectedPeriod === "30dias") return 300;
-    if (selectedPeriod === "trimestre") return 350;
-    if (selectedPeriod === "semestre") return 400;
-    return 450;
-  }, [selectedPeriod]);
 
   const CustomTooltip = ({ active, payload }: any) => {
     if (active && payload && payload[0] && payload[0].payload.entry) {
@@ -181,7 +174,7 @@ const DiarioSection = () => {
                   </Select>
                 </div>
                 
-                <div className="w-full" style={{ height: `${chartHeight}px` }}>
+                <div className="h-[300px] w-full">
                   <ResponsiveContainer width="100%" height="100%">
                     <LineChart data={chartData}>
                       <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
