@@ -6,9 +6,10 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { Compass, Heart, Target, Lightbulb, ChevronDown, ChevronUp, ArrowRight, Edit } from "lucide-react";
+import { Compass, Heart, Target, Lightbulb, ChevronDown, ChevronUp, ArrowRight, Edit, Sparkles, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { Link } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
 
 interface PlanoDeVidaProps {
   onTabChange?: (tab: string) => void;
@@ -30,6 +31,8 @@ const PlanoDeVida = ({ onTabChange, onOpenChange }: PlanoDeVidaProps) => {
     { area: "Lazer", notaAtual: "", notaDesejada: "" },
   ]);
   const [isEditingAreas, setIsEditingAreas] = useState(true);
+  const [insight, setInsight] = useState("");
+  const [isGeneratingInsight, setIsGeneratingInsight] = useState(false);
   const [objetivo, setObjetivo] = useState({
     texto: "",
     dataAlvo: "",
@@ -104,6 +107,37 @@ const PlanoDeVida = ({ onTabChange, onOpenChange }: PlanoDeVidaProps) => {
   const isAreasComplete = areasVida.every(
     (area) => area.notaAtual.trim() !== "" && area.notaDesejada.trim() !== ""
   );
+
+  const handleGenerateInsight = async () => {
+    if (!vvd && !isValoresComplete && !isAreasComplete) {
+      toast.error("Preencha pelo menos uma seção para gerar insights");
+      return;
+    }
+
+    setIsGeneratingInsight(true);
+    
+    try {
+      const { data, error } = await supabase.functions.invoke('generate-insight', {
+        body: { vvd, valores, areasVida }
+      });
+
+      if (error) {
+        console.error("Error generating insight:", error);
+        toast.error(error.message || "Erro ao gerar insight");
+        return;
+      }
+
+      if (data?.insight) {
+        setInsight(data.insight);
+        toast.success("Insight gerado com sucesso!");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      toast.error("Erro ao gerar insight");
+    } finally {
+      setIsGeneratingInsight(false);
+    }
+  };
 
   const handleSaveObjetivo = () => {
     const objetivos = JSON.parse(localStorage.getItem("objetivos") || "[]");
@@ -321,6 +355,63 @@ const PlanoDeVida = ({ onTabChange, onOpenChange }: PlanoDeVidaProps) => {
                     </Button>
                   </div>
                 </div>
+              </div>
+
+              {/* Insight */}
+              <div className="space-y-3 pt-6 border-t">
+                <div className="flex items-center gap-2 mb-2">
+                  <Sparkles className="w-5 h-5 text-primary" />
+                  <h3 className="text-lg font-semibold">Insight</h3>
+                </div>
+                <p className="text-sm text-muted-foreground mb-3">
+                  Uma análise personalizada do seu Plano de Vida baseada nas informações que você preencheu
+                </p>
+                
+                {insight ? (
+                  <div className="space-y-3">
+                    <div className="bg-muted/30 rounded-lg p-4 border">
+                      <div className="prose prose-sm max-w-none whitespace-pre-line">
+                        {insight}
+                      </div>
+                    </div>
+                    <Button 
+                      onClick={handleGenerateInsight} 
+                      size="sm" 
+                      variant="outline"
+                      disabled={isGeneratingInsight}
+                    >
+                      {isGeneratingInsight ? (
+                        <>
+                          <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                          Gerando novo insight...
+                        </>
+                      ) : (
+                        <>
+                          <Sparkles className="w-4 h-4 mr-2" />
+                          Gerar novo insight
+                        </>
+                      )}
+                    </Button>
+                  </div>
+                ) : (
+                  <Button 
+                    onClick={handleGenerateInsight} 
+                    size="sm" 
+                    disabled={isGeneratingInsight || (!vvd && !isValoresComplete && !isAreasComplete)}
+                  >
+                    {isGeneratingInsight ? (
+                      <>
+                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                        Gerando insight...
+                      </>
+                    ) : (
+                      <>
+                        <Sparkles className="w-4 h-4 mr-2" />
+                        Gerar Insight
+                      </>
+                    )}
+                  </Button>
+                )}
               </div>
             </div>
           </TabsContent>
