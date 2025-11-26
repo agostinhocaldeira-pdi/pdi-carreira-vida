@@ -63,76 +63,154 @@ const DiarioSection = () => {
     else if (selectedPeriod === "semestre") numDays = 180;
     else if (selectedPeriod === "ano") numDays = 365;
     
+    // Para 30 dias, mantém visualização diária
+    if (selectedPeriod === "30dias") {
+      const data = [];
+      for (let i = numDays - 1; i >= 0; i--) {
+        const date = new Date(now);
+        date.setDate(date.getDate() - i);
+        const dateStr = date.toISOString().split("T")[0];
+        const entry = entradas.find((e) => e.data === dateStr);
+        
+        let humorValue = null;
+        if (entry) {
+          if (entry.humor === "feliz") humorValue = 3;
+          else if (entry.humor === "neutro") humorValue = 2;
+          else if (entry.humor === "triste") humorValue = 1;
+        }
+        
+        data.push({
+          dia: date.getDate(),
+          data: dateStr,
+          humor: humorValue,
+          entry: entry || null,
+        });
+      }
+      return data;
+    }
+    
+    // Para períodos maiores, agrupa por semana
     const data = [];
-    for (let i = numDays - 1; i >= 0; i--) {
-      const date = new Date(now);
-      date.setDate(date.getDate() - i);
-      const dateStr = date.toISOString().split("T")[0];
-      const entry = entradas.find((e) => e.data === dateStr);
+    const numWeeks = Math.ceil(numDays / 7);
+    
+    for (let weekIndex = numWeeks - 1; weekIndex >= 0; weekIndex--) {
+      const weekStart = new Date(now);
+      weekStart.setDate(weekStart.getDate() - (weekIndex * 7) - 6);
+      const weekEnd = new Date(now);
+      weekEnd.setDate(weekEnd.getDate() - (weekIndex * 7));
       
-      let humorValue = null;
-      if (entry) {
-        if (entry.humor === "feliz") humorValue = 3;
-        else if (entry.humor === "neutro") humorValue = 2;
-        else if (entry.humor === "triste") humorValue = 1;
+      const weekEntries = [];
+      for (let i = 0; i < 7; i++) {
+        const date = new Date(weekStart);
+        date.setDate(date.getDate() + i);
+        const dateStr = date.toISOString().split("T")[0];
+        const entry = entradas.find((e) => e.data === dateStr);
+        if (entry) weekEntries.push(entry);
       }
       
+      const total = weekEntries.length;
+      const felizCount = weekEntries.filter(e => e.humor === "feliz").length;
+      const neutroCount = weekEntries.filter(e => e.humor === "neutro").length;
+      const tristeCount = weekEntries.filter(e => e.humor === "triste").length;
+      
       data.push({
-        dia: date.getDate(),
-        data: dateStr,
-        humor: humorValue,
-        entry: entry || null,
+        semana: `Sem ${numWeeks - weekIndex}`,
+        feliz: total > 0 ? Math.round((felizCount / total) * 100) : null,
+        neutro: total > 0 ? Math.round((neutroCount / total) * 100) : null,
+        triste: total > 0 ? Math.round((tristeCount / total) * 100) : null,
+        entries: weekEntries,
       });
     }
     return data;
   }, [entradas, selectedPeriod]);
 
   const CustomTooltip = ({ active, payload }: any) => {
-    if (active && payload && payload[0] && payload[0].payload.entry) {
-      const entry = payload[0].payload.entry;
-      return (
-        <Card className="w-[300px] shadow-lg border-2">
-          <CardHeader className="pb-3">
-            <CardTitle className="text-sm">
-              {new Date(entry.data).toLocaleDateString("pt-BR", { 
-                day: "2-digit", 
-                month: "long", 
-                year: "numeric" 
-              })}
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="pt-0">
-            <ScrollArea className="h-[200px] pr-4">
-              <div className="space-y-3 text-sm">
-                {entry.reflexoes && (
-                  <div>
-                    <p className="font-semibold text-primary">Reflexões:</p>
-                    <p className="text-muted-foreground">{entry.reflexoes}</p>
+    if (active && payload && payload[0]) {
+      const data = payload[0].payload;
+      
+      // Tooltip para visualização diária
+      if (data.entry) {
+        const entry = data.entry;
+        return (
+          <Card className="w-[300px] shadow-lg border-2">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-sm">
+                {new Date(entry.data).toLocaleDateString("pt-BR", { 
+                  day: "2-digit", 
+                  month: "long", 
+                  year: "numeric" 
+                })}
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="pt-0">
+              <ScrollArea className="h-[200px] pr-4">
+                <div className="space-y-3 text-sm">
+                  {entry.reflexoes && (
+                    <div>
+                      <p className="font-semibold text-primary">Reflexões:</p>
+                      <p className="text-muted-foreground">{entry.reflexoes}</p>
+                    </div>
+                  )}
+                  {entry.avancos && (
+                    <div>
+                      <p className="font-semibold text-primary">Avanços e Conquistas:</p>
+                      <p className="text-muted-foreground">{entry.avancos}</p>
+                    </div>
+                  )}
+                  {entry.habitos && (
+                    <div>
+                      <p className="font-semibold text-primary">Hábitos Realizados:</p>
+                      <p className="text-muted-foreground">{entry.habitos}</p>
+                    </div>
+                  )}
+                  {entry.gratidao && (
+                    <div>
+                      <p className="font-semibold text-primary">Gratidão:</p>
+                      <p className="text-muted-foreground">{entry.gratidao}</p>
+                    </div>
+                  )}
+                </div>
+              </ScrollArea>
+            </CardContent>
+          </Card>
+        );
+      }
+      
+      // Tooltip para visualização semanal
+      if (data.entries) {
+        return (
+          <Card className="w-[250px] shadow-lg border-2">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-sm">{data.semana}</CardTitle>
+            </CardHeader>
+            <CardContent className="pt-0">
+              <div className="space-y-2 text-sm">
+                {data.feliz !== null && (
+                  <div className="flex items-center justify-between">
+                    <span className="text-primary">😊 Feliz:</span>
+                    <span className="font-semibold">{data.feliz}%</span>
                   </div>
                 )}
-                {entry.avancos && (
-                  <div>
-                    <p className="font-semibold text-primary">Avanços e Conquistas:</p>
-                    <p className="text-muted-foreground">{entry.avancos}</p>
+                {data.neutro !== null && (
+                  <div className="flex items-center justify-between">
+                    <span className="text-muted-foreground">😐 Neutro:</span>
+                    <span className="font-semibold">{data.neutro}%</span>
                   </div>
                 )}
-                {entry.habitos && (
-                  <div>
-                    <p className="font-semibold text-primary">Hábitos Realizados:</p>
-                    <p className="text-muted-foreground">{entry.habitos}</p>
+                {data.triste !== null && (
+                  <div className="flex items-center justify-between">
+                    <span className="text-destructive">😔 Triste:</span>
+                    <span className="font-semibold">{data.triste}%</span>
                   </div>
                 )}
-                {entry.gratidao && (
-                  <div>
-                    <p className="font-semibold text-primary">Gratidão:</p>
-                    <p className="text-muted-foreground">{entry.gratidao}</p>
-                  </div>
-                )}
+                <p className="text-xs text-muted-foreground mt-2">
+                  {data.entries.length} {data.entries.length === 1 ? 'registro' : 'registros'}
+                </p>
               </div>
-            </ScrollArea>
-          </CardContent>
-        </Card>
-      );
+            </CardContent>
+          </Card>
+        );
+      }
     }
     return null;
   };
@@ -176,34 +254,77 @@ const DiarioSection = () => {
                 
                 <div className="h-[300px] w-full">
                   <ResponsiveContainer width="100%" height="100%">
-                    <LineChart data={chartData}>
-                      <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
-                      <XAxis 
-                        dataKey="dia" 
-                        label={{ value: "Dia", position: "insideBottom", offset: -5 }}
-                        className="text-xs"
-                      />
-                      <YAxis 
-                        domain={[0, 4]}
-                        ticks={[1, 2, 3]}
-                        tickFormatter={(value) => {
-                          if (value === 1) return "Triste";
-                          if (value === 2) return "Neutro";
-                          if (value === 3) return "Feliz";
-                          return "";
-                        }}
-                        className="text-xs"
-                      />
-                      <Tooltip content={<CustomTooltip />} />
-                      <Line 
-                        type="monotone" 
-                        dataKey="humor" 
-                        stroke="hsl(var(--primary))" 
-                        strokeWidth={2}
-                        dot={{ fill: "hsl(var(--primary))", r: 4 }}
-                        connectNulls={false}
-                      />
-                    </LineChart>
+                    {selectedPeriod === "30dias" ? (
+                      <LineChart data={chartData}>
+                        <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
+                        <XAxis 
+                          dataKey="dia" 
+                          label={{ value: "Dia", position: "insideBottom", offset: -5 }}
+                          className="text-xs"
+                        />
+                        <YAxis 
+                          domain={[0, 4]}
+                          ticks={[1, 2, 3]}
+                          tickFormatter={(value) => {
+                            if (value === 1) return "Triste";
+                            if (value === 2) return "Neutro";
+                            if (value === 3) return "Feliz";
+                            return "";
+                          }}
+                          className="text-xs"
+                        />
+                        <Tooltip content={<CustomTooltip />} />
+                        <Line 
+                          type="monotone" 
+                          dataKey="humor" 
+                          stroke="hsl(var(--primary))" 
+                          strokeWidth={2}
+                          dot={{ fill: "hsl(var(--primary))", r: 4 }}
+                          connectNulls={false}
+                        />
+                      </LineChart>
+                    ) : (
+                      <LineChart data={chartData}>
+                        <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
+                        <XAxis 
+                          dataKey="semana" 
+                          className="text-xs"
+                        />
+                        <YAxis 
+                          domain={[0, 100]}
+                          label={{ value: "%", position: "insideLeft" }}
+                          className="text-xs"
+                        />
+                        <Tooltip content={<CustomTooltip />} />
+                        <Line 
+                          type="monotone" 
+                          dataKey="feliz" 
+                          stroke="hsl(var(--primary))" 
+                          strokeWidth={2}
+                          dot={{ fill: "hsl(var(--primary))", r: 4 }}
+                          name="Feliz"
+                          connectNulls={false}
+                        />
+                        <Line 
+                          type="monotone" 
+                          dataKey="neutro" 
+                          stroke="hsl(var(--muted-foreground))" 
+                          strokeWidth={2}
+                          dot={{ fill: "hsl(var(--muted-foreground))", r: 4 }}
+                          name="Neutro"
+                          connectNulls={false}
+                        />
+                        <Line 
+                          type="monotone" 
+                          dataKey="triste" 
+                          stroke="hsl(var(--destructive))" 
+                          strokeWidth={2}
+                          dot={{ fill: "hsl(var(--destructive))", r: 4 }}
+                          name="Triste"
+                          connectNulls={false}
+                        />
+                      </LineChart>
+                    )}
                   </ResponsiveContainer>
                 </div>
               </div>
