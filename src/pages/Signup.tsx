@@ -23,6 +23,16 @@ const Signup = () => {
       return;
     }
 
+    // Verificar se já existe usuário com este e-mail
+    const existingUser = localStorage.getItem("user");
+    if (existingUser) {
+      const userData = JSON.parse(existingUser);
+      if (userData.email === formData.email) {
+        toast.error("Este e-mail já está cadastrado");
+        return;
+      }
+    }
+
     // Simular criação de perfil
     localStorage.setItem("user", JSON.stringify(formData));
     toast.success("Perfil criado com sucesso!");
