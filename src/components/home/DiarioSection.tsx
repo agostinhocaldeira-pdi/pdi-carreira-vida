@@ -311,128 +311,128 @@ const DiarioSection = () => {
               </Button>
             </CollapsibleTrigger>
           </div>
-              
-              {/* Gráfico de histórico de humor */}
-              <div className="mt-6 space-y-4">
-                <div className="flex items-center justify-between">
-                  <h3 className="text-lg font-semibold">Histórico de Humor</h3>
-                  <div className="flex gap-2">
-                    <Button 
-                      variant="outline" 
-                      size="sm" 
-                      onClick={generateMockData}
-                    >
-                      Gerar Dados Teste
-                    </Button>
-                    <Select value={selectedPeriod} onValueChange={setSelectedPeriod}>
-                      <SelectTrigger className="w-[200px]">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {periodOptions.map((option) => (
-                          <SelectItem key={option.value} value={option.value}>
-                            {option.label}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-                
-                <div className="h-[300px] w-full">
-                  <ResponsiveContainer width="100%" height="100%">
-                    {selectedPeriod === "30dias" ? (
-                      <LineChart data={chartData}>
-                        <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
-                        <XAxis 
-                          dataKey="dia" 
-                          label={{ value: "Dia", position: "insideBottom", offset: -5 }}
-                          className="text-xs"
-                        />
-                        <YAxis 
-                          domain={[0, 4]}
-                          ticks={[1, 2, 3]}
-                          tickFormatter={(value) => {
-                            if (value === 1) return "Triste";
-                            if (value === 2) return "Neutro";
-                            if (value === 3) return "Feliz";
-                            return "";
-                          }}
-                          className="text-xs"
-                        />
-                        <Tooltip content={<CustomTooltip />} />
-                        <Line 
-                          type="monotone" 
-                          dataKey="humor" 
-                          stroke="hsl(var(--primary))" 
-                          strokeWidth={2}
-                          dot={{ fill: "hsl(var(--primary))", r: 4 }}
-                          connectNulls={false}
-                        />
-                      </LineChart>
-                    ) : (
-                      <LineChart data={chartData}>
-                        <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
-                        <XAxis 
-                          dataKey="semana" 
-                          className="text-xs"
-                        />
-                        <YAxis 
-                          domain={[0, 100]}
-                          label={{ value: "%", position: "insideLeft" }}
-                          className="text-xs"
-                        />
-                        <Tooltip content={<CustomTooltip />} />
-                        <Line 
-                          type="monotone" 
-                          dataKey="feliz" 
-                          stroke="hsl(var(--primary))" 
-                          strokeWidth={2}
-                          dot={{ fill: "hsl(var(--primary))", r: 4 }}
-                          name="Feliz"
-                          connectNulls={false}
-                        />
-                        <Line 
-                          type="monotone" 
-                          dataKey="neutro" 
-                          stroke="hsl(var(--muted-foreground))" 
-                          strokeWidth={2}
-                          dot={{ fill: "hsl(var(--muted-foreground))", r: 4 }}
-                          name="Neutro"
-                          connectNulls={false}
-                        />
-                        <Line 
-                          type="monotone" 
-                          dataKey="triste" 
-                          stroke="hsl(var(--destructive))" 
-                          strokeWidth={2}
-                          dot={{ fill: "hsl(var(--destructive))", r: 4 }}
-                          name="Triste"
-                          connectNulls={false}
-                        />
-                      </LineChart>
-                    )}
-                  </ResponsiveContainer>
-                </div>
-
-                {/* Legenda do gráfico */}
-                <div className="flex items-center justify-center gap-6 mt-4">
-                  <div className="flex items-center gap-2">
-                    <div className="w-4 h-1 rounded" style={{ backgroundColor: 'hsl(var(--primary))' }} />
-                    <span className="text-sm text-muted-foreground">😊 Feliz</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <div className="w-4 h-1 rounded" style={{ backgroundColor: 'hsl(var(--muted-foreground))' }} />
-                    <span className="text-sm text-muted-foreground">😐 Neutro</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <div className="w-4 h-1 rounded" style={{ backgroundColor: 'hsl(var(--destructive))' }} />
-                    <span className="text-sm text-muted-foreground">😔 Triste</span>
-                  </div>
-                </div>
-              </div>
         </CardHeader>
         <CollapsibleContent>
+          {/* Gráfico de histórico de humor */}
+          <div className="px-6 pt-6 space-y-4">
+            <div className="flex items-center justify-between">
+              <h3 className="text-lg font-semibold">Histórico de Humor</h3>
+              <div className="flex gap-2">
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={generateMockData}
+                >
+                  Gerar Dados Teste
+                </Button>
+                <Select value={selectedPeriod} onValueChange={setSelectedPeriod}>
+                  <SelectTrigger className="w-[200px]">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {periodOptions.map((option) => (
+                      <SelectItem key={option.value} value={option.value}>
+                        {option.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+            
+            <div className="h-[300px] w-full">
+              <ResponsiveContainer width="100%" height="100%">
+                {selectedPeriod === "30dias" ? (
+                  <LineChart data={chartData}>
+                    <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
+                    <XAxis 
+                      dataKey="dia" 
+                      label={{ value: "Dia", position: "insideBottom", offset: -5 }}
+                      className="text-xs"
+                    />
+                    <YAxis 
+                      domain={[0, 4]}
+                      ticks={[1, 2, 3]}
+                      tickFormatter={(value) => {
+                        if (value === 1) return "Triste";
+                        if (value === 2) return "Neutro";
+                        if (value === 3) return "Feliz";
+                        return "";
+                      }}
+                      className="text-xs"
+                    />
+                    <Tooltip content={<CustomTooltip />} />
+                    <Line 
+                      type="monotone" 
+                      dataKey="humor" 
+                      stroke="hsl(var(--primary))" 
+                      strokeWidth={2}
+                      dot={{ fill: "hsl(var(--primary))", r: 4 }}
+                      connectNulls={false}
+                    />
+                  </LineChart>
+                ) : (
+                  <LineChart data={chartData}>
+                    <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
+                    <XAxis 
+                      dataKey="semana" 
+                      className="text-xs"
+                    />
+                    <YAxis 
+                      domain={[0, 100]}
+                      label={{ value: "%", position: "insideLeft" }}
+                      className="text-xs"
+                    />
+                    <Tooltip content={<CustomTooltip />} />
+                    <Line 
+                      type="monotone" 
+                      dataKey="feliz" 
+                      stroke="hsl(var(--primary))" 
+                      strokeWidth={2}
+                      dot={{ fill: "hsl(var(--primary))", r: 4 }}
+                      name="Feliz"
+                      connectNulls={false}
+                    />
+                    <Line 
+                      type="monotone" 
+                      dataKey="neutro" 
+                      stroke="hsl(var(--muted-foreground))" 
+                      strokeWidth={2}
+                      dot={{ fill: "hsl(var(--muted-foreground))", r: 4 }}
+                      name="Neutro"
+                      connectNulls={false}
+                    />
+                    <Line 
+                      type="monotone" 
+                      dataKey="triste" 
+                      stroke="hsl(var(--destructive))" 
+                      strokeWidth={2}
+                      dot={{ fill: "hsl(var(--destructive))", r: 4 }}
+                      name="Triste"
+                      connectNulls={false}
+                    />
+                  </LineChart>
+                )}
+              </ResponsiveContainer>
+            </div>
+
+            {/* Legenda do gráfico */}
+            <div className="flex items-center justify-center gap-6 mt-4">
+              <div className="flex items-center gap-2">
+                <div className="w-4 h-1 rounded" style={{ backgroundColor: 'hsl(var(--primary))' }} />
+                <span className="text-sm text-muted-foreground">😊 Feliz</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-4 h-1 rounded" style={{ backgroundColor: 'hsl(var(--muted-foreground))' }} />
+                <span className="text-sm text-muted-foreground">😐 Neutro</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-4 h-1 rounded" style={{ backgroundColor: 'hsl(var(--destructive))' }} />
+                <span className="text-sm text-muted-foreground">😔 Triste</span>
+              </div>
+            </div>
+          </div>
+          
           <CardContent className="space-y-6">
         {/* Humor */}
         <div className="space-y-3">
