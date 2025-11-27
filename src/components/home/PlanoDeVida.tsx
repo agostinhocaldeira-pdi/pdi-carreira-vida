@@ -502,7 +502,7 @@ const PlanoDeVida = ({ onTabChange, onOpenChange }: PlanoDeVidaProps) => {
                       {areasVida.map((area, index) => (
                         <tr key={area.area} className="border-t">
                           <td className="p-2 sm:p-3 text-xs sm:text-sm">{area.area}</td>
-                          <td className="p-2 sm:p-3">
+                           <td className="p-2 sm:p-3">
                             <Input 
                               type="number" 
                               min="0" 
@@ -510,8 +510,8 @@ const PlanoDeVida = ({ onTabChange, onOpenChange }: PlanoDeVidaProps) => {
                               className="w-16 sm:w-20 text-sm" 
                               placeholder="0-10"
                               value={area.notaAtual}
-                              onChange={(e) => updateArea(index, 'notaAtual', e.target.value)}
-                              disabled={!isEditingAreas}
+                              disabled
+                              readOnly
                             />
                           </td>
                           <td className="p-2 sm:p-3">
@@ -522,8 +522,8 @@ const PlanoDeVida = ({ onTabChange, onOpenChange }: PlanoDeVidaProps) => {
                               className="w-16 sm:w-20 text-sm" 
                               placeholder="0-10"
                               value={area.notaDesejada}
-                              onChange={(e) => updateArea(index, 'notaDesejada', e.target.value)}
-                              disabled={!isEditingAreas}
+                              disabled
+                              readOnly
                             />
                           </td>
                         </tr>
@@ -531,31 +531,14 @@ const PlanoDeVida = ({ onTabChange, onOpenChange }: PlanoDeVidaProps) => {
                     </tbody>
                   </table>
                 </div>
-                <div className="flex items-center justify-between gap-4">
+                <div className="flex items-center justify-start gap-4">
                   <Link 
                     to="/roda-da-vida" 
                     className="flex items-center gap-2 text-sm text-primary hover:underline"
                   >
-                    Acessar a Roda da Vida
+                    Acessar a Roda da Vida para editar
                     <ArrowRight className="w-4 h-4" />
                   </Link>
-                  
-                  <div className="flex gap-2">
-                    {!isEditingAreas && (
-                      <Button onClick={handleEditAreas} size="sm" variant="outline">
-                        <Edit className="w-4 h-4 mr-2" />
-                        Editar
-                      </Button>
-                    )}
-                    <Button 
-                      onClick={handleSaveAreas} 
-                      size="sm" 
-                      variant="outline"
-                      disabled={!isAreasComplete || !isEditingAreas}
-                    >
-                      Salvar
-                    </Button>
-                  </div>
                 </div>
               </div>
 
