@@ -35,6 +35,8 @@ const PlanoDeVida = ({ onTabChange, onOpenChange }: PlanoDeVidaProps) => {
   const [isEditingAreas, setIsEditingAreas] = useState(true);
   const [insight, setInsight] = useState("");
   const [isGeneratingInsight, setIsGeneratingInsight] = useState(false);
+  const [lastInsightDate, setLastInsightDate] = useState<string | null>(null);
+  const [canGenerateInsight, setCanGenerateInsight] = useState(true);
   const [objetivo, setObjetivo] = useState({
     texto: "",
     dataAlvo: "",
@@ -81,6 +83,19 @@ const PlanoDeVida = ({ onTabChange, onOpenChange }: PlanoDeVidaProps) => {
     const savedObjetivos = localStorage.getItem("objetivos");
     if (savedObjetivos) {
       setObjetivos(JSON.parse(savedObjetivos));
+    }
+
+    // Verificar última geração de insight
+    const savedLastInsightDate = localStorage.getItem("lastInsightDate");
+    if (savedLastInsightDate) {
+      setLastInsightDate(savedLastInsightDate);
+      const lastDate = new Date(savedLastInsightDate);
+      const today = new Date();
+      const diffTime = Math.abs(today.getTime() - lastDate.getTime());
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+      
+      // Permite gerar novamente após 30 dias
+      setCanGenerateInsight(diffDays >= 30);
     }
   }, []);
 
@@ -133,6 +148,11 @@ const PlanoDeVida = ({ onTabChange, onOpenChange }: PlanoDeVidaProps) => {
   );
 
   const handleGenerateInsight = async () => {
+    if (!canGenerateInsight) {
+      toast.error("Você já gerou seu insight mensal. Contrate o plano Premium para gerar mais insights!");
+      return;
+    }
+
     if (!vvd && !isValoresComplete && !isAreasComplete) {
       toast.error("Preencha pelo menos uma seção para gerar insights");
       return;
@@ -153,6 +173,13 @@ const PlanoDeVida = ({ onTabChange, onOpenChange }: PlanoDeVidaProps) => {
 
       if (data?.insight) {
         setInsight(data.insight);
+        
+        // Salvar data da geração
+        const today = new Date().toISOString();
+        localStorage.setItem("lastInsightDate", today);
+        setLastInsightDate(today);
+        setCanGenerateInsight(false);
+        
         toast.success("Insight gerado com sucesso!");
       }
     } catch (error) {
@@ -161,6 +188,14 @@ const PlanoDeVida = ({ onTabChange, onOpenChange }: PlanoDeVidaProps) => {
     } finally {
       setIsGeneratingInsight(false);
     }
+  };
+
+  const getNextInsightDate = () => {
+    if (!lastInsightDate) return null;
+    const lastDate = new Date(lastInsightDate);
+    const nextDate = new Date(lastDate);
+    nextDate.setDate(nextDate.getDate() + 30);
+    return nextDate.toLocaleDateString('pt-BR');
   };
 
   const handleSaveObjetivo = () => {
@@ -432,6 +467,15 @@ const PlanoDeVida = ({ onTabChange, onOpenChange }: PlanoDeVidaProps) => {
                   Uma análise personalizada do seu Plano de Vida baseada nas informações que você preencheu
                 </p>
                 
+                {!canGenerateInsight && (
+                  <div className="bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-800 rounded-lg p-3 mb-3">
+                    <p className="text-xs sm:text-sm text-amber-900 dark:text-amber-200">
+                      <strong>Limite mensal atingido.</strong> Você poderá gerar um novo insight em {getNextInsightDate()}. 
+                      Contrate o plano <strong>Premium</strong> para gerar insights ilimitados!
+                    </p>
+                  </div>
+                )}
+                
                 {insight ? (
                   <div className="space-y-3">
                     <div className="bg-muted/30 rounded-lg p-4 border">
@@ -443,7 +487,7 @@ const PlanoDeVida = ({ onTabChange, onOpenChange }: PlanoDeVidaProps) => {
                       onClick={handleGenerateInsight} 
                       size="sm" 
                       variant="outline"
-                      disabled={isGeneratingInsight}
+                      disabled={isGeneratingInsight || !canGenerateInsight}
                     >
                       {isGeneratingInsight ? (
                         <>
@@ -462,7 +506,7 @@ const PlanoDeVida = ({ onTabChange, onOpenChange }: PlanoDeVidaProps) => {
                   <Button 
                     onClick={handleGenerateInsight} 
                     size="sm" 
-                    disabled={isGeneratingInsight || (!vvd && !isValoresComplete && !isAreasComplete)}
+                    disabled={isGeneratingInsight || !canGenerateInsight || (!vvd && !isValoresComplete && !isAreasComplete)}
                   >
                     {isGeneratingInsight ? (
                       <>
