@@ -68,11 +68,36 @@ const PlanoDeVida = ({ onTabChange, onOpenChange }: PlanoDeVidaProps) => {
     if (savedVvd) {
       setVvd(savedVvd);
       setIsEditingVvd(false);
+    } else {
+      // Dados mockados para VVD
+      const mockVvd = "Quero construir uma carreira sólida no desenvolvimento de software, com equilíbrio entre vida pessoal e profissional. Desejo ter tempo para cuidar da minha saúde física e mental, manter relacionamentos significativos com família e amigos, e ter estabilidade financeira que me permita realizar sonhos como viajar pelo mundo e ter minha própria casa. Busco ser uma pessoa íntegra, que contribui positivamente para a sociedade e inspira outros ao meu redor.";
+      setVvd(mockVvd);
+      localStorage.setItem("vvd", mockVvd);
+      setIsEditingVvd(false);
     }
 
     const savedValores = localStorage.getItem("valores");
     if (savedValores) {
       setValores(JSON.parse(savedValores));
+      setIsEditingValores(false);
+    } else {
+      // Dados mockados para Valores
+      const mockValores = [
+        "Integridade",
+        "Respeito",
+        "Crescimento",
+        "Família",
+        "Saúde",
+        "Equilíbrio",
+        "Criatividade",
+        "Liberdade",
+        "Excelência",
+        "Empatia",
+        "Gratidão",
+        "Resiliência"
+      ];
+      setValores(mockValores);
+      localStorage.setItem("valores", JSON.stringify(mockValores));
       setIsEditingValores(false);
     }
 
@@ -80,11 +105,50 @@ const PlanoDeVida = ({ onTabChange, onOpenChange }: PlanoDeVidaProps) => {
     if (savedAreas) {
       setAreasVida(JSON.parse(savedAreas));
       setIsEditingAreas(false);
+    } else {
+      // Dados mockados para Áreas da Vida
+      const mockAreas = [
+        { area: "Carreira", notaAtual: "7", notaDesejada: "9" },
+        { area: "Saúde", notaAtual: "6", notaDesejada: "9" },
+        { area: "Relacionamentos", notaAtual: "8", notaDesejada: "10" },
+        { area: "Finanças", notaAtual: "5", notaDesejada: "8" },
+        { area: "Lazer", notaAtual: "5", notaDesejada: "8" },
+      ];
+      setAreasVida(mockAreas);
+      localStorage.setItem("areasVida", JSON.stringify(mockAreas));
+      setIsEditingAreas(false);
     }
 
     const savedObjetivos = localStorage.getItem("objetivos");
     if (savedObjetivos) {
       setObjetivos(JSON.parse(savedObjetivos));
+    } else {
+      // Dados mockados para Objetivos
+      const mockObjetivos = [
+        {
+          id: 1,
+          texto: "Concluir certificação em Cloud Computing",
+          dataAlvo: "2025-06-30",
+          conexaoVvd: "Crescimento profissional e desenvolvimento de habilidades técnicas",
+          status: "em-andamento"
+        },
+        {
+          id: 2,
+          texto: "Praticar exercícios físicos 3x por semana",
+          dataAlvo: "2025-12-31",
+          conexaoVvd: "Cuidar da saúde física e ter mais energia no dia a dia",
+          status: "em-andamento"
+        },
+        {
+          id: 3,
+          texto: "Economizar 20% da renda mensal",
+          dataAlvo: "2025-12-31",
+          conexaoVvd: "Alcançar estabilidade financeira e realizar sonhos",
+          status: "a-fazer"
+        }
+      ];
+      setObjetivos(mockObjetivos);
+      localStorage.setItem("objetivos", JSON.stringify(mockObjetivos));
     }
 
     // Verificar se o usuário é administrador
