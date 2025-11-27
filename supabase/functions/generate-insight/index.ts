@@ -41,14 +41,18 @@ ${areasPreenchidas.length > 0
   : "Nenhuma área avaliada ainda"
 }
 
-Por favor, crie uma análise detalhada que:
-1. Faça correlações entre os valores identificados e a visão de vida desejada
-2. Identifique padrões nas áreas da vida (quais têm maior gap, quais estão mais alinhadas)
-3. Conecte os gaps das áreas com os valores e a visão
-4. Ofereça 2-3 insights profundos sobre quem essa pessoa é, baseado nas informações
-5. Sugira pontos de atenção ou áreas prioritárias de desenvolvimento
+INSTRUÇÕES IMPORTANTES:
+- Escreva APENAS 2 parágrafos curtos e diretos
+- Cada parágrafo deve ter no máximo 4-5 linhas
+- Seja objetivo e vá direto ao ponto
+- Extraia apenas a ESSÊNCIA do que descobriu sobre o usuário
+- Use linguagem empática e motivadora
+- Foque nos insights mais importantes e correlações principais
 
-Seja empático, motivador e específico. Use linguagem acolhedora e inspiradora. Estruture a resposta de forma clara com parágrafos curtos.`;
+Estruture sua resposta em exatamente 2 parágrafos:
+1º parágrafo: Quem é essa pessoa (valores, visão e padrões principais)
+2º parágrafo: Áreas prioritárias e sugestão de próximos passos`;
+
 
     console.log("Calling Lovable AI for insight generation...");
 
