@@ -2,9 +2,10 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowLeft, Edit2, Save, X } from "lucide-react";
+import { ArrowLeft, Edit2, Save, X, Check } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer, Legend } from "recharts";
+import { toast } from "sonner";
 
 interface LifeArea {
   area: string;
@@ -43,6 +44,12 @@ export default function RodaDaVida() {
     setAreas(newAreas);
   };
 
+  const handleSaveToPlanoDeVida = () => {
+    // Sincroniza as áreas da Roda da Vida com o Plano de Vida
+    localStorage.setItem("areasVida", JSON.stringify(areas));
+    toast.success("Áreas da Vida atualizadas no Plano de Vida com sucesso!");
+  };
+
   const handleEdit = (index: number) => {
     setEditingIndex(index);
     setTempArea({ ...areas[index] });
@@ -72,14 +79,22 @@ export default function RodaDaVida() {
   return (
     <div className="min-h-screen bg-background p-4 md:p-8">
       <div className="max-w-7xl mx-auto space-y-6">
-        <Button
-          variant="ghost"
-          onClick={() => navigate("/ferramentas")}
-          className="mb-4"
-        >
-          <ArrowLeft className="mr-2 h-4 w-4" />
-          Voltar para Ferramentas
-        </Button>
+        <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between mb-4">
+          <Button
+            variant="ghost"
+            onClick={() => navigate("/ferramentas")}
+          >
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            Voltar para Ferramentas
+          </Button>
+          <Button
+            onClick={handleSaveToPlanoDeVida}
+            className="gap-2"
+          >
+            <Check className="h-4 w-4" />
+            Salvar no Plano de Vida
+          </Button>
+        </div>
 
         <Card>
           <CardHeader>
