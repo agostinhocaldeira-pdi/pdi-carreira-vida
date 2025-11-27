@@ -477,6 +477,11 @@ const DiarioSection = () => {
               </div>
             </div>
           </div>
+
+          {/* Título Novo Registro */}
+          <div className="px-6 mt-6 mb-2">
+            <h3 className="text-lg font-semibold">Novo Registro</h3>
+          </div>
           
           <CardContent className="space-y-4 sm:space-y-6 px-3 sm:px-6">
         {!isToday && (
