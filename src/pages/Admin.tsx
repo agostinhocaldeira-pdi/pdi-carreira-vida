@@ -2,13 +2,30 @@ import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { useNavigate } from "react-router-dom";
-import { Shield, Home, Users, Settings, Activity, AlertCircle } from "lucide-react";
+import { Shield, Home, Users, Settings, Activity, AlertCircle, Trash2, UserPlus } from "lucide-react";
 import { toast } from "sonner";
+
+interface Administrator {
+  id: string;
+  name: string;
+  email: string;
+  phone: string;
+  createdAt: string;
+}
 
 const Admin = () => {
   const [isAdmin, setIsAdmin] = useState(false);
   const [adminEmail, setAdminEmail] = useState("");
+  const [administrators, setAdministrators] = useState<Administrator[]>([]);
+  const [newAdmin, setNewAdmin] = useState({
+    name: "",
+    email: "",
+    phone: ""
+  });
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -31,7 +48,73 @@ const Admin = () => {
 
     setIsAdmin(true);
     setAdminEmail(userData.email);
+
+    // Carregar administradores salvos
+    const savedAdmins = localStorage.getItem("administrators");
+    if (savedAdmins) {
+      setAdministrators(JSON.parse(savedAdmins));
+    } else {
+      // Inicializar com o admin principal
+      const initialAdmin: Administrator = {
+        id: "1",
+        name: "Agostinho Caldeira",
+        email: "agostinhocmcaldeira@gmail.com",
+        phone: "(00) 00000-0000",
+        createdAt: new Date().toISOString()
+      };
+      setAdministrators([initialAdmin]);
+      localStorage.setItem("administrators", JSON.stringify([initialAdmin]));
+    }
   }, [navigate]);
+
+  const handleAddAdmin = () => {
+    if (!newAdmin.name.trim() || !newAdmin.email.trim() || !newAdmin.phone.trim()) {
+      toast.error("Preencha todos os campos");
+      return;
+    }
+
+    // Validação básica de email
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(newAdmin.email)) {
+      toast.error("Email inválido");
+      return;
+    }
+
+    // Verifica se o email já existe
+    if (administrators.some(admin => admin.email === newAdmin.email)) {
+      toast.error("Já existe um administrador com este email");
+      return;
+    }
+
+    const administrator: Administrator = {
+      id: Date.now().toString(),
+      name: newAdmin.name,
+      email: newAdmin.email,
+      phone: newAdmin.phone,
+      createdAt: new Date().toISOString()
+    };
+
+    const updatedAdmins = [...administrators, administrator];
+    setAdministrators(updatedAdmins);
+    localStorage.setItem("administrators", JSON.stringify(updatedAdmins));
+    
+    setNewAdmin({ name: "", email: "", phone: "" });
+    toast.success("Administrador cadastrado com sucesso!");
+  };
+
+  const handleDeleteAdmin = (id: string) => {
+    // Não permitir excluir o admin principal
+    const adminToDelete = administrators.find(admin => admin.id === id);
+    if (adminToDelete?.email === "agostinhocmcaldeira@gmail.com") {
+      toast.error("Não é possível excluir o administrador principal");
+      return;
+    }
+
+    const updatedAdmins = administrators.filter(admin => admin.id !== id);
+    setAdministrators(updatedAdmins);
+    localStorage.setItem("administrators", JSON.stringify(updatedAdmins));
+    toast.success("Administrador removido com sucesso!");
+  };
 
   if (!isAdmin) {
     return null;
@@ -148,6 +231,118 @@ const Admin = () => {
             </CardContent>
           </Card>
         </div>
+
+        {/* Cadastro de Administradores */}
+        <Card className="shadow-medium">
+          <CardHeader>
+            <CardTitle className="text-lg flex items-center gap-2">
+              <UserPlus className="w-5 h-5 text-primary" />
+              Cadastrar Novo Administrador
+            </CardTitle>
+            <CardDescription>Adicione novos administradores ao sistema</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+              <div className="space-y-2">
+                <Label htmlFor="admin-name">Nome</Label>
+                <Input
+                  id="admin-name"
+                  placeholder="Nome completo"
+                  value={newAdmin.name}
+                  onChange={(e) => setNewAdmin({ ...newAdmin, name: e.target.value })}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="admin-email">E-mail</Label>
+                <Input
+                  id="admin-email"
+                  type="email"
+                  placeholder="email@exemplo.com"
+                  value={newAdmin.email}
+                  onChange={(e) => setNewAdmin({ ...newAdmin, email: e.target.value })}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="admin-phone">Telefone</Label>
+                <Input
+                  id="admin-phone"
+                  placeholder="(00) 00000-0000"
+                  value={newAdmin.phone}
+                  onChange={(e) => setNewAdmin({ ...newAdmin, phone: e.target.value })}
+                />
+              </div>
+            </div>
+            <Button onClick={handleAddAdmin} className="w-full sm:w-auto gap-2">
+              <UserPlus className="w-4 h-4" />
+              Cadastrar Administrador
+            </Button>
+          </CardContent>
+        </Card>
+
+        {/* Tabela de Administradores */}
+        <Card className="shadow-medium">
+          <CardHeader>
+            <CardTitle className="text-lg flex items-center gap-2">
+              <Users className="w-5 h-5 text-primary" />
+              Administradores Cadastrados
+            </CardTitle>
+            <CardDescription>
+              Total: {administrators.length} administrador(es)
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="rounded-lg border overflow-x-auto">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Nome</TableHead>
+                    <TableHead>E-mail</TableHead>
+                    <TableHead>Telefone</TableHead>
+                    <TableHead className="text-right">Ações</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {administrators.length === 0 ? (
+                    <TableRow>
+                      <TableCell colSpan={4} className="text-center text-muted-foreground py-8">
+                        Nenhum administrador cadastrado
+                      </TableCell>
+                    </TableRow>
+                  ) : (
+                    administrators.map((admin) => (
+                      <TableRow key={admin.id}>
+                        <TableCell className="font-medium">
+                          <div className="flex items-center gap-2">
+                            {admin.name}
+                            {admin.email === "agostinhocmcaldeira@gmail.com" && (
+                              <Badge variant="destructive" className="text-xs">
+                                Principal
+                              </Badge>
+                            )}
+                          </div>
+                        </TableCell>
+                        <TableCell>{admin.email}</TableCell>
+                        <TableCell>{admin.phone}</TableCell>
+                        <TableCell className="text-right">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handleDeleteAdmin(admin.id)}
+                            disabled={admin.email === "agostinhocmcaldeira@gmail.com"}
+                            className="gap-2"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                            Excluir
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  )}
+                </TableBody>
+              </Table>
+            </div>
+          </CardContent>
+        </Card>
 
         {/* Recent Activity */}
         <Card className="shadow-medium">
