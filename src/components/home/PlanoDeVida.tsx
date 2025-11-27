@@ -244,10 +244,19 @@ const PlanoDeVida = ({ onTabChange, onOpenChange }: PlanoDeVidaProps) => {
         <CollapsibleContent>
           <CardContent>
         <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
-          <TabsList className="grid w-full grid-cols-3 h-auto">
-            <TabsTrigger value="quem-sou" className="text-xs sm:text-sm px-2 sm:px-3 py-2">Quem sou Eu</TabsTrigger>
-            <TabsTrigger value="para-onde" className="text-xs sm:text-sm px-2 sm:px-3 py-2">Para onde vou</TabsTrigger>
-            <TabsTrigger value="como-chegar" className="text-xs sm:text-sm px-2 sm:px-3 py-2">Como chegar lá</TabsTrigger>
+          <TabsList className="flex flex-col sm:grid sm:grid-cols-3 w-full h-auto gap-1 sm:gap-0 p-1">
+            <TabsTrigger value="quem-sou" className="w-full justify-start sm:justify-center text-sm px-3 py-2.5 sm:py-2">
+              <Heart className="w-4 h-4 mr-2 flex-shrink-0" />
+              <span className="truncate">Quem sou Eu</span>
+            </TabsTrigger>
+            <TabsTrigger value="para-onde" className="w-full justify-start sm:justify-center text-sm px-3 py-2.5 sm:py-2">
+              <Target className="w-4 h-4 mr-2 flex-shrink-0" />
+              <span className="truncate">Para onde vou</span>
+            </TabsTrigger>
+            <TabsTrigger value="como-chegar" className="w-full justify-start sm:justify-center text-sm px-3 py-2.5 sm:py-2">
+              <Lightbulb className="w-4 h-4 mr-2 flex-shrink-0" />
+              <span className="truncate">Como chegar lá</span>
+            </TabsTrigger>
           </TabsList>
 
           {/* Quem sou Eu */}
