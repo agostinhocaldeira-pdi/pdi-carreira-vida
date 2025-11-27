@@ -26,13 +26,11 @@ const PlanoDeVida = ({ onTabChange, onOpenChange }: PlanoDeVidaProps) => {
   const [isEditingVvd, setIsEditingVvd] = useState(true);
   const [valores, setValores] = useState<string[]>(Array(12).fill(""));
   const [isEditingValores, setIsEditingValores] = useState(true);
-  const [areasVida, setAreasVida] = useState([
-    { area: "Carreira", notaAtual: "", notaDesejada: "" },
-    { area: "Saúde", notaAtual: "", notaDesejada: "" },
-    { area: "Relacionamentos", notaAtual: "", notaDesejada: "" },
-    { area: "Finanças", notaAtual: "", notaDesejada: "" },
-    { area: "Lazer", notaAtual: "", notaDesejada: "" },
-  ]);
+  const [areasVida, setAreasVida] = useState<Array<{
+    area: string;
+    notaAtual: string | number;
+    notaDesejada: string | number;
+  }>>([]);
   const [isEditingAreas, setIsEditingAreas] = useState(true);
   const [insight, setInsight] = useState("");
   const [isGeneratingInsight, setIsGeneratingInsight] = useState(false);
@@ -103,16 +101,28 @@ const PlanoDeVida = ({ onTabChange, onOpenChange }: PlanoDeVidaProps) => {
 
     const savedAreas = localStorage.getItem("areasVida");
     if (savedAreas) {
-      setAreasVida(JSON.parse(savedAreas));
+      const loadedAreas = JSON.parse(savedAreas);
+      // Converter números para strings se necessário
+      const normalizedAreas = loadedAreas.map((area: any) => ({
+        ...area,
+        notaAtual: String(area.notaAtual || ""),
+        notaDesejada: String(area.notaDesejada || "")
+      }));
+      setAreasVida(normalizedAreas);
       setIsEditingAreas(false);
     } else {
-      // Dados mockados para Áreas da Vida
+      // Dados mockados para Áreas da Vida (10 áreas)
       const mockAreas = [
-        { area: "Carreira", notaAtual: "7", notaDesejada: "9" },
-        { area: "Saúde", notaAtual: "6", notaDesejada: "9" },
-        { area: "Relacionamentos", notaAtual: "8", notaDesejada: "10" },
+        { area: "Saúde e Bem-estar", notaAtual: "5", notaDesejada: "9" },
+        { area: "Carreira e Profissão", notaAtual: "6", notaDesejada: "9" },
         { area: "Finanças", notaAtual: "5", notaDesejada: "8" },
-        { area: "Lazer", notaAtual: "5", notaDesejada: "8" },
+        { area: "Relacionamentos", notaAtual: "7", notaDesejada: "9" },
+        { area: "Família", notaAtual: "8", notaDesejada: "10" },
+        { area: "Desenvolvimento Pessoal", notaAtual: "6", notaDesejada: "9" },
+        { area: "Lazer e Diversão", notaAtual: "4", notaDesejada: "8" },
+        { area: "Espiritualidade", notaAtual: "5", notaDesejada: "8" },
+        { area: "Ambiente Físico", notaAtual: "6", notaDesejada: "9" },
+        { area: "Contribuição Social", notaAtual: "4", notaDesejada: "7" },
       ];
       setAreasVida(mockAreas);
       localStorage.setItem("areasVida", JSON.stringify(mockAreas));
@@ -225,12 +235,15 @@ const PlanoDeVida = ({ onTabChange, onOpenChange }: PlanoDeVidaProps) => {
 
   const updateArea = (index: number, field: 'notaAtual' | 'notaDesejada', value: string) => {
     const newAreas = [...areasVida];
-    newAreas[index][field] = value;
+    newAreas[index] = {
+      ...newAreas[index],
+      [field]: value
+    };
     setAreasVida(newAreas);
   };
 
-  const isAreasComplete = areasVida.every(
-    (area) => area.notaAtual.trim() !== "" && area.notaDesejada.trim() !== ""
+  const isAreasComplete = areasVida.length > 0 && areasVida.every(
+    (area) => String(area.notaAtual).trim() !== "" && String(area.notaDesejada).trim() !== ""
   );
 
   const handleGenerateInsight = async () => {
@@ -520,7 +533,7 @@ const PlanoDeVida = ({ onTabChange, onOpenChange }: PlanoDeVidaProps) => {
                 </div>
                 <div className="flex items-center justify-between gap-4">
                   <Link 
-                    to="/ferramentas" 
+                    to="/roda-da-vida" 
                     className="flex items-center gap-2 text-sm text-primary hover:underline"
                   >
                     Acessar a Roda da Vida
