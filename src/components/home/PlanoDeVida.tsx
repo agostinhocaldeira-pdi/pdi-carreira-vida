@@ -6,7 +6,9 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { Compass, Heart, Target, Lightbulb, ChevronDown, ArrowRight, Edit, Sparkles, Loader2, ExternalLink } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Compass, Heart, Target, Lightbulb, ChevronDown, ArrowRight, Edit, Sparkles, Loader2, ExternalLink, Plus, Trash2, Pencil, Check, X } from "lucide-react";
 import { toast } from "sonner";
 import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -37,7 +39,24 @@ const PlanoDeVida = ({ onTabChange, onOpenChange }: PlanoDeVidaProps) => {
     texto: "",
     dataAlvo: "",
     conexaoVvd: "",
+    status: "em-andamento",
   });
+
+  const [objetivos, setObjetivos] = useState<Array<{
+    id: number;
+    texto: string;
+    dataAlvo: string;
+    conexaoVvd: string;
+    status: string;
+  }>>([]);
+
+  const [editandoObjetivoId, setEditandoObjetivoId] = useState<number | null>(null);
+  const [objetivoEditado, setObjetivoEditado] = useState<{
+    texto: string;
+    dataAlvo: string;
+    conexaoVvd: string;
+    status: string;
+  } | null>(null);
 
   // Carregar dados salvos do localStorage
   useEffect(() => {
@@ -57,6 +76,11 @@ const PlanoDeVida = ({ onTabChange, onOpenChange }: PlanoDeVidaProps) => {
     if (savedAreas) {
       setAreasVida(JSON.parse(savedAreas));
       setIsEditingAreas(false);
+    }
+
+    const savedObjetivos = localStorage.getItem("objetivos");
+    if (savedObjetivos) {
+      setObjetivos(JSON.parse(savedObjetivos));
     }
   }, []);
 
@@ -140,11 +164,52 @@ const PlanoDeVida = ({ onTabChange, onOpenChange }: PlanoDeVidaProps) => {
   };
 
   const handleSaveObjetivo = () => {
-    const objetivos = JSON.parse(localStorage.getItem("objetivos") || "[]");
-    objetivos.push(objetivo);
-    localStorage.setItem("objetivos", JSON.stringify(objetivos));
+    if (!objetivo.texto || !objetivo.dataAlvo) {
+      toast.error("Preencha pelo menos o objetivo e a data alvo");
+      return;
+    }
+
+    const novoObjetivo = { ...objetivo, id: Date.now() };
+    const novosObjetivos = [...objetivos, novoObjetivo];
+    setObjetivos(novosObjetivos);
+    localStorage.setItem("objetivos", JSON.stringify(novosObjetivos));
     toast.success("Objetivo cadastrado!");
-    setObjetivo({ texto: "", dataAlvo: "", conexaoVvd: "" });
+    setObjetivo({ texto: "", dataAlvo: "", conexaoVvd: "", status: "em-andamento" });
+  };
+
+  const handleRemoveObjetivo = (id: number) => {
+    const novosObjetivos = objetivos.filter((obj) => obj.id !== id);
+    setObjetivos(novosObjetivos);
+    localStorage.setItem("objetivos", JSON.stringify(novosObjetivos));
+    toast.success("Objetivo removido!");
+  };
+
+  const handleStartEditObjetivo = (obj: any) => {
+    setEditandoObjetivoId(obj.id);
+    setObjetivoEditado({
+      texto: obj.texto,
+      dataAlvo: obj.dataAlvo,
+      conexaoVvd: obj.conexaoVvd,
+      status: obj.status,
+    });
+  };
+
+  const handleCancelEditObjetivo = () => {
+    setEditandoObjetivoId(null);
+    setObjetivoEditado(null);
+  };
+
+  const handleSaveEditObjetivo = (id: number) => {
+    if (!objetivoEditado) return;
+
+    const novosObjetivos = objetivos.map((obj) => 
+      obj.id === id ? { ...obj, ...objetivoEditado } : obj
+    );
+    setObjetivos(novosObjetivos);
+    localStorage.setItem("objetivos", JSON.stringify(novosObjetivos));
+    setEditandoObjetivoId(null);
+    setObjetivoEditado(null);
+    toast.success("Objetivo atualizado!");
   };
 
   const handleTabChange = (value: string) => {
@@ -415,7 +480,10 @@ const PlanoDeVida = ({ onTabChange, onOpenChange }: PlanoDeVidaProps) => {
                 <h3 className="text-lg font-semibold">Meus Objetivos</h3>
               </div>
 
-              <div className="space-y-4">
+              {/* Formulário de cadastro */}
+              <div className="space-y-4 p-4 border rounded-lg bg-muted/30">
+                <h4 className="font-medium text-sm">Cadastrar Novo Objetivo</h4>
+                
                 <div className="space-y-2">
                   <Label htmlFor="objetivo">Objetivo em Foco</Label>
                   <Input
@@ -426,14 +494,34 @@ const PlanoDeVida = ({ onTabChange, onOpenChange }: PlanoDeVidaProps) => {
                   />
                 </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="dataAlvo">Data Alvo</Label>
-                  <Input
-                    id="dataAlvo"
-                    type="date"
-                    value={objetivo.dataAlvo}
-                    onChange={(e) => setObjetivo({ ...objetivo, dataAlvo: e.target.value })}
-                  />
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="dataAlvo">Data Alvo</Label>
+                    <Input
+                      id="dataAlvo"
+                      type="date"
+                      value={objetivo.dataAlvo}
+                      onChange={(e) => setObjetivo({ ...objetivo, dataAlvo: e.target.value })}
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="status">Status</Label>
+                    <Select
+                      value={objetivo.status}
+                      onValueChange={(value) => setObjetivo({ ...objetivo, status: value })}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Selecione o status" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="em-andamento">Em andamento</SelectItem>
+                        <SelectItem value="concluido">Concluído</SelectItem>
+                        <SelectItem value="pendente">Pendente</SelectItem>
+                        <SelectItem value="pausado">Pausado</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
                 </div>
 
                 <div className="space-y-2">
@@ -448,9 +536,147 @@ const PlanoDeVida = ({ onTabChange, onOpenChange }: PlanoDeVidaProps) => {
                 </div>
 
                 <Button onClick={handleSaveObjetivo} className="w-full">
+                  <Plus className="w-4 h-4 mr-2" />
                   Cadastrar Objetivo
                 </Button>
               </div>
+
+              {/* Lista de objetivos cadastrados */}
+              {objetivos.length > 0 && (
+                <div className="space-y-3">
+                  <h4 className="font-medium text-sm">Objetivos Cadastrados</h4>
+                  <div className="rounded-lg border overflow-x-auto">
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead className="text-xs sm:text-sm">Objetivo</TableHead>
+                          <TableHead className="text-xs sm:text-sm">Data Alvo</TableHead>
+                          <TableHead className="text-xs sm:text-sm">Status</TableHead>
+                          <TableHead className="text-xs sm:text-sm">Conexão VVD</TableHead>
+                          <TableHead className="text-xs sm:text-sm text-right">Ações</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {objetivos.map((obj) => (
+                          <TableRow key={obj.id}>
+                            <TableCell className="text-xs sm:text-sm">
+                              {editandoObjetivoId === obj.id ? (
+                                <Input
+                                  value={objetivoEditado?.texto || ""}
+                                  onChange={(e) =>
+                                    setObjetivoEditado({ ...objetivoEditado!, texto: e.target.value })
+                                  }
+                                  className="text-xs sm:text-sm"
+                                />
+                              ) : (
+                                obj.texto
+                              )}
+                            </TableCell>
+                            <TableCell className="text-xs sm:text-sm">
+                              {editandoObjetivoId === obj.id ? (
+                                <Input
+                                  type="date"
+                                  value={objetivoEditado?.dataAlvo || ""}
+                                  onChange={(e) =>
+                                    setObjetivoEditado({ ...objetivoEditado!, dataAlvo: e.target.value })
+                                  }
+                                  className="text-xs sm:text-sm"
+                                />
+                              ) : (
+                                new Date(obj.dataAlvo).toLocaleDateString("pt-BR")
+                              )}
+                            </TableCell>
+                            <TableCell className="text-xs sm:text-sm">
+                              {editandoObjetivoId === obj.id ? (
+                                <Select
+                                  value={objetivoEditado?.status || "em-andamento"}
+                                  onValueChange={(value) =>
+                                    setObjetivoEditado({ ...objetivoEditado!, status: value })
+                                  }
+                                >
+                                  <SelectTrigger className="text-xs sm:text-sm">
+                                    <SelectValue />
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    <SelectItem value="em-andamento">Em andamento</SelectItem>
+                                    <SelectItem value="concluido">Concluído</SelectItem>
+                                    <SelectItem value="pendente">Pendente</SelectItem>
+                                    <SelectItem value="pausado">Pausado</SelectItem>
+                                  </SelectContent>
+                                </Select>
+                              ) : (
+                                <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
+                                  obj.status === "concluido" ? "bg-green-100 text-green-800" :
+                                  obj.status === "em-andamento" ? "bg-blue-100 text-blue-800" :
+                                  obj.status === "pausado" ? "bg-yellow-100 text-yellow-800" :
+                                  "bg-gray-100 text-gray-800"
+                                }`}>
+                                  {obj.status === "em-andamento" ? "Em andamento" :
+                                   obj.status === "concluido" ? "Concluído" :
+                                   obj.status === "pausado" ? "Pausado" : "Pendente"}
+                                </span>
+                              )}
+                            </TableCell>
+                            <TableCell className="text-xs sm:text-sm max-w-[200px] truncate">
+                              {editandoObjetivoId === obj.id ? (
+                                <Textarea
+                                  value={objetivoEditado?.conexaoVvd || ""}
+                                  onChange={(e) =>
+                                    setObjetivoEditado({ ...objetivoEditado!, conexaoVvd: e.target.value })
+                                  }
+                                  rows={2}
+                                  className="text-xs sm:text-sm"
+                                />
+                              ) : (
+                                obj.conexaoVvd
+                              )}
+                            </TableCell>
+                            <TableCell className="text-right">
+                              <div className="flex items-center justify-end gap-1 sm:gap-2">
+                                {editandoObjetivoId === obj.id ? (
+                                  <>
+                                    <Button
+                                      variant="ghost"
+                                      size="sm"
+                                      onClick={() => handleSaveEditObjetivo(obj.id)}
+                                    >
+                                      <Check className="w-4 h-4 text-green-600" />
+                                    </Button>
+                                    <Button
+                                      variant="ghost"
+                                      size="sm"
+                                      onClick={handleCancelEditObjetivo}
+                                    >
+                                      <X className="w-4 h-4 text-red-600" />
+                                    </Button>
+                                  </>
+                                ) : (
+                                  <>
+                                    <Button
+                                      variant="ghost"
+                                      size="sm"
+                                      onClick={() => handleStartEditObjetivo(obj)}
+                                    >
+                                      <Pencil className="w-4 h-4" />
+                                    </Button>
+                                    <Button
+                                      variant="ghost"
+                                      size="sm"
+                                      onClick={() => handleRemoveObjetivo(obj.id)}
+                                    >
+                                      <Trash2 className="w-4 h-4 text-red-600" />
+                                    </Button>
+                                  </>
+                                )}
+                              </div>
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </div>
+                </div>
+              )}
             </div>
           </TabsContent>
 
