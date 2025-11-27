@@ -134,16 +134,16 @@ const Signup = () => {
         </DialogContent>
       </Dialog>
 
-      <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-subtle">
+      <div className="min-h-screen flex items-center justify-center px-4 py-6 sm:p-4 bg-gradient-subtle">
         <Card className="w-full max-w-md shadow-large animate-slide-up">
-          <CardHeader className="space-y-1 text-center">
-            <CardTitle className="text-3xl font-bold">PDI - Carreira & Vida</CardTitle>
-            <CardDescription className="text-base">
+          <CardHeader className="space-y-2 text-center pb-4 sm:pb-6">
+            <CardTitle className="text-2xl sm:text-3xl font-bold">PDI - Carreira & Vida</CardTitle>
+            <CardDescription className="text-sm sm:text-base">
               Crie seu perfil e comece sua jornada de desenvolvimento
             </CardDescription>
           </CardHeader>
-          <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-4">
+          <CardContent className="px-4 sm:px-6">
+            <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
             <div className="space-y-2">
               <Label htmlFor="name">Nome Completo</Label>
               <Input
@@ -192,7 +192,7 @@ const Signup = () => {
               />
             </div>
 
-            <Button type="submit" className="w-full mt-6" size="lg">
+            <Button type="submit" className="w-full mt-4 sm:mt-6" size="lg">
               Criar Perfil
             </Button>
             </form>
