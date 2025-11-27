@@ -189,10 +189,10 @@ const PlanoDeVida = ({ onTabChange, onOpenChange }: PlanoDeVidaProps) => {
         <CollapsibleContent>
           <CardContent>
         <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
-          <TabsList className="grid w-full grid-cols-3">
-            <TabsTrigger value="quem-sou">Quem sou Eu</TabsTrigger>
-            <TabsTrigger value="para-onde">Para onde vou</TabsTrigger>
-            <TabsTrigger value="como-chegar">Como chegar lá</TabsTrigger>
+          <TabsList className="grid w-full grid-cols-3 h-auto">
+            <TabsTrigger value="quem-sou" className="text-xs sm:text-sm px-2 sm:px-3 py-2">Quem sou Eu</TabsTrigger>
+            <TabsTrigger value="para-onde" className="text-xs sm:text-sm px-2 sm:px-3 py-2">Para onde vou</TabsTrigger>
+            <TabsTrigger value="como-chegar" className="text-xs sm:text-sm px-2 sm:px-3 py-2">Como chegar lá</TabsTrigger>
           </TabsList>
 
           {/* Quem sou Eu */}
@@ -245,7 +245,7 @@ const PlanoDeVida = ({ onTabChange, onOpenChange }: PlanoDeVidaProps) => {
               {/* Valores */}
               <div className="space-y-3">
                 <Label>Meus Valores</Label>
-                <div className="grid grid-cols-4 gap-3">
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-3">
                   {valores.map((valor, index) => (
                     <Input
                       key={index}
@@ -253,6 +253,7 @@ const PlanoDeVida = ({ onTabChange, onOpenChange }: PlanoDeVidaProps) => {
                       value={valor}
                       onChange={(e) => updateValor(index, e.target.value)}
                       disabled={!isEditingValores}
+                      className="text-sm"
                     />
                   ))}
                 </div>
@@ -287,37 +288,37 @@ const PlanoDeVida = ({ onTabChange, onOpenChange }: PlanoDeVidaProps) => {
               {/* Áreas da Vida */}
               <div className="space-y-3">
                 <Label>Áreas da Vida</Label>
-                <div className="rounded-lg border">
-                  <table className="w-full">
+                <div className="rounded-lg border overflow-x-auto">
+                  <table className="w-full min-w-[500px]">
                     <thead className="bg-muted/50">
                       <tr>
-                        <th className="p-3 text-left text-sm font-medium">Área</th>
-                        <th className="p-3 text-left text-sm font-medium">Nota Atual</th>
-                        <th className="p-3 text-left text-sm font-medium">Nota Desejada</th>
+                        <th className="p-2 sm:p-3 text-left text-xs sm:text-sm font-medium">Área</th>
+                        <th className="p-2 sm:p-3 text-left text-xs sm:text-sm font-medium">Nota Atual</th>
+                        <th className="p-2 sm:p-3 text-left text-xs sm:text-sm font-medium">Nota Desejada</th>
                       </tr>
                     </thead>
                     <tbody>
                       {areasVida.map((area, index) => (
                         <tr key={area.area} className="border-t">
-                          <td className="p-3 text-sm">{area.area}</td>
-                          <td className="p-3">
+                          <td className="p-2 sm:p-3 text-xs sm:text-sm">{area.area}</td>
+                          <td className="p-2 sm:p-3">
                             <Input 
                               type="number" 
                               min="0" 
                               max="10" 
-                              className="w-20" 
+                              className="w-16 sm:w-20 text-sm" 
                               placeholder="0-10"
                               value={area.notaAtual}
                               onChange={(e) => updateArea(index, 'notaAtual', e.target.value)}
                               disabled={!isEditingAreas}
                             />
                           </td>
-                          <td className="p-3">
+                          <td className="p-2 sm:p-3">
                             <Input 
                               type="number" 
                               min="0" 
                               max="10" 
-                              className="w-20" 
+                              className="w-16 sm:w-20 text-sm" 
                               placeholder="0-10"
                               value={area.notaDesejada}
                               onChange={(e) => updateArea(index, 'notaDesejada', e.target.value)}

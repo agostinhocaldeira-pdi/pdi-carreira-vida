@@ -193,7 +193,7 @@ const MaoNaMassa = () => {
                 </Button>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-3 p-4 bg-muted/30 rounded-lg">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 p-3 sm:p-4 bg-muted/30 rounded-lg">
                 <div className="space-y-2">
                   <Label htmlFor="nova-acao" className="text-xs">Nova Ação</Label>
                   <Input
@@ -201,6 +201,7 @@ const MaoNaMassa = () => {
                     placeholder="Descreva a ação"
                     value={novaAcao.acao}
                     onChange={(e) => setNovaAcao({ ...novaAcao, acao: e.target.value })}
+                    className="text-sm"
                   />
                 </div>
 
@@ -210,7 +211,7 @@ const MaoNaMassa = () => {
                     value={novaAcao.periodicidade}
                     onValueChange={(value) => setNovaAcao({ ...novaAcao, periodicidade: value })}
                   >
-                    <SelectTrigger id="nova-periodicidade">
+                    <SelectTrigger id="nova-periodicidade" className="text-sm">
                       <SelectValue placeholder="Selecione" />
                     </SelectTrigger>
                     <SelectContent>
@@ -224,13 +225,13 @@ const MaoNaMassa = () => {
                   </Select>
                 </div>
 
-                <div className="space-y-2">
+                <div className="space-y-2 sm:col-span-2 lg:col-span-1">
                   <Label htmlFor="novo-status" className="text-xs">Status</Label>
                   <Select
                     value={novaAcao.status}
                     onValueChange={(value) => setNovaAcao({ ...novaAcao, status: value })}
                   >
-                    <SelectTrigger id="novo-status">
+                    <SelectTrigger id="novo-status" className="text-sm">
                       <SelectValue placeholder="Selecione" />
                     </SelectTrigger>
                     <SelectContent>
@@ -244,14 +245,14 @@ const MaoNaMassa = () => {
               </div>
 
               {acoes.length > 0 && (
-                <div className="rounded-lg border">
-                  <Table>
+                <div className="rounded-lg border overflow-x-auto">
+                  <Table className="min-w-[600px]">
                     <TableHeader>
                       <TableRow>
-                        <TableHead>Ação</TableHead>
-                        <TableHead>Periodicidade</TableHead>
-                        <TableHead>Status</TableHead>
-                        <TableHead className="w-[100px]">Ações</TableHead>
+                        <TableHead className="text-xs sm:text-sm">Ação</TableHead>
+                        <TableHead className="text-xs sm:text-sm">Periodicidade</TableHead>
+                        <TableHead className="text-xs sm:text-sm">Status</TableHead>
+                        <TableHead className="w-[80px] sm:w-[100px] text-xs sm:text-sm">Ações</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
