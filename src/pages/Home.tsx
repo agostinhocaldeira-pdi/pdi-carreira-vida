@@ -33,9 +33,14 @@ const Home = () => {
       const userData = JSON.parse(user);
       setUserName(userData.name);
       
-      // Verifica se o usuário é admin (mockado)
-      if (userData.email === "agostinhocmcaldeira@gmail.com") {
-        setIsAdmin(true);
+      // Verifica se o usuário está cadastrado como administrador
+      const savedAdmins = localStorage.getItem("administrators");
+      if (savedAdmins) {
+        const administrators = JSON.parse(savedAdmins);
+        const userIsAdmin = administrators.some(
+          (admin: { email: string }) => admin.email === userData.email
+        );
+        setIsAdmin(userIsAdmin);
       }
     }
 

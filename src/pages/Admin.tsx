@@ -38,32 +38,44 @@ const Admin = () => {
     }
 
     const userData = JSON.parse(user);
-    const userIsAdmin = userData.email === "agostinhocmcaldeira@gmail.com";
     
-    if (!userIsAdmin) {
-      toast.error("Acesso restrito apenas para administradores");
-      navigate("/home");
-      return;
-    }
-
-    setIsAdmin(true);
-    setAdminEmail(userData.email);
-
     // Carregar administradores salvos
     const savedAdmins = localStorage.getItem("administrators");
     if (savedAdmins) {
-      setAdministrators(JSON.parse(savedAdmins));
+      const administrators = JSON.parse(savedAdmins);
+      setAdministrators(administrators);
+      
+      // Verifica se o usuário está na lista de administradores
+      const userIsAdmin = administrators.some(
+        (admin: { email: string }) => admin.email === userData.email
+      );
+      
+      if (!userIsAdmin) {
+        toast.error("Acesso restrito apenas para administradores");
+        navigate("/home");
+        return;
+      }
+      
+      setIsAdmin(true);
+      setAdminEmail(userData.email);
     } else {
-      // Inicializar com o admin principal
-      const initialAdmin: Administrator = {
-        id: "1",
-        name: "Agostinho Caldeira",
-        email: "agostinhocmcaldeira@gmail.com",
-        phone: "(00) 00000-0000",
-        createdAt: new Date().toISOString()
-      };
-      setAdministrators([initialAdmin]);
-      localStorage.setItem("administrators", JSON.stringify([initialAdmin]));
+      // Inicializar com o admin principal se não existir
+      if (userData.email === "agostinhocmcaldeira@gmail.com") {
+        const initialAdmin: Administrator = {
+          id: "1",
+          name: "Agostinho Caldeira",
+          email: "agostinhocmcaldeira@gmail.com",
+          phone: "(00) 00000-0000",
+          createdAt: new Date().toISOString()
+        };
+        setAdministrators([initialAdmin]);
+        localStorage.setItem("administrators", JSON.stringify([initialAdmin]));
+        setIsAdmin(true);
+        setAdminEmail(userData.email);
+      } else {
+        toast.error("Acesso restrito apenas para administradores");
+        navigate("/home");
+      }
     }
   }, [navigate]);
 
@@ -103,10 +115,11 @@ const Admin = () => {
   };
 
   const handleDeleteAdmin = (id: string) => {
-    // Não permitir excluir o admin principal
     const adminToDelete = administrators.find(admin => admin.id === id);
-    if (adminToDelete?.email === "agostinhocmcaldeira@gmail.com") {
-      toast.error("Não é possível excluir o administrador principal");
+    
+    // Não permitir excluir o próprio usuário logado
+    if (adminToDelete?.email === adminEmail) {
+      toast.error("Você não pode excluir sua própria conta de administrador");
       return;
     }
 
@@ -314,9 +327,9 @@ const Admin = () => {
                         <TableCell className="font-medium">
                           <div className="flex items-center gap-2">
                             {admin.name}
-                            {admin.email === "agostinhocmcaldeira@gmail.com" && (
-                              <Badge variant="destructive" className="text-xs">
-                                Principal
+                            {admin.email === adminEmail && (
+                              <Badge variant="secondary" className="text-xs">
+                                Você
                               </Badge>
                             )}
                           </div>
@@ -328,7 +341,7 @@ const Admin = () => {
                             variant="ghost"
                             size="sm"
                             onClick={() => handleDeleteAdmin(admin.id)}
-                            disabled={admin.email === "agostinhocmcaldeira@gmail.com"}
+                            disabled={admin.email === adminEmail}
                             className="gap-2"
                           >
                             <Trash2 className="w-4 h-4" />
