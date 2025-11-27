@@ -169,31 +169,45 @@ const PlanoDeVida = ({ onTabChange, onOpenChange }: PlanoDeVidaProps) => {
   );
 
   const handleGenerateInsight = async () => {
+    console.log("🔍 handleGenerateInsight called");
+    console.log("isAdmin:", isAdmin);
+    console.log("canGenerateInsight:", canGenerateInsight);
+    console.log("vvd:", vvd ? "preenchido" : "vazio");
+    console.log("isValoresComplete:", isValoresComplete);
+    console.log("isAreasComplete:", isAreasComplete);
+    
     // Administradores não têm limite
     if (!isAdmin && !canGenerateInsight) {
+      console.log("❌ Limite mensal atingido");
       toast.error("Você já gerou seu insight mensal. Contrate o plano Premium para gerar mais insights!");
       return;
     }
 
     if (!vvd && !isValoresComplete && !isAreasComplete) {
+      console.log("❌ Nenhuma seção preenchida");
       toast.error("Preencha pelo menos uma seção para gerar insights");
       return;
     }
 
+    console.log("✅ Iniciando geração de insight...");
     setIsGeneratingInsight(true);
     
     try {
+      console.log("📡 Chamando edge function...");
       const { data, error } = await supabase.functions.invoke('generate-insight', {
         body: { vvd, valores, areasVida }
       });
 
+      console.log("📥 Resposta recebida:", { data, error });
+
       if (error) {
-        console.error("Error generating insight:", error);
+        console.error("❌ Error generating insight:", error);
         toast.error(error.message || "Erro ao gerar insight");
         return;
       }
 
       if (data?.insight) {
+        console.log("✅ Insight gerado com sucesso");
         setInsight(data.insight);
         
         // Salvar data da geração apenas para não-admins
@@ -207,7 +221,7 @@ const PlanoDeVida = ({ onTabChange, onOpenChange }: PlanoDeVidaProps) => {
         toast.success("Insight gerado com sucesso!");
       }
     } catch (error) {
-      console.error("Error:", error);
+      console.error("❌ Error:", error);
       toast.error("Erro ao gerar insight");
     } finally {
       setIsGeneratingInsight(false);
