@@ -37,6 +37,7 @@ const PlanoDeVida = ({ onTabChange, onOpenChange }: PlanoDeVidaProps) => {
   const [isGeneratingInsight, setIsGeneratingInsight] = useState(false);
   const [lastInsightDate, setLastInsightDate] = useState<string | null>(null);
   const [canGenerateInsight, setCanGenerateInsight] = useState(true);
+  const [isAdmin, setIsAdmin] = useState(false);
   const [objetivo, setObjetivo] = useState({
     texto: "",
     dataAlvo: "",
@@ -85,7 +86,27 @@ const PlanoDeVida = ({ onTabChange, onOpenChange }: PlanoDeVidaProps) => {
       setObjetivos(JSON.parse(savedObjetivos));
     }
 
-    // Verificar última geração de insight
+    // Verificar se o usuário é administrador
+    const user = localStorage.getItem("user");
+    if (user) {
+      const userData = JSON.parse(user);
+      const savedAdmins = localStorage.getItem("administrators");
+      if (savedAdmins) {
+        const administrators = JSON.parse(savedAdmins);
+        const userIsAdmin = administrators.some(
+          (admin: { email: string }) => admin.email === userData.email
+        );
+        setIsAdmin(userIsAdmin);
+        
+        // Administradores não têm limite
+        if (userIsAdmin) {
+          setCanGenerateInsight(true);
+          return;
+        }
+      }
+    }
+
+    // Verificar última geração de insight para usuários não-admin
     const savedLastInsightDate = localStorage.getItem("lastInsightDate");
     if (savedLastInsightDate) {
       setLastInsightDate(savedLastInsightDate);
@@ -148,7 +169,8 @@ const PlanoDeVida = ({ onTabChange, onOpenChange }: PlanoDeVidaProps) => {
   );
 
   const handleGenerateInsight = async () => {
-    if (!canGenerateInsight) {
+    // Administradores não têm limite
+    if (!isAdmin && !canGenerateInsight) {
       toast.error("Você já gerou seu insight mensal. Contrate o plano Premium para gerar mais insights!");
       return;
     }
@@ -174,11 +196,13 @@ const PlanoDeVida = ({ onTabChange, onOpenChange }: PlanoDeVidaProps) => {
       if (data?.insight) {
         setInsight(data.insight);
         
-        // Salvar data da geração
-        const today = new Date().toISOString();
-        localStorage.setItem("lastInsightDate", today);
-        setLastInsightDate(today);
-        setCanGenerateInsight(false);
+        // Salvar data da geração apenas para não-admins
+        if (!isAdmin) {
+          const today = new Date().toISOString();
+          localStorage.setItem("lastInsightDate", today);
+          setLastInsightDate(today);
+          setCanGenerateInsight(false);
+        }
         
         toast.success("Insight gerado com sucesso!");
       }
@@ -467,11 +491,19 @@ const PlanoDeVida = ({ onTabChange, onOpenChange }: PlanoDeVidaProps) => {
                   Uma análise personalizada do seu Plano de Vida baseada nas informações que você preencheu
                 </p>
                 
-                {!canGenerateInsight && (
+                {!canGenerateInsight && !isAdmin && (
                   <div className="bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-800 rounded-lg p-3 mb-3">
                     <p className="text-xs sm:text-sm text-amber-900 dark:text-amber-200">
                       <strong>Limite mensal atingido.</strong> Você poderá gerar um novo insight em {getNextInsightDate()}. 
                       Contrate o plano <strong>Premium</strong> para gerar insights ilimitados!
+                    </p>
+                  </div>
+                )}
+                
+                {isAdmin && (
+                  <div className="bg-primary/10 border border-primary/20 rounded-lg p-3 mb-3">
+                    <p className="text-xs sm:text-sm text-primary">
+                      <strong>Acesso Admin:</strong> Você tem insights ilimitados como administrador.
                     </p>
                   </div>
                 )}
@@ -487,7 +519,7 @@ const PlanoDeVida = ({ onTabChange, onOpenChange }: PlanoDeVidaProps) => {
                       onClick={handleGenerateInsight} 
                       size="sm" 
                       variant="outline"
-                      disabled={isGeneratingInsight || !canGenerateInsight}
+                      disabled={isGeneratingInsight || (!isAdmin && !canGenerateInsight)}
                     >
                       {isGeneratingInsight ? (
                         <>
@@ -506,7 +538,7 @@ const PlanoDeVida = ({ onTabChange, onOpenChange }: PlanoDeVidaProps) => {
                   <Button 
                     onClick={handleGenerateInsight} 
                     size="sm" 
-                    disabled={isGeneratingInsight || !canGenerateInsight || (!vvd && !isValoresComplete && !isAreasComplete)}
+                    disabled={isGeneratingInsight || (!isAdmin && !canGenerateInsight) || (!vvd && !isValoresComplete && !isAreasComplete)}
                   >
                     {isGeneratingInsight ? (
                       <>
