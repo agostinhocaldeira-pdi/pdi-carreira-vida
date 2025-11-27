@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { Compass, Heart, Target, Lightbulb, ChevronDown, ArrowRight, Edit, Sparkles, Loader2 } from "lucide-react";
+import { Compass, Heart, Target, Lightbulb, ChevronDown, ArrowRight, Edit, Sparkles, Loader2, ExternalLink } from "lucide-react";
 import { toast } from "sonner";
 import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -470,13 +470,17 @@ const PlanoDeVida = ({ onTabChange, onOpenChange }: PlanoDeVidaProps) => {
                 />
               </div>
 
-              <div className="flex gap-3">
+              <div className="flex items-center justify-between gap-3">
                 <Button variant="outline" className="flex-1">
                   Cadastrar
                 </Button>
-                <Button variant="outline" className="flex-1">
+                <Link 
+                  to="/ferramentas" 
+                  className="flex items-center gap-2 text-sm text-primary hover:underline"
+                >
                   Ferramenta de Habilidades (FF)
-                </Button>
+                  <ExternalLink className="w-4 h-4" />
+                </Link>
               </div>
             </div>
           </TabsContent>
