@@ -3,8 +3,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Link } from "react-router-dom";
-import { Target, TrendingUp, BookOpen, MessagesSquare, Book, Sparkles, LogIn, User, Zap, Star, Shield, Lock } from "lucide-react";
+import { Target, TrendingUp, BookOpen, MessagesSquare, Book, Sparkles, LogIn, User, Zap, Star, Shield, Lock, ChevronDown } from "lucide-react";
 import ProgressSection from "@/components/home/ProgressSection";
 import DiarioSection from "@/components/home/DiarioSection";
 import PlanoDeVida from "@/components/home/PlanoDeVida";
@@ -16,6 +17,7 @@ const Home = () => {
   const [planoDeVidaOpen, setPlanoDeVidaOpen] = useState(false);
   const [motivationalQuote, setMotivationalQuote] = useState("");
   const [isAdmin, setIsAdmin] = useState(false);
+  const [recursosOpen, setRecursosOpen] = useState(false);
 
   const quotes = [
     "Acredite em si mesmo e todo o resto se encaixará. 💪",
@@ -133,60 +135,73 @@ const Home = () => {
 
         {/* Recursos Section */}
         <section className="animate-slide-up" style={{ animationDelay: "0.4s" }}>
-          <Card className="shadow-medium">
-            <CardHeader>
-              <CardTitle className="text-2xl flex items-center gap-2">
-                <Sparkles className="w-6 h-6 text-primary" />
-                Recursos
-              </CardTitle>
-              <CardDescription>Acesse ferramentas e suporte para sua jornada</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <Link to="/construcao-guiada">
-                  <Card className="hover:shadow-medium transition-all cursor-pointer h-full border-2 hover:border-primary">
-                    <CardContent className="pt-6 text-center space-y-3">
-                      <div className="w-12 h-12 mx-auto bg-primary/10 rounded-full flex items-center justify-center">
-                        <BookOpen className="w-6 h-6 text-primary" />
-                      </div>
-                      <h3 className="font-semibold">Construção Guiada</h3>
-                      <p className="text-sm text-muted-foreground">
-                        Trilha passo a passo para construir seu PDI
-                      </p>
-                    </CardContent>
-                  </Card>
-                </Link>
+          <Collapsible open={recursosOpen} onOpenChange={setRecursosOpen}>
+            <Card className="shadow-medium">
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <div className="space-y-1">
+                    <CardTitle className="text-2xl flex items-center gap-2">
+                      <Sparkles className="w-6 h-6 text-primary" />
+                      Recursos
+                    </CardTitle>
+                    <CardDescription>Acesse ferramentas e suporte para sua jornada</CardDescription>
+                  </div>
+                  <CollapsibleTrigger asChild>
+                    <Button variant="ghost" size="sm" className="flex-shrink-0">
+                      <ChevronDown className={`w-4 h-4 transition-transform ${recursosOpen ? "rotate-180" : ""}`} />
+                    </Button>
+                  </CollapsibleTrigger>
+                </div>
+              </CardHeader>
+              <CollapsibleContent>
+                <CardContent>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <Link to="/construcao-guiada">
+                      <Card className="hover:shadow-medium transition-all cursor-pointer h-full border-2 hover:border-primary">
+                        <CardContent className="pt-6 text-center space-y-3">
+                          <div className="w-12 h-12 mx-auto bg-primary/10 rounded-full flex items-center justify-center">
+                            <BookOpen className="w-6 h-6 text-primary" />
+                          </div>
+                          <h3 className="font-semibold">Construção Guiada</h3>
+                          <p className="text-sm text-muted-foreground">
+                            Trilha passo a passo para construir seu PDI
+                          </p>
+                        </CardContent>
+                      </Card>
+                    </Link>
 
-                <Link to="/ferramentas">
-                  <Card className="hover:shadow-medium transition-all cursor-pointer h-full border-2 hover:border-primary">
-                    <CardContent className="pt-6 text-center space-y-3">
-                      <div className="w-12 h-12 mx-auto bg-primary/10 rounded-full flex items-center justify-center">
-                        <Target className="w-6 h-6 text-primary" />
-                      </div>
-                      <h3 className="font-semibold">Ferramentas</h3>
-                      <p className="text-sm text-muted-foreground">
-                        SWOT, Roda da Vida e mais
-                      </p>
-                    </CardContent>
-                  </Card>
-                </Link>
+                    <Link to="/ferramentas">
+                      <Card className="hover:shadow-medium transition-all cursor-pointer h-full border-2 hover:border-primary">
+                        <CardContent className="pt-6 text-center space-y-3">
+                          <div className="w-12 h-12 mx-auto bg-primary/10 rounded-full flex items-center justify-center">
+                            <Target className="w-6 h-6 text-primary" />
+                          </div>
+                          <h3 className="font-semibold">Ferramentas</h3>
+                          <p className="text-sm text-muted-foreground">
+                            SWOT, Roda da Vida e mais
+                          </p>
+                        </CardContent>
+                      </Card>
+                    </Link>
 
-                <Link to="/suporte">
-                  <Card className="hover:shadow-medium transition-all cursor-pointer h-full border-2 hover:border-primary">
-                    <CardContent className="pt-6 text-center space-y-3">
-                      <div className="w-12 h-12 mx-auto bg-primary/10 rounded-full flex items-center justify-center">
-                        <MessagesSquare className="w-6 h-6 text-primary" />
-                      </div>
-                      <h3 className="font-semibold">Suporte</h3>
-                      <p className="text-sm text-muted-foreground">
-                        Chat de ajuda e orientação
-                      </p>
-                    </CardContent>
-                  </Card>
-                </Link>
-              </div>
-            </CardContent>
-          </Card>
+                    <Link to="/suporte">
+                      <Card className="hover:shadow-medium transition-all cursor-pointer h-full border-2 hover:border-primary">
+                        <CardContent className="pt-6 text-center space-y-3">
+                          <div className="w-12 h-12 mx-auto bg-primary/10 rounded-full flex items-center justify-center">
+                            <MessagesSquare className="w-6 h-6 text-primary" />
+                          </div>
+                          <h3 className="font-semibold">Suporte</h3>
+                          <p className="text-sm text-muted-foreground">
+                            Chat de ajuda e orientação
+                          </p>
+                        </CardContent>
+                      </Card>
+                    </Link>
+                  </div>
+                </CardContent>
+              </CollapsibleContent>
+            </Card>
+          </Collapsible>
         </section>
 
         {/* Área Restrita - Apenas para Administradores */}
