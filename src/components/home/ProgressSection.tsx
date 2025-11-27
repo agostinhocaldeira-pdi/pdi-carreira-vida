@@ -8,7 +8,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
 const ProgressSection = () => {
-  const [isOpen, setIsOpen] = useState(true);
+  const [isOpen, setIsOpen] = useState(false);
   const [insight, setInsight] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
   const [canGenerateInsight, setCanGenerateInsight] = useState(true);
