@@ -20,7 +20,6 @@ const CATEGORIES = [
 
 interface SupportTicket {
   id: string;
-  user_id: string;
   category: string;
   question: string;
   created_at: string;
@@ -65,40 +64,21 @@ const Suporte = () => {
   };
 
   const loadTickets = () => {
-    const currentUser = localStorage.getItem("currentUser");
-    if (!currentUser) {
-      console.log("No current user found");
-      return;
-    }
-
-    const user = JSON.parse(currentUser);
     const allTickets = JSON.parse(localStorage.getItem("supportTickets") || "[]");
     const allMessages = JSON.parse(localStorage.getItem("supportMessages") || "[]");
 
-    console.log("All tickets:", allTickets);
-    console.log("Current user:", user.email);
-    console.log("Is admin:", isAdmin);
-
-    // Filter tickets for current user or show all if admin
-    const userRoles = JSON.parse(localStorage.getItem("userRoles") || "{}");
-    const isUserAdmin = userRoles[user.email] === "admin";
-    
-    const filteredTickets = isUserAdmin 
-      ? allTickets 
-      : allTickets.filter((t: SupportTicket) => t.user_id === user.email);
-
-    console.log("Filtered tickets:", filteredTickets);
-
-    setTickets(filteredTickets.sort((a: SupportTicket, b: SupportTicket) => 
+    const sortedTickets = allTickets.sort((a: SupportTicket, b: SupportTicket) =>
       new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-    ));
+    );
+
+    setTickets(sortedTickets);
 
     // Load messages for each ticket
     const messagesMap: Record<string, SupportMessage[]> = {};
-    filteredTickets.forEach((ticket: SupportTicket) => {
+    sortedTickets.forEach((ticket: SupportTicket) => {
       messagesMap[ticket.id] = allMessages
         .filter((m: SupportMessage) => m.ticket_id === ticket.id)
-        .sort((a: SupportMessage, b: SupportMessage) => 
+        .sort((a: SupportMessage, b: SupportMessage) =>
           new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
         );
     });
@@ -121,7 +101,6 @@ const Suporte = () => {
     const ticketId = `ticket-${Date.now()}`;
     const newTicket: SupportTicket = {
       id: ticketId,
-      user_id: userId,
       category: category,
       question: question.trim(),
       created_at: new Date().toISOString(),
