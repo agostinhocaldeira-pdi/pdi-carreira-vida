@@ -42,34 +42,34 @@ const Home = () => {
     <div className="min-h-screen bg-gradient-subtle">
       {/* Header */}
       <header className="bg-gradient-to-r from-card via-card to-primary/5 border-b shadow-elegant backdrop-blur-sm">
-        <div className="container mx-auto px-4 py-6">
+        <div className="container mx-auto px-3 sm:px-4 py-4 sm:py-6">
           {/* Top row - Logo, Quote and Actions */}
-          <div className="flex items-start justify-between gap-4 mb-4">
-            <div className="flex-1">
-              <div className="flex items-center gap-3 mb-2">
-                <div className="w-10 h-10 bg-gradient-primary rounded-lg flex items-center justify-center shadow-glow">
-                  <Sparkles className="w-6 h-6 text-white" />
+          <div className="flex items-start justify-between gap-2 sm:gap-4 mb-3 sm:mb-4">
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-2 sm:gap-3 mb-2">
+                <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-primary rounded-lg flex items-center justify-center shadow-glow flex-shrink-0">
+                  <Sparkles className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
                 </div>
-                <div>
-                  <h1 className="text-2xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
+                <div className="min-w-0">
+                  <h1 className="text-lg sm:text-2xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent truncate">
                     PDI - Carreira & Vida
                   </h1>
-                  <p className="text-sm text-muted-foreground flex items-center gap-1">
-                    <Star className="w-3 h-3 fill-primary text-primary" />
-                    Olá, {userName || "Usuário"}!
+                  <p className="text-xs sm:text-sm text-muted-foreground flex items-center gap-1">
+                    <Star className="w-3 h-3 fill-primary text-primary flex-shrink-0" />
+                    <span className="truncate">Olá, {userName || "Usuário"}!</span>
                   </p>
                 </div>
               </div>
             </div>
             
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0">
               {!userName ? (
-                <Button variant="ghost" size="sm" className="gap-2">
+                <Button variant="ghost" size="sm" className="gap-1 sm:gap-2 px-2 sm:px-3">
                   <LogIn className="w-4 h-4" />
                   <span className="hidden sm:inline">Login</span>
                 </Button>
               ) : (
-                <Button variant="outline" size="sm" className="gap-2">
+                <Button variant="outline" size="sm" className="gap-1 sm:gap-2 px-2 sm:px-3">
                   <User className="w-4 h-4" />
                   <span className="hidden sm:inline">Perfil</span>
                 </Button>
@@ -78,26 +78,26 @@ const Home = () => {
           </div>
 
           {/* Bottom row - Motivational quote and progress */}
-          <div className="flex items-center justify-between gap-4 p-4 bg-primary/5 rounded-lg border border-primary/10">
-            <div className="flex items-center gap-3 flex-1">
-              <div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0">
-                <Zap className="w-4 h-4 text-primary" />
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4 p-3 sm:p-4 bg-primary/5 rounded-lg border border-primary/10">
+            <div className="flex items-center gap-2 sm:gap-3 flex-1 w-full">
+              <div className="w-7 h-7 sm:w-8 sm:h-8 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0">
+                <Zap className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-primary" />
               </div>
-              <p className="text-sm font-medium text-foreground/90">
+              <p className="text-xs sm:text-sm font-medium text-foreground/90 line-clamp-2">
                 {motivationalQuote}
               </p>
             </div>
             
-            <Badge variant="secondary" className="gap-2 px-3 py-1 whitespace-nowrap">
+            <Badge variant="secondary" className="gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1 whitespace-nowrap self-start sm:self-auto">
               <TrendingUp className="w-3 h-3" />
-              Em progresso
+              <span className="text-xs">Em progresso</span>
             </Badge>
           </div>
         </div>
       </header>
 
       {/* Main Content */}
-      <main className="container mx-auto px-4 py-8 space-y-8">
+      <main className="container mx-auto px-3 sm:px-4 py-4 sm:py-8 space-y-4 sm:space-y-8">
         {/* Progresso Section */}
         <section className="animate-slide-up">
           <ProgressSection />

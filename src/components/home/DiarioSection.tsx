@@ -369,18 +369,19 @@ const DiarioSection = () => {
         <CollapsibleContent>
           {/* Gráfico de histórico de humor */}
           <div className="px-6 pt-6 space-y-4">
-            <div className="flex items-center justify-between">
-              <h3 className="text-lg font-semibold">Histórico de Humor</h3>
-              <div className="flex gap-2">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <h3 className="text-base sm:text-lg font-semibold">Histórico de Humor</h3>
+              <div className="flex flex-col sm:flex-row gap-2">
                 <Button 
                   variant="outline" 
                   size="sm" 
                   onClick={generateMockData}
+                  className="text-xs sm:text-sm"
                 >
                   Gerar Dados Teste
                 </Button>
                 <Select value={selectedPeriod} onValueChange={setSelectedPeriod}>
-                  <SelectTrigger className="w-[200px]">
+                  <SelectTrigger className="w-full sm:w-[180px]">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -394,8 +395,8 @@ const DiarioSection = () => {
               </div>
             </div>
             
-            <div className="h-[300px] w-full">
-              <ResponsiveContainer width="100%" height="100%">
+            <div className="h-[250px] sm:h-[300px] w-full overflow-x-auto">
+              <ResponsiveContainer width="100%" height="100%" minWidth={300}>
                 {selectedPeriod === "30dias" ? (
                   <LineChart data={chartData}>
                     <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
@@ -487,28 +488,30 @@ const DiarioSection = () => {
             </div>
           </div>
           
-          <CardContent className="space-y-6">
+          <CardContent className="space-y-4 sm:space-y-6 px-3 sm:px-6">
         {!isToday && (
-          <div className="bg-muted/50 border border-muted-foreground/20 rounded-lg p-4 mb-4">
-            <p className="text-sm text-muted-foreground text-center">
+          <div className="bg-muted/50 border border-muted-foreground/20 rounded-lg p-3 sm:p-4 mb-3 sm:mb-4">
+            <p className="text-xs sm:text-sm text-muted-foreground text-center">
               📅 Você está visualizando uma entrada de outra data. Apenas a data de hoje pode ser editada.
             </p>
           </div>
         )}
         
         {/* Seletor de Data */}
-        <div className="flex items-center gap-4 flex-wrap">
+        <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
           <Popover>
             <PopoverTrigger asChild>
               <Button
                 variant="outline"
                 className={cn(
-                  "justify-start text-left font-normal",
+                  "w-full sm:w-auto justify-start text-left font-normal text-sm",
                   !selectedDate && "text-muted-foreground"
                 )}
               >
-                <CalendarIcon className="mr-2 h-4 w-4" />
-                {selectedDate ? format(selectedDate, "dd/MM/yyyy") : "Selecionar data"}
+                <CalendarIcon className="mr-2 h-4 w-4 flex-shrink-0" />
+                <span className="truncate">
+                  {selectedDate ? format(selectedDate, "dd/MM/yyyy") : "Selecionar data"}
+                </span>
               </Button>
             </PopoverTrigger>
             <PopoverContent className="w-auto p-0" align="start">
@@ -522,7 +525,7 @@ const DiarioSection = () => {
             </PopoverContent>
           </Popover>
           
-          <p className="text-sm text-muted-foreground">
+          <p className="text-xs sm:text-sm text-muted-foreground">
             Altere a data para ver o histórico de dias anteriores
           </p>
         </div>
