@@ -9,7 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Book, Smile, Frown, Meh, ChevronDown, ChevronUp, CalendarIcon } from "lucide-react";
+import { Book, Smile, Frown, Meh, ChevronDown, CalendarIcon } from "lucide-react";
 import { toast } from "sonner";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 import { format } from "date-fns";
@@ -350,18 +350,8 @@ const DiarioSection = () => {
               </CardDescription>
             </div>
             <CollapsibleTrigger asChild>
-              <Button variant="ghost" size="sm">
-                {isOpen ? (
-                  <>
-                    <ChevronUp className="w-4 h-4 mr-2" />
-                    Minimizar
-                  </>
-                ) : (
-                  <>
-                    <ChevronDown className="w-4 h-4 mr-2" />
-                    Expandir
-                  </>
-                )}
+              <Button variant="ghost" size="sm" className="flex-shrink-0">
+                <ChevronDown className={`w-4 h-4 transition-transform ${isOpen ? "rotate-180" : ""}`} />
               </Button>
             </CollapsibleTrigger>
           </div>

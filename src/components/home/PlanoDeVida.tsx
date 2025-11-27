@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { Compass, Heart, Target, Lightbulb, ChevronDown, ChevronUp, ArrowRight, Edit, Sparkles, Loader2 } from "lucide-react";
+import { Compass, Heart, Target, Lightbulb, ChevronDown, ArrowRight, Edit, Sparkles, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -170,18 +170,8 @@ const PlanoDeVida = ({ onTabChange, onOpenChange }: PlanoDeVidaProps) => {
               <CardDescription>Construa sua visão e defina seus objetivos</CardDescription>
             </div>
             <CollapsibleTrigger asChild>
-              <Button variant="ghost" size="sm">
-                {isOpen ? (
-                  <>
-                    <ChevronUp className="w-4 h-4 mr-2" />
-                    Minimizar
-                  </>
-                ) : (
-                  <>
-                    <ChevronDown className="w-4 h-4 mr-2" />
-                    Expandir
-                  </>
-                )}
+              <Button variant="ghost" size="sm" className="flex-shrink-0">
+                <ChevronDown className={`w-4 h-4 transition-transform ${isOpen ? "rotate-180" : ""}`} />
               </Button>
             </CollapsibleTrigger>
           </div>
