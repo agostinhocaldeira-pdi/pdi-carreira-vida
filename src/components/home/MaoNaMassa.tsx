@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -10,7 +10,14 @@ import { Rocket, Plus, Trash2, Pencil, Check, X } from "lucide-react";
 import { toast } from "sonner";
 
 const MaoNaMassa = () => {
+  const [objetivoSelecionado, setObjetivoSelecionado] = useState("");
+  const [objetivosDisponiveis, setObjetivosDisponiveis] = useState<Array<{
+    id: number;
+    texto: string;
+  }>>([]);
+
   const [meta, setMeta] = useState({
+    objetivoId: "",
     texto: "",
     dataAlvo: "",
     medicao: "",
@@ -38,6 +45,11 @@ const MaoNaMassa = () => {
     periodicidade: string;
     status: string;
   } | null>(null);
+
+  useEffect(() => {
+    const objetivosSalvos = JSON.parse(localStorage.getItem("objetivos") || "[]");
+    setObjetivosDisponiveis(objetivosSalvos);
+  }, []);
 
   const handleAddAcao = () => {
     if (!novaAcao.acao) {
@@ -81,18 +93,25 @@ const MaoNaMassa = () => {
   };
 
   const handleSaveMeta = () => {
+    if (!objetivoSelecionado) {
+      toast.error("Selecione um objetivo primeiro");
+      return;
+    }
+    
     if (!meta.texto || !meta.dataAlvo) {
       toast.error("Preencha pelo menos a meta e a data alvo");
       return;
     }
 
     const metas = JSON.parse(localStorage.getItem("metas") || "[]");
-    metas.push({ ...meta, acoes, id: Date.now(), concluida: false });
+    metas.push({ ...meta, objetivoId: objetivoSelecionado, acoes, id: Date.now(), concluida: false });
     localStorage.setItem("metas", JSON.stringify(metas));
     toast.success("Meta cadastrada com sucesso!");
     
     // Reset form
+    setObjetivoSelecionado("");
     setMeta({
+      objetivoId: "",
       texto: "",
       dataAlvo: "",
       medicao: "",
@@ -118,12 +137,39 @@ const MaoNaMassa = () => {
 
           <div className="space-y-4">
             <div className="space-y-2">
+              <Label htmlFor="objetivo">Objetivo</Label>
+              <Select
+                value={objetivoSelecionado}
+                onValueChange={(value) => {
+                  setObjetivoSelecionado(value);
+                  setMeta({ ...meta, objetivoId: value });
+                }}
+              >
+                <SelectTrigger id="objetivo">
+                  <SelectValue placeholder="Selecione um objetivo" />
+                </SelectTrigger>
+                <SelectContent>
+                  {objetivosDisponiveis.length === 0 ? (
+                    <SelectItem value="none" disabled>Nenhum objetivo cadastrado</SelectItem>
+                  ) : (
+                    objetivosDisponiveis.map((obj) => (
+                      <SelectItem key={obj.id} value={obj.id.toString()}>
+                        {obj.texto}
+                      </SelectItem>
+                    ))
+                  )}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="space-y-2">
               <Label htmlFor="meta">Meta</Label>
               <Input
                 id="meta"
                 placeholder="Ex: Conquistar promoção para cargo de liderança"
                 value={meta.texto}
                 onChange={(e) => setMeta({ ...meta, texto: e.target.value })}
+                disabled={!objetivoSelecionado}
               />
             </div>
 
@@ -135,6 +181,7 @@ const MaoNaMassa = () => {
                   type="date"
                   value={meta.dataAlvo}
                   onChange={(e) => setMeta({ ...meta, dataAlvo: e.target.value })}
+                  disabled={!objetivoSelecionado}
                 />
               </div>
 
@@ -145,6 +192,7 @@ const MaoNaMassa = () => {
                   type="date"
                   value={meta.inicio}
                   onChange={(e) => setMeta({ ...meta, inicio: e.target.value })}
+                  disabled={!objetivoSelecionado}
                 />
               </div>
             </div>
@@ -156,6 +204,7 @@ const MaoNaMassa = () => {
                 placeholder="Ex: Receber feedback positivo do gestor, assumir projeto importante"
                 value={meta.medicao}
                 onChange={(e) => setMeta({ ...meta, medicao: e.target.value })}
+                disabled={!objetivoSelecionado}
               />
             </div>
 
@@ -164,6 +213,7 @@ const MaoNaMassa = () => {
               <Select
                 value={meta.periodicidade}
                 onValueChange={(value) => setMeta({ ...meta, periodicidade: value })}
+                disabled={!objetivoSelecionado}
               >
                 <SelectTrigger id="periodicidade">
                   <SelectValue placeholder="Selecione a frequência" />
@@ -187,6 +237,7 @@ const MaoNaMassa = () => {
                   variant="outline" 
                   size="sm"
                   onClick={handleAddAcao}
+                  disabled={!objetivoSelecionado}
                 >
                   <Plus className="w-4 h-4 mr-2" />
                   Adicionar Ação
@@ -202,6 +253,7 @@ const MaoNaMassa = () => {
                     value={novaAcao.acao}
                     onChange={(e) => setNovaAcao({ ...novaAcao, acao: e.target.value })}
                     className="text-sm"
+                    disabled={!objetivoSelecionado}
                   />
                 </div>
 
@@ -210,6 +262,7 @@ const MaoNaMassa = () => {
                   <Select
                     value={novaAcao.periodicidade}
                     onValueChange={(value) => setNovaAcao({ ...novaAcao, periodicidade: value })}
+                    disabled={!objetivoSelecionado}
                   >
                     <SelectTrigger id="nova-periodicidade" className="text-sm">
                       <SelectValue placeholder="Selecione" />
@@ -230,6 +283,7 @@ const MaoNaMassa = () => {
                   <Select
                     value={novaAcao.status}
                     onValueChange={(value) => setNovaAcao({ ...novaAcao, status: value })}
+                    disabled={!objetivoSelecionado}
                   >
                     <SelectTrigger id="novo-status" className="text-sm">
                       <SelectValue placeholder="Selecione" />
@@ -382,10 +436,11 @@ const MaoNaMassa = () => {
                 value={meta.passos}
                 onChange={(e) => setMeta({ ...meta, passos: e.target.value })}
                 rows={4}
+                disabled={!objetivoSelecionado}
               />
             </div>
 
-            <Button onClick={handleSaveMeta} className="w-full" size="lg">
+            <Button onClick={handleSaveMeta} className="w-full" size="lg" disabled={!objetivoSelecionado}>
               Cadastrar Meta
             </Button>
           </div>
