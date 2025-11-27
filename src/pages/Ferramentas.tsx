@@ -21,7 +21,7 @@ const Ferramentas = () => {
       nome: "Roda da Vida",
       descricao: "Avalie o equilíbrio entre as diferentes áreas da sua vida",
       icon: CircleDot,
-      link: "/ferramentas/roda-da-vida",
+      link: "/roda-da-vida",
       color: "text-primary"
     },
     {
