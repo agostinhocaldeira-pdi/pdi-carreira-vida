@@ -10,20 +10,20 @@ import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 
 const CATEGORIES = [
-  { value: "progresso", label: "Progresso" },
-  { value: "diario", label: "Diário" },
-  { value: "plano_de_vida", label: "Plano de Vida" },
-  { value: "mao_na_massa", label: "Mão na Massa" },
-  { value: "ferramentas", label: "Ferramentas (Geral)" },
-  { value: "roda_da_vida", label: "Roda da Vida" },
   { value: "analise_swot", label: "Análise SWOT" },
+  { value: "crencas", label: "Crenças" },
+  { value: "diario", label: "Diário" },
+  { value: "ferramentas", label: "Ferramentas (Geral)" },
+  { value: "mao_na_massa", label: "Mão na Massa" },
+  { value: "matriz_eisenhower", label: "Matriz de Eisenhower" },
   { value: "metodo_vvd", label: "Método VVD" },
+  { value: "genio_da_lampada", label: "O Pedido para o Gênio da Lâmpada" },
+  { value: "outros", label: "Outros" },
+  { value: "plano_de_vida", label: "Plano de Vida" },
+  { value: "progresso", label: "Progresso" },
+  { value: "roda_da_vida", label: "Roda da Vida" },
   { value: "smart", label: "SMART" },
   { value: "valores", label: "Valores" },
-  { value: "genio_da_lampada", label: "O Pedido para o Gênio da Lâmpada" },
-  { value: "matriz_eisenhower", label: "Matriz de Eisenhower" },
-  { value: "crencas", label: "Crenças" },
-  { value: "outros", label: "Outros" },
 ];
 
 interface SupportTicket {
