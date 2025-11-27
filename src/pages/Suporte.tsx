@@ -1,7 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { MessagesSquare, Send } from "lucide-react";
 import { useState, useEffect } from "react";
-import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -21,6 +20,7 @@ const CATEGORIES = [
 
 interface SupportTicket {
   id: string;
+  user_id: string;
   category: string;
   question: string;
   created_at: string;
@@ -50,51 +50,50 @@ const Suporte = () => {
     loadTickets();
   }, []);
 
-  const checkUserRole = async () => {
+  const checkUserRole = () => {
     const currentUser = localStorage.getItem("currentUser");
     if (!currentUser) return;
 
     const user = JSON.parse(currentUser);
     setUserId(user.email);
 
-    const { data } = await supabase
-      .from("user_roles")
-      .select("role")
-      .eq("user_id", user.email)
-      .single();
-
-    if (data?.role === "admin") {
+    // Mock: Check if user is admin (you can set this manually in localStorage for testing)
+    const userRoles = JSON.parse(localStorage.getItem("userRoles") || "{}");
+    if (userRoles[user.email] === "admin") {
       setIsAdmin(true);
     }
   };
 
-  const loadTickets = async () => {
-    const { data: ticketsData } = await supabase
-      .from("support_tickets")
-      .select("*")
-      .order("created_at", { ascending: false });
+  const loadTickets = () => {
+    const currentUser = localStorage.getItem("currentUser");
+    if (!currentUser) return;
 
-    if (ticketsData) {
-      setTickets(ticketsData);
-      
-      // Load messages for each ticket
-      const messagesMap: Record<string, SupportMessage[]> = {};
-      for (const ticket of ticketsData) {
-        const { data: messagesData } = await supabase
-          .from("support_messages")
-          .select("*")
-          .eq("ticket_id", ticket.id)
-          .order("created_at", { ascending: true });
-        
-        if (messagesData) {
-          messagesMap[ticket.id] = messagesData;
-        }
-      }
-      setMessages(messagesMap);
-    }
+    const user = JSON.parse(currentUser);
+    const allTickets = JSON.parse(localStorage.getItem("supportTickets") || "[]");
+    const allMessages = JSON.parse(localStorage.getItem("supportMessages") || "[]");
+
+    // Filter tickets for current user or show all if admin
+    const filteredTickets = isAdmin 
+      ? allTickets 
+      : allTickets.filter((t: SupportTicket) => t.user_id === user.email);
+
+    setTickets(filteredTickets.sort((a: SupportTicket, b: SupportTicket) => 
+      new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+    ));
+
+    // Load messages for each ticket
+    const messagesMap: Record<string, SupportMessage[]> = {};
+    filteredTickets.forEach((ticket: SupportTicket) => {
+      messagesMap[ticket.id] = allMessages
+        .filter((m: SupportMessage) => m.ticket_id === ticket.id)
+        .sort((a: SupportMessage, b: SupportMessage) => 
+          new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
+        );
+    });
+    setMessages(messagesMap);
   };
 
-  const handleSubmitQuestion = async () => {
+  const handleSubmitQuestion = () => {
     if (!category || !question.trim()) {
       toast({
         title: "Erro",
@@ -105,43 +104,48 @@ const Suporte = () => {
     }
 
     setIsLoading(true);
-    const { data: ticket, error } = await supabase
-      .from("support_tickets")
-      .insert([{
-        user_id: userId,
-        category: category as any,
-        question: question.trim(),
-      }])
-      .select()
-      .single();
 
-    if (error) {
-      toast({
-        title: "Erro",
-        description: "Não foi possível enviar sua dúvida",
-        variant: "destructive",
-      });
-    } else if (ticket) {
-      // Add initial message
-      await supabase.from("support_messages").insert([{
-        ticket_id: ticket.id,
-        user_id: userId,
-        message: question.trim(),
-        is_admin_response: false,
-      }]);
+    // Create new ticket
+    const ticketId = `ticket-${Date.now()}`;
+    const newTicket: SupportTicket = {
+      id: ticketId,
+      user_id: userId,
+      category: category,
+      question: question.trim(),
+      created_at: new Date().toISOString(),
+    };
 
-      toast({
-        title: "Sucesso",
-        description: "Sua dúvida foi enviada!",
-      });
-      setCategory("");
-      setQuestion("");
-      loadTickets();
-    }
+    // Create initial message
+    const newMessage: SupportMessage = {
+      id: `msg-${Date.now()}`,
+      ticket_id: ticketId,
+      message: question.trim(),
+      is_admin_response: false,
+      created_at: new Date().toISOString(),
+    };
+
+    // Save to localStorage
+    const allTickets = JSON.parse(localStorage.getItem("supportTickets") || "[]");
+    const allMessages = JSON.parse(localStorage.getItem("supportMessages") || "[]");
+    
+    allTickets.push(newTicket);
+    allMessages.push(newMessage);
+    
+    localStorage.setItem("supportTickets", JSON.stringify(allTickets));
+    localStorage.setItem("supportMessages", JSON.stringify(allMessages));
+
+    toast({
+      title: "Sucesso",
+      description: "Sua dúvida foi enviada!",
+    });
+    
+    setCategory("");
+    setQuestion("");
+    loadTickets();
     setIsLoading(false);
   };
 
-  const handleSubmitAdminResponse = async (ticketId: string) => {
+  const handleSubmitAdminResponse = (ticketId: string) => {
     if (!adminResponse.trim()) {
       toast({
         title: "Erro",
@@ -152,27 +156,28 @@ const Suporte = () => {
     }
 
     setIsLoading(true);
-    const { error } = await supabase.from("support_messages").insert([{
+
+    // Create admin response message
+    const newMessage: SupportMessage = {
+      id: `msg-${Date.now()}`,
       ticket_id: ticketId,
-      user_id: userId,
       message: adminResponse.trim(),
       is_admin_response: true,
-    }]);
+      created_at: new Date().toISOString(),
+    };
 
-    if (error) {
-      toast({
-        title: "Erro",
-        description: "Não foi possível enviar a resposta",
-        variant: "destructive",
-      });
-    } else {
-      toast({
-        title: "Sucesso",
-        description: "Resposta enviada!",
-      });
-      setAdminResponse("");
-      loadTickets();
-    }
+    // Save to localStorage
+    const allMessages = JSON.parse(localStorage.getItem("supportMessages") || "[]");
+    allMessages.push(newMessage);
+    localStorage.setItem("supportMessages", JSON.stringify(allMessages));
+
+    toast({
+      title: "Sucesso",
+      description: "Resposta enviada!",
+    });
+    
+    setAdminResponse("");
+    loadTickets();
     setIsLoading(false);
   };
 
