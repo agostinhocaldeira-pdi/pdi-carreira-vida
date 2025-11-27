@@ -12,6 +12,7 @@ import { Compass, Heart, Target, Lightbulb, ChevronDown, ArrowRight, Edit, Spark
 import { toast } from "sonner";
 import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 interface PlanoDeVidaProps {
   onTabChange?: (tab: string) => void;
@@ -169,45 +170,31 @@ const PlanoDeVida = ({ onTabChange, onOpenChange }: PlanoDeVidaProps) => {
   );
 
   const handleGenerateInsight = async () => {
-    console.log("🔍 handleGenerateInsight called");
-    console.log("isAdmin:", isAdmin);
-    console.log("canGenerateInsight:", canGenerateInsight);
-    console.log("vvd:", vvd ? "preenchido" : "vazio");
-    console.log("isValoresComplete:", isValoresComplete);
-    console.log("isAreasComplete:", isAreasComplete);
-    
     // Administradores não têm limite
     if (!isAdmin && !canGenerateInsight) {
-      console.log("❌ Limite mensal atingido");
       toast.error("Você já gerou seu insight mensal. Contrate o plano Premium para gerar mais insights!");
       return;
     }
 
     if (!vvd && !isValoresComplete && !isAreasComplete) {
-      console.log("❌ Nenhuma seção preenchida");
       toast.error("Preencha pelo menos uma seção para gerar insights");
       return;
     }
 
-    console.log("✅ Iniciando geração de insight...");
     setIsGeneratingInsight(true);
     
     try {
-      console.log("📡 Chamando edge function...");
       const { data, error } = await supabase.functions.invoke('generate-insight', {
         body: { vvd, valores, areasVida }
       });
 
-      console.log("📥 Resposta recebida:", { data, error });
-
       if (error) {
-        console.error("❌ Error generating insight:", error);
+        console.error("Error generating insight:", error);
         toast.error(error.message || "Erro ao gerar insight");
         return;
       }
 
       if (data?.insight) {
-        console.log("✅ Insight gerado com sucesso");
         setInsight(data.insight);
         
         // Salvar data da geração apenas para não-admins
@@ -221,7 +208,7 @@ const PlanoDeVida = ({ onTabChange, onOpenChange }: PlanoDeVidaProps) => {
         toast.success("Insight gerado com sucesso!");
       }
     } catch (error) {
-      console.error("❌ Error:", error);
+      console.error("Error:", error);
       toast.error("Erro ao gerar insight");
     } finally {
       setIsGeneratingInsight(false);
@@ -549,23 +536,48 @@ const PlanoDeVida = ({ onTabChange, onOpenChange }: PlanoDeVidaProps) => {
                     </Button>
                   </div>
                 ) : (
-                  <Button 
-                    onClick={handleGenerateInsight} 
-                    size="sm" 
-                    disabled={isGeneratingInsight || (!isAdmin && !canGenerateInsight) || (!vvd && !isValoresComplete && !isAreasComplete)}
-                  >
-                    {isGeneratingInsight ? (
-                      <>
-                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                        Gerando insight...
-                      </>
-                    ) : (
-                      <>
-                        <Sparkles className="w-4 h-4 mr-2" />
-                        Gerar Insight
-                      </>
-                    )}
-                  </Button>
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <div className="inline-block">
+                          <Button 
+                            onClick={handleGenerateInsight} 
+                            size="sm" 
+                            disabled={isGeneratingInsight || (!isAdmin && !canGenerateInsight) || (!vvd && !isValoresComplete && !isAreasComplete)}
+                            className="w-full"
+                          >
+                            {isGeneratingInsight ? (
+                              <>
+                                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                                Gerando insight...
+                              </>
+                            ) : (
+                              <>
+                                <Sparkles className="w-4 h-4 mr-2" />
+                                Gerar Insight
+                              </>
+                            )}
+                          </Button>
+                        </div>
+                      </TooltipTrigger>
+                      {(!vvd && !isValoresComplete && !isAreasComplete) && (
+                        <TooltipContent>
+                          <p className="text-sm">
+                            Preencha pelo menos uma seção acima<br />
+                            (VVD, Valores ou Áreas da Vida)
+                          </p>
+                        </TooltipContent>
+                      )}
+                      {!isAdmin && !canGenerateInsight && (vvd || isValoresComplete || isAreasComplete) && (
+                        <TooltipContent>
+                          <p className="text-sm">
+                            Limite mensal atingido.<br />
+                            Próxima geração disponível em {getNextInsightDate()}
+                          </p>
+                        </TooltipContent>
+                      )}
+                    </Tooltip>
+                  </TooltipProvider>
                 )}
               </div>
             </div>
