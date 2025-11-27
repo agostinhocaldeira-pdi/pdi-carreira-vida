@@ -266,55 +266,58 @@ const Suporte = () => {
                     <p className="font-medium">{ticket.question}</p>
                   </div>
 
-                  {/* Messages */}
-                  <div className="space-y-3 pl-4 border-l-2 border-border">
-                    {messages[ticket.id]?.map((msg) => (
-                      <div
-                        key={msg.id}
-                        className={`p-3 rounded-lg ${
-                          msg.is_admin_response
-                            ? "bg-primary/5 border border-primary/20"
-                            : "bg-muted"
-                        }`}
-                      >
-                        <div className="flex items-center gap-2 mb-1">
-                          <span className="text-xs font-semibold">
-                            {msg.is_admin_response ? "Administrador" : "Você"}
-                          </span>
-                          <span className="text-xs text-muted-foreground">
-                            {format(new Date(msg.created_at), "dd/MM/yyyy 'às' HH:mm", {
-                              locale: ptBR,
-                            })}
-                          </span>
-                        </div>
-                        <p className="text-sm">{msg.message}</p>
+                  {/* Messages - Histórico de Conversas */}
+                  {messages[ticket.id] && messages[ticket.id].length > 0 && (
+                    <div className="space-y-2">
+                      <Label>Histórico de Conversas</Label>
+                      <div className="space-y-3 pl-4 border-l-2 border-border">
+                        {messages[ticket.id].map((msg) => (
+                          <div
+                            key={msg.id}
+                            className={`p-3 rounded-lg ${
+                              msg.is_admin_response
+                                ? "bg-primary/5 border border-primary/20"
+                                : "bg-muted"
+                            }`}
+                          >
+                            <div className="flex items-center gap-2 mb-1">
+                              <span className="text-xs font-semibold">
+                                {msg.is_admin_response ? "Suporte" : "Você"}
+                              </span>
+                              <span className="text-xs text-muted-foreground">
+                                {format(new Date(msg.created_at), "dd/MM/yyyy 'às' HH:mm", {
+                                  locale: ptBR,
+                                })}
+                              </span>
+                            </div>
+                            <p className="text-sm">{msg.message}</p>
+                          </div>
+                        ))}
                       </div>
-                    ))}
-                  </div>
-
-                  {/* Admin Response Field */}
-                  {isAdmin && (
-                    <div className="space-y-2 pt-4 border-t">
-                      <Label htmlFor={`admin-response-${ticket.id}`}>
-                        Resposta do Administrador
-                      </Label>
-                      <Textarea
-                        id={`admin-response-${ticket.id}`}
-                        placeholder="Escreva sua resposta..."
-                        value={adminResponse}
-                        onChange={(e) => setAdminResponse(e.target.value)}
-                        className="min-h-[100px]"
-                      />
-                      <Button
-                        onClick={() => handleSubmitAdminResponse(ticket.id)}
-                        disabled={isLoading}
-                        size="sm"
-                      >
-                        <Send className="w-4 h-4 mr-2" />
-                        Enviar Resposta
-                      </Button>
                     </div>
                   )}
+
+                  {/* Admin Response Field - Always visible */}
+                  <div className="space-y-2 pt-4 border-t">
+                    <Label htmlFor={`admin-response-${ticket.id}`}>
+                      Resposta do Suporte
+                    </Label>
+                    <Textarea
+                      id={`admin-response-${ticket.id}`}
+                      placeholder="Escreva sua resposta..."
+                      value={adminResponse}
+                      onChange={(e) => setAdminResponse(e.target.value)}
+                      className="min-h-[100px]"
+                    />
+                    <Button
+                      onClick={() => handleSubmitAdminResponse(ticket.id)}
+                      disabled={isLoading || !adminResponse.trim()}
+                      className="w-full"
+                    >
+                      <Send className="w-4 h-4 mr-2" />
+                      Salvar
+                    </Button>
+                  </div>
                 </div>
               ))
             )}
