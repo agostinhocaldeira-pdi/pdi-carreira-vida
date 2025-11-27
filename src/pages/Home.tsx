@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { Link } from "react-router-dom";
-import { Target, TrendingUp, BookOpen, MessagesSquare, Book, Sparkles, LogIn, User, Zap, Star } from "lucide-react";
+import { Target, TrendingUp, BookOpen, MessagesSquare, Book, Sparkles, LogIn, User, Zap, Star, Shield, Lock } from "lucide-react";
 import ProgressSection from "@/components/home/ProgressSection";
 import DiarioSection from "@/components/home/DiarioSection";
 import PlanoDeVida from "@/components/home/PlanoDeVida";
@@ -15,6 +15,7 @@ const Home = () => {
   const [activeTab, setActiveTab] = useState("quem-sou");
   const [planoDeVidaOpen, setPlanoDeVidaOpen] = useState(false);
   const [motivationalQuote, setMotivationalQuote] = useState("");
+  const [isAdmin, setIsAdmin] = useState(false);
 
   const quotes = [
     "Acredite em si mesmo e todo o resto se encaixará. 💪",
@@ -31,6 +32,11 @@ const Home = () => {
     if (user) {
       const userData = JSON.parse(user);
       setUserName(userData.name);
+      
+      // Verifica se o usuário é admin (mockado)
+      if (userData.email === "agostinhocmcaldeira@gmail.com") {
+        setIsAdmin(true);
+      }
     }
 
     // Seleciona uma frase motivacional baseada no dia
@@ -177,6 +183,42 @@ const Home = () => {
             </CardContent>
           </Card>
         </section>
+
+        {/* Área Restrita - Apenas para Administradores */}
+        {isAdmin && (
+          <section className="animate-slide-up" style={{ animationDelay: "0.5s" }}>
+            <Card className="shadow-medium border-destructive/20 bg-gradient-to-br from-card to-destructive/5">
+              <CardHeader>
+                <div className="flex items-center gap-2">
+                  <Shield className="w-5 h-5 text-destructive" />
+                  <CardTitle className="text-xl">Área Restrita</CardTitle>
+                </div>
+                <CardDescription>Acesso exclusivo para administradores</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-4 bg-destructive/5 rounded-lg border border-destructive/20">
+                  <div className="flex items-start gap-3">
+                    <div className="w-10 h-10 bg-destructive/10 rounded-lg flex items-center justify-center flex-shrink-0">
+                      <Lock className="w-5 h-5 text-destructive" />
+                    </div>
+                    <div>
+                      <h3 className="font-semibold text-sm sm:text-base mb-1">Painel Administrativo</h3>
+                      <p className="text-xs sm:text-sm text-muted-foreground">
+                        Gerencie usuários, visualize estatísticas e configure o sistema
+                      </p>
+                    </div>
+                  </div>
+                  <Link to="/admin" className="w-full sm:w-auto">
+                    <Button variant="destructive" className="w-full sm:w-auto gap-2">
+                      <Shield className="w-4 h-4" />
+                      Acessar Painel
+                    </Button>
+                  </Link>
+                </div>
+              </CardContent>
+            </Card>
+          </section>
+        )}
       </main>
     </div>
   );
