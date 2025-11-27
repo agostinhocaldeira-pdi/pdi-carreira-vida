@@ -191,14 +191,14 @@ const Ferramentas = () => {
               Cada ferramenta foi projetada para revelar insights únicos sobre você e sua jornada. 
               Comece pela que mais ressoa com o momento atual da sua vida.
             </p>
-            <div className="flex gap-4 justify-center pt-4">
+            <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
               <Link to="/home">
-                <Button variant="outline">
+                <Button variant="outline" className="w-full sm:w-auto">
                   Voltar ao Dashboard
                 </Button>
               </Link>
               <Link to="/construcao-guiada">
-                <Button className="gap-2">
+                <Button className="w-full sm:w-auto gap-2">
                   <Compass className="w-4 h-4" />
                   Construção Guiada
                 </Button>

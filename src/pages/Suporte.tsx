@@ -1,5 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { MessagesSquare, Send } from "lucide-react";
+import { MessagesSquare, Send, Compass, Home } from "lucide-react";
+import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -320,6 +321,30 @@ const Suporte = () => {
                 </div>
               ))
             )}
+          </CardContent>
+        </Card>
+
+        {/* Call to Action */}
+        <Card className="max-w-4xl mx-auto bg-gradient-to-r from-primary/5 via-primary/10 to-accent/5 border-primary/20 shadow-medium">
+          <CardContent className="py-8 text-center space-y-3">
+            <h3 className="text-xl font-semibold">Pronto para continuar sua jornada?</h3>
+            <p className="text-muted-foreground max-w-2xl mx-auto">
+              Explore mais recursos e ferramentas ou volte ao seu dashboard principal.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
+              <Link to="/home">
+                <Button variant="outline" className="w-full sm:w-auto gap-2">
+                  <Home className="w-4 h-4" />
+                  Voltar ao Dashboard
+                </Button>
+              </Link>
+              <Link to="/construcao-guiada">
+                <Button className="w-full sm:w-auto gap-2">
+                  <Compass className="w-4 h-4" />
+                  Construção Guiada
+                </Button>
+              </Link>
+            </div>
           </CardContent>
         </Card>
       </main>
