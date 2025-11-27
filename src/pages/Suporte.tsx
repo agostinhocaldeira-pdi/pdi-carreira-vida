@@ -66,16 +66,28 @@ const Suporte = () => {
 
   const loadTickets = () => {
     const currentUser = localStorage.getItem("currentUser");
-    if (!currentUser) return;
+    if (!currentUser) {
+      console.log("No current user found");
+      return;
+    }
 
     const user = JSON.parse(currentUser);
     const allTickets = JSON.parse(localStorage.getItem("supportTickets") || "[]");
     const allMessages = JSON.parse(localStorage.getItem("supportMessages") || "[]");
 
+    console.log("All tickets:", allTickets);
+    console.log("Current user:", user.email);
+    console.log("Is admin:", isAdmin);
+
     // Filter tickets for current user or show all if admin
-    const filteredTickets = isAdmin 
+    const userRoles = JSON.parse(localStorage.getItem("userRoles") || "{}");
+    const isUserAdmin = userRoles[user.email] === "admin";
+    
+    const filteredTickets = isUserAdmin 
       ? allTickets 
       : allTickets.filter((t: SupportTicket) => t.user_id === user.email);
+
+    console.log("Filtered tickets:", filteredTickets);
 
     setTickets(filteredTickets.sort((a: SupportTicket, b: SupportTicket) => 
       new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
