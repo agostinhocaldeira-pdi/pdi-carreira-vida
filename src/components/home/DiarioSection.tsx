@@ -9,8 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Book, Smile, Frown, Meh, ChevronDown, CalendarIcon, AlertCircle } from "lucide-react";
+import { Book, Smile, Frown, Meh, ChevronDown, CalendarIcon } from "lucide-react";
 import { toast } from "sonner";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 import { format } from "date-fns";
@@ -29,7 +28,6 @@ const DiarioSection = () => {
   });
   const [selectedPeriod, setSelectedPeriod] = useState("30dias");
   const [entradas, setEntradas] = useState<any[]>([]);
-  const [showWarningModal, setShowWarningModal] = useState(false);
 
   // Verificar se a data selecionada é hoje
   const isToday = useMemo(() => {
@@ -57,37 +55,6 @@ const DiarioSection = () => {
     const stored = JSON.parse(localStorage.getItem("diario") || "[]");
     setEntradas(stored);
   }, []);
-
-  // Verificar inatividade no diário e mostrar modal de aviso
-  useEffect(() => {
-    if (isOpen) {
-      const stored = JSON.parse(localStorage.getItem("diario") || "[]");
-      
-      // Para teste: sempre mostrar o modal quando entrar no diário
-      // TODO: Remover depois de implementar dados reais
-      setShowWarningModal(true);
-      
-      // Lógica real (comentada para teste):
-      /*
-      if (stored.length > 0) {
-        const sortedEntries = stored.sort((a: any, b: any) => 
-          new Date(b.data).getTime() - new Date(a.data).getTime()
-        );
-        const lastEntry = sortedEntries[0];
-        const lastEntryDate = new Date(lastEntry.data);
-        const today = new Date();
-        const diffInDays = Math.floor((today.getTime() - lastEntryDate.getTime()) / (1000 * 60 * 60 * 24));
-        
-        if (diffInDays > 3) {
-          setShowWarningModal(true);
-        }
-      } else {
-        // Nenhuma entrada ainda
-        setShowWarningModal(true);
-      }
-      */
-    }
-  }, [isOpen]);
 
   // Carregar entrada da data selecionada
   useEffect(() => {
@@ -364,49 +331,8 @@ const DiarioSection = () => {
   };
 
   return (
-    <>
-      <Dialog open={showWarningModal} onOpenChange={setShowWarningModal}>
-        <DialogContent className="sm:max-w-[500px]">
-          <DialogHeader>
-            <div className="flex items-center gap-3 mb-2">
-              <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
-                <AlertCircle className="w-6 h-6 text-primary" />
-              </div>
-              <DialogTitle className="text-xl">Momento de Reflexão 📝</DialogTitle>
-            </div>
-            <DialogDescription className="text-base leading-relaxed pt-4 space-y-4">
-              <p>
-                <strong>Olá! Notamos que você não preenche seu diário há alguns dias.</strong>
-              </p>
-              <p>
-                O diário é uma ferramenta poderosa de autoconhecimento e desenvolvimento pessoal. 
-                Reservar alguns minutos por dia para refletir sobre suas experiências, conquistas 
-                e aprendizados ajuda você a:
-              </p>
-              <ul className="list-disc list-inside space-y-2 text-sm ml-4">
-                <li>Manter clareza sobre seus objetivos e progresso</li>
-                <li>Identificar padrões de comportamento e emoções</li>
-                <li>Cultivar gratidão e pensamento positivo</li>
-                <li>Fortalecer o compromisso com seu PDI</li>
-              </ul>
-              <p className="font-semibold text-primary">
-                Que tal dedicar alguns minutos agora para registrar seu dia?
-              </p>
-            </DialogDescription>
-          </DialogHeader>
-          <div className="flex gap-2 justify-end mt-4">
-            <Button variant="outline" onClick={() => setShowWarningModal(false)}>
-              Mais tarde
-            </Button>
-            <Button onClick={() => setShowWarningModal(false)}>
-              Vou registrar agora
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
-
-      <Collapsible open={isOpen} onOpenChange={setIsOpen}>
-        <Card className="shadow-medium">
+    <Collapsible open={isOpen} onOpenChange={setIsOpen}>
+      <Card className="shadow-medium">
         <CardHeader>
           <div className="flex items-center justify-between">
             <div className="space-y-1">
@@ -692,7 +618,6 @@ const DiarioSection = () => {
         </CollapsibleContent>
       </Card>
     </Collapsible>
-    </>
   );
 };
 
