@@ -141,15 +141,32 @@ const MetodoVvd = () => {
             </p>
           </div>
           <div className="flex gap-2">
-            <div className={`w-8 h-8 rounded-full flex items-center justify-center ${step >= 1 ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'}`}>
+            <button
+              onClick={() => setStep(1)}
+              className={`w-8 h-8 rounded-full flex items-center justify-center transition-all hover:scale-110 ${
+                step >= 1 ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'
+              } ${step === 1 ? 'ring-2 ring-primary ring-offset-2' : ''} cursor-pointer`}
+            >
               1
-            </div>
-            <div className={`w-8 h-8 rounded-full flex items-center justify-center ${step >= 2 ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'}`}>
+            </button>
+            <button
+              onClick={() => paragraphText && setStep(2)}
+              disabled={!paragraphText}
+              className={`w-8 h-8 rounded-full flex items-center justify-center transition-all hover:scale-110 disabled:cursor-not-allowed disabled:opacity-50 ${
+                step >= 2 ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'
+              } ${step === 2 ? 'ring-2 ring-primary ring-offset-2' : ''} ${paragraphText ? 'cursor-pointer' : ''}`}
+            >
               2
-            </div>
-            <div className={`w-8 h-8 rounded-full flex items-center justify-center ${step >= 3 ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'}`}>
+            </button>
+            <button
+              onClick={() => sentenceText && setStep(3)}
+              disabled={!sentenceText}
+              className={`w-8 h-8 rounded-full flex items-center justify-center transition-all hover:scale-110 disabled:cursor-not-allowed disabled:opacity-50 ${
+                step >= 3 ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'
+              } ${step === 3 ? 'ring-2 ring-primary ring-offset-2' : ''} ${sentenceText ? 'cursor-pointer' : ''}`}
+            >
               3
-            </div>
+            </button>
           </div>
         </div>
 
