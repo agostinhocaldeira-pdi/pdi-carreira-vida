@@ -66,6 +66,30 @@ const PlanoDeVida = ({ onTabChange, onOpenChange }: PlanoDeVidaProps) => {
   const [editandoHabilidadeId, setEditandoHabilidadeId] = useState<number | null>(null);
   const [habilidadeEditada, setHabilidadeEditada] = useState("");
 
+  // Sincronizar insight entre seções
+  useEffect(() => {
+    const syncInsight = () => {
+      const savedInsight = localStorage.getItem("userInsight");
+      if (savedInsight) {
+        setInsight(savedInsight);
+      }
+    };
+
+    // Carregar insight inicial
+    syncInsight();
+
+    // Escutar mudanças no localStorage
+    window.addEventListener("storage", syncInsight);
+    
+    // Evento customizado para sincronizar na mesma aba
+    window.addEventListener("insightUpdated", syncInsight);
+
+    return () => {
+      window.removeEventListener("storage", syncInsight);
+      window.removeEventListener("insightUpdated", syncInsight);
+    };
+  }, []);
+
   // Carregar dados salvos do localStorage
   useEffect(() => {
     const savedVvd = localStorage.getItem("vvd");
@@ -285,6 +309,10 @@ const PlanoDeVida = ({ onTabChange, onOpenChange }: PlanoDeVidaProps) => {
 
       if (data?.insight) {
         setInsight(data.insight);
+        localStorage.setItem("userInsight", data.insight);
+        
+        // Disparar evento para sincronizar na mesma aba
+        window.dispatchEvent(new Event("insightUpdated"));
         
         // Salvar data da geração apenas para não-admins
         if (!isAdmin) {
