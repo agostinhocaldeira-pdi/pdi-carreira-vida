@@ -54,6 +54,9 @@ const MatrizEisenhower = () => {
   const [tarefaParaMover, setTarefaParaMover] = useState<Tarefa | null>(null);
 
   useEffect(() => {
+    // Scroll para o topo ao montar o componente
+    window.scrollTo(0, 0);
+    
     const savedTarefas = localStorage.getItem("eisenhower_tarefas");
     if (savedTarefas) {
       const tarefasParsed = JSON.parse(savedTarefas);
