@@ -44,13 +44,15 @@ const Valores = () => {
   const [valoresSelecionados10, setValoresSelecionados10] = useState<string[]>([]);
   const [valoresSelecionados6, setValoresSelecionados6] = useState<string[]>([]);
   const [showSuccessDialog, setShowSuccessDialog] = useState(false);
+  const [exercicioConcluido, setExercicioConcluido] = useState(false);
 
   useEffect(() => {
-    // Carregar valores salvos se existirem
+    // Verificar se o exercício já foi concluído
     const savedValores = localStorage.getItem("meus_valores");
     if (savedValores) {
       const valores = JSON.parse(savedValores);
       if (valores.length === 6) {
+        setExercicioConcluido(true);
         setValoresSelecionados6(valores);
       }
     }
@@ -155,6 +157,92 @@ const Valores = () => {
   };
 
   const progresso = (getValoresSelecionados().length / getQuantidadeObjetivo()) * 100;
+
+  // Se o exercício já foi concluído, mostrar mensagem de bloqueio
+  if (exercicioConcluido) {
+    return (
+      <div className="min-h-screen bg-gradient-subtle">
+        <header className="bg-card border-b shadow-soft sticky top-0 z-10">
+          <div className="container mx-auto px-4 py-4">
+            <div className="flex items-center justify-between gap-2">
+              <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+                <Heart className="w-5 h-5 sm:w-6 sm:h-6 text-primary flex-shrink-0" />
+                <h1 className="text-lg sm:text-2xl font-bold truncate">Descobrindo Seus Valores</h1>
+              </div>
+              <Link to="/ferramentas" className="flex-shrink-0">
+                <Button variant="ghost" size="sm" className="gap-2">
+                  <ArrowLeft className="w-4 h-4" />
+                  <span className="hidden sm:inline">Voltar</span>
+                </Button>
+              </Link>
+            </div>
+          </div>
+        </header>
+
+        <main className="container mx-auto px-4 py-8 max-w-4xl">
+          <Card className="shadow-large border-primary/20">
+            <CardContent className="pt-8 pb-8 space-y-6">
+              <div className="flex items-center justify-center mb-6">
+                <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center">
+                  <CheckCircle2 className="w-12 h-12 text-primary" />
+                </div>
+              </div>
+
+              <div className="text-center space-y-4">
+                <h2 className="text-2xl font-bold">Exercício Já Concluído!</h2>
+                <p className="text-muted-foreground max-w-2xl mx-auto leading-relaxed">
+                  Você já realizou o exercício de descoberta de valores e identificou seus 6 valores fundamentais. 
+                  Este exercício só pode ser realizado uma vez para garantir autenticidade na sua jornada de autoconhecimento.
+                </p>
+              </div>
+
+              <div className="bg-muted/30 rounded-lg p-6 space-y-3">
+                <h3 className="font-semibold flex items-center gap-2">
+                  <Heart className="w-5 h-5 text-primary" />
+                  Seus Valores Fundamentais:
+                </h3>
+                <div className="flex flex-wrap gap-2 justify-center">
+                  {valoresSelecionados6.map((valor) => (
+                    <Badge key={valor} variant="secondary" className="text-base px-4 py-2">
+                      {valor}
+                    </Badge>
+                  ))}
+                </div>
+              </div>
+
+              <div className="bg-accent/10 border border-accent/20 rounded-lg p-6 space-y-2">
+                <p className="text-sm font-medium">💡 Deseja fazer alterações?</p>
+                <p className="text-sm text-muted-foreground">
+                  Para editar seus valores, acesse a seção <strong>"Meus Valores"</strong> dentro do <strong>Plano de Vida</strong> na página inicial.
+                </p>
+              </div>
+
+              <div className="bg-primary/5 border border-primary/10 rounded-lg p-6 space-y-2">
+                <p className="text-sm font-medium flex items-center gap-2">
+                  <Sparkles className="w-4 h-4 text-primary" />
+                  Funcionalidade Premium (Em breve)
+                </p>
+                <p className="text-sm text-muted-foreground">
+                  Em breve, usuários com plano Premium poderão refazer este exercício quantas vezes desejarem, 
+                  permitindo uma revisão periódica dos seus valores conforme sua evolução pessoal.
+                </p>
+              </div>
+
+              <div className="flex flex-col sm:flex-row gap-3 justify-center pt-4">
+                <Button variant="outline" onClick={() => navigate("/ferramentas")} className="w-full sm:w-auto">
+                  Voltar às Ferramentas
+                </Button>
+                <Button onClick={() => navigate("/home")} className="w-full sm:w-auto gap-2">
+                  <Heart className="w-4 h-4" />
+                  Ir para o Plano de Vida
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </main>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-subtle">
