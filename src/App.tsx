@@ -18,6 +18,7 @@ import RodaDaVida from "./pages/RodaDaVida";
 import Valores from "./pages/Valores";
 import MatrizEisenhower from "./pages/MatrizEisenhower";
 import Crencas from "./pages/Crencas";
+import AnaliseSwot from "./pages/AnaliseSwot";
 
 const queryClient = new QueryClient();
 
@@ -39,9 +40,10 @@ const App = () => (
             <Route path="/suporte" element={<Suporte />} />
             <Route path="/admin" element={<Admin />} />
             <Route path="/roda-da-vida" element={<RodaDaVida />} />
-            <Route path="/ferramentas/valores" element={<Valores />} />
+          <Route path="/ferramentas/valores" element={<Valores />} />
           <Route path="/ferramentas/eisenhower" element={<MatrizEisenhower />} />
           <Route path="/ferramentas/crencas" element={<Crencas />} />
+          <Route path="/ferramentas/swot" element={<AnaliseSwot />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
