@@ -204,7 +204,19 @@ const MetodoVvd = () => {
               </div>
             </CardHeader>
             <CardContent className="space-y-6">
-              <div className="relative">
+              <div className="space-y-3">
+                {!isEditingParagraph && (
+                  <div className="flex justify-end">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setIsEditingParagraph(true)}
+                    >
+                      <Edit className="h-4 w-4 mr-2" />
+                      Editar
+                    </Button>
+                  </div>
+                )}
                 <Textarea
                   value={paragraphText}
                   onChange={(e) => setParagraphText(e.target.value)}
@@ -214,17 +226,6 @@ const MetodoVvd = () => {
                   }`}
                   spellCheck
                 />
-                {!isEditingParagraph && (
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => setIsEditingParagraph(true)}
-                    className="absolute top-2 right-2"
-                  >
-                    <Edit className="h-4 w-4 mr-2" />
-                    Editar
-                  </Button>
-                )}
               </div>
 
               <div className="flex justify-between">
@@ -276,41 +277,44 @@ const MetodoVvd = () => {
               </div>
             </CardHeader>
             <CardContent className="space-y-6">
-              <div className="relative bg-gradient-to-br from-primary/10 via-accent/5 to-primary/10 rounded-xl p-8 border-2 border-primary/30">
-                {!isEditingSentence ? (
-                  <>
-                    <p className="text-2xl font-bold text-center leading-relaxed">
-                      "{sentenceText}"
-                    </p>
+              <div className="space-y-4">
+                {!isEditingSentence && (
+                  <div className="flex justify-end">
                     <Button
-                      variant="ghost"
+                      variant="outline"
                       size="sm"
                       onClick={() => setIsEditingSentence(true)}
-                      className="absolute top-2 right-2"
                     >
                       <Edit className="h-4 w-4 mr-2" />
                       Editar
                     </Button>
-                  </>
-                ) : (
-                  <div className="space-y-4">
-                    <Textarea
-                      value={sentenceText}
-                      onChange={(e) => setSentenceText(e.target.value)}
-                      className="text-xl font-medium text-center min-h-[120px]"
-                      spellCheck
-                    />
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => setIsEditingSentence(false)}
-                      className="w-full"
-                    >
-                      <Check className="h-4 w-4 mr-2" />
-                      Confirmar Edição
-                    </Button>
                   </div>
                 )}
+                <div className="bg-gradient-to-br from-primary/10 via-accent/5 to-primary/10 rounded-xl p-8 border-2 border-primary/30">
+                  {!isEditingSentence ? (
+                    <p className="text-2xl font-bold text-center leading-relaxed">
+                      "{sentenceText}"
+                    </p>
+                  ) : (
+                    <div className="space-y-4">
+                      <Textarea
+                        value={sentenceText}
+                        onChange={(e) => setSentenceText(e.target.value)}
+                        className="text-xl font-medium text-center min-h-[120px]"
+                        spellCheck
+                      />
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setIsEditingSentence(false)}
+                        className="w-full"
+                      >
+                        <Check className="h-4 w-4 mr-2" />
+                        Confirmar Edição
+                      </Button>
+                    </div>
+                  )}
+                </div>
               </div>
 
               <div className="bg-accent/10 border border-accent/20 rounded-lg p-4">
