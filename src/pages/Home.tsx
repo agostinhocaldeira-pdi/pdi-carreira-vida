@@ -11,6 +11,7 @@ import ProgressSection from "@/components/home/ProgressSection";
 import DiarioSection from "@/components/home/DiarioSection";
 import PlanoDeVida from "@/components/home/PlanoDeVida";
 import MaoNaMassa from "@/components/home/MaoNaMassa";
+import LanguageSelector from "@/components/LanguageSelector";
 
 const Home = () => {
   const [userName, setUserName] = useState("");
@@ -164,6 +165,7 @@ const Home = () => {
             </div>
             
             <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0">
+              <LanguageSelector />
               {!userName ? (
                 <Button variant="ghost" size="sm" className="gap-1 sm:gap-2 px-2 sm:px-3">
                   <LogIn className="w-4 h-4" />
