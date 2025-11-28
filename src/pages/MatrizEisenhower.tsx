@@ -347,12 +347,18 @@ const MatrizEisenhower = () => {
           {renderQuadrante("eliminar")}
         </div>
 
-        {/* Botão Voltar */}
+        {/* Botões de Navegação */}
         <Card className="shadow-medium">
           <CardContent className="pt-6">
-            <div className="flex justify-center">
+            <div className="flex flex-col sm:flex-row justify-center gap-3">
+              <Link to="/home">
+                <Button variant="outline" className="gap-2 w-full sm:w-auto">
+                  <ArrowLeft className="w-4 h-4" />
+                  Voltar ao Dashboard
+                </Button>
+              </Link>
               <Link to="/ferramentas">
-                <Button variant="outline" className="gap-2">
+                <Button variant="outline" className="gap-2 w-full sm:w-auto">
                   <ArrowLeft className="w-4 h-4" />
                   Voltar às Ferramentas
                 </Button>
