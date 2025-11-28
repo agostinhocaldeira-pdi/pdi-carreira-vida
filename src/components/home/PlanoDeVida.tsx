@@ -110,6 +110,24 @@ const PlanoDeVida = ({ onTabChange, onOpenChange }: PlanoDeVidaProps) => {
     };
   }, []);
 
+  // Sincronizar VVD com a ferramenta Método VVD
+  useEffect(() => {
+    const syncVvd = () => {
+      const savedVvd = localStorage.getItem("vvd");
+      if (savedVvd) {
+        setVvd(savedVvd);
+        setIsEditingVvd(false);
+      }
+    };
+
+    syncVvd();
+    window.addEventListener("vvdUpdated", syncVvd);
+
+    return () => {
+      window.removeEventListener("vvdUpdated", syncVvd);
+    };
+  }, []);
+
   // Sincronizar habilidades com a ferramenta SWOT
   useEffect(() => {
     const syncHabilidades = () => {
