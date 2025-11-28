@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -11,6 +11,7 @@ import { Rocket, Plus, Trash2, Pencil, Check, X, ChevronDown } from "lucide-reac
 import { toast } from "sonner";
 
 const MaoNaMassa = () => {
+  const formRef = useRef<HTMLDivElement>(null);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [objetivoSelecionado, setObjetivoSelecionado] = useState("");
   const [objetivosDisponiveis, setObjetivosDisponiveis] = useState<Array<{
@@ -290,9 +291,11 @@ const MaoNaMassa = () => {
     setAcoes(metaParaEditar.acoes || []);
     setPassos(metaParaEditar.passos || []);
     
-    // Expandir formulário e scroll para o topo
+    // Expandir formulário e manter no formulário
     setIsFormOpen(true);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    setTimeout(() => {
+      formRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 100);
     toast.info("Meta carregada para edição");
   };
 
@@ -486,7 +489,8 @@ const MaoNaMassa = () => {
           )}
 
           {/* Botão Cadastrar Nova Meta */}
-          <Collapsible open={isFormOpen} onOpenChange={setIsFormOpen}>
+          <div ref={formRef}>
+            <Collapsible open={isFormOpen} onOpenChange={setIsFormOpen}>
             <div className="flex justify-center">
               <CollapsibleTrigger asChild>
                 <Button 
@@ -910,6 +914,7 @@ const MaoNaMassa = () => {
               </div>
             </CollapsibleContent>
           </Collapsible>
+          </div>
         </div>
       </CardContent>
     </Card>
