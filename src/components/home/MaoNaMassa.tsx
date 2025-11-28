@@ -249,6 +249,7 @@ const MaoNaMassa = () => {
       setMetasCadastradas(metasAtualizadas);
       toast.success("Meta atualizada com sucesso!");
       setEditandoMetaId(null);
+      setIsFormOpen(false);
     } else {
       // Adicionar nova meta
       const novaMeta = { ...meta, objetivoId: objetivoSelecionado, acoes, passos, id: Date.now(), concluida: false };
@@ -256,6 +257,7 @@ const MaoNaMassa = () => {
       localStorage.setItem("metas", JSON.stringify(metas));
       setMetasCadastradas(metas);
       toast.success("Meta cadastrada com sucesso!");
+      setIsFormOpen(false);
     }
     
     // Reset form
