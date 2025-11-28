@@ -33,9 +33,9 @@ const Ferramentas = () => {
     },
     {
       nome: "Método VVD",
-      descricao: "Defina sua Visão, Valores e Direção de vida",
+      descricao: "Defina sua Visão de Vida Desejada",
       icon: Compass,
-      link: "/ferramentas/vvd",
+      link: "/ferramentas/metodo-vvd",
       color: "text-primary"
     },
     {

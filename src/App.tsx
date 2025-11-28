@@ -20,6 +20,7 @@ import MatrizEisenhower from "./pages/MatrizEisenhower";
 import Crencas from "./pages/Crencas";
 import AnaliseSwot from "./pages/AnaliseSwot";
 import MetodoSmart from "./pages/MetodoSmart";
+import MetodoVvd from "./pages/MetodoVvd";
 
 const queryClient = new QueryClient();
 
@@ -46,6 +47,7 @@ const App = () => (
           <Route path="/ferramentas/crencas" element={<Crencas />} />
           <Route path="/ferramentas/swot" element={<AnaliseSwot />} />
           <Route path="/ferramentas/smart" element={<MetodoSmart />} />
+          <Route path="/ferramentas/metodo-vvd" element={<MetodoVvd />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
