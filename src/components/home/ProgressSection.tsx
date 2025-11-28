@@ -3,7 +3,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { TrendingUp, Target, CheckCircle2, ChevronDown, Sparkles, Loader2 } from "lucide-react";
+import { TrendingUp, Target, CheckCircle2, ChevronDown, Sparkles, Loader2, AlertCircle } from "lucide-react";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
@@ -13,6 +14,15 @@ const ProgressSection = () => {
   const [isGenerating, setIsGenerating] = useState(false);
   const [canGenerateInsight, setCanGenerateInsight] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [pendingItems, setPendingItems] = useState<{
+    objectives: any[];
+    goals: any[];
+    actions: any[];
+  }>({
+    objectives: [],
+    goals: [],
+    actions: []
+  });
   
   // Mock data - will be dynamic later
   const progressData = {
@@ -41,6 +51,29 @@ const ProgressSection = () => {
         setCanGenerateInsight(diffInDays >= 30);
       }
     }
+
+    // Load pending items
+    const objetivos = JSON.parse(localStorage.getItem("objetivos") || "[]");
+    const metas = JSON.parse(localStorage.getItem("metas") || "[]");
+    
+    const pendingObjetivos = objetivos.filter((obj: any) => obj.status === "pendente");
+    const pendingMetas = metas.filter((meta: any) => meta.status === "pendente");
+    
+    let pendingActions: any[] = [];
+    metas.forEach((meta: any) => {
+      if (meta.acoes && Array.isArray(meta.acoes)) {
+        const metaPendingActions = meta.acoes
+          .filter((acao: any) => acao.status === "pendente")
+          .map((acao: any) => ({ ...acao, metaTitulo: meta.meta }));
+        pendingActions = [...pendingActions, ...metaPendingActions];
+      }
+    });
+
+    setPendingItems({
+      objectives: pendingObjetivos,
+      goals: pendingMetas,
+      actions: pendingActions
+    });
   }, []);
 
   const handleGenerateInsight = async () => {
@@ -116,6 +149,54 @@ Analise as correlações entre estes elementos e forneça um insight sobre a ess
         </CardHeader>
         <CollapsibleContent>
           <CardContent>
+            {/* Pending Items Alert */}
+            {(pendingItems.objectives.length > 0 || pendingItems.goals.length > 0 || pendingItems.actions.length > 0) && (
+              <Alert variant="destructive" className="mb-6">
+                <AlertCircle className="h-4 w-4" />
+                <AlertTitle>Itens Pendentes - Prazos Expirados</AlertTitle>
+                <AlertDescription>
+                  <div className="mt-3 space-y-3">
+                    {pendingItems.objectives.length > 0 && (
+                      <div>
+                        <p className="font-semibold text-sm mb-2">Objetivos ({pendingItems.objectives.length}):</p>
+                        <ul className="list-disc list-inside space-y-1 text-sm">
+                          {pendingItems.objectives.map((obj: any, idx: number) => (
+                            <li key={idx}>
+                              {obj.objetivo} - Prazo: {new Date(obj.dataAlvo).toLocaleDateString('pt-BR')}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+                    {pendingItems.goals.length > 0 && (
+                      <div>
+                        <p className="font-semibold text-sm mb-2">Metas ({pendingItems.goals.length}):</p>
+                        <ul className="list-disc list-inside space-y-1 text-sm">
+                          {pendingItems.goals.map((meta: any, idx: number) => (
+                            <li key={idx}>
+                              {meta.meta} - Prazo: {new Date(meta.dataAlvo).toLocaleDateString('pt-BR')}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+                    {pendingItems.actions.length > 0 && (
+                      <div>
+                        <p className="font-semibold text-sm mb-2">Ações ({pendingItems.actions.length}):</p>
+                        <ul className="list-disc list-inside space-y-1 text-sm">
+                          {pendingItems.actions.map((acao: any, idx: number) => (
+                            <li key={idx}>
+                              {acao.acao} (Meta: {acao.metaTitulo}) - Periodicidade: {acao.periodicidade}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+                  </div>
+                </AlertDescription>
+              </Alert>
+            )}
+
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {/* Objetivos */}
               <div className="space-y-3">
