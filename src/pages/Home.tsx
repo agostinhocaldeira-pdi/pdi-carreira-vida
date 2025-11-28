@@ -54,9 +54,8 @@ const Home = () => {
     setMotivationalQuote(quotes[today % quotes.length]);
 
     // Verificar inatividade no diário e mostrar modal de aviso
-    // Para teste: sempre mostrar o modal ao acessar a home
-    // TODO: Remover depois de implementar dados reais e descomentar a lógica abaixo
-    setShowDiaryWarningModal(true);
+    // TODO: Ativar quando as tabelas do Supabase estiverem criadas com dados reais
+    // setShowDiaryWarningModal(true);
     
     // Lógica real (comentada para teste):
     /*
