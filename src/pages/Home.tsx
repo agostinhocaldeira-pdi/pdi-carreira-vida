@@ -237,8 +237,15 @@ const Home = () => {
                     <CardDescription>Acesse ferramentas e suporte para sua jornada</CardDescription>
                   </div>
                   <CollapsibleTrigger asChild>
-                    <Button variant="ghost" size="sm" className="flex-shrink-0">
-                      <ChevronDown className={`w-4 h-4 transition-transform ${recursosOpen ? "rotate-180" : ""}`} />
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      className="flex-shrink-0 gap-2 hover:bg-primary/10 hover:border-primary transition-all shadow-sm"
+                    >
+                      <span className="text-xs font-medium">
+                        {recursosOpen ? "Minimizar" : "Expandir"}
+                      </span>
+                      <ChevronDown className={`w-4 h-4 transition-transform duration-300 ${recursosOpen ? "rotate-180" : ""}`} />
                     </Button>
                   </CollapsibleTrigger>
                 </div>
