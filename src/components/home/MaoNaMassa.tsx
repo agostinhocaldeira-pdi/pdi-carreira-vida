@@ -46,6 +46,15 @@ const MaoNaMassa = () => {
     status: string;
   } | null>(null);
 
+  const [passos, setPassos] = useState<Array<{
+    id: number;
+    passo: string;
+  }>>([]);
+
+  const [novoPasso, setNovoPasso] = useState("");
+  const [editandoPassoId, setEditandoPassoId] = useState<number | null>(null);
+  const [passoEditado, setPassoEditado] = useState("");
+
   useEffect(() => {
     const objetivosSalvos = JSON.parse(localStorage.getItem("objetivos") || "[]");
     setObjetivosDisponiveis(objetivosSalvos);
@@ -92,6 +101,43 @@ const MaoNaMassa = () => {
     toast.success("Ação atualizada!");
   };
 
+  const handleAddPasso = () => {
+    if (!novoPasso.trim()) {
+      toast.error("Preencha o passo");
+      return;
+    }
+
+    setPassos([...passos, { id: Date.now(), passo: novoPasso }]);
+    setNovoPasso("");
+    toast.success("Passo adicionado!");
+  };
+
+  const handleRemovePasso = (id: number) => {
+    setPassos(passos.filter((passo) => passo.id !== id));
+    toast.success("Passo removido!");
+  };
+
+  const handleStartEditPasso = (passo: any) => {
+    setEditandoPassoId(passo.id);
+    setPassoEditado(passo.passo);
+  };
+
+  const handleCancelEditPasso = () => {
+    setEditandoPassoId(null);
+    setPassoEditado("");
+  };
+
+  const handleSaveEditPasso = (id: number) => {
+    if (!passoEditado.trim()) return;
+
+    setPassos(passos.map((passo) => 
+      passo.id === id ? { ...passo, passo: passoEditado } : passo
+    ));
+    setEditandoPassoId(null);
+    setPassoEditado("");
+    toast.success("Passo atualizado!");
+  };
+
   const handleSaveMeta = () => {
     if (!objetivoSelecionado) {
       toast.error("Selecione um objetivo primeiro");
@@ -104,7 +150,7 @@ const MaoNaMassa = () => {
     }
 
     const metas = JSON.parse(localStorage.getItem("metas") || "[]");
-    metas.push({ ...meta, objetivoId: objetivoSelecionado, acoes, id: Date.now(), concluida: false });
+    metas.push({ ...meta, objetivoId: objetivoSelecionado, acoes, passos, id: Date.now(), concluida: false });
     localStorage.setItem("metas", JSON.stringify(metas));
     toast.success("Meta cadastrada com sucesso!");
     
@@ -120,6 +166,7 @@ const MaoNaMassa = () => {
       passos: "",
     });
     setAcoes([]);
+    setPassos([]);
   };
 
   return (
@@ -230,19 +277,7 @@ const MaoNaMassa = () => {
             </div>
 
             <div className="space-y-3">
-              <div className="flex items-center justify-between">
-                <Label>Ações</Label>
-                <Button 
-                  type="button" 
-                  variant="outline" 
-                  size="sm"
-                  onClick={handleAddAcao}
-                  disabled={!objetivoSelecionado}
-                >
-                  <Plus className="w-4 h-4 mr-2" />
-                  Adicionar Ação
-                </Button>
-              </div>
+              <Label>Ações</Label>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 p-3 sm:p-4 bg-muted/30 rounded-lg">
                 <div className="space-y-2">
@@ -426,18 +461,120 @@ const MaoNaMassa = () => {
                   </Table>
                 </div>
               )}
+
+              <Button 
+                type="button" 
+                variant="outline" 
+                size="sm"
+                onClick={handleAddAcao}
+                disabled={!objetivoSelecionado}
+                className="mt-2"
+              >
+                <Plus className="w-4 h-4 mr-2" />
+                Adicionar Ação
+              </Button>
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="passos">Meus Passos</Label>
-              <Textarea
-                id="passos"
-                placeholder="Descreva o passo a passo detalhado"
-                value={meta.passos}
-                onChange={(e) => setMeta({ ...meta, passos: e.target.value })}
-                rows={4}
+            <div className="space-y-3">
+              <Label>Passos</Label>
+
+              <div className="flex gap-2 p-3 sm:p-4 bg-muted/30 rounded-lg">
+                <Input
+                  placeholder="Descreva o passo"
+                  value={novoPasso}
+                  onChange={(e) => setNovoPasso(e.target.value)}
+                  disabled={!objetivoSelecionado}
+                  onKeyPress={(e) => {
+                    if (e.key === 'Enter') {
+                      handleAddPasso();
+                    }
+                  }}
+                />
+              </div>
+
+              {passos.length > 0 && (
+                <div className="rounded-lg border overflow-x-auto">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead className="text-xs sm:text-sm">Passo</TableHead>
+                        <TableHead className="w-[80px] sm:w-[100px] text-xs sm:text-sm">Ações</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {passos.map((passo) => {
+                        const isEditing = editandoPassoId === passo.id;
+                        
+                        return (
+                          <TableRow key={passo.id}>
+                            <TableCell>
+                              {isEditing ? (
+                                <Input
+                                  value={passoEditado}
+                                  onChange={(e) => setPassoEditado(e.target.value)}
+                                />
+                              ) : (
+                                passo.passo
+                              )}
+                            </TableCell>
+                            <TableCell>
+                              <div className="flex gap-1">
+                                {isEditing ? (
+                                  <>
+                                    <Button
+                                      variant="ghost"
+                                      size="sm"
+                                      onClick={() => handleSaveEditPasso(passo.id)}
+                                    >
+                                      <Check className="w-4 h-4 text-green-600" />
+                                    </Button>
+                                    <Button
+                                      variant="ghost"
+                                      size="sm"
+                                      onClick={handleCancelEditPasso}
+                                    >
+                                      <X className="w-4 h-4 text-destructive" />
+                                    </Button>
+                                  </>
+                                ) : (
+                                  <>
+                                    <Button
+                                      variant="ghost"
+                                      size="sm"
+                                      onClick={() => handleStartEditPasso(passo)}
+                                    >
+                                      <Pencil className="w-4 h-4" />
+                                    </Button>
+                                    <Button
+                                      variant="ghost"
+                                      size="sm"
+                                      onClick={() => handleRemovePasso(passo.id)}
+                                    >
+                                      <Trash2 className="w-4 h-4 text-destructive" />
+                                    </Button>
+                                  </>
+                                )}
+                              </div>
+                            </TableCell>
+                          </TableRow>
+                        );
+                      })}
+                    </TableBody>
+                  </Table>
+                </div>
+              )}
+
+              <Button 
+                type="button" 
+                variant="outline" 
+                size="sm"
+                onClick={handleAddPasso}
                 disabled={!objetivoSelecionado}
-              />
+                className="mt-2"
+              >
+                <Plus className="w-4 h-4 mr-2" />
+                Cadastrar Mais Passos
+              </Button>
             </div>
 
             <Button onClick={handleSaveMeta} className="w-full" size="lg" disabled={!objetivoSelecionado}>
