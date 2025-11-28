@@ -90,6 +90,26 @@ const PlanoDeVida = ({ onTabChange, onOpenChange }: PlanoDeVidaProps) => {
     };
   }, []);
 
+  // Sincronizar valores com a página de exercício
+  useEffect(() => {
+    const syncValores = () => {
+      const savedMeusValores = localStorage.getItem("meus_valores");
+      if (savedMeusValores) {
+        const meusValores = JSON.parse(savedMeusValores);
+        // Preencher com os 6 valores + 6 vazios para manter compatibilidade
+        const valoresCompletos = [...meusValores, ...Array(12 - meusValores.length).fill("")];
+        setValores(valoresCompletos);
+      }
+    };
+
+    syncValores();
+    window.addEventListener("valoresUpdated", syncValores);
+
+    return () => {
+      window.removeEventListener("valoresUpdated", syncValores);
+    };
+  }, []);
+
   // Carregar dados salvos do localStorage
   useEffect(() => {
     const savedVvd = localStorage.getItem("vvd");
@@ -557,7 +577,7 @@ const PlanoDeVida = ({ onTabChange, onOpenChange }: PlanoDeVidaProps) => {
                 </div>
                 <div className="flex items-center justify-between gap-4">
                   <Link 
-                    to="/ferramentas" 
+                    to="/ferramentas/valores" 
                     className="flex items-center gap-2 text-sm text-primary hover:underline"
                   >
                     Descobrir meus valores
