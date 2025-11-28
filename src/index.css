@@ -136,3 +136,25 @@ All colors MUST be HSL.
     }
   }
 }
+
+/* Melhorias visuais para toasts */
+@layer components {
+  [data-sonner-toast] {
+    animation: slideDown 0.3s cubic-bezier(0.21, 1.02, 0.73, 1) !important;
+  }
+  
+  [data-sonner-toast][data-styled="true"] {
+    padding: 1rem !important;
+  }
+  
+  @keyframes slideDown {
+    from {
+      opacity: 0;
+      transform: translateY(-100%) scale(0.95);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+}
