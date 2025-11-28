@@ -76,6 +76,18 @@ const MetodoVvd = () => {
     }
   };
 
+  const handleStep1ManualSave = () => {
+    if (!freeText.trim()) {
+      toast.error("Por favor, escreva sua visão de vida antes de continuar.");
+      return;
+    }
+    setParagraphText(freeText);
+    setStep(2);
+    toast.success("Texto salvo!", {
+      description: "Agora você pode prosseguir para a próxima etapa."
+    });
+  };
+
   const handleStep2Save = async () => {
     if (!paragraphText.trim()) {
       toast.error("O parágrafo não pode estar vazio.");
@@ -97,6 +109,18 @@ const MetodoVvd = () => {
         description: "Revise sua frase final e salve quando estiver pronto."
       });
     }
+  };
+
+  const handleStep2ManualSave = () => {
+    if (!paragraphText.trim()) {
+      toast.error("O parágrafo não pode estar vazio.");
+      return;
+    }
+    setSentenceText(paragraphText);
+    setStep(3);
+    toast.success("Parágrafo salvo!", {
+      description: "Agora você pode finalizar sua VVD."
+    });
   };
 
   const handleFinalSave = () => {
@@ -214,7 +238,15 @@ const MetodoVvd = () => {
                 </div>
               )}
 
-              <div className="flex justify-end">
+              <div className="flex justify-end gap-3">
+                <Button
+                  onClick={handleStep1ManualSave}
+                  disabled={!freeText.trim()}
+                  size="lg"
+                  variant="outline"
+                >
+                  Salvar
+                </Button>
                 <Button
                   onClick={handleStep1Save}
                   disabled={!freeText.trim() || isProcessing || hasUsedAI}
@@ -301,29 +333,39 @@ const MetodoVvd = () => {
                   <ArrowLeft className="h-4 w-4 mr-2" />
                   Voltar
                 </Button>
-                <Button
-                  onClick={handleStep2Save}
-                  disabled={!paragraphText.trim() || isProcessing || hasUsedAI}
-                  size="lg"
-                  className="bg-gradient-to-r from-primary to-accent hover:opacity-90 transition-opacity"
-                >
-                  {isProcessing ? (
-                    <>
-                      <Loader2 className="h-5 w-5 animate-spin mr-2" />
-                      Processando...
-                    </>
-                  ) : hasUsedAI ? (
-                    <>
-                      <Sparkles className="h-5 w-5 mr-2" />
-                      IA já utilizada
-                    </>
-                  ) : (
-                    <>
-                      <Sparkles className="h-5 w-5 mr-2" />
-                      Resumir para uma Frase
-                    </>
-                  )}
-                </Button>
+                <div className="flex gap-3">
+                  <Button
+                    onClick={handleStep2ManualSave}
+                    disabled={!paragraphText.trim()}
+                    size="lg"
+                    variant="outline"
+                  >
+                    Salvar
+                  </Button>
+                  <Button
+                    onClick={handleStep2Save}
+                    disabled={!paragraphText.trim() || isProcessing || hasUsedAI}
+                    size="lg"
+                    className="bg-gradient-to-r from-primary to-accent hover:opacity-90 transition-opacity"
+                  >
+                    {isProcessing ? (
+                      <>
+                        <Loader2 className="h-5 w-5 animate-spin mr-2" />
+                        Processando...
+                      </>
+                    ) : hasUsedAI ? (
+                      <>
+                        <Sparkles className="h-5 w-5 mr-2" />
+                        IA já utilizada
+                      </>
+                    ) : (
+                      <>
+                        <Sparkles className="h-5 w-5 mr-2" />
+                        Resumir para uma Frase
+                      </>
+                    )}
+                  </Button>
+                </div>
               </div>
             </CardContent>
           </Card>
