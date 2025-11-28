@@ -110,6 +110,23 @@ const PlanoDeVida = ({ onTabChange, onOpenChange }: PlanoDeVidaProps) => {
     };
   }, []);
 
+  // Sincronizar habilidades com a ferramenta SWOT
+  useEffect(() => {
+    const syncHabilidades = () => {
+      const savedHabilidades = localStorage.getItem("habilidades");
+      if (savedHabilidades) {
+        setHabilidades(JSON.parse(savedHabilidades));
+      }
+    };
+
+    syncHabilidades();
+    window.addEventListener("habilidadesUpdated", syncHabilidades);
+
+    return () => {
+      window.removeEventListener("habilidadesUpdated", syncHabilidades);
+    };
+  }, []);
+
   // Carregar dados salvos do localStorage
   useEffect(() => {
     const savedVvd = localStorage.getItem("vvd");
@@ -242,12 +259,6 @@ const PlanoDeVida = ({ onTabChange, onOpenChange }: PlanoDeVidaProps) => {
       
       // Permite gerar novamente após 30 dias
       setCanGenerateInsight(diffDays >= 30);
-    }
-
-    // Carregar habilidades do localStorage
-    const savedHabilidades = localStorage.getItem("habilidades");
-    if (savedHabilidades) {
-      setHabilidades(JSON.parse(savedHabilidades));
     }
   }, []);
 
