@@ -414,6 +414,7 @@ const PlanoDeVida = ({ onTabChange, onOpenChange }: PlanoDeVidaProps) => {
                   onChange={(e) => setVvd(e.target.value)}
                   rows={4}
                   disabled={!isEditingVvd}
+                  spellCheck="true"
                 />
                 <div className="flex items-center justify-between gap-4">
                   <Link 
@@ -455,6 +456,7 @@ const PlanoDeVida = ({ onTabChange, onOpenChange }: PlanoDeVidaProps) => {
                       onChange={(e) => updateValor(index, e.target.value)}
                       disabled={!isEditingValores}
                       className="text-sm"
+                      spellCheck="true"
                     />
                   ))}
                 </div>
@@ -691,6 +693,7 @@ const PlanoDeVida = ({ onTabChange, onOpenChange }: PlanoDeVidaProps) => {
                     placeholder="Descreva seu objetivo principal"
                     value={objetivo.texto}
                     onChange={(e) => setObjetivo({ ...objetivo, texto: e.target.value })}
+                    spellCheck="true"
                   />
                 </div>
 
@@ -733,6 +736,7 @@ const PlanoDeVida = ({ onTabChange, onOpenChange }: PlanoDeVidaProps) => {
                     value={objetivo.conexaoVvd}
                     onChange={(e) => setObjetivo({ ...objetivo, conexaoVvd: e.target.value })}
                     rows={3}
+                    spellCheck="true"
                   />
                 </div>
 

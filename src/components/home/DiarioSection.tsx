@@ -569,6 +569,7 @@ const DiarioSection = () => {
             onChange={(e) => setEntrada({ ...entrada, reflexoes: e.target.value })}
             rows={4}
             disabled={!isToday}
+            spellCheck="true"
           />
         </div>
 
@@ -582,6 +583,7 @@ const DiarioSection = () => {
             onChange={(e) => setEntrada({ ...entrada, avancos: e.target.value })}
             rows={3}
             disabled={!isToday}
+            spellCheck="true"
           />
         </div>
 
@@ -595,6 +597,7 @@ const DiarioSection = () => {
             onChange={(e) => setEntrada({ ...entrada, habitos: e.target.value })}
             rows={3}
             disabled={!isToday}
+            spellCheck="true"
           />
         </div>
 
@@ -608,6 +611,7 @@ const DiarioSection = () => {
             onChange={(e) => setEntrada({ ...entrada, gratidao: e.target.value })}
             rows={3}
             disabled={!isToday}
+            spellCheck="true"
           />
         </div>
 

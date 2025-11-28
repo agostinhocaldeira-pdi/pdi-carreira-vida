@@ -348,6 +348,7 @@ const MaoNaMassa = () => {
                 value={meta.texto}
                 onChange={(e) => setMeta({ ...meta, texto: e.target.value })}
                 disabled={!objetivoSelecionado}
+                spellCheck="true"
               />
             </div>
 
@@ -383,6 +384,7 @@ const MaoNaMassa = () => {
                 value={meta.medicao}
                 onChange={(e) => setMeta({ ...meta, medicao: e.target.value })}
                 disabled={!objetivoSelecionado}
+                spellCheck="true"
               />
             </div>
 
@@ -420,6 +422,7 @@ const MaoNaMassa = () => {
                     onChange={(e) => setNovaAcao({ ...novaAcao, acao: e.target.value })}
                     className="text-sm"
                     disabled={!objetivoSelecionado}
+                    spellCheck="true"
                   />
                 </div>
 
@@ -615,6 +618,7 @@ const MaoNaMassa = () => {
                   value={novoPasso}
                   onChange={(e) => setNovoPasso(e.target.value)}
                   disabled={!objetivoSelecionado}
+                  spellCheck="true"
                   onKeyPress={(e) => {
                     if (e.key === 'Enter') {
                       handleAddPasso();
