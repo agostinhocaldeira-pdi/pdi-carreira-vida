@@ -71,6 +71,25 @@ const Home = () => {
       
       if (diffInDays > 3) {
         setShowDiaryWarningModal(true);
+        
+        // TODO: INTEGRAÇÃO FUTURA - Enviar notificação por email
+        // Quando implementado, chamar edge function que:
+        // 1. Verifica se já enviou email nas últimas 24h (evitar spam)
+        // 2. Envia email ao usuário usando Resend.com
+        // 3. Registra no banco que o email foi enviado
+        // Endpoint sugerido: supabase.functions.invoke('send-diary-reminder-email', { 
+        //   body: { email: userData.email, name: userData.name, daysInactive: diffInDays }
+        // })
+        
+        // TODO: INTEGRAÇÃO FUTURA - Enviar notificação por WhatsApp
+        // Quando implementado, chamar edge function que:
+        // 1. Verifica se usuário habilitou notificações WhatsApp nas preferências
+        // 2. Verifica se já enviou WhatsApp nas últimas 24h (evitar spam)
+        // 3. Envia mensagem via API do WhatsApp Business (ou Twilio/WA Cloud API)
+        // 4. Registra no banco que a mensagem foi enviada
+        // Endpoint sugerido: supabase.functions.invoke('send-diary-reminder-whatsapp', { 
+        //   body: { phone: userData.phone, name: userData.name, daysInactive: diffInDays }
+        // })
       }
     } else {
       // Nenhuma entrada ainda - mostrar modal também
