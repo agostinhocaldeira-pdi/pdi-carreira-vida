@@ -437,9 +437,12 @@ const PlanoDeVida = ({ onTabChange, onOpenChange }: PlanoDeVidaProps) => {
                 size="sm" 
                 className="flex-shrink-0 gap-2 hover:bg-primary/10 hover:border-primary transition-all shadow-sm"
               >
-                <span className="text-xs font-medium hidden sm:inline">
-                  {isOpen ? "Minimizar" : "Expandir"}
-                </span>
+                {!isOpen && (
+                  <span className="text-xs font-medium">Expandir</span>
+                )}
+                {isOpen && (
+                  <span className="text-xs font-medium hidden sm:inline">Minimizar</span>
+                )}
                 <ChevronDown className={`w-4 h-4 transition-transform duration-300 ${isOpen ? "rotate-180" : ""}`} />
               </Button>
             </CollapsibleTrigger>
