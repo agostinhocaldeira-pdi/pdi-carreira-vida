@@ -32,10 +32,21 @@ const ProgressSection = () => {
   };
 
   useEffect(() => {
-    const savedInsight = localStorage.getItem("userInsight");
-    if (savedInsight) {
-      setInsight(savedInsight);
-    }
+    const syncInsight = () => {
+      const savedInsight = localStorage.getItem("userInsight");
+      if (savedInsight) {
+        setInsight(savedInsight);
+      }
+    };
+
+    // Carregar insight inicial
+    syncInsight();
+
+    // Escutar mudanças no localStorage
+    window.addEventListener("storage", syncInsight);
+    
+    // Evento customizado para sincronizar na mesma aba
+    window.addEventListener("insightUpdated", syncInsight);
 
     const currentUserEmail = localStorage.getItem("userEmail");
     const savedAdmins = JSON.parse(localStorage.getItem("administrators") || "[]");
@@ -52,6 +63,13 @@ const ProgressSection = () => {
       }
     }
 
+    return () => {
+      window.removeEventListener("storage", syncInsight);
+      window.removeEventListener("insightUpdated", syncInsight);
+    };
+  }, []);
+
+  useEffect(() => {
     // Mock data - Create sample pending items if none exist
     let objetivos = JSON.parse(localStorage.getItem("objetivos") || "[]");
     let metas = JSON.parse(localStorage.getItem("metas") || "[]");
@@ -71,7 +89,7 @@ const ProgressSection = () => {
           status: "pendente"
         },
         {
-          objetivo: "Expandir rede de contatos profissionais",
+          objetivo: "Expandar rede de contatos profissionais",
           dataAlvo: "2024-12-01",
           conexaoVVD: "Networking",
           status: "em andamento"
@@ -186,6 +204,9 @@ Analise as correlações entre estes elementos e forneça um insight sobre a ess
       const generatedInsight = data.insight;
       setInsight(generatedInsight);
       localStorage.setItem("userInsight", generatedInsight);
+      
+      // Disparar evento para sincronizar na mesma aba
+      window.dispatchEvent(new Event("insightUpdated"));
       
       if (!isAdmin) {
         localStorage.setItem("lastInsightDate", new Date().toISOString());
