@@ -56,13 +56,35 @@ const MatrizEisenhower = () => {
   useEffect(() => {
     const savedTarefas = localStorage.getItem("eisenhower_tarefas");
     if (savedTarefas) {
-      setTarefas(JSON.parse(savedTarefas));
+      const tarefasParsed = JSON.parse(savedTarefas);
+      setTarefas(tarefasParsed);
+      
+      // Sincronizar com o formato para ProgressSection
+      const tarefasOrganizadas = {
+        q1: tarefasParsed.filter((t: Tarefa) => t.quadrante === "urgente-importante").map((t: Tarefa) => t.texto),
+        q2: tarefasParsed.filter((t: Tarefa) => t.quadrante === "importante").map((t: Tarefa) => t.texto),
+        q3: tarefasParsed.filter((t: Tarefa) => t.quadrante === "urgente").map((t: Tarefa) => t.texto),
+        q4: tarefasParsed.filter((t: Tarefa) => t.quadrante === "eliminar").map((t: Tarefa) => t.texto),
+      };
+      localStorage.setItem("eisenhowerTasks", JSON.stringify(tarefasOrganizadas));
     }
   }, []);
 
   const salvarTarefas = (novasTarefas: Tarefa[]) => {
     setTarefas(novasTarefas);
     localStorage.setItem("eisenhower_tarefas", JSON.stringify(novasTarefas));
+    
+    // Organizar tarefas por quadrante para o ProgressSection
+    const tarefasOrganizadas = {
+      q1: novasTarefas.filter(t => t.quadrante === "urgente-importante").map(t => t.texto),
+      q2: novasTarefas.filter(t => t.quadrante === "importante").map(t => t.texto),
+      q3: novasTarefas.filter(t => t.quadrante === "urgente").map(t => t.texto),
+      q4: novasTarefas.filter(t => t.quadrante === "eliminar").map(t => t.texto),
+    };
+    localStorage.setItem("eisenhowerTasks", JSON.stringify(tarefasOrganizadas));
+    
+    // Disparar evento para sincronizar com o ProgressSection
+    window.dispatchEvent(new Event("eisenhowerUpdated"));
   };
 
   const handleAdicionarTarefa = () => {

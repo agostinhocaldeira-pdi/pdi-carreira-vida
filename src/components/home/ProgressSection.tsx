@@ -3,10 +3,11 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { TrendingUp, Target, CheckCircle2, ChevronDown, Sparkles, Loader2, AlertCircle, Clock, ExternalLink } from "lucide-react";
+import { TrendingUp, Target, CheckCircle2, ChevronDown, Sparkles, Loader2, AlertCircle, Clock, ExternalLink, Flame } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { Link } from "react-router-dom";
 
 const ProgressSection = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -22,6 +23,13 @@ const ProgressSection = () => {
     objectives: [],
     goals: [],
     actions: []
+  });
+  const [eisenhowerTasks, setEisenhowerTasks] = useState<{
+    q1: any[];
+    q2: any[];
+  }>({
+    q1: [],
+    q2: []
   });
   
   // Mock data - will be dynamic later
@@ -165,6 +173,31 @@ const ProgressSection = () => {
       goals: pendingMetas,
       actions: pendingActions
     });
+  }, []);
+
+  useEffect(() => {
+    const loadEisenhowerTasks = () => {
+      const tasks = JSON.parse(localStorage.getItem("eisenhowerTasks") || "{}");
+      setEisenhowerTasks({
+        q1: tasks.q1 || [],
+        q2: tasks.q2 || []
+      });
+    };
+
+    loadEisenhowerTasks();
+
+    // Escutar mudanças no localStorage
+    const handleStorageChange = () => {
+      loadEisenhowerTasks();
+    };
+
+    window.addEventListener("storage", handleStorageChange);
+    window.addEventListener("eisenhowerUpdated", handleStorageChange);
+
+    return () => {
+      window.removeEventListener("storage", handleStorageChange);
+      window.removeEventListener("eisenhowerUpdated", handleStorageChange);
+    };
   }, []);
 
   const handleGenerateInsight = async () => {
@@ -440,6 +473,76 @@ Analise as correlações entre estes elementos e forneça um insight sobre a ess
                 </p>
               </div>
             </div>
+
+            {/* Matriz de Eisenhower Priority Tasks */}
+            {(eisenhowerTasks.q1.length > 0 || eisenhowerTasks.q2.length > 0) && (
+              <div className="mt-8 space-y-4">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-lg font-semibold flex items-center gap-2">
+                    <Flame className="w-5 h-5 text-destructive" />
+                    Tarefas Prioritárias - Matriz de Eisenhower
+                  </h3>
+                  <Link to="/ferramentas/eisenhower">
+                    <Button variant="ghost" size="sm" className="gap-2 hover:text-primary">
+                      <span className="text-xs">Ver Ferramenta</span>
+                      <ExternalLink className="w-3 h-3" />
+                    </Button>
+                  </Link>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {/* Urgente e Importante */}
+                  {eisenhowerTasks.q1.length > 0 && (
+                    <Card className="border-red-500/50 bg-gradient-to-br from-red-500/5 to-orange-500/5">
+                      <CardHeader className="pb-3">
+                        <CardTitle className="text-base flex items-center gap-2">
+                          <Flame className="w-5 h-5 text-red-500" />
+                          <span>Urgente e Importante ({eisenhowerTasks.q1.length})</span>
+                        </CardTitle>
+                        <CardDescription className="text-xs">Faça primeiro - Máxima prioridade</CardDescription>
+                      </CardHeader>
+                      <CardContent className="space-y-2">
+                        {eisenhowerTasks.q1.map((task: string, idx: number) => (
+                          <div 
+                            key={idx}
+                            className="p-3 bg-background rounded-lg border border-red-500/20 hover:border-red-500/50 transition-colors"
+                          >
+                            <p className="text-sm font-medium text-foreground">
+                              {task}
+                            </p>
+                          </div>
+                        ))}
+                      </CardContent>
+                    </Card>
+                  )}
+
+                  {/* Importante, não urgente */}
+                  {eisenhowerTasks.q2.length > 0 && (
+                    <Card className="border-primary/50 bg-gradient-to-br from-primary/5 to-blue-500/5">
+                      <CardHeader className="pb-3">
+                        <CardTitle className="text-base flex items-center gap-2">
+                          <Target className="w-5 h-5 text-primary" />
+                          <span>Importante, não urgente ({eisenhowerTasks.q2.length})</span>
+                        </CardTitle>
+                        <CardDescription className="text-xs">Planeje e agende - Foco estratégico</CardDescription>
+                      </CardHeader>
+                      <CardContent className="space-y-2">
+                        {eisenhowerTasks.q2.map((task: string, idx: number) => (
+                          <div 
+                            key={idx}
+                            className="p-3 bg-background rounded-lg border border-primary/20 hover:border-primary/50 transition-colors"
+                          >
+                            <p className="text-sm font-medium text-foreground">
+                              {task}
+                            </p>
+                          </div>
+                        ))}
+                      </CardContent>
+                    </Card>
+                  )}
+                </div>
+              </div>
+            )}
 
             {/* Insights Section */}
             <div className="mt-8 space-y-4">
