@@ -16,6 +16,15 @@ const MetodoVvd = () => {
   const [isProcessing, setIsProcessing] = useState(false);
   const [isEditingParagraph, setIsEditingParagraph] = useState(false);
   const [isEditingSentence, setIsEditingSentence] = useState(false);
+  const [hasUsedAI, setHasUsedAI] = useState(false);
+
+  // Verificar se o usuário já usou a IA
+  useEffect(() => {
+    const vvdAIUsed = localStorage.getItem("vvd_ai_used");
+    if (vvdAIUsed === "true") {
+      setHasUsedAI(true);
+    }
+  }, []);
 
   const processVvd = async (text: string, stepType: "paragraph" | "sentence") => {
     setIsProcessing(true);
@@ -47,10 +56,20 @@ const MetodoVvd = () => {
       return;
     }
 
+    if (hasUsedAI) {
+      toast.error("Você já utilizou a IA para criar seu VVD.", {
+        description: "Use o botão Editar para fazer alterações manuais."
+      });
+      return;
+    }
+
     const result = await processVvd(freeText, "paragraph");
     if (result) {
       setParagraphText(result);
       setStep(2);
+      // Marcar que a IA foi usada
+      localStorage.setItem("vvd_ai_used", "true");
+      setHasUsedAI(true);
       toast.success("Texto resumido com sucesso!", {
         description: "Revise e edite se desejar, depois salve para continuar."
       });
@@ -60,6 +79,13 @@ const MetodoVvd = () => {
   const handleStep2Save = async () => {
     if (!paragraphText.trim()) {
       toast.error("O parágrafo não pode estar vazio.");
+      return;
+    }
+
+    if (hasUsedAI) {
+      toast.error("Você já utilizou a IA para criar seu VVD.", {
+        description: "Use o botão Editar para fazer alterações manuais."
+      });
       return;
     }
 
@@ -163,10 +189,18 @@ const MetodoVvd = () => {
                 spellCheck
               />
 
+              {hasUsedAI && (
+                <div className="bg-accent/10 border border-accent/20 rounded-lg p-4">
+                  <p className="text-sm text-muted-foreground text-center">
+                    ℹ️ Você já utilizou a IA para criar seu VVD. Para fazer alterações, prossiga manualmente ou use o botão Editar nas próximas etapas.
+                  </p>
+                </div>
+              )}
+
               <div className="flex justify-end">
                 <Button
                   onClick={handleStep1Save}
-                  disabled={!freeText.trim() || isProcessing}
+                  disabled={!freeText.trim() || isProcessing || hasUsedAI}
                   size="lg"
                   className="bg-gradient-to-r from-primary to-accent hover:opacity-90 transition-opacity"
                 >
@@ -174,6 +208,11 @@ const MetodoVvd = () => {
                     <>
                       <Loader2 className="h-5 w-5 animate-spin mr-2" />
                       Processando...
+                    </>
+                  ) : hasUsedAI ? (
+                    <>
+                      <Sparkles className="h-5 w-5 mr-2" />
+                      IA já utilizada
                     </>
                   ) : (
                     <>
@@ -228,6 +267,14 @@ const MetodoVvd = () => {
                 />
               </div>
 
+              {hasUsedAI && (
+                <div className="bg-accent/10 border border-accent/20 rounded-lg p-4">
+                  <p className="text-sm text-muted-foreground text-center">
+                    ℹ️ Você já utilizou a IA. Para continuar, edite manualmente o texto acima ou prossiga para a próxima etapa.
+                  </p>
+                </div>
+              )}
+
               <div className="flex justify-between">
                 <Button
                   variant="outline"
@@ -239,7 +286,7 @@ const MetodoVvd = () => {
                 </Button>
                 <Button
                   onClick={handleStep2Save}
-                  disabled={!paragraphText.trim() || isProcessing}
+                  disabled={!paragraphText.trim() || isProcessing || hasUsedAI}
                   size="lg"
                   className="bg-gradient-to-r from-primary to-accent hover:opacity-90 transition-opacity"
                 >
@@ -247,6 +294,11 @@ const MetodoVvd = () => {
                     <>
                       <Loader2 className="h-5 w-5 animate-spin mr-2" />
                       Processando...
+                    </>
+                  ) : hasUsedAI ? (
+                    <>
+                      <Sparkles className="h-5 w-5 mr-2" />
+                      IA já utilizada
                     </>
                   ) : (
                     <>
