@@ -59,10 +59,88 @@ const MaoNaMassa = () => {
   const [editandoMetaId, setEditandoMetaId] = useState<number | null>(null);
 
   useEffect(() => {
-    const objetivosSalvos = JSON.parse(localStorage.getItem("objetivos") || "[]");
+    let objetivosSalvos = JSON.parse(localStorage.getItem("objetivos") || "[]");
+    
+    // Adicionar objetivos mockados se não existirem
+    if (objetivosSalvos.length === 0) {
+      objetivosSalvos = [
+        { id: 1, texto: "Crescimento Profissional", status: "em-andamento" },
+        { id: 2, texto: "Saúde e Bem-estar", status: "a-fazer" },
+        { id: 3, texto: "Desenvolvimento Pessoal", status: "em-andamento" }
+      ];
+      localStorage.setItem("objetivos", JSON.stringify(objetivosSalvos));
+    }
     setObjetivosDisponiveis(objetivosSalvos);
     
-    const metasSalvas = JSON.parse(localStorage.getItem("metas") || "[]");
+    let metasSalvas = JSON.parse(localStorage.getItem("metas") || "[]");
+    
+    // Adicionar metas mockadas se não existirem
+    if (metasSalvas.length === 0) {
+      metasSalvas = [
+        {
+          id: 1001,
+          objetivoId: "1",
+          texto: "Conquistar promoção para cargo de liderança",
+          dataAlvo: "2025-12-31",
+          medicao: "Receber feedback positivo do gestor e assumir projeto importante",
+          inicio: "2025-01-15",
+          periodicidade: "mensalmente",
+          concluida: false,
+          acoes: [
+            { id: 101, acao: "Participar de curso de liderança", periodicidade: "semanalmente", status: "em-andamento" },
+            { id: 102, acao: "Solicitar reunião 1:1 com gestor", periodicidade: "mensalmente", status: "a-fazer" },
+            { id: 103, acao: "Mentorar membros júnior da equipe", periodicidade: "semanalmente", status: "em-andamento" }
+          ],
+          passos: [
+            { id: 201, passo: "Identificar competências necessárias para cargo de liderança" },
+            { id: 202, passo: "Criar plano de desenvolvimento individual com gestor" },
+            { id: 203, passo: "Buscar oportunidades de liderar projetos pequenos" },
+            { id: 204, passo: "Demonstrar resultados consistentes na função atual" }
+          ]
+        },
+        {
+          id: 1002,
+          objetivoId: "2",
+          texto: "Perder 10kg e melhorar condicionamento físico",
+          dataAlvo: "2025-08-30",
+          medicao: "Atingir 75kg na balança e completar 5km de corrida",
+          inicio: "2025-02-01",
+          periodicidade: "semanalmente",
+          concluida: false,
+          acoes: [
+            { id: 104, acao: "Treinar na academia", periodicidade: "diariamente", status: "em-andamento" },
+            { id: 105, acao: "Seguir plano alimentar", periodicidade: "diariamente", status: "em-andamento" },
+            { id: 106, acao: "Praticar corrida ao ar livre", periodicidade: "semanalmente", status: "a-fazer" }
+          ],
+          passos: [
+            { id: 205, passo: "Contratar nutricionista e personal trainer" },
+            { id: 206, passo: "Estabelecer rotina de treinos 5x por semana" },
+            { id: 207, passo: "Acompanhar peso e medidas semanalmente" }
+          ]
+        },
+        {
+          id: 1003,
+          objetivoId: "3",
+          texto: "Ler 24 livros no ano sobre desenvolvimento pessoal",
+          dataAlvo: "2025-12-31",
+          medicao: "Completar leitura de 2 livros por mês e fazer resumos",
+          inicio: "2025-01-01",
+          periodicidade: "mensalmente",
+          concluida: false,
+          acoes: [
+            { id: 107, acao: "Ler 30 minutos por dia", periodicidade: "diariamente", status: "em-andamento" },
+            { id: 108, acao: "Fazer anotações e resumos", periodicidade: "semanalmente", status: "pendente" }
+          ],
+          passos: [
+            { id: 208, passo: "Criar lista de 24 livros recomendados" },
+            { id: 209, passo: "Reservar 30 minutos diários para leitura" },
+            { id: 210, passo: "Criar sistema de anotações e aprendizados" },
+            { id: 211, passo: "Compartilhar resumos com grupo de estudos" }
+          ]
+        }
+      ];
+      localStorage.setItem("metas", JSON.stringify(metasSalvas));
+    }
     setMetasCadastradas(metasSalvas);
   }, []);
 
