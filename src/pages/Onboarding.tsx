@@ -6,7 +6,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Progress } from "@/components/ui/progress";
-import { CheckCircle2 } from "lucide-react";
+import { CheckCircle2, ArrowLeft, ArrowRight, Heart, Target } from "lucide-react";
+import { toast } from "sonner";
 
 const Onboarding = () => {
   const navigate = useNavigate();
@@ -16,16 +17,49 @@ const Onboarding = () => {
     expectations: "",
   });
 
-  const totalSteps = 4;
+  const totalSteps = 5;
   const progress = (step / totalSteps) * 100;
 
+  const canAdvance = () => {
+    switch (step) {
+      case 1:
+        return true; // Etapa de boas-vindas sempre pode avançar
+      case 2:
+        return true; // Etapa explicativa sempre pode avançar
+      case 3:
+        return true; // Etapa sobre método PDI sempre pode avançar
+      case 4:
+        return onboardingData.currentPhase.trim() !== ""; // Requer fase atual preenchida
+      case 5:
+        return onboardingData.expectations.trim() !== ""; // Requer expectativas preenchidas
+      default:
+        return false;
+    }
+  };
+
   const handleNext = () => {
+    if (!canAdvance()) {
+      toast.error("Por favor, preencha o campo antes de continuar");
+      return;
+    }
+    
     if (step < totalSteps) {
       setStep(step + 1);
     }
   };
 
+  const handlePrevious = () => {
+    if (step > 1) {
+      setStep(step - 1);
+    }
+  };
+
   const handleFinish = () => {
+    if (!canAdvance()) {
+      toast.error("Por favor, preencha o campo antes de finalizar");
+      return;
+    }
+    
     localStorage.setItem("onboarding", JSON.stringify(onboardingData));
     localStorage.setItem("onboardingComplete", "true");
     navigate("/home");
@@ -57,16 +91,93 @@ const Onboarding = () => {
                   onde quer chegar e como vai realizar seus objetivos de vida e carreira.
                 </CardDescription>
               </div>
-              <Button onClick={handleNext} className="w-full" size="lg">
-                Continuar
-              </Button>
+              
+              <div className="flex gap-3">
+                <Button 
+                  onClick={handlePrevious} 
+                  variant="outline" 
+                  size="lg"
+                  className="flex-1"
+                  disabled={step === 1}
+                >
+                  <ArrowLeft className="w-4 h-4 mr-2" />
+                  Voltar
+                </Button>
+                <Button 
+                  onClick={handleNext} 
+                  size="lg"
+                  className="flex-1"
+                >
+                  Continuar
+                  <ArrowRight className="w-4 h-4 ml-2" />
+                </Button>
+              </div>
             </div>
           )}
 
           {step === 2 && (
             <div className="space-y-6 animate-fade-in">
               <div className="space-y-4">
-                <CardTitle className="text-2xl">O que é o PDI?</CardTitle>
+                <div className="flex items-center gap-3 mb-2">
+                  <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
+                    <Heart className="w-6 h-6 text-primary" />
+                  </div>
+                  <CardTitle className="text-2xl">PDI: Carreira & Vida</CardTitle>
+                </div>
+                <CardDescription className="text-base leading-relaxed space-y-4">
+                  <p>
+                    <strong>Embora o PDI seja tradicionalmente usado para desenvolvimento de carreira, 
+                    este aplicativo vai além:</strong> ele integra carreira e vida pessoal.
+                  </p>
+                  <p>
+                    Por quê? Porque <strong>é impossível separar uma coisa da outra</strong>. Sua vida 
+                    profissional impacta diretamente sua vida pessoal, e vice-versa.
+                  </p>
+                  <div className="p-4 bg-primary/5 border border-primary/20 rounded-lg">
+                    <p className="text-sm">
+                      💡 <strong>Nossa abordagem holística</strong> considera que um profissional realizado 
+                      é também alguém que cuida da saúde, dos relacionamentos, das finanças, do 
+                      desenvolvimento pessoal e do bem-estar emocional.
+                    </p>
+                  </div>
+                  <p>
+                    Aqui você não apenas planeja sua carreira, mas constrói uma <strong>visão completa 
+                    da vida que deseja viver</strong>.
+                  </p>
+                </CardDescription>
+              </div>
+              
+              <div className="flex gap-3">
+                <Button 
+                  onClick={handlePrevious} 
+                  variant="outline" 
+                  size="lg"
+                  className="flex-1"
+                >
+                  <ArrowLeft className="w-4 h-4 mr-2" />
+                  Voltar
+                </Button>
+                <Button 
+                  onClick={handleNext} 
+                  size="lg"
+                  className="flex-1"
+                >
+                  Avançar
+                  <ArrowRight className="w-4 h-4 ml-2" />
+                </Button>
+              </div>
+            </div>
+          )}
+
+          {step === 3 && (
+            <div className="space-y-6 animate-fade-in">
+              <div className="space-y-4">
+                <div className="flex items-center gap-3 mb-2">
+                  <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
+                    <Target className="w-6 h-6 text-primary" />
+                  </div>
+                  <CardTitle className="text-2xl">O que é o PDI?</CardTitle>
+                </div>
                 <CardDescription className="text-base leading-relaxed">
                   <p className="mb-4">
                     O Plano de Desenvolvimento Individual é uma ferramenta poderosa que te ajuda a:
@@ -81,13 +192,30 @@ const Onboarding = () => {
                   </ul>
                 </CardDescription>
               </div>
-              <Button onClick={handleNext} className="w-full" size="lg">
-                Avançar
-              </Button>
+              
+              <div className="flex gap-3">
+                <Button 
+                  onClick={handlePrevious} 
+                  variant="outline" 
+                  size="lg"
+                  className="flex-1"
+                >
+                  <ArrowLeft className="w-4 h-4 mr-2" />
+                  Voltar
+                </Button>
+                <Button 
+                  onClick={handleNext} 
+                  size="lg"
+                  className="flex-1"
+                >
+                  Avançar
+                  <ArrowRight className="w-4 h-4 ml-2" />
+                </Button>
+              </div>
             </div>
           )}
 
-          {step === 3 && (
+          {step === 4 && (
             <div className="space-y-6 animate-fade-in">
               <div className="space-y-4">
                 <CardTitle className="text-2xl">Sua Fase de Vida Atual</CardTitle>
@@ -104,15 +232,34 @@ const Onboarding = () => {
                   onChange={(e) =>
                     setOnboardingData({ ...onboardingData, currentPhase: e.target.value })
                   }
+                  spellCheck="true"
                 />
               </div>
-              <Button onClick={handleNext} className="w-full" size="lg">
-                Avançar
-              </Button>
+              
+              <div className="flex gap-3">
+                <Button 
+                  onClick={handlePrevious} 
+                  variant="outline" 
+                  size="lg"
+                  className="flex-1"
+                >
+                  <ArrowLeft className="w-4 h-4 mr-2" />
+                  Voltar
+                </Button>
+                <Button 
+                  onClick={handleNext} 
+                  size="lg"
+                  className="flex-1"
+                  disabled={!canAdvance()}
+                >
+                  Avançar
+                  <ArrowRight className="w-4 h-4 ml-2" />
+                </Button>
+              </div>
             </div>
           )}
 
-          {step === 4 && (
+          {step === 5 && (
             <div className="space-y-6 animate-fade-in">
               <div className="space-y-4">
                 <CardTitle className="text-2xl">Suas Expectativas</CardTitle>
@@ -130,11 +277,30 @@ const Onboarding = () => {
                     setOnboardingData({ ...onboardingData, expectations: e.target.value })
                   }
                   rows={6}
+                  spellCheck="true"
                 />
               </div>
-              <Button onClick={handleFinish} className="w-full" size="lg">
-                Ir para Home
-              </Button>
+              
+              <div className="flex gap-3">
+                <Button 
+                  onClick={handlePrevious} 
+                  variant="outline" 
+                  size="lg"
+                  className="flex-1"
+                >
+                  <ArrowLeft className="w-4 h-4 mr-2" />
+                  Voltar
+                </Button>
+                <Button 
+                  onClick={handleFinish} 
+                  size="lg"
+                  className="flex-1"
+                  disabled={!canAdvance()}
+                >
+                  Ir para Home
+                  <ArrowRight className="w-4 h-4 ml-2" />
+                </Button>
+              </div>
             </div>
           )}
         </CardContent>
