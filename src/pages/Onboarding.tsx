@@ -282,12 +282,12 @@ const Onboarding = () => {
                 />
               </div>
               
-              <div className="flex gap-3">
+              <div className="flex flex-col sm:flex-row gap-3">
                 <Button 
                   onClick={handlePrevious} 
                   variant="outline" 
                   size="lg"
-                  className="flex-1"
+                  className="w-full sm:flex-1"
                 >
                   <ArrowLeft className="w-4 h-4 mr-2" />
                   Voltar
@@ -295,10 +295,11 @@ const Onboarding = () => {
                 <Button 
                   onClick={handleFinish} 
                   size="lg"
-                  className="flex-1"
+                  className="w-full sm:flex-1"
                   disabled={!canAdvance()}
                 >
-                  Ir para Home
+                  <span className="hidden sm:inline">Ir para Home</span>
+                  <span className="sm:hidden">Começar</span>
                   <ArrowRight className="w-4 h-4 ml-2" />
                 </Button>
               </div>
