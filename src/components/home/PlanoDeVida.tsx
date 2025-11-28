@@ -682,7 +682,7 @@ const PlanoDeVida = ({ onTabChange, onOpenChange }: PlanoDeVidaProps) => {
 
               {/* Formulário de cadastro */}
               <div className="space-y-4 p-4 border rounded-lg bg-muted/30">
-                <h4 className="font-medium text-sm">Cadastrar Novo Objetivo</h4>
+                <h4 className="font-medium text-sm">Atenção: "Quem muito quer, pouco consegue!" (Tenha no máximo 3 objetivos por vez)</h4>
                 
                 <div className="space-y-2">
                   <Label htmlFor="objetivo">Objetivo em Foco</Label>
@@ -715,6 +715,7 @@ const PlanoDeVida = ({ onTabChange, onOpenChange }: PlanoDeVidaProps) => {
                         <SelectValue placeholder="Selecione o status" />
                       </SelectTrigger>
                       <SelectContent>
+                        <SelectItem value="a-iniciar">A iniciar</SelectItem>
                         <SelectItem value="em-andamento">Em andamento</SelectItem>
                         <SelectItem value="concluido">Concluído</SelectItem>
                         <SelectItem value="pendente">Pendente</SelectItem>
@@ -798,6 +799,7 @@ const PlanoDeVida = ({ onTabChange, onOpenChange }: PlanoDeVidaProps) => {
                                     <SelectValue />
                                   </SelectTrigger>
                                   <SelectContent>
+                                    <SelectItem value="a-iniciar">A iniciar</SelectItem>
                                     <SelectItem value="em-andamento">Em andamento</SelectItem>
                                     <SelectItem value="concluido">Concluído</SelectItem>
                                     <SelectItem value="pendente">Pendente</SelectItem>
@@ -809,11 +811,13 @@ const PlanoDeVida = ({ onTabChange, onOpenChange }: PlanoDeVidaProps) => {
                                   obj.status === "concluido" ? "bg-green-100 text-green-800" :
                                   obj.status === "em-andamento" ? "bg-blue-100 text-blue-800" :
                                   obj.status === "pausado" ? "bg-yellow-100 text-yellow-800" :
+                                  obj.status === "a-iniciar" ? "bg-purple-100 text-purple-800" :
                                   "bg-gray-100 text-gray-800"
                                 }`}>
                                   {obj.status === "em-andamento" ? "Em andamento" :
                                    obj.status === "concluido" ? "Concluído" :
-                                   obj.status === "pausado" ? "Pausado" : "Pendente"}
+                                   obj.status === "pausado" ? "Pausado" :
+                                   obj.status === "a-iniciar" ? "A iniciar" : "Pendente"}
                                 </span>
                               )}
                             </TableCell>
