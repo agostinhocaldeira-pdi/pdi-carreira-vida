@@ -195,8 +195,8 @@ const MetodoVvd = () => {
         </div>
 
         {/* Step 1: Free Text */}
-        {step === 1 && (
-          <Card className="border-2 border-primary/20 shadow-xl animate-fade-in">
+        {step >= 1 && (
+          <Card className={`border-2 shadow-xl animate-fade-in mb-6 ${step === 1 ? 'border-primary/20' : 'border-muted/20'}`}>
             <CardHeader className="space-y-4">
               <div className="flex items-center gap-3">
                 <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center">
@@ -211,73 +211,83 @@ const MetodoVvd = () => {
               </div>
             </CardHeader>
             <CardContent className="space-y-6">
-              <div className="bg-accent/10 border border-accent/20 rounded-lg p-4 space-y-2">
-                <p className="text-sm font-medium flex items-center gap-2">
-                  <Star className="h-4 w-4 text-accent" />
-                  Exemplo de VVD:
-                </p>
-                <p className="text-sm text-muted-foreground italic">
-                  "Quero viver com integridade, ser uma pessoa honesta, responsável e compassiva, buscando sempre o crescimento pessoal e profissional.
-                  Eu valorizo a importância da família e dos amigos, e me esforço para cultivar relacionamentos saudáveis e significativos..."
-                </p>
-              </div>
+              {step === 1 && (
+                <>
+                  <div className="bg-accent/10 border border-accent/20 rounded-lg p-4 space-y-2">
+                    <p className="text-sm font-medium flex items-center gap-2">
+                      <Star className="h-4 w-4 text-accent" />
+                      Exemplo de VVD:
+                    </p>
+                    <p className="text-sm text-muted-foreground italic">
+                      "Quero viver com integridade, ser uma pessoa honesta, responsável e compassiva, buscando sempre o crescimento pessoal e profissional.
+                      Eu valorizo a importância da família e dos amigos, e me esforço para cultivar relacionamentos saudáveis e significativos..."
+                    </p>
+                  </div>
 
-              <Textarea
-                value={freeText}
-                onChange={(e) => setFreeText(e.target.value)}
-                placeholder="Comece a escrever sua visão de vida desejada aqui..."
-                className="min-h-[300px] text-base resize-none focus:ring-2 focus:ring-primary"
-                spellCheck
-              />
+                  <Textarea
+                    value={freeText}
+                    onChange={(e) => setFreeText(e.target.value)}
+                    placeholder="Comece a escrever sua visão de vida desejada aqui..."
+                    className="min-h-[300px] text-base resize-none focus:ring-2 focus:ring-primary"
+                    spellCheck
+                  />
 
-              {hasUsedAI && (
-                <div className="bg-accent/10 border border-accent/20 rounded-lg p-4">
-                  <p className="text-sm text-muted-foreground text-center">
-                    ℹ️ Você já utilizou a IA para criar seu VVD. Para fazer alterações, prossiga manualmente ou use o botão Editar nas próximas etapas.
-                  </p>
+                  {hasUsedAI && (
+                    <div className="bg-accent/10 border border-accent/20 rounded-lg p-4">
+                      <p className="text-sm text-muted-foreground text-center">
+                        ℹ️ Você já utilizou a IA para criar seu VVD. Para fazer alterações, prossiga manualmente ou use o botão Editar nas próximas etapas.
+                      </p>
+                    </div>
+                  )}
+
+                  <div className="flex justify-end gap-3">
+                    <Button
+                      onClick={handleStep1ManualSave}
+                      disabled={!freeText.trim()}
+                      size="lg"
+                      variant="outline"
+                    >
+                      Salvar
+                    </Button>
+                    <Button
+                      onClick={handleStep1Save}
+                      disabled={!freeText.trim() || isProcessing || hasUsedAI}
+                      size="lg"
+                      className="bg-gradient-to-r from-primary to-accent hover:opacity-90 transition-opacity"
+                    >
+                      {isProcessing ? (
+                        <>
+                          <Loader2 className="h-5 w-5 animate-spin mr-2" />
+                          Processando...
+                        </>
+                      ) : hasUsedAI ? (
+                        <>
+                          <Sparkles className="h-5 w-5 mr-2" />
+                          IA já utilizada
+                        </>
+                      ) : (
+                        <>
+                          <Sparkles className="h-5 w-5 mr-2" />
+                          Resumir para um Parágrafo
+                        </>
+                      )}
+                    </Button>
+                  </div>
+                </>
+              )}
+              
+              {step > 1 && (
+                <div className="bg-muted/30 rounded-lg p-4 border border-muted">
+                  <p className="text-sm text-muted-foreground whitespace-pre-wrap">{freeText}</p>
                 </div>
               )}
-
-              <div className="flex justify-end gap-3">
-                <Button
-                  onClick={handleStep1ManualSave}
-                  disabled={!freeText.trim()}
-                  size="lg"
-                  variant="outline"
-                >
-                  Salvar
-                </Button>
-                <Button
-                  onClick={handleStep1Save}
-                  disabled={!freeText.trim() || isProcessing || hasUsedAI}
-                  size="lg"
-                  className="bg-gradient-to-r from-primary to-accent hover:opacity-90 transition-opacity"
-                >
-                  {isProcessing ? (
-                    <>
-                      <Loader2 className="h-5 w-5 animate-spin mr-2" />
-                      Processando...
-                    </>
-                  ) : hasUsedAI ? (
-                    <>
-                      <Sparkles className="h-5 w-5 mr-2" />
-                      IA já utilizada
-                    </>
-                  ) : (
-                    <>
-                      <Sparkles className="h-5 w-5 mr-2" />
-                      Resumir para um Parágrafo
-                    </>
-                  )}
-                </Button>
-              </div>
             </CardContent>
           </Card>
         )}
 
         {/* Step 2: Paragraph */}
-        {step === 2 && (
-          <Card className="border-2 border-primary/20 shadow-xl animate-fade-in">
+        {step >= 2 && (
+          <Card className={`border-2 shadow-xl animate-fade-in mb-6 ${step === 2 ? 'border-primary/20' : 'border-muted/20'}`}>
             <CardHeader className="space-y-4">
               <div className="flex items-center gap-3">
                 <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center">
@@ -292,87 +302,97 @@ const MetodoVvd = () => {
               </div>
             </CardHeader>
             <CardContent className="space-y-6">
-              <div className="space-y-3">
-                {!isEditingParagraph && (
-                  <div className="flex justify-end">
+              {step === 2 && (
+                <>
+                  <div className="space-y-3">
+                    {!isEditingParagraph && (
+                      <div className="flex justify-end">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => setIsEditingParagraph(true)}
+                        >
+                          <Edit className="h-4 w-4 mr-2" />
+                          Editar
+                        </Button>
+                      </div>
+                    )}
+                    <Textarea
+                      value={paragraphText}
+                      onChange={(e) => setParagraphText(e.target.value)}
+                      disabled={!isEditingParagraph}
+                      className={`min-h-[200px] text-lg font-medium leading-relaxed ${
+                        !isEditingParagraph ? 'bg-muted/30' : 'bg-background'
+                      }`}
+                      spellCheck
+                    />
+                  </div>
+
+                  {hasUsedAI && (
+                    <div className="bg-accent/10 border border-accent/20 rounded-lg p-4">
+                      <p className="text-sm text-muted-foreground text-center">
+                        ℹ️ Você já utilizou a IA. Para continuar, edite manualmente o texto acima ou prossiga para a próxima etapa.
+                      </p>
+                    </div>
+                  )}
+
+                  <div className="flex justify-between">
                     <Button
                       variant="outline"
-                      size="sm"
-                      onClick={() => setIsEditingParagraph(true)}
+                      onClick={() => setStep(1)}
+                      disabled={isProcessing}
                     >
-                      <Edit className="h-4 w-4 mr-2" />
-                      Editar
+                      <ArrowLeft className="h-4 w-4 mr-2" />
+                      Voltar
                     </Button>
+                    <div className="flex gap-3">
+                      <Button
+                        onClick={handleStep2ManualSave}
+                        disabled={!paragraphText.trim()}
+                        size="lg"
+                        variant="outline"
+                      >
+                        Salvar
+                      </Button>
+                      <Button
+                        onClick={handleStep2Save}
+                        disabled={!paragraphText.trim() || isProcessing || hasUsedAI}
+                        size="lg"
+                        className="bg-gradient-to-r from-primary to-accent hover:opacity-90 transition-opacity"
+                      >
+                        {isProcessing ? (
+                          <>
+                            <Loader2 className="h-5 w-5 animate-spin mr-2" />
+                            Processando...
+                          </>
+                        ) : hasUsedAI ? (
+                          <>
+                            <Sparkles className="h-5 w-5 mr-2" />
+                            IA já utilizada
+                          </>
+                        ) : (
+                          <>
+                            <Sparkles className="h-5 w-5 mr-2" />
+                            Resumir para uma Frase
+                          </>
+                        )}
+                      </Button>
+                    </div>
                   </div>
-                )}
-                <Textarea
-                  value={paragraphText}
-                  onChange={(e) => setParagraphText(e.target.value)}
-                  disabled={!isEditingParagraph}
-                  className={`min-h-[200px] text-lg font-medium leading-relaxed ${
-                    !isEditingParagraph ? 'bg-muted/30' : 'bg-background'
-                  }`}
-                  spellCheck
-                />
-              </div>
-
-              {hasUsedAI && (
-                <div className="bg-accent/10 border border-accent/20 rounded-lg p-4">
-                  <p className="text-sm text-muted-foreground text-center">
-                    ℹ️ Você já utilizou a IA. Para continuar, edite manualmente o texto acima ou prossiga para a próxima etapa.
-                  </p>
-                </div>
+                </>
               )}
 
-              <div className="flex justify-between">
-                <Button
-                  variant="outline"
-                  onClick={() => setStep(1)}
-                  disabled={isProcessing}
-                >
-                  <ArrowLeft className="h-4 w-4 mr-2" />
-                  Voltar
-                </Button>
-                <div className="flex gap-3">
-                  <Button
-                    onClick={handleStep2ManualSave}
-                    disabled={!paragraphText.trim()}
-                    size="lg"
-                    variant="outline"
-                  >
-                    Salvar
-                  </Button>
-                  <Button
-                    onClick={handleStep2Save}
-                    disabled={!paragraphText.trim() || isProcessing || hasUsedAI}
-                    size="lg"
-                    className="bg-gradient-to-r from-primary to-accent hover:opacity-90 transition-opacity"
-                  >
-                    {isProcessing ? (
-                      <>
-                        <Loader2 className="h-5 w-5 animate-spin mr-2" />
-                        Processando...
-                      </>
-                    ) : hasUsedAI ? (
-                      <>
-                        <Sparkles className="h-5 w-5 mr-2" />
-                        IA já utilizada
-                      </>
-                    ) : (
-                      <>
-                        <Sparkles className="h-5 w-5 mr-2" />
-                        Resumir para uma Frase
-                      </>
-                    )}
-                  </Button>
+              {step > 2 && (
+                <div className="bg-muted/30 rounded-lg p-4 border border-muted">
+                  <p className="text-base font-medium text-muted-foreground whitespace-pre-wrap">{paragraphText}</p>
                 </div>
-              </div>
+              )}
             </CardContent>
           </Card>
         )}
 
         {/* Step 3: Sentence */}
-        {step === 3 && (
+        {step >= 3 && (
           <Card className="border-2 border-primary/20 shadow-xl animate-fade-in">
             <CardHeader className="space-y-4">
               <div className="flex items-center gap-3">
