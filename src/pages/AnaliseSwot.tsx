@@ -50,7 +50,7 @@ const AnaliseSwot = () => {
     }
   }, []);
 
-  const salvarSwot = (novosSwotData: SwotData) => {
+  const salvarSwot = (novosSwotData: SwotData, mostrarNotificacaoSync = false) => {
     localStorage.setItem("analise_swot", JSON.stringify(novosSwotData));
     setSwotData(novosSwotData);
 
@@ -66,6 +66,13 @@ const AnaliseSwot = () => {
       
       // Disparar evento para sincronizar
       window.dispatchEvent(new Event("habilidadesUpdated"));
+      
+      // Mostrar notificação de sincronização se solicitado
+      if (mostrarNotificacaoSync) {
+        toast.success("✨ Habilidade sincronizada com o Plano de Vida!", {
+          description: "Acesse a aba 'Como chegar lá' no seu Plano de Vida",
+        });
+      }
     }
   };
 
@@ -125,7 +132,7 @@ const AnaliseSwot = () => {
       habilidadesADesenvolver: [...swotData.habilidadesADesenvolver, novaHabilidade],
     };
 
-    salvarSwot(novosSwotData);
+    salvarSwot(novosSwotData, true); // true para mostrar notificação de sincronização
     setNovasHabilidades({ ...novasHabilidades, [fraquezaId]: "" });
     toast.success("Habilidade adicionada!");
   };
