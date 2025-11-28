@@ -557,35 +557,16 @@ const PlanoDeVida = ({ onTabChange, onOpenChange }: PlanoDeVidaProps) => {
                   value={vvd}
                   onChange={(e) => setVvd(e.target.value)}
                   rows={4}
-                  disabled={!isEditingVvd}
+                  disabled
                   spellCheck="true"
                 />
-                <div className="flex items-center justify-between gap-4">
-                  <Link 
-                    to="/ferramentas" 
-                    className="flex items-center gap-2 text-sm text-primary hover:underline"
-                  >
-                    Como criar seu VVD
-                    <ArrowRight className="w-4 h-4" />
-                  </Link>
-                  
-                  <div className="flex gap-2">
-                    {!isEditingVvd && (
-                      <Button onClick={handleEditVvd} size="sm" variant="outline">
-                        <Edit className="w-4 h-4 mr-2" />
-                        Editar
-                      </Button>
-                    )}
-                    <Button 
-                      onClick={handleSaveVvd} 
-                      size="sm" 
-                      variant="outline"
-                      disabled={!vvd.trim() || !isEditingVvd}
-                    >
-                      Salvar
-                    </Button>
-                  </div>
-                </div>
+                <Link 
+                  to="/ferramentas/metodo-vvd" 
+                  className="flex items-center gap-2 text-sm text-primary hover:underline"
+                >
+                  Como criar seu VVD
+                  <ArrowRight className="w-4 h-4" />
+                </Link>
               </div>
 
               {/* Valores */}
