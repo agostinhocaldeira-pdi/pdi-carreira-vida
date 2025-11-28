@@ -55,9 +55,15 @@ const MaoNaMassa = () => {
   const [editandoPassoId, setEditandoPassoId] = useState<number | null>(null);
   const [passoEditado, setPassoEditado] = useState("");
 
+  const [metasCadastradas, setMetasCadastradas] = useState<Array<any>>([]);
+  const [editandoMetaId, setEditandoMetaId] = useState<number | null>(null);
+
   useEffect(() => {
     const objetivosSalvos = JSON.parse(localStorage.getItem("objetivos") || "[]");
     setObjetivosDisponiveis(objetivosSalvos);
+    
+    const metasSalvas = JSON.parse(localStorage.getItem("metas") || "[]");
+    setMetasCadastradas(metasSalvas);
   }, []);
 
   const handleAddAcao = () => {
@@ -150,9 +156,26 @@ const MaoNaMassa = () => {
     }
 
     const metas = JSON.parse(localStorage.getItem("metas") || "[]");
-    metas.push({ ...meta, objetivoId: objetivoSelecionado, acoes, passos, id: Date.now(), concluida: false });
-    localStorage.setItem("metas", JSON.stringify(metas));
-    toast.success("Meta cadastrada com sucesso!");
+    
+    if (editandoMetaId) {
+      // Atualizar meta existente
+      const metasAtualizadas = metas.map((m: any) => 
+        m.id === editandoMetaId 
+          ? { ...meta, objetivoId: objetivoSelecionado, acoes, passos, id: editandoMetaId, concluida: false }
+          : m
+      );
+      localStorage.setItem("metas", JSON.stringify(metasAtualizadas));
+      setMetasCadastradas(metasAtualizadas);
+      toast.success("Meta atualizada com sucesso!");
+      setEditandoMetaId(null);
+    } else {
+      // Adicionar nova meta
+      const novaMeta = { ...meta, objetivoId: objetivoSelecionado, acoes, passos, id: Date.now(), concluida: false };
+      metas.push(novaMeta);
+      localStorage.setItem("metas", JSON.stringify(metas));
+      setMetasCadastradas(metas);
+      toast.success("Meta cadastrada com sucesso!");
+    }
     
     // Reset form
     setObjetivoSelecionado("");
@@ -167,6 +190,36 @@ const MaoNaMassa = () => {
     });
     setAcoes([]);
     setPassos([]);
+  };
+
+  const handleEditMeta = (metaId: number) => {
+    const metaParaEditar = metasCadastradas.find((m) => m.id === metaId);
+    if (!metaParaEditar) return;
+
+    setEditandoMetaId(metaId);
+    setObjetivoSelecionado(metaParaEditar.objetivoId);
+    setMeta({
+      objetivoId: metaParaEditar.objetivoId,
+      texto: metaParaEditar.texto,
+      dataAlvo: metaParaEditar.dataAlvo,
+      medicao: metaParaEditar.medicao || "",
+      inicio: metaParaEditar.inicio || "",
+      periodicidade: metaParaEditar.periodicidade || "",
+      passos: metaParaEditar.passos || "",
+    });
+    setAcoes(metaParaEditar.acoes || []);
+    setPassos(metaParaEditar.passos || []);
+    
+    // Scroll para o topo do formulário
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    toast.info("Meta carregada para edição");
+  };
+
+  const handleDeleteMeta = (metaId: number) => {
+    const metasAtualizadas = metasCadastradas.filter((m) => m.id !== metaId);
+    localStorage.setItem("metas", JSON.stringify(metasAtualizadas));
+    setMetasCadastradas(metasAtualizadas);
+    toast.success("Meta removida!");
   };
 
   return (
@@ -578,9 +631,180 @@ const MaoNaMassa = () => {
             </div>
 
             <Button onClick={handleSaveMeta} className="w-full" size="lg" disabled={!objetivoSelecionado}>
-              Cadastrar Meta
+              {editandoMetaId ? "Atualizar Meta" : "Cadastrar Meta"}
             </Button>
           </div>
+
+          {/* Tabela de Metas Cadastradas */}
+          {metasCadastradas.length > 0 && (
+            <div className="mt-8 space-y-4">
+              <h3 className="text-lg font-semibold">Metas Cadastradas</h3>
+              
+              {/* Versão Desktop - Tabela */}
+              <div className="hidden md:block rounded-lg border overflow-x-auto">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Objetivo</TableHead>
+                      <TableHead>Meta</TableHead>
+                      <TableHead>Data Alvo</TableHead>
+                      <TableHead>Ações</TableHead>
+                      <TableHead>Passos</TableHead>
+                      <TableHead className="w-[100px]">Ações</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {metasCadastradas.map((metaCadastrada) => {
+                      const objetivo = objetivosDisponiveis.find(
+                        (obj) => obj.id.toString() === metaCadastrada.objetivoId
+                      );
+                      
+                      return (
+                        <TableRow key={metaCadastrada.id}>
+                          <TableCell className="font-medium">
+                            {objetivo?.texto || "Objetivo não encontrado"}
+                          </TableCell>
+                          <TableCell>{metaCadastrada.texto}</TableCell>
+                          <TableCell>
+                            {new Date(metaCadastrada.dataAlvo).toLocaleDateString('pt-BR')}
+                          </TableCell>
+                          <TableCell>
+                            <div className="space-y-1">
+                              {metaCadastrada.acoes && metaCadastrada.acoes.length > 0 ? (
+                                metaCadastrada.acoes.map((acao: any, idx: number) => (
+                                  <div key={idx} className="text-sm">
+                                    • {acao.acao}
+                                  </div>
+                                ))
+                              ) : (
+                                <span className="text-muted-foreground text-sm">Nenhuma ação</span>
+                              )}
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            <div className="space-y-1">
+                              {metaCadastrada.passos && metaCadastrada.passos.length > 0 ? (
+                                metaCadastrada.passos.map((passo: any, idx: number) => (
+                                  <div key={idx} className="text-sm">
+                                    {idx + 1}. {passo.passo}
+                                  </div>
+                                ))
+                              ) : (
+                                <span className="text-muted-foreground text-sm">Nenhum passo</span>
+                              )}
+                            </div>
+                          </TableCell>
+                          <TableCell>
+                            <div className="flex gap-1">
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => handleEditMeta(metaCadastrada.id)}
+                                title="Editar meta"
+                              >
+                                <Pencil className="w-4 h-4" />
+                              </Button>
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => handleDeleteMeta(metaCadastrada.id)}
+                                title="Excluir meta"
+                              >
+                                <Trash2 className="w-4 h-4 text-destructive" />
+                              </Button>
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      );
+                    })}
+                  </TableBody>
+                </Table>
+              </div>
+
+              {/* Versão Mobile - Cards */}
+              <div className="md:hidden space-y-4">
+                {metasCadastradas.map((metaCadastrada) => {
+                  const objetivo = objetivosDisponiveis.find(
+                    (obj) => obj.id.toString() === metaCadastrada.objetivoId
+                  );
+                  
+                  return (
+                    <Card key={metaCadastrada.id} className="shadow-sm">
+                      <CardContent className="pt-6 space-y-3">
+                        <div>
+                          <Label className="text-xs text-muted-foreground">Objetivo</Label>
+                          <p className="font-medium">{objetivo?.texto || "Objetivo não encontrado"}</p>
+                        </div>
+                        
+                        <div>
+                          <Label className="text-xs text-muted-foreground">Meta</Label>
+                          <p className="text-sm">{metaCadastrada.texto}</p>
+                        </div>
+                        
+                        <div>
+                          <Label className="text-xs text-muted-foreground">Data Alvo</Label>
+                          <p className="text-sm">
+                            {new Date(metaCadastrada.dataAlvo).toLocaleDateString('pt-BR')}
+                          </p>
+                        </div>
+                        
+                        <div>
+                          <Label className="text-xs text-muted-foreground">Ações</Label>
+                          {metaCadastrada.acoes && metaCadastrada.acoes.length > 0 ? (
+                            <div className="space-y-1 mt-1">
+                              {metaCadastrada.acoes.map((acao: any, idx: number) => (
+                                <div key={idx} className="text-sm">
+                                  • {acao.acao}
+                                </div>
+                              ))}
+                            </div>
+                          ) : (
+                            <p className="text-muted-foreground text-sm">Nenhuma ação</p>
+                          )}
+                        </div>
+                        
+                        <div>
+                          <Label className="text-xs text-muted-foreground">Passos</Label>
+                          {metaCadastrada.passos && metaCadastrada.passos.length > 0 ? (
+                            <div className="space-y-1 mt-1">
+                              {metaCadastrada.passos.map((passo: any, idx: number) => (
+                                <div key={idx} className="text-sm">
+                                  {idx + 1}. {passo.passo}
+                                </div>
+                              ))}
+                            </div>
+                          ) : (
+                            <p className="text-muted-foreground text-sm">Nenhum passo</p>
+                          )}
+                        </div>
+                        
+                        <div className="flex gap-2 pt-2 border-t">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleEditMeta(metaCadastrada.id)}
+                            className="flex-1"
+                          >
+                            <Pencil className="w-4 h-4 mr-2" />
+                            Editar
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleDeleteMeta(metaCadastrada.id)}
+                            className="flex-1"
+                          >
+                            <Trash2 className="w-4 h-4 mr-2 text-destructive" />
+                            Excluir
+                          </Button>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  );
+                })}
+              </div>
+            </div>
+          )}
         </div>
       </CardContent>
     </Card>
