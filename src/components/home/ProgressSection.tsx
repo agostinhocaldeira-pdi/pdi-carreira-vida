@@ -52,10 +52,83 @@ const ProgressSection = () => {
       }
     }
 
-    // Load pending items
-    const objetivos = JSON.parse(localStorage.getItem("objetivos") || "[]");
-    const metas = JSON.parse(localStorage.getItem("metas") || "[]");
+    // Mock data - Create sample pending items if none exist
+    let objetivos = JSON.parse(localStorage.getItem("objetivos") || "[]");
+    let metas = JSON.parse(localStorage.getItem("metas") || "[]");
     
+    if (objetivos.length === 0) {
+      objetivos = [
+        {
+          objetivo: "Melhorar habilidades de liderança",
+          dataAlvo: "2024-11-15",
+          conexaoVVD: "Crescimento profissional",
+          status: "pendente"
+        },
+        {
+          objetivo: "Alcançar equilíbrio vida-trabalho",
+          dataAlvo: "2024-10-30",
+          conexaoVVD: "Bem-estar pessoal",
+          status: "pendente"
+        },
+        {
+          objetivo: "Expandir rede de contatos profissionais",
+          dataAlvo: "2024-12-01",
+          conexaoVVD: "Networking",
+          status: "em andamento"
+        }
+      ];
+      localStorage.setItem("objetivos", JSON.stringify(objetivos));
+    }
+
+    if (metas.length === 0) {
+      metas = [
+        {
+          objetivo: "Melhorar habilidades de liderança",
+          meta: "Concluir curso de gestão de equipes",
+          dataAlvo: "2024-11-20",
+          criterioMedicao: "Certificado de conclusão",
+          dataInicio: "2024-10-01",
+          periodicidade: "Semanal",
+          status: "pendente",
+          acoes: [
+            {
+              acao: "Assistir módulo 1 do curso",
+              periodicidade: "Semanal",
+              status: "pendente"
+            },
+            {
+              acao: "Fazer exercícios práticos",
+              periodicidade: "Semanal",
+              status: "pendente"
+            }
+          ]
+        },
+        {
+          objetivo: "Alcançar equilíbrio vida-trabalho",
+          meta: "Estabelecer rotina de exercícios físicos",
+          dataAlvo: "2024-11-01",
+          criterioMedicao: "3 vezes por semana",
+          dataInicio: "2024-09-15",
+          periodicidade: "Semanal",
+          status: "pendente",
+          acoes: [
+            {
+              acao: "Ir à academia segunda, quarta e sexta",
+              periodicidade: "Semanal",
+              status: "pendente"
+            },
+            {
+              acao: "Fazer caminhada no fim de semana",
+              periodicidade: "Semanal",
+              status: "pendente"
+            }
+          ]
+        }
+      ];
+      localStorage.setItem("metas", JSON.stringify(metas));
+    }
+
+    // Load pending items
     const pendingObjetivos = objetivos.filter((obj: any) => obj.status === "pendente");
     const pendingMetas = metas.filter((meta: any) => meta.status === "pendente");
     
