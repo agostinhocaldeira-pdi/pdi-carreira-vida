@@ -53,7 +53,7 @@ const Ferramentas = () => {
       color: "text-destructive"
     },
     {
-      nome: "Pedido ao Gênio",
+      nome: "Autoavaliação + 360º",
       descricao: "Visualize seus desejos mais profundos e autênticos",
       icon: Sparkles,
       link: "/ferramentas/genio",
