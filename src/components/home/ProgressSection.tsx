@@ -3,7 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { TrendingUp, Target, CheckCircle2, ChevronDown, Sparkles, Loader2, AlertCircle } from "lucide-react";
+import { TrendingUp, Target, CheckCircle2, ChevronDown, Sparkles, Loader2, AlertCircle, Clock, ExternalLink } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -222,52 +222,136 @@ Analise as correlações entre estes elementos e forneça um insight sobre a ess
         </CardHeader>
         <CollapsibleContent>
           <CardContent>
-            {/* Pending Items Alert */}
+            {/* Pending Items Cards */}
             {(pendingItems.objectives.length > 0 || pendingItems.goals.length > 0 || pendingItems.actions.length > 0) && (
-              <Alert variant="destructive" className="mb-6">
-                <AlertCircle className="h-4 w-4" />
-                <AlertTitle>Itens Pendentes - Prazos Expirados</AlertTitle>
-                <AlertDescription>
-                  <div className="mt-3 space-y-3">
-                    {pendingItems.objectives.length > 0 && (
-                      <div>
-                        <p className="font-semibold text-sm mb-2">Objetivos ({pendingItems.objectives.length}):</p>
-                        <ul className="list-disc list-inside space-y-1 text-sm">
-                          {pendingItems.objectives.map((obj: any, idx: number) => (
-                            <li key={idx}>
-                              {obj.objetivo} - Prazo: {new Date(obj.dataAlvo).toLocaleDateString('pt-BR')}
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    )}
-                    {pendingItems.goals.length > 0 && (
-                      <div>
-                        <p className="font-semibold text-sm mb-2">Metas ({pendingItems.goals.length}):</p>
-                        <ul className="list-disc list-inside space-y-1 text-sm">
-                          {pendingItems.goals.map((meta: any, idx: number) => (
-                            <li key={idx}>
-                              {meta.meta} - Prazo: {new Date(meta.dataAlvo).toLocaleDateString('pt-BR')}
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    )}
-                    {pendingItems.actions.length > 0 && (
-                      <div>
-                        <p className="font-semibold text-sm mb-2">Ações ({pendingItems.actions.length}):</p>
-                        <ul className="list-disc list-inside space-y-1 text-sm">
-                          {pendingItems.actions.map((acao: any, idx: number) => (
-                            <li key={idx}>
-                              {acao.acao} (Meta: {acao.metaTitulo}) - Periodicidade: {acao.periodicidade}
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    )}
-                  </div>
-                </AlertDescription>
-              </Alert>
+              <div className="mb-8 space-y-4">
+                <div className="flex items-center gap-2 mb-4">
+                  <Clock className="w-5 h-5 text-destructive" />
+                  <h3 className="text-lg font-semibold text-destructive">Itens com Prazo Expirado</h3>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  {/* Objetivos Pendentes */}
+                  {pendingItems.objectives.length > 0 && (
+                    <Card className="border-destructive/50 bg-destructive/5">
+                      <CardHeader className="pb-3">
+                        <CardTitle className="text-base flex items-center gap-2">
+                          <span className="text-2xl">🎯</span>
+                          <span>Objetivos ({pendingItems.objectives.length})</span>
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent className="space-y-2">
+                        {pendingItems.objectives.map((obj: any, idx: number) => (
+                          <div 
+                            key={idx}
+                            className="p-3 bg-background rounded-lg border border-border hover:border-primary/50 transition-colors cursor-pointer group"
+                            onClick={() => {
+                              const tabButtons = document.querySelectorAll('[role="tab"]');
+                              const paraOndeVouTab = Array.from(tabButtons).find(
+                                btn => btn.textContent?.includes('Para onde vou')
+                              ) as HTMLElement;
+                              if (paraOndeVouTab) paraOndeVouTab.click();
+                            }}
+                          >
+                            <div className="flex items-start justify-between gap-2">
+                              <div className="flex-1 min-w-0">
+                                <p className="text-sm font-medium text-foreground truncate">
+                                  {obj.objetivo}
+                                </p>
+                                <p className="text-xs text-muted-foreground mt-1">
+                                  Prazo: {new Date(obj.dataAlvo).toLocaleDateString('pt-BR')}
+                                </p>
+                              </div>
+                              <ExternalLink className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors flex-shrink-0" />
+                            </div>
+                          </div>
+                        ))}
+                      </CardContent>
+                    </Card>
+                  )}
+
+                  {/* Metas Pendentes */}
+                  {pendingItems.goals.length > 0 && (
+                    <Card className="border-destructive/50 bg-destructive/5">
+                      <CardHeader className="pb-3">
+                        <CardTitle className="text-base flex items-center gap-2">
+                          <span className="text-2xl">📊</span>
+                          <span>Metas ({pendingItems.goals.length})</span>
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent className="space-y-2">
+                        {pendingItems.goals.map((meta: any, idx: number) => (
+                          <div 
+                            key={idx}
+                            className="p-3 bg-background rounded-lg border border-border hover:border-primary/50 transition-colors cursor-pointer group"
+                            onClick={() => {
+                              const tabButtons = document.querySelectorAll('[role="tab"]');
+                              const comoChegar = Array.from(tabButtons).find(
+                                btn => btn.textContent?.includes('Como vou chegar lá')
+                              ) as HTMLElement;
+                              if (comoChegar) comoChegar.click();
+                            }}
+                          >
+                            <div className="flex items-start justify-between gap-2">
+                              <div className="flex-1 min-w-0">
+                                <p className="text-sm font-medium text-foreground truncate">
+                                  {meta.meta}
+                                </p>
+                                <p className="text-xs text-muted-foreground mt-1">
+                                  Prazo: {new Date(meta.dataAlvo).toLocaleDateString('pt-BR')}
+                                </p>
+                              </div>
+                              <ExternalLink className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors flex-shrink-0" />
+                            </div>
+                          </div>
+                        ))}
+                      </CardContent>
+                    </Card>
+                  )}
+
+                  {/* Ações Pendentes */}
+                  {pendingItems.actions.length > 0 && (
+                    <Card className="border-destructive/50 bg-destructive/5">
+                      <CardHeader className="pb-3">
+                        <CardTitle className="text-base flex items-center gap-2">
+                          <span className="text-2xl">⚡</span>
+                          <span>Ações ({pendingItems.actions.length})</span>
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent className="space-y-2">
+                        {pendingItems.actions.map((acao: any, idx: number) => (
+                          <div 
+                            key={idx}
+                            className="p-3 bg-background rounded-lg border border-border hover:border-primary/50 transition-colors cursor-pointer group"
+                            onClick={() => {
+                              const tabButtons = document.querySelectorAll('[role="tab"]');
+                              const comoChegar = Array.from(tabButtons).find(
+                                btn => btn.textContent?.includes('Como vou chegar lá')
+                              ) as HTMLElement;
+                              if (comoChegar) comoChegar.click();
+                            }}
+                          >
+                            <div className="flex items-start justify-between gap-2">
+                              <div className="flex-1 min-w-0">
+                                <p className="text-sm font-medium text-foreground truncate">
+                                  {acao.acao}
+                                </p>
+                                <p className="text-xs text-muted-foreground mt-1">
+                                  Meta: {acao.metaTitulo}
+                                </p>
+                                <p className="text-xs text-muted-foreground">
+                                  {acao.periodicidade}
+                                </p>
+                              </div>
+                              <ExternalLink className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors flex-shrink-0" />
+                            </div>
+                          </div>
+                        ))}
+                      </CardContent>
+                    </Card>
+                  )}
+                </div>
+              </div>
             )}
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
