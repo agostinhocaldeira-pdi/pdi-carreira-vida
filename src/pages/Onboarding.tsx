@@ -219,7 +219,7 @@ const Onboarding = () => {
           {step === 4 && (
             <div className="space-y-6 animate-fade-in">
               <div className="space-y-4">
-                <CardTitle className="text-2xl">Sua Fase de Vida Atual</CardTitle>
+                <CardTitle className="text-2xl">Vamos começar? 🚀</CardTitle>
                 <CardDescription className="text-base">
                   Como você descreveria o momento que está vivendo agora?
                 </CardDescription>
