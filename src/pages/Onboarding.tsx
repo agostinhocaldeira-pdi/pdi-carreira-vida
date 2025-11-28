@@ -93,16 +93,17 @@ const Onboarding = () => {
               </div>
               
               <div className="flex gap-3">
-                <Button 
-                  onClick={handlePrevious} 
-                  variant="outline" 
-                  size="lg"
-                  className="flex-1"
-                  disabled={step === 1}
-                >
-                  <ArrowLeft className="w-4 h-4 mr-2" />
-                  Voltar
-                </Button>
+                {step > 1 && (
+                  <Button 
+                    onClick={handlePrevious} 
+                    variant="outline" 
+                    size="lg"
+                    className="flex-1"
+                  >
+                    <ArrowLeft className="w-4 h-4 mr-2" />
+                    Voltar
+                  </Button>
+                )}
                 <Button 
                   onClick={handleNext} 
                   size="lg"
