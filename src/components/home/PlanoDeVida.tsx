@@ -60,6 +60,12 @@ const PlanoDeVida = ({ onTabChange, onOpenChange }: PlanoDeVidaProps) => {
     status: string;
   } | null>(null);
 
+  // Estados para Habilidades
+  const [novaHabilidade, setNovaHabilidade] = useState("");
+  const [habilidades, setHabilidades] = useState<Array<{ id: number; texto: string }>>([]);
+  const [editandoHabilidadeId, setEditandoHabilidadeId] = useState<number | null>(null);
+  const [habilidadeEditada, setHabilidadeEditada] = useState("");
+
   // Carregar dados salvos do localStorage
   useEffect(() => {
     const savedVvd = localStorage.getItem("vvd");
@@ -192,6 +198,12 @@ const PlanoDeVida = ({ onTabChange, onOpenChange }: PlanoDeVidaProps) => {
       
       // Permite gerar novamente após 30 dias
       setCanGenerateInsight(diffDays >= 30);
+    }
+
+    // Carregar habilidades do localStorage
+    const savedHabilidades = localStorage.getItem("habilidades");
+    if (savedHabilidades) {
+      setHabilidades(JSON.parse(savedHabilidades));
     }
   }, []);
 
@@ -347,6 +359,54 @@ const PlanoDeVida = ({ onTabChange, onOpenChange }: PlanoDeVidaProps) => {
     setEditandoObjetivoId(null);
     setObjetivoEditado(null);
     toast.success("Objetivo atualizado!");
+  };
+
+  // Funções para gerenciar habilidades
+  const handleAddHabilidade = () => {
+    if (!novaHabilidade.trim()) {
+      toast.error("Digite uma habilidade para adicionar");
+      return;
+    }
+
+    const novaHab = { id: Date.now(), texto: novaHabilidade };
+    const novasHabilidades = [...habilidades, novaHab];
+    setHabilidades(novasHabilidades);
+    localStorage.setItem("habilidades", JSON.stringify(novasHabilidades));
+    setNovaHabilidade("");
+    toast.success("Habilidade adicionada!");
+  };
+
+  const handleRemoveHabilidade = (id: number) => {
+    const novasHabilidades = habilidades.filter((hab) => hab.id !== id);
+    setHabilidades(novasHabilidades);
+    localStorage.setItem("habilidades", JSON.stringify(novasHabilidades));
+    toast.success("Habilidade removida!");
+  };
+
+  const handleStartEditHabilidade = (habilidade: { id: number; texto: string }) => {
+    setEditandoHabilidadeId(habilidade.id);
+    setHabilidadeEditada(habilidade.texto);
+  };
+
+  const handleCancelEditHabilidade = () => {
+    setEditandoHabilidadeId(null);
+    setHabilidadeEditada("");
+  };
+
+  const handleSaveEditHabilidade = (id: number) => {
+    if (!habilidadeEditada.trim()) {
+      toast.error("A habilidade não pode estar vazia");
+      return;
+    }
+
+    const novasHabilidades = habilidades.map((hab) =>
+      hab.id === id ? { ...hab, texto: habilidadeEditada } : hab
+    );
+    setHabilidades(novasHabilidades);
+    localStorage.setItem("habilidades", JSON.stringify(novasHabilidades));
+    setEditandoHabilidadeId(null);
+    setHabilidadeEditada("");
+    toast.success("Habilidade atualizada!");
   };
 
   const handleTabChange = (value: string) => {
@@ -896,21 +956,110 @@ const PlanoDeVida = ({ onTabChange, onOpenChange }: PlanoDeVidaProps) => {
                 <h3 className="text-lg font-semibold">Desenvolvimento</h3>
               </div>
 
-              <div className="space-y-2">
+              <div className="space-y-3">
                 <Label>Habilidades a Desenvolver</Label>
-                <Textarea
-                  placeholder="Liste as habilidades que você precisa desenvolver..."
-                  rows={4}
-                />
-              </div>
 
-              <div className="flex items-center justify-between gap-3">
-                <Button variant="outline" className="flex-1">
-                  Cadastrar
+                <div className="flex gap-2 p-3 sm:p-4 bg-muted/30 rounded-lg">
+                  <Input
+                    placeholder="Digite uma habilidade"
+                    value={novaHabilidade}
+                    onChange={(e) => setNovaHabilidade(e.target.value)}
+                    spellCheck="true"
+                    onKeyPress={(e) => {
+                      if (e.key === 'Enter') {
+                        handleAddHabilidade();
+                      }
+                    }}
+                  />
+                </div>
+
+                <Button 
+                  type="button" 
+                  variant="outline" 
+                  size="sm"
+                  onClick={handleAddHabilidade}
+                  className="mt-2"
+                >
+                  <Plus className="w-4 h-4 mr-2" />
+                  Adicionar Habilidade
                 </Button>
+
+                {habilidades.length > 0 && (
+                  <div className="rounded-lg border overflow-x-auto">
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead className="text-xs sm:text-sm">Habilidade</TableHead>
+                          <TableHead className="w-[80px] sm:w-[100px] text-xs sm:text-sm">Ações</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {habilidades.map((habilidade) => {
+                          const isEditing = editandoHabilidadeId === habilidade.id;
+                          
+                          return (
+                            <TableRow key={habilidade.id}>
+                              <TableCell>
+                                {isEditing ? (
+                                  <Input
+                                    value={habilidadeEditada}
+                                    onChange={(e) => setHabilidadeEditada(e.target.value)}
+                                    spellCheck="true"
+                                  />
+                                ) : (
+                                  habilidade.texto
+                                )}
+                              </TableCell>
+                              <TableCell>
+                                <div className="flex gap-1">
+                                  {isEditing ? (
+                                    <>
+                                      <Button
+                                        variant="ghost"
+                                        size="sm"
+                                        onClick={() => handleSaveEditHabilidade(habilidade.id)}
+                                      >
+                                        <Check className="w-4 h-4 text-green-600" />
+                                      </Button>
+                                      <Button
+                                        variant="ghost"
+                                        size="sm"
+                                        onClick={handleCancelEditHabilidade}
+                                      >
+                                        <X className="w-4 h-4 text-destructive" />
+                                      </Button>
+                                    </>
+                                  ) : (
+                                    <>
+                                      <Button
+                                        variant="ghost"
+                                        size="sm"
+                                        onClick={() => handleStartEditHabilidade(habilidade)}
+                                      >
+                                        <Pencil className="w-4 h-4" />
+                                      </Button>
+                                      <Button
+                                        variant="ghost"
+                                        size="sm"
+                                        onClick={() => handleRemoveHabilidade(habilidade.id)}
+                                      >
+                                        <Trash2 className="w-4 h-4 text-destructive" />
+                                      </Button>
+                                    </>
+                                  )}
+                                </div>
+                              </TableCell>
+                            </TableRow>
+                          );
+                        })}
+                      </TableBody>
+                    </Table>
+                  </div>
+                )}
+
                 <Link 
                   to="/ferramentas" 
-                  className="flex items-center gap-2 text-sm text-primary hover:underline"
+                  className="flex items-center gap-2 text-sm text-primary hover:underline mt-2"
                 >
                   Ferramenta de Habilidades (FF)
                   <ExternalLink className="w-4 h-4" />
