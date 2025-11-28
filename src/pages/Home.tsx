@@ -4,8 +4,9 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Link } from "react-router-dom";
-import { Target, TrendingUp, BookOpen, MessagesSquare, Book, Sparkles, LogIn, User, Zap, Star, Shield, Lock, ChevronDown } from "lucide-react";
+import { Target, TrendingUp, BookOpen, MessagesSquare, Book, Sparkles, LogIn, User, Zap, Star, Shield, Lock, ChevronDown, AlertCircle } from "lucide-react";
 import ProgressSection from "@/components/home/ProgressSection";
 import DiarioSection from "@/components/home/DiarioSection";
 import PlanoDeVida from "@/components/home/PlanoDeVida";
@@ -18,6 +19,7 @@ const Home = () => {
   const [motivationalQuote, setMotivationalQuote] = useState("");
   const [isAdmin, setIsAdmin] = useState(false);
   const [recursosOpen, setRecursosOpen] = useState(false);
+  const [showDiaryWarningModal, setShowDiaryWarningModal] = useState(false);
 
   const quotes = [
     "Acredite em si mesmo e todo o resto se encaixará. 💪",
@@ -49,10 +51,77 @@ const Home = () => {
     // Seleciona uma frase motivacional baseada no dia
     const today = new Date().getDate();
     setMotivationalQuote(quotes[today % quotes.length]);
+
+    // Verificar inatividade no diário e mostrar modal de aviso
+    // Para teste: sempre mostrar o modal ao acessar a home
+    // TODO: Remover depois de implementar dados reais e descomentar a lógica abaixo
+    setShowDiaryWarningModal(true);
+    
+    // Lógica real (comentada para teste):
+    /*
+    const stored = JSON.parse(localStorage.getItem("diario") || "[]");
+    if (stored.length > 0) {
+      const sortedEntries = stored.sort((a: any, b: any) => 
+        new Date(b.data).getTime() - new Date(a.data).getTime()
+      );
+      const lastEntry = sortedEntries[0];
+      const lastEntryDate = new Date(lastEntry.data);
+      const todayDate = new Date();
+      const diffInDays = Math.floor((todayDate.getTime() - lastEntryDate.getTime()) / (1000 * 60 * 60 * 24));
+      
+      if (diffInDays > 3) {
+        setShowDiaryWarningModal(true);
+      }
+    } else {
+      // Nenhuma entrada ainda - mostrar modal também
+      setShowDiaryWarningModal(true);
+    }
+    */
   }, []);
 
   return (
     <div className="min-h-screen bg-gradient-subtle">
+      {/* Modal de Aviso do Diário */}
+      <Dialog open={showDiaryWarningModal} onOpenChange={setShowDiaryWarningModal}>
+        <DialogContent className="sm:max-w-[500px]">
+          <DialogHeader>
+            <div className="flex items-center gap-3 mb-2">
+              <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
+                <AlertCircle className="w-6 h-6 text-primary" />
+              </div>
+              <DialogTitle className="text-xl">Momento de Reflexão 📝</DialogTitle>
+            </div>
+            <DialogDescription className="text-base leading-relaxed pt-4 space-y-4">
+              <p>
+                <strong>Olá! Notamos que você não preenche seu diário há alguns dias.</strong>
+              </p>
+              <p>
+                O diário é uma ferramenta poderosa de autoconhecimento e desenvolvimento pessoal. 
+                Reservar alguns minutos por dia para refletir sobre suas experiências, conquistas 
+                e aprendizados ajuda você a:
+              </p>
+              <ul className="list-disc list-inside space-y-2 text-sm ml-4">
+                <li>Manter clareza sobre seus objetivos e progresso</li>
+                <li>Identificar padrões de comportamento e emoções</li>
+                <li>Cultivar gratidão e pensamento positivo</li>
+                <li>Fortalecer o compromisso com seu PDI</li>
+              </ul>
+              <p className="font-semibold text-primary">
+                Que tal dedicar alguns minutos agora para registrar seu dia?
+              </p>
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex gap-2 justify-end mt-4">
+            <Button variant="outline" onClick={() => setShowDiaryWarningModal(false)}>
+              Mais tarde
+            </Button>
+            <Button onClick={() => setShowDiaryWarningModal(false)}>
+              Vou registrar agora
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
       {/* Header */}
       <header className="bg-gradient-to-r from-card via-card to-primary/5 border-b shadow-elegant backdrop-blur-sm">
         <div className="container mx-auto px-3 sm:px-4 py-4 sm:py-6">
