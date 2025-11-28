@@ -623,6 +623,18 @@ const MaoNaMassa = () => {
                 />
               </div>
 
+              <Button 
+                type="button" 
+                variant="outline" 
+                size="sm"
+                onClick={handleAddPasso}
+                disabled={!objetivoSelecionado}
+                className="mt-2"
+              >
+                <Plus className="w-4 h-4 mr-2" />
+                Cadastrar Mais Passos
+              </Button>
+
               {passos.length > 0 && (
                 <div className="rounded-lg border overflow-x-auto">
                   <Table>
@@ -694,18 +706,6 @@ const MaoNaMassa = () => {
                   </Table>
                 </div>
               )}
-
-              <Button 
-                type="button" 
-                variant="outline" 
-                size="sm"
-                onClick={handleAddPasso}
-                disabled={!objetivoSelecionado}
-                className="mt-2"
-              >
-                <Plus className="w-4 h-4 mr-2" />
-                Cadastrar Mais Passos
-              </Button>
             </div>
 
             <Button onClick={handleSaveMeta} className="w-full" size="lg" disabled={!objetivoSelecionado}>
