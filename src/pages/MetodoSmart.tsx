@@ -141,14 +141,15 @@ const MetodoSmart = () => {
     // Salvar temporariamente para destacar na home
     localStorage.setItem("metaImportadaSmart", JSON.stringify(novaMeta));
 
-    toast.success("🎯 Meta SMART importada!", {
-      description: "Sua meta foi adicionada ao Plano de Vida",
+    toast.success("🎯 Meta SMART importada com sucesso!", {
+      description: "Agora vá até 'Metas Cadastradas' no Plano de Vida e complete o cadastro com as ações e passos necessários",
+      duration: 5000,
     });
 
     // Redirecionar para home
     setTimeout(() => {
       navigate("/home");
-    }, 1500);
+    }, 2000);
   };
 
   const getProgress = () => {
