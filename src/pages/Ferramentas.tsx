@@ -54,9 +54,9 @@ const Ferramentas = () => {
     },
     {
       nome: "Autoavaliação + 360º",
-      descricao: "Visualize seus desejos mais profundos e autênticos",
+      descricao: "Análise profunda sobre você através de dilemas e feedback externo",
       icon: Sparkles,
-      link: "/ferramentas/genio",
+      link: "/ferramentas/autoavaliacao-360",
       color: "text-primary"
     },
     {
