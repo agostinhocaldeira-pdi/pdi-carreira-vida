@@ -338,11 +338,23 @@ Agora, com base em todas essas respostas acima, faça a análise profunda solici
                   Esta ferramenta pode ser utilizada uma vez a cada 3 meses para garantir uma reflexão profunda e evolutiva.
                 </p>
               </div>
-              <Link to="/home">
-                <Button className="mt-4">
-                  Voltar ao Dashboard
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <Link to="/home">
+                  <Button className="w-full sm:w-auto">
+                    Voltar ao Dashboard
+                  </Button>
+                </Link>
+                <Button 
+                  variant="outline" 
+                  onClick={() => {
+                    localStorage.removeItem("autoavaliacao360_last_used");
+                    window.location.reload();
+                  }}
+                  className="w-full sm:w-auto"
+                >
+                  🔄 Reset para Teste
                 </Button>
-              </Link>
+              </div>
             </CardContent>
           </Card>
         </main>
