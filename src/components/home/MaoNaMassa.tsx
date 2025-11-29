@@ -356,7 +356,7 @@ const MaoNaMassa = () => {
                             <div className="space-y-1">
                               {metaCadastrada.acoes && metaCadastrada.acoes.length > 0 ? (
                                 metaCadastrada.acoes.map((acao: any, idx: number) => (
-                                  <div key={idx} className="text-sm">
+                                  <div key={`acao-${metaCadastrada.id}-${idx}`} className="text-sm">
                                     • {acao.acao}
                                   </div>
                                 ))
@@ -369,7 +369,7 @@ const MaoNaMassa = () => {
                             <div className="space-y-1">
                               {metaCadastrada.passos && metaCadastrada.passos.length > 0 ? (
                                 metaCadastrada.passos.map((passo: any, idx: number) => (
-                                  <div key={idx} className="text-sm">
+                                  <div key={`passo-${metaCadastrada.id}-${idx}`} className="text-sm">
                                     {idx + 1}. {passo.passo}
                                   </div>
                                 ))
@@ -437,7 +437,7 @@ const MaoNaMassa = () => {
                           {metaCadastrada.acoes && metaCadastrada.acoes.length > 0 ? (
                             <div className="space-y-1 mt-1">
                               {metaCadastrada.acoes.map((acao: any, idx: number) => (
-                                <div key={idx} className="text-sm">
+                                <div key={`acao-mobile-${metaCadastrada.id}-${idx}`} className="text-sm">
                                   • {acao.acao}
                                 </div>
                               ))}
@@ -452,7 +452,7 @@ const MaoNaMassa = () => {
                           {metaCadastrada.passos && metaCadastrada.passos.length > 0 ? (
                             <div className="space-y-1 mt-1">
                               {metaCadastrada.passos.map((passo: any, idx: number) => (
-                                <div key={idx} className="text-sm">
+                                <div key={`passo-mobile-${metaCadastrada.id}-${idx}`} className="text-sm">
                                   {idx + 1}. {passo.passo}
                                 </div>
                               ))}
