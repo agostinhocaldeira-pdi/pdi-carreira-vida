@@ -12,19 +12,19 @@ import { ptBR } from "date-fns/locale";
 
 const CATEGORIES = [
   { value: "analise_swot", label: "Análise SWOT" },
+  { value: "autoavaliacao_360", label: "Autoavaliação + 360º" },
   { value: "crencas", label: "Crenças" },
   { value: "diario", label: "Diário" },
   { value: "ferramentas", label: "Ferramentas (Geral)" },
   { value: "mao_na_massa", label: "Mão na Massa" },
   { value: "matriz_eisenhower", label: "Matriz de Eisenhower" },
   { value: "metodo_vvd", label: "Método VVD" },
-  { value: "genio_da_lampada", label: "O Pedido para o Gênio da Lâmpada" },
-  { value: "outros", label: "Outros" },
   { value: "plano_de_vida", label: "Plano de Vida" },
   { value: "progresso", label: "Progresso" },
   { value: "roda_da_vida", label: "Roda da Vida" },
   { value: "smart", label: "SMART" },
   { value: "valores", label: "Valores" },
+  { value: "outros", label: "Outros" },
 ];
 
 interface SupportTicket {
@@ -205,7 +205,7 @@ const Suporte = () => {
                 <SelectTrigger id="category">
                   <SelectValue placeholder="Selecione uma opção" />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="max-h-[300px] overflow-y-auto bg-popover">
                   {CATEGORIES.map((cat) => (
                     <SelectItem key={cat.value} value={cat.value}>
                       {cat.label}
