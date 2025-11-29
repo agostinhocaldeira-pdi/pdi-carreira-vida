@@ -19,6 +19,7 @@ const Autoavaliacao360 = () => {
   const [daysRemaining, setDaysRemaining] = useState(0);
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [responses360, setResponses360] = useState("");
+  const [aiAnalysis, setAiAnalysis] = useState("");
   const [history, setHistory] = useState<HistoryEntry[]>([]);
   const [showHistory, setShowHistory] = useState(false);
   const { toast } = useToast();
@@ -49,6 +50,12 @@ const Autoavaliacao360 = () => {
     const saved360 = localStorage.getItem("autoavaliacao360_current_responses");
     if (saved360) {
       setResponses360(saved360);
+    }
+
+    // Load saved AI analysis
+    const savedAnalysis = localStorage.getItem("autoavaliacao360_ai_analysis");
+    if (savedAnalysis) {
+      setAiAnalysis(savedAnalysis);
     }
 
     // Load history
@@ -270,7 +277,27 @@ Agora, com base em todas essas respostas acima, faça a análise profunda solici
     });
   };
 
+  const handleSaveAnalysis = () => {
+    if (!aiAnalysis.trim()) {
+      toast({
+        title: "⚠️ Atenção",
+        description: "Por favor, adicione a análise da IA antes de salvar",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    localStorage.setItem("autoavaliacao360_ai_analysis", aiAnalysis);
+    toast({
+      title: "✅ Análise salva!",
+      description: "A análise da IA foi salva com sucesso",
+    });
+  };
+
   const handleComplete = () => {
+    if (aiAnalysis.trim()) {
+      localStorage.setItem("autoavaliacao360_ai_analysis", aiAnalysis);
+    }
     localStorage.setItem("autoavaliacao360_last_used", new Date().toISOString());
     toast({
       title: "✅ Ferramenta concluída!",
@@ -595,10 +622,35 @@ Agora, com base em todas essas respostas acima, faça a análise profunda solici
                 </div>
               </div>
 
+              {/* Campo para resultado da análise da IA */}
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <h4 className="font-semibold">Resultado da Análise da IA</h4>
+                  <Button
+                    onClick={handleSaveAnalysis}
+                    variant="outline"
+                    size="sm"
+                    className="gap-2"
+                  >
+                    <Save className="w-4 h-4" />
+                    Salvar Análise
+                  </Button>
+                </div>
+                <Textarea
+                  value={aiAnalysis}
+                  onChange={(e) => setAiAnalysis(e.target.value)}
+                  placeholder="Cole aqui a análise completa que você recebeu da IA..."
+                  className="min-h-[300px]"
+                />
+                <p className="text-xs text-muted-foreground">
+                  💾 Cole aqui o resultado completo da análise que você recebeu da IA para salvar e consultar futuramente
+                </p>
+              </div>
+
               <div className="p-4 bg-primary/5 rounded-lg border border-primary/10">
                 <p className="font-semibold text-primary mb-2">💡 Dica importante:</p>
                 <p className="text-sm">
-                  Após receber a análise da IA, identifique as principais habilidades que você precisa desenvolver 
+                  Após receber e salvar a análise da IA, identifique as principais habilidades que você precisa desenvolver 
                   e adicione-as na seção <strong>"Habilidades a Desenvolver"</strong> dentro do seu <strong>Plano de Vida</strong>. 
                   Isso vai te ajudar a criar um plano de ação concreto para seu desenvolvimento.
                 </p>
