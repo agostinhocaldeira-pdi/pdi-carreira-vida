@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowLeft, Sparkles, Heart, Star, Loader2, Edit, Check } from "lucide-react";
+import { ArrowLeft, Sparkles, Heart, Star, Loader2, Edit, Check, ExternalLink } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -274,6 +274,17 @@ const MetodoVvd = () => {
                       )}
                     </Button>
                   </div>
+
+                  <div className="pt-4 border-t border-muted">
+                    <Button
+                      variant="ghost"
+                      className="w-full justify-center gap-2 text-muted-foreground hover:text-primary"
+                      onClick={() => navigate("/home")}
+                    >
+                      <ExternalLink className="h-4 w-4" />
+                      Ver "Minha Visão de Vida Desejada" no Plano de Vida
+                    </Button>
+                  </div>
                 </>
               )}
               
@@ -382,6 +393,17 @@ const MetodoVvd = () => {
                       </Button>
                     </div>
                   </div>
+
+                  <div className="pt-4 border-t border-muted">
+                    <Button
+                      variant="ghost"
+                      className="w-full justify-center gap-2 text-muted-foreground hover:text-primary"
+                      onClick={() => navigate("/home")}
+                    >
+                      <ExternalLink className="h-4 w-4" />
+                      Ver "Minha Visão de Vida Desejada" no Plano de Vida
+                    </Button>
+                  </div>
                 </>
               )}
 
@@ -474,6 +496,17 @@ const MetodoVvd = () => {
                 >
                   <Check className="h-5 w-5 mr-2" />
                   Salvar no Plano de Vida
+                </Button>
+              </div>
+
+              <div className="pt-4 border-t border-muted">
+                <Button
+                  variant="ghost"
+                  className="w-full justify-center gap-2 text-muted-foreground hover:text-primary"
+                  onClick={() => navigate("/home")}
+                >
+                  <ExternalLink className="h-4 w-4" />
+                  Ver "Minha Visão de Vida Desejada" no Plano de Vida
                 </Button>
               </div>
             </CardContent>
