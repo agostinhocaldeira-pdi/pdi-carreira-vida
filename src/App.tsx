@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
+import Landing from "./pages/Landing";
 import Signup from "./pages/Signup";
 import Onboarding from "./pages/Onboarding";
 import Home from "./pages/Home";
@@ -33,7 +34,7 @@ const App = () => (
         <Sonner />
         <BrowserRouter>
           <Routes>
-            <Route path="/" element={<Navigate to="/signup" replace />} />
+            <Route path="/" element={<Landing />} />
             <Route path="/signup" element={<Signup />} />
             <Route path="/onboarding" element={<Onboarding />} />
             <Route path="/home" element={<Home />} />
