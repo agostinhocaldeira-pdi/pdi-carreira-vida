@@ -477,10 +477,10 @@ Analise as correlações entre estes elementos e forneça um insight sobre a ess
             {/* Matriz de Eisenhower Priority Tasks */}
             {(eisenhowerTasks.q1.length > 0 || eisenhowerTasks.q2.length > 0) && (
               <div className="mt-8 space-y-4">
-                <div className="flex items-center justify-between">
-                  <h3 className="text-lg font-semibold flex items-center gap-2">
-                    <Flame className="w-5 h-5 text-destructive" />
-                    Tarefas Prioritárias - Matriz de Eisenhower
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 sm:gap-0">
+                  <h3 className="text-base sm:text-lg font-semibold flex items-center gap-2">
+                    <Flame className="w-4 h-4 sm:w-5 sm:h-5 text-destructive flex-shrink-0" />
+                    <span className="break-words">Tarefas Prioritárias</span>
                   </h3>
                   <Link to="/ferramentas/eisenhower">
                     <Button variant="ghost" size="sm" className="gap-2 hover:text-primary">
