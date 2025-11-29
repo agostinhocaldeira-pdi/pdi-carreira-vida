@@ -240,12 +240,13 @@ const MetodoVvd = () => {
                     </div>
                   )}
 
-                  <div className="flex justify-end gap-3">
+                  <div className="flex flex-col sm:flex-row justify-end gap-3">
                     <Button
                       onClick={handleStep1ManualSave}
                       disabled={!freeText.trim()}
                       size="lg"
                       variant="outline"
+                      className="w-full sm:w-auto"
                     >
                       Salvar
                     </Button>
@@ -253,7 +254,7 @@ const MetodoVvd = () => {
                       onClick={handleStep1Save}
                       disabled={!freeText.trim() || isProcessing || hasUsedAI}
                       size="lg"
-                      className="bg-gradient-to-r from-primary to-accent hover:opacity-90 transition-opacity"
+                      className="w-full sm:w-auto bg-gradient-to-r from-primary to-accent hover:opacity-90 transition-opacity"
                     >
                       {isProcessing ? (
                         <>
@@ -336,21 +337,23 @@ const MetodoVvd = () => {
                     </div>
                   )}
 
-                  <div className="flex justify-between">
+                  <div className="flex flex-col sm:flex-row justify-between gap-3 sm:gap-4">
                     <Button
                       variant="outline"
                       onClick={() => setStep(1)}
                       disabled={isProcessing}
+                      className="w-full sm:w-auto"
                     >
                       <ArrowLeft className="h-4 w-4 mr-2" />
                       Voltar
                     </Button>
-                    <div className="flex gap-3">
+                    <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
                       <Button
                         onClick={handleStep2ManualSave}
                         disabled={!paragraphText.trim()}
                         size="lg"
                         variant="outline"
+                        className="w-full sm:w-auto"
                       >
                         Salvar
                       </Button>
@@ -358,7 +361,7 @@ const MetodoVvd = () => {
                         onClick={handleStep2Save}
                         disabled={!paragraphText.trim() || isProcessing || hasUsedAI}
                         size="lg"
-                        className="bg-gradient-to-r from-primary to-accent hover:opacity-90 transition-opacity"
+                        className="w-full sm:w-auto bg-gradient-to-r from-primary to-accent hover:opacity-90 transition-opacity"
                       >
                         {isProcessing ? (
                           <>
@@ -454,10 +457,11 @@ const MetodoVvd = () => {
                 </p>
               </div>
 
-              <div className="flex justify-between">
+              <div className="flex flex-col sm:flex-row justify-between gap-3 sm:gap-4">
                 <Button
                   variant="outline"
                   onClick={() => setStep(2)}
+                  className="w-full sm:w-auto"
                 >
                   <ArrowLeft className="h-4 w-4 mr-2" />
                   Voltar
@@ -466,7 +470,7 @@ const MetodoVvd = () => {
                   onClick={handleFinalSave}
                   disabled={!sentenceText.trim()}
                   size="lg"
-                  className="bg-gradient-to-r from-primary to-accent hover:opacity-90 transition-opacity"
+                  className="w-full sm:w-auto bg-gradient-to-r from-primary to-accent hover:opacity-90 transition-opacity"
                 >
                   <Check className="h-5 w-5 mr-2" />
                   Salvar no Plano de Vida
