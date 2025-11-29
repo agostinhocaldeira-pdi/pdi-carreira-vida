@@ -421,9 +421,9 @@ const MetodoVvd = () => {
                     </Button>
                   </div>
                 )}
-                <div className="bg-gradient-to-br from-primary/10 via-accent/5 to-primary/10 rounded-xl p-8 border-2 border-primary/30">
+                <div className="bg-gradient-to-br from-primary/10 via-accent/5 to-primary/10 rounded-xl p-4 sm:p-8 border-2 border-primary/30">
                   {!isEditingSentence ? (
-                    <p className="text-2xl font-bold text-center leading-relaxed">
+                    <p className="text-lg sm:text-2xl font-bold text-center leading-relaxed break-words">
                       "{sentenceText}"
                     </p>
                   ) : (
@@ -431,7 +431,7 @@ const MetodoVvd = () => {
                       <Textarea
                         value={sentenceText}
                         onChange={(e) => setSentenceText(e.target.value)}
-                        className="text-xl font-medium text-center min-h-[120px]"
+                        className="text-base sm:text-xl font-medium text-center min-h-[120px]"
                         spellCheck
                       />
                       <Button
