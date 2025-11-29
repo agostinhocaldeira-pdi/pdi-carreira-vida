@@ -636,27 +636,27 @@ Agora, com base em todas essas respostas acima, faça a análise profunda solici
 
               {/* Campo para resultado da análise da IA */}
               <div className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <h4 className="font-semibold">Resultado da Análise da IA</h4>
-                  <Button
-                    onClick={handleSaveAnalysis}
-                    variant="outline"
-                    size="sm"
-                    className="gap-2"
-                  >
-                    <Save className="w-4 h-4" />
-                    Salvar Análise
-                  </Button>
-                </div>
+                <h4 className="font-semibold">Resultado da Análise da IA</h4>
                 <Textarea
                   value={aiAnalysis}
                   onChange={(e) => setAiAnalysis(e.target.value)}
                   placeholder="Cole aqui a análise completa que você recebeu da IA..."
                   className="min-h-[300px]"
                 />
-                <p className="text-xs text-muted-foreground">
-                  💾 Cole aqui o resultado completo da análise que você recebeu da IA para salvar e consultar futuramente
-                </p>
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                  <p className="text-xs text-muted-foreground">
+                    💾 Cole aqui o resultado completo da análise que você recebeu da IA para salvar e consultar futuramente
+                  </p>
+                  <Button
+                    onClick={handleSaveAnalysis}
+                    variant="outline"
+                    size="sm"
+                    className="gap-2 w-full sm:w-auto"
+                  >
+                    <Save className="w-4 h-4" />
+                    Salvar Análise
+                  </Button>
+                </div>
               </div>
 
               <div className="p-4 bg-primary/5 rounded-lg border border-primary/10">
