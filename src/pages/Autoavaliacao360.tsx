@@ -3,15 +3,24 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Link } from "react-router-dom";
-import { ArrowLeft, ArrowRight, Copy, CheckCircle, Clock, Sparkles } from "lucide-react";
+import { ArrowLeft, ArrowRight, Copy, CheckCircle, Clock, Sparkles, History, Save } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/contexts/LanguageContext";
+
+interface HistoryEntry {
+  id: string;
+  date: string;
+  responses360: string;
+}
 
 const Autoavaliacao360 = () => {
   const [currentStep, setCurrentStep] = useState(1);
   const [canUse, setCanUse] = useState(true);
   const [daysRemaining, setDaysRemaining] = useState(0);
   const [answers, setAnswers] = useState<Record<string, string>>({});
+  const [responses360, setResponses360] = useState("");
+  const [history, setHistory] = useState<HistoryEntry[]>([]);
+  const [showHistory, setShowHistory] = useState(false);
   const { toast } = useToast();
   const { t } = useLanguage();
 
@@ -34,6 +43,18 @@ const Autoavaliacao360 = () => {
     const savedAnswers = localStorage.getItem("autoavaliacao360_answers");
     if (savedAnswers) {
       setAnswers(JSON.parse(savedAnswers));
+    }
+
+    // Load saved 360 responses
+    const saved360 = localStorage.getItem("autoavaliacao360_current_responses");
+    if (saved360) {
+      setResponses360(saved360);
+    }
+
+    // Load history
+    const savedHistory = localStorage.getItem("autoavaliacao360_history");
+    if (savedHistory) {
+      setHistory(JSON.parse(savedHistory));
     }
   }, []);
 
@@ -200,6 +221,33 @@ Depois que eu te enviar todas as respostas, faça a análise profunda solicitada
     setCurrentStep(2);
   };
 
+  const handleSave360Responses = () => {
+    if (!responses360.trim()) {
+      toast({
+        title: "⚠️ Atenção",
+        description: "Por favor, adicione as respostas 360º antes de salvar",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    const newEntry: HistoryEntry = {
+      id: Date.now().toString(),
+      date: new Date().toISOString(),
+      responses360: responses360
+    };
+
+    const updatedHistory = [newEntry, ...history];
+    setHistory(updatedHistory);
+    localStorage.setItem("autoavaliacao360_history", JSON.stringify(updatedHistory));
+    localStorage.setItem("autoavaliacao360_current_responses", responses360);
+
+    toast({
+      title: "✅ Respostas salvas!",
+      description: "As respostas 360º foram adicionadas ao histórico",
+    });
+  };
+
   const handleComplete = () => {
     localStorage.setItem("autoavaliacao360_last_used", new Date().toISOString());
     toast({
@@ -281,7 +329,7 @@ Depois que eu te enviar todas as respostas, faça a análise profunda solicitada
                 <div className={`w-8 h-8 rounded-full flex items-center justify-center font-semibold ${currentStep >= 1 ? 'bg-primary text-white' : 'bg-muted'}`}>
                   1
                 </div>
-                <span className="text-sm font-medium hidden sm:inline">Perguntas Profundas</span>
+                <span className="text-sm font-medium hidden sm:inline">Autoavaliação</span>
               </div>
               <div className="flex-1 h-1 bg-muted">
                 <div className={`h-full bg-primary transition-all ${currentStep >= 2 ? 'w-full' : 'w-0'}`} />
@@ -311,7 +359,7 @@ Depois que eu te enviar todas as respostas, faça a análise profunda solicitada
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Sparkles className="w-5 h-5 text-primary" />
-                Etapa 1: Perguntas Profundas em Formato de Dilemas
+                Etapa 1: Perguntas de Autoavaliação
               </CardTitle>
               <CardDescription>
                 Responda com sinceridade sobre como você age diante desses dilemas. Não há respostas certas ou erradas.
@@ -364,7 +412,7 @@ Depois que eu te enviar todas as respostas, faça a análise profunda solicitada
                   <li>Clique no botão abaixo para copiar todas as 32 perguntas</li>
                   <li>Cole as perguntas em um documento Word, Google Docs ou ferramenta de sua preferência</li>
                   <li>Envie para o máximo de pessoas possível (quanto mais feedback, melhor será sua análise)</li>
-                  <li>Colete todas as respostas e guarde para usar na Etapa 3</li>
+                  <li>Colete todas as respostas e cole no campo abaixo para salvar no histórico</li>
                 </ol>
               </div>
 
@@ -386,6 +434,84 @@ Depois que eu te enviar todas as respostas, faça a análise profunda solicitada
                   {questions360}
                 </div>
               </div>
+
+              {/* Campo para colar respostas coletadas */}
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <h4 className="font-semibold">Respostas Coletadas (360º)</h4>
+                  <Button
+                    onClick={handleSave360Responses}
+                    variant="outline"
+                    size="sm"
+                    className="gap-2"
+                  >
+                    <Save className="w-4 h-4" />
+                    Salvar no Histórico
+                  </Button>
+                </div>
+                <Textarea
+                  value={responses360}
+                  onChange={(e) => setResponses360(e.target.value)}
+                  placeholder="Cole aqui todas as respostas coletadas das pessoas que responderam a avaliação 360º..."
+                  className="min-h-[200px]"
+                />
+                <p className="text-xs text-muted-foreground">
+                  💾 As respostas serão salvas no histórico para consulta futura
+                </p>
+              </div>
+
+              {/* Histórico de respostas */}
+              {history.length > 0 && (
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <h4 className="font-semibold flex items-center gap-2">
+                      <History className="w-4 h-4" />
+                      Histórico de Respostas 360º
+                    </h4>
+                    <Button
+                      onClick={() => setShowHistory(!showHistory)}
+                      variant="ghost"
+                      size="sm"
+                    >
+                      {showHistory ? "Ocultar" : "Mostrar"} ({history.length})
+                    </Button>
+                  </div>
+                  
+                  {showHistory && (
+                    <div className="space-y-3 max-h-[300px] overflow-y-auto">
+                      {history.map((entry) => (
+                        <Card key={entry.id} className="bg-muted/20">
+                          <CardContent className="pt-4 space-y-2">
+                            <div className="flex items-center justify-between">
+                              <p className="text-sm font-medium">
+                                📅 {new Date(entry.date).toLocaleDateString('pt-BR', {
+                                  day: '2-digit',
+                                  month: 'long',
+                                  year: 'numeric',
+                                  hour: '2-digit',
+                                  minute: '2-digit'
+                                })}
+                              </p>
+                              <Button
+                                onClick={() => copyToClipboard(entry.responses360, "Respostas 360º do histórico")}
+                                variant="ghost"
+                                size="sm"
+                                className="gap-1 text-xs"
+                              >
+                                <Copy className="w-3 h-3" />
+                                Copiar
+                              </Button>
+                            </div>
+                            <p className="text-xs text-muted-foreground line-clamp-3">
+                              {entry.responses360}
+                            </p>
+                          </CardContent>
+                        </Card>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
 
               <div className="flex justify-between pt-4">
                 <Button variant="outline" onClick={() => setCurrentStep(1)} className="gap-2">
