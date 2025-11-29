@@ -164,7 +164,37 @@ const Autoavaliacao360 = () => {
 31. Quais situações eu pareço procrastinar ou evitar decisões?
 32. Você percebe em mim, clareza sobre os meus objetivos profissionais? Comente.`;
 
-  const aiPrompt = `A seguir, vou te enviar um conjunto de respostas — primeiro as minhas próprias respostas e depois as respostas de outras pessoas (avaliação 360º) — referentes às perguntas listadas abaixo.
+  const copyToClipboard = (text: string, label: string) => {
+    navigator.clipboard.writeText(text);
+    toast({
+      title: "✅ Copiado!",
+      description: `${label} copiado para a área de transferência`,
+    });
+  };
+
+  const generateCompletePrompt = () => {
+    // Formatar respostas da Etapa 1 (Autoavaliação)
+    let step1Formatted = "=== MINHAS RESPOSTAS (AUTOAVALIAÇÃO) ===\n\n";
+    
+    questionsStep1.forEach((category) => {
+      step1Formatted += `${category.category}\n`;
+      category.questions.forEach((q) => {
+        step1Formatted += `\nPergunta: ${q.text}\n`;
+        step1Formatted += `Resposta: ${answers[q.id] || "Não respondida"}\n`;
+      });
+      step1Formatted += "\n";
+    });
+
+    // Adicionar respostas da Etapa 2 (360º)
+    let step2Formatted = "\n=== RESPOSTAS DE OUTRAS PESSOAS (AVALIAÇÃO 360º) ===\n\n";
+    if (responses360.trim()) {
+      step2Formatted += responses360;
+    } else {
+      step2Formatted += "Nenhuma resposta 360º foi coletada ainda.";
+    }
+
+    // Montar prompt completo
+    const completePrompt = `A seguir, vou te enviar um conjunto de respostas — primeiro as minhas próprias respostas e depois as respostas de outras pessoas (avaliação 360º) — referentes às perguntas listadas abaixo.
 
 Com base exclusivamente nessas respostas, quero que você produza uma análise profunda sobre mim, respondendo claramente:
 
@@ -188,20 +218,12 @@ Depois, com base em tudo isso, quero que você me devolva uma síntese clara com
 • o que tudo isso indica sobre meu momento atual
 • quais são meus maiores potenciais a desenvolver a partir dessa análise
 
-Aqui estão as perguntas que minhas respostas e as de outras pessoas irão seguir:
+${step1Formatted}
+${step2Formatted}
 
-${questions360}
+Agora, com base em todas essas respostas acima, faça a análise profunda solicitada.`;
 
-(cole todas as respostas aqui)
-
-Depois que eu te enviar todas as respostas, faça a análise profunda solicitada.`;
-
-  const copyToClipboard = (text: string, label: string) => {
-    navigator.clipboard.writeText(text);
-    toast({
-      title: "✅ Copiado!",
-      description: `${label} copiado para a área de transferência`,
-    });
+    return completePrompt;
   };
 
   const handleFinishStep1 = () => {
@@ -536,39 +558,40 @@ Depois que eu te enviar todas as respostas, faça a análise profunda solicitada
                 Etapa 3: Análise Profunda com IA
               </CardTitle>
               <CardDescription>
-                Agora você vai consolidar todas as suas respostas (Etapa 1) e as respostas coletadas (Etapa 2) e enviá-las para uma IA de sua preferência junto com o prompt abaixo.
+                Seu prompt completo está pronto! Copie tudo e cole em uma IA de sua preferência (ChatGPT, Claude, Copilot, Gemini, etc.) para receber sua análise personalizada.
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="p-4 bg-accent/5 rounded-lg border border-accent/10 space-y-3">
-                <p className="font-semibold text-accent">🤖 Como fazer a análise:</p>
+                <p className="font-semibold text-accent">🤖 Prompt Completo Gerado</p>
+                <p className="text-sm">
+                  Consolidamos automaticamente todas as suas respostas da Etapa 1 (Autoavaliação) e as respostas coletadas na Etapa 2 (Avaliação 360º) em um único prompt pronto para usar.
+                </p>
                 <ol className="list-decimal list-inside space-y-2 text-sm">
-                  <li>Copie o PROMPT COMPLETO abaixo clicando no botão</li>
+                  <li>Clique em "Copiar Prompt Completo" abaixo</li>
                   <li>Abra uma IA de sua preferência (ChatGPT, Claude, Copilot, Gemini, etc.)</li>
-                  <li>Cole o prompt na IA</li>
-                  <li>Logo após o prompt, cole TODAS as suas respostas da Etapa 1</li>
-                  <li>Em seguida, cole TODAS as respostas coletadas na Etapa 2</li>
-                  <li>Aguarde a análise profunda da IA</li>
+                  <li>Cole o prompt completo na IA</li>
+                  <li>Aguarde a análise profunda</li>
                   <li>Use os insights para alimentar "Habilidades a Desenvolver" no seu Plano de Vida</li>
                 </ol>
               </div>
 
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
-                  <h4 className="font-semibold">PROMPT COMPLETO PARA IA</h4>
+                  <h4 className="font-semibold">PROMPT COMPLETO COM TODAS AS RESPOSTAS</h4>
                   <Button
-                    onClick={() => copyToClipboard(aiPrompt, "Prompt para IA")}
-                    variant="outline"
+                    onClick={() => copyToClipboard(generateCompletePrompt(), "Prompt completo")}
+                    variant="default"
                     size="sm"
                     className="gap-2"
                   >
                     <Copy className="w-4 h-4" />
-                    Copiar Prompt
+                    Copiar Prompt Completo
                   </Button>
                 </div>
                 
                 <div className="max-h-[500px] overflow-y-auto p-4 bg-muted/30 rounded-lg border text-sm whitespace-pre-wrap">
-                  {aiPrompt}
+                  {generateCompletePrompt()}
                 </div>
               </div>
 
