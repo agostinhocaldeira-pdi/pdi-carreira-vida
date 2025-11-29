@@ -282,7 +282,7 @@ const MetodoVvd = () => {
                       onClick={() => navigate("/home")}
                     >
                       <ExternalLink className="h-4 w-4" />
-                      Ver "Minha Visão de Vida Desejada" no Plano de Vida
+                      Voltar Dashboard
                     </Button>
                   </div>
                 </>
@@ -401,7 +401,7 @@ const MetodoVvd = () => {
                       onClick={() => navigate("/home")}
                     >
                       <ExternalLink className="h-4 w-4" />
-                      Ver "Minha Visão de Vida Desejada" no Plano de Vida
+                      Voltar Dashboard
                     </Button>
                   </div>
                 </>
@@ -506,7 +506,7 @@ const MetodoVvd = () => {
                   onClick={() => navigate("/home")}
                 >
                   <ExternalLink className="h-4 w-4" />
-                  Ver "Minha Visão de Vida Desejada" no Plano de Vida
+                  Voltar Dashboard
                 </Button>
               </div>
             </CardContent>
