@@ -49,6 +49,49 @@ const Home = () => {
       }
     }
 
+    // Adicionar dados mockados com prazo vencido (apenas uma vez)
+    const mockDataAdded = localStorage.getItem("mock_expired_data_added");
+    if (!mockDataAdded) {
+      // Data vencida (30 dias atrás)
+      const expiredDate = new Date();
+      expiredDate.setDate(expiredDate.getDate() - 30);
+      const expiredDateString = expiredDate.toISOString().split('T')[0];
+
+      // Objetivo mockado com prazo vencido
+      const existingObjectives = JSON.parse(localStorage.getItem("objectives") || "[]");
+      existingObjectives.push({
+        id: `mock-obj-${Date.now()}`,
+        objetivo: "Melhorar habilidades de comunicação",
+        data_alvo: expiredDateString,
+        conexao_vvd: "Ser mais assertivo e claro nas minhas interações profissionais",
+        status: "pendente"
+      });
+      localStorage.setItem("objectives", JSON.stringify(existingObjectives));
+
+      // Meta mockada com prazo vencido
+      const existingMetas = JSON.parse(localStorage.getItem("metas") || "[]");
+      existingMetas.push({
+        id: `mock-meta-${Date.now()}`,
+        objetivo: "Melhorar habilidades de comunicação",
+        meta: "Concluir curso de oratória online",
+        data_alvo: expiredDateString,
+        status: "pendente"
+      });
+      localStorage.setItem("metas", JSON.stringify(existingMetas));
+
+      // Ação mockada com prazo vencido
+      const existingAcoes = JSON.parse(localStorage.getItem("acoes") || "[]");
+      existingAcoes.push({
+        id: `mock-acao-${Date.now()}`,
+        acao: "Praticar apresentação para equipe",
+        periodicidade: expiredDateString,
+        status: "pendente"
+      });
+      localStorage.setItem("acoes", JSON.stringify(existingAcoes));
+
+      localStorage.setItem("mock_expired_data_added", "true");
+    }
+
     // Seleciona uma frase motivacional baseada no dia
     const today = new Date().getDate();
     setMotivationalQuote(quotes[today % quotes.length]);
