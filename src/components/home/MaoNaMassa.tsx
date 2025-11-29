@@ -62,20 +62,21 @@ const MaoNaMassa = () => {
   const [editandoMetaId, setEditandoMetaId] = useState<number | null>(null);
 
   useEffect(() => {
-    let objetivosSalvos = JSON.parse(localStorage.getItem("objetivos") || "[]");
-    
-    // Adicionar objetivos mockados se não existirem
-    if (objetivosSalvos.length === 0) {
-      objetivosSalvos = [
-        { id: 1, texto: "Crescimento Profissional", status: "em-andamento" },
-        { id: 2, texto: "Saúde e Bem-estar", status: "a-fazer" },
-        { id: 3, texto: "Desenvolvimento Pessoal", status: "em-andamento" }
-      ];
-      localStorage.setItem("objetivos", JSON.stringify(objetivosSalvos));
-    }
-    setObjetivosDisponiveis(objetivosSalvos);
-    
-    let metasSalvas = JSON.parse(localStorage.getItem("metas") || "[]");
+    try {
+      let objetivosSalvos = JSON.parse(localStorage.getItem("objetivos") || "[]");
+      
+      // Adicionar objetivos mockados se não existirem
+      if (objetivosSalvos.length === 0) {
+        objetivosSalvos = [
+          { id: 1, texto: "Crescimento Profissional", status: "em-andamento" },
+          { id: 2, texto: "Saúde e Bem-estar", status: "a-fazer" },
+          { id: 3, texto: "Desenvolvimento Pessoal", status: "em-andamento" }
+        ];
+        localStorage.setItem("objetivos", JSON.stringify(objetivosSalvos));
+      }
+      setObjetivosDisponiveis(objetivosSalvos);
+      
+      let metasSalvas = JSON.parse(localStorage.getItem("metas") || "[]");
     
     // Adicionar metas mockadas se não existirem
     if (metasSalvas.length === 0) {
@@ -145,6 +146,11 @@ const MaoNaMassa = () => {
       localStorage.setItem("metas", JSON.stringify(metasSalvas));
     }
     setMetasCadastradas(metasSalvas);
+    } catch (error) {
+      console.error("Erro ao carregar dados do localStorage:", error);
+      setObjetivosDisponiveis([]);
+      setMetasCadastradas([]);
+    }
   }, []);
 
   const handleAddAcao = () => {
@@ -352,12 +358,12 @@ const MaoNaMassa = () => {
                           <TableCell>
                             {new Date(metaCadastrada.dataAlvo).toLocaleDateString('pt-BR')}
                           </TableCell>
-                          <TableCell>
+                           <TableCell>
                             <div className="space-y-1">
-                              {metaCadastrada.acoes && metaCadastrada.acoes.length > 0 ? (
+                              {metaCadastrada.acoes && Array.isArray(metaCadastrada.acoes) && metaCadastrada.acoes.length > 0 ? (
                                 metaCadastrada.acoes.map((acao: any, idx: number) => (
                                   <div key={`acao-${metaCadastrada.id}-${idx}`} className="text-sm">
-                                    • {acao.acao}
+                                    • {acao?.acao || "Ação sem nome"}
                                   </div>
                                 ))
                               ) : (
@@ -367,10 +373,10 @@ const MaoNaMassa = () => {
                           </TableCell>
                           <TableCell>
                             <div className="space-y-1">
-                              {metaCadastrada.passos && metaCadastrada.passos.length > 0 ? (
+                              {metaCadastrada.passos && Array.isArray(metaCadastrada.passos) && metaCadastrada.passos.length > 0 ? (
                                 metaCadastrada.passos.map((passo: any, idx: number) => (
                                   <div key={`passo-${metaCadastrada.id}-${idx}`} className="text-sm">
-                                    {idx + 1}. {passo.passo}
+                                    {idx + 1}. {passo?.passo || "Passo sem descrição"}
                                   </div>
                                 ))
                               ) : (
@@ -434,11 +440,11 @@ const MaoNaMassa = () => {
                         
                         <div>
                           <Label className="text-xs text-muted-foreground">Ações</Label>
-                          {metaCadastrada.acoes && metaCadastrada.acoes.length > 0 ? (
+                          {metaCadastrada.acoes && Array.isArray(metaCadastrada.acoes) && metaCadastrada.acoes.length > 0 ? (
                             <div className="space-y-1 mt-1">
                               {metaCadastrada.acoes.map((acao: any, idx: number) => (
                                 <div key={`acao-mobile-${metaCadastrada.id}-${idx}`} className="text-sm">
-                                  • {acao.acao}
+                                  • {acao?.acao || "Ação sem nome"}
                                 </div>
                               ))}
                             </div>
