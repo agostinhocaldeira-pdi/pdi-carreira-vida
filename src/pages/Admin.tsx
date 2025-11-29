@@ -6,8 +6,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { useNavigate } from "react-router-dom";
-import { Shield, Home, Users, Settings, Activity, AlertCircle, Trash2, UserPlus } from "lucide-react";
+import { Shield, Home, Users, Settings, Activity, AlertCircle, Trash2, UserPlus, Star, Zap, TrendingUp } from "lucide-react";
 import { toast } from "sonner";
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, LineChart, Line } from "recharts";
 
 interface Administrator {
   id: string;
@@ -353,6 +354,177 @@ const Admin = () => {
                   )}
                 </TableBody>
               </Table>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Pesquisas de Satisfação */}
+        <Card className="shadow-medium">
+          <CardHeader>
+            <CardTitle className="text-lg flex items-center gap-2">
+              <TrendingUp className="w-5 h-5 text-primary" />
+              Pesquisas de Satisfação
+            </CardTitle>
+            <CardDescription>
+              Análise de CSAT (Satisfação) e CES (Esforço) dos usuários (Dados Mockados)
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            {/* Resumo Geral */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="p-4 bg-primary/5 rounded-lg border border-primary/10">
+                <div className="flex items-center gap-2 mb-2">
+                  <Star className="w-4 h-4 text-primary" />
+                  <span className="text-sm font-medium">CSAT Médio</span>
+                </div>
+                <p className="text-2xl font-bold">4.3/5</p>
+                <p className="text-xs text-muted-foreground mt-1">Satisfação geral</p>
+              </div>
+              
+              <div className="p-4 bg-primary/5 rounded-lg border border-primary/10">
+                <div className="flex items-center gap-2 mb-2">
+                  <Zap className="w-4 h-4 text-primary" />
+                  <span className="text-sm font-medium">CES Médio</span>
+                </div>
+                <p className="text-2xl font-bold">5.8/7</p>
+                <p className="text-xs text-muted-foreground mt-1">Facilidade de uso</p>
+              </div>
+              
+              <div className="p-4 bg-primary/5 rounded-lg border border-primary/10">
+                <div className="flex items-center gap-2 mb-2">
+                  <Users className="w-4 h-4 text-primary" />
+                  <span className="text-sm font-medium">Respostas</span>
+                </div>
+                <p className="text-2xl font-bold">143</p>
+                <p className="text-xs text-muted-foreground mt-1">Total de feedbacks</p>
+              </div>
+            </div>
+
+            {/* Gráfico de Tendência */}
+            <div>
+              <h4 className="text-sm font-semibold mb-3">Tendência de Satisfação (últimos 6 meses)</h4>
+              <ResponsiveContainer width="100%" height={250}>
+                <LineChart
+                  data={[
+                    { mes: "Jan", csat: 3.8, ces: 5.2 },
+                    { mes: "Fev", csat: 4.0, ces: 5.4 },
+                    { mes: "Mar", csat: 4.1, ces: 5.6 },
+                    { mes: "Abr", csat: 4.2, ces: 5.5 },
+                    { mes: "Mai", csat: 4.3, ces: 5.7 },
+                    { mes: "Jun", csat: 4.3, ces: 5.8 },
+                  ]}
+                >
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="mes" />
+                  <YAxis />
+                  <Tooltip />
+                  <Legend />
+                  <Line type="monotone" dataKey="csat" stroke="hsl(var(--primary))" name="CSAT (1-5)" strokeWidth={2} />
+                  <Line type="monotone" dataKey="ces" stroke="hsl(var(--destructive))" name="CES (1-7)" strokeWidth={2} />
+                </LineChart>
+              </ResponsiveContainer>
+            </div>
+
+            {/* Gráfico por Seção */}
+            <div>
+              <h4 className="text-sm font-semibold mb-3">Satisfação por Seção</h4>
+              <ResponsiveContainer width="100%" height={300}>
+                <BarChart
+                  data={[
+                    { secao: "Diário", csat: 4.5, ces: 6.2 },
+                    { secao: "Plano de Vida", csat: 4.2, ces: 5.5 },
+                    { secao: "Objetivos", csat: 4.4, ces: 5.8 },
+                    { secao: "Roda da Vida", csat: 4.1, ces: 5.4 },
+                    { secao: "SWOT", csat: 4.0, ces: 5.3 },
+                    { secao: "VVD", csat: 4.3, ces: 5.9 },
+                  ]}
+                >
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="secao" angle={-15} textAnchor="end" height={80} />
+                  <YAxis />
+                  <Tooltip />
+                  <Legend />
+                  <Bar dataKey="csat" fill="hsl(var(--primary))" name="CSAT (1-5)" />
+                  <Bar dataKey="ces" fill="hsl(var(--destructive))" name="CES (1-7)" />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+
+            {/* Tabela de Feedbacks Recentes */}
+            <div>
+              <h4 className="text-sm font-semibold mb-3">Feedbacks Recentes</h4>
+              <div className="rounded-lg border overflow-x-auto">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Data</TableHead>
+                      <TableHead>Tipo</TableHead>
+                      <TableHead>Seção</TableHead>
+                      <TableHead>Nota</TableHead>
+                      <TableHead>Comentário</TableHead>
+                      <TableHead>Usuário</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {[
+                      { 
+                        data: "2025-01-20", 
+                        tipo: "CSAT", 
+                        secao: "Diário", 
+                        nota: "5/5", 
+                        comentario: "Muito útil para reflexão diária!",
+                        usuario: "joao@exemplo.com"
+                      },
+                      { 
+                        data: "2025-01-19", 
+                        tipo: "CES", 
+                        secao: "Roda da Vida", 
+                        nota: "6/7", 
+                        comentario: "Fácil de usar, interface intuitiva",
+                        usuario: "maria@exemplo.com"
+                      },
+                      { 
+                        data: "2025-01-19", 
+                        tipo: "CSAT", 
+                        secao: "Objetivos", 
+                        nota: "4/5", 
+                        comentario: "Bom, mas poderia ter mais exemplos",
+                        usuario: "pedro@exemplo.com"
+                      },
+                      { 
+                        data: "2025-01-18", 
+                        tipo: "CES", 
+                        secao: "VVD", 
+                        nota: "7/7", 
+                        comentario: "Muito fácil, adorei a IA!",
+                        usuario: "ana@exemplo.com"
+                      },
+                      { 
+                        data: "2025-01-18", 
+                        tipo: "CSAT", 
+                        secao: "SWOT", 
+                        nota: "3/5", 
+                        comentario: "Poderia ter mais explicações sobre cada quadrante",
+                        usuario: "carlos@exemplo.com"
+                      },
+                    ].map((feedback, index) => (
+                      <TableRow key={index}>
+                        <TableCell className="whitespace-nowrap">{feedback.data}</TableCell>
+                        <TableCell>
+                          <Badge variant={feedback.tipo === "CSAT" ? "default" : "secondary"} className="gap-1">
+                            {feedback.tipo === "CSAT" ? <Star className="w-3 h-3" /> : <Zap className="w-3 h-3" />}
+                            {feedback.tipo}
+                          </Badge>
+                        </TableCell>
+                        <TableCell>{feedback.secao}</TableCell>
+                        <TableCell className="font-semibold">{feedback.nota}</TableCell>
+                        <TableCell className="max-w-xs truncate">{feedback.comentario}</TableCell>
+                        <TableCell className="text-muted-foreground text-sm">{feedback.usuario}</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
             </div>
           </CardContent>
         </Card>

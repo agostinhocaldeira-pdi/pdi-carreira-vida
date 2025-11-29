@@ -12,6 +12,8 @@ import DiarioSection from "@/components/home/DiarioSection";
 import PlanoDeVida from "@/components/home/PlanoDeVida";
 import MaoNaMassa from "@/components/home/MaoNaMassa";
 import LanguageSelector from "@/components/LanguageSelector";
+import { SatisfactionSurveyModal } from "@/components/SatisfactionSurveyModal";
+import { useSatisfactionSurvey } from "@/hooks/useSatisfactionSurvey";
 
 const Home = () => {
   const [userName, setUserName] = useState("");
@@ -21,6 +23,13 @@ const Home = () => {
   const [isAdmin, setIsAdmin] = useState(false);
   const [recursosOpen, setRecursosOpen] = useState(false);
   const [showDiaryWarningModal, setShowDiaryWarningModal] = useState(false);
+  
+  const { showSurvey, setShowSurvey, completedSection, markSectionCompleted } = useSatisfactionSurvey();
+
+  // Expor função globalmente para ser chamada pelas seções
+  useEffect(() => {
+    (window as any).markSectionCompleted = markSectionCompleted;
+  }, [markSectionCompleted]);
 
   const quotes = [
     "Acredite em si mesmo e todo o resto se encaixará. 💪",
@@ -143,6 +152,13 @@ const Home = () => {
 
   return (
     <div className="min-h-screen bg-gradient-subtle">
+      {/* Modal de Pesquisa de Satisfação */}
+      <SatisfactionSurveyModal 
+        open={showSurvey}
+        onOpenChange={setShowSurvey}
+        sectionCompleted={completedSection}
+      />
+
       {/* Modal de Aviso do Diário */}
       <Dialog open={showDiaryWarningModal} onOpenChange={setShowDiaryWarningModal}>
         <DialogContent className="sm:max-w-[500px]">
