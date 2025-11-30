@@ -356,7 +356,12 @@ const MaoNaMassa = () => {
                           </TableCell>
                           <TableCell>{metaCadastrada.texto}</TableCell>
                           <TableCell>
-                            {new Date(metaCadastrada.dataAlvo).toLocaleDateString('pt-BR')}
+                            {(() => {
+                              const dataValor = metaCadastrada.dataAlvo || metaCadastrada.data_alvo;
+                              if (!dataValor) return "-";
+                              const data = new Date(dataValor);
+                              return isNaN(data.getTime()) ? "-" : data.toLocaleDateString('pt-BR');
+                            })()}
                           </TableCell>
                            <TableCell>
                             <div className="space-y-1">
@@ -434,7 +439,12 @@ const MaoNaMassa = () => {
                         <div>
                           <Label className="text-xs text-muted-foreground">Data Alvo</Label>
                           <p className="text-sm">
-                            {new Date(metaCadastrada.dataAlvo).toLocaleDateString('pt-BR')}
+                            {(() => {
+                              const dataValor = metaCadastrada.dataAlvo || metaCadastrada.data_alvo;
+                              if (!dataValor) return "-";
+                              const data = new Date(dataValor);
+                              return isNaN(data.getTime()) ? "-" : data.toLocaleDateString('pt-BR');
+                            })()}
                           </p>
                         </div>
                         
