@@ -485,6 +485,14 @@ Analise as correlações entre estes elementos e forneça um insight sobre a ess
               </div>
             )}
 
+            {/* Título da seção de progresso */}
+            <div className="mb-6">
+              <h3 className="text-lg font-semibold flex items-center gap-2">
+                <TrendingUp className="w-5 h-5 text-primary" />
+                Evolução
+              </h3>
+            </div>
+
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {/* Objetivos */}
               <div className="space-y-3">
