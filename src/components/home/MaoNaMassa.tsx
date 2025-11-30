@@ -7,12 +7,16 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { Rocket, Plus, Trash2, Pencil, Check, X, ChevronDown } from "lucide-react";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Rocket, Plus, Trash2, Pencil, Check, X, ChevronDown, Lightbulb } from "lucide-react";
 import { toast } from "sonner";
+import { useNavigate } from "react-router-dom";
 
 const MaoNaMassa = () => {
   const formRef = useRef<HTMLDivElement>(null);
+  const navigate = useNavigate();
   const [isFormOpen, setIsFormOpen] = useState(false);
+  const [showSuggestionModal, setShowSuggestionModal] = useState(false);
   const [objetivoSelecionado, setObjetivoSelecionado] = useState("");
   const [objetivosDisponiveis, setObjetivosDisponiveis] = useState<Array<{
     id: number;
@@ -262,7 +266,7 @@ const MaoNaMassa = () => {
       metas.push(novaMeta);
       localStorage.setItem("metas", JSON.stringify(metas));
       setMetasCadastradas(metas);
-      toast.success("Meta cadastrada com sucesso!");
+      setShowSuggestionModal(true);
       setIsFormOpen(false);
     }
     
@@ -935,6 +939,46 @@ const MaoNaMassa = () => {
           </div>
         </div>
       </CardContent>
+
+      <Dialog open={showSuggestionModal} onOpenChange={setShowSuggestionModal}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-xl">
+              <Lightbulb className="w-6 h-6 text-accent" />
+              Meta Cadastrada com Sucesso! 🎉
+            </DialogTitle>
+            <DialogDescription className="text-base space-y-3 pt-3">
+              <p className="font-semibold text-foreground">
+                Sua meta foi registrada no Plano de Vida.
+              </p>
+              <p className="bg-accent/10 p-3 rounded-md border border-accent/20">
+                <span className="font-semibold text-accent">💡 Sugestão:</span> Para garantir que você dedique tempo para trabalhar nesta meta, cadastre uma ação relacionada na <span className="font-semibold">Matriz de Eisenhower</span> como <span className="font-semibold text-accent">"Importante não urgente"</span>.
+              </p>
+              <p className="text-sm text-muted-foreground">
+                Isso ajudará você a priorizar o que realmente importa sem deixar para depois!
+              </p>
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="flex-col sm:flex-row gap-2">
+            <Button 
+              variant="outline" 
+              onClick={() => setShowSuggestionModal(false)}
+              className="w-full sm:w-auto"
+            >
+              Fechar
+            </Button>
+            <Button 
+              onClick={() => {
+                setShowSuggestionModal(false);
+                navigate('/ferramentas/eisenhower');
+              }}
+              className="w-full sm:w-auto"
+            >
+              Ir para Matriz de Eisenhower
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </Card>
   );
 };
