@@ -465,11 +465,11 @@ const MaoNaMassa = () => {
                         
                         <div>
                           <Label className="text-xs text-muted-foreground">Passos</Label>
-                          {metaCadastrada.passos && metaCadastrada.passos.length > 0 ? (
+                          {metaCadastrada.passos && Array.isArray(metaCadastrada.passos) && metaCadastrada.passos.length > 0 ? (
                             <div className="space-y-1 mt-1">
                               {metaCadastrada.passos.map((passo: any, idx: number) => (
                                 <div key={`passo-mobile-${metaCadastrada.id}-${idx}`} className="text-sm">
-                                  {idx + 1}. {passo.passo}
+                                  {idx + 1}. {passo?.passo || "Passo sem descrição"}
                                 </div>
                               ))}
                             </div>
