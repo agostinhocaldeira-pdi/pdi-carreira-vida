@@ -268,6 +268,11 @@ const MaoNaMassa = () => {
       setMetasCadastradas(metas);
       setShowSuggestionModal(true);
       setIsFormOpen(false);
+      
+      // Disparar pesquisa de satisfação para novas metas
+      if (typeof window !== 'undefined' && (window as any).markSectionCompleted) {
+        (window as any).markSectionCompleted("Mão na Massa (Metas)");
+      }
     }
     
     // Reset form

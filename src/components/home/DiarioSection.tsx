@@ -156,6 +156,11 @@ const DiarioSection = () => {
       // Criar nova entrada
       stored.push({ ...entrada, id: Date.now() });
       toast.success("Entrada do diário salva!");
+      
+      // Disparar pesquisa de satisfação apenas para novas entradas
+      if (typeof window !== 'undefined' && (window as any).markSectionCompleted) {
+        (window as any).markSectionCompleted("Diário");
+      }
     }
     
     localStorage.setItem("diario", JSON.stringify(stored));

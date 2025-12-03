@@ -299,6 +299,11 @@ const PlanoDeVida = ({ onTabChange, onOpenChange, forcedTab, forcedOpen }: Plano
     localStorage.setItem("vvd", vvd);
     setIsEditingVvd(false);
     toast.success("Visão de Vida Desejada salva!");
+    
+    // Disparar pesquisa de satisfação
+    if (typeof window !== 'undefined' && (window as any).markSectionCompleted) {
+      (window as any).markSectionCompleted("Visão de Vida Desejada (VVD)");
+    }
   };
 
   const handleEditVvd = () => {
@@ -309,6 +314,11 @@ const PlanoDeVida = ({ onTabChange, onOpenChange, forcedTab, forcedOpen }: Plano
     localStorage.setItem("valores", JSON.stringify(valores));
     setIsEditingValores(false);
     toast.success("Valores salvos!");
+    
+    // Disparar pesquisa de satisfação
+    if (typeof window !== 'undefined' && (window as any).markSectionCompleted) {
+      (window as any).markSectionCompleted("Meus Valores");
+    }
   };
 
   const handleEditValores = () => {
@@ -327,6 +337,11 @@ const PlanoDeVida = ({ onTabChange, onOpenChange, forcedTab, forcedOpen }: Plano
     localStorage.setItem("areasVida", JSON.stringify(areasVida));
     setIsEditingAreas(false);
     toast.success("Áreas da Vida salvas!");
+    
+    // Disparar pesquisa de satisfação
+    if (typeof window !== 'undefined' && (window as any).markSectionCompleted) {
+      (window as any).markSectionCompleted("Áreas da Vida");
+    }
   };
 
   const handleEditAreas = () => {
@@ -416,6 +431,11 @@ const PlanoDeVida = ({ onTabChange, onOpenChange, forcedTab, forcedOpen }: Plano
     localStorage.setItem("objetivos", JSON.stringify(novosObjetivos));
     toast.success("Objetivo cadastrado!");
     setObjetivo({ texto: "", dataAlvo: "", conexaoVvd: "", status: "em-andamento" });
+    
+    // Disparar pesquisa de satisfação
+    if (typeof window !== 'undefined' && (window as any).markSectionCompleted) {
+      (window as any).markSectionCompleted("Meus Objetivos");
+    }
   };
 
   const handleRemoveObjetivo = (id: number) => {
@@ -451,6 +471,11 @@ const PlanoDeVida = ({ onTabChange, onOpenChange, forcedTab, forcedOpen }: Plano
     setEditandoObjetivoId(null);
     setObjetivoEditado(null);
     toast.success("Objetivo atualizado!");
+    
+    // Disparar pesquisa de satisfação
+    if (typeof window !== 'undefined' && (window as any).markSectionCompleted) {
+      (window as any).markSectionCompleted("Meus Objetivos");
+    }
   };
 
   // Funções para gerenciar habilidades
