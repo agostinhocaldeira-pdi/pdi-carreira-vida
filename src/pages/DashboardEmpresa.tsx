@@ -33,8 +33,8 @@ import {
   Phone,
   Calendar,
   UserPlus,
-  Power,
-  Eye
+  Eye,
+  KeyRound
 } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { generateProvisionalPassword } from "@/types/company";
@@ -215,22 +215,26 @@ const DashboardEmpresa = () => {
     toast.success("Gestor removido");
   };
 
-  const handleToggleManagerStatus = (id: string) => {
+  const handleResetManagerPassword = (id: string) => {
     if (!selectedCompanyId) return;
+    const newPassword = generateProvisionalPassword();
     const updatedManagers = managers.map(m => {
       if (m.id === id) {
         return { 
           ...m, 
-          acceptedAt: m.acceptedAt ? null : new Date().toISOString(),
-          password: m.acceptedAt ? null : m.provisionalPassword // Reset password if deactivating
+          provisionalPassword: newPassword,
+          password: null,
+          acceptedAt: null
         };
       }
       return m;
     });
     setManagers(updatedManagers);
     localStorage.setItem(`managers_${selectedCompanyId}`, JSON.stringify(updatedManagers));
-    const manager = updatedManagers.find(m => m.id === id);
-    toast.success(manager?.acceptedAt ? "Gestor ativado" : "Gestor desativado");
+    toast.success("Nova senha provisória gerada!", {
+      description: `Senha: ${newPassword}`,
+      duration: 10000,
+    });
   };
 
   const handleRemoveEmployee = (id: string) => {
@@ -241,22 +245,26 @@ const DashboardEmpresa = () => {
     toast.success("Funcionário removido");
   };
 
-  const handleToggleEmployeeStatus = (id: string) => {
+  const handleResetEmployeePassword = (id: string) => {
     if (!selectedCompanyId) return;
+    const newPassword = generateProvisionalPassword();
     const updatedEmployees = employees.map(e => {
       if (e.id === id) {
         return { 
           ...e, 
-          acceptedAt: e.acceptedAt ? null : new Date().toISOString(),
-          password: e.acceptedAt ? null : e.provisionalPassword
+          provisionalPassword: newPassword,
+          password: null,
+          acceptedAt: null
         };
       }
       return e;
     });
     setEmployees(updatedEmployees);
     localStorage.setItem(`employees_${selectedCompanyId}`, JSON.stringify(updatedEmployees));
-    const employee = updatedEmployees.find(e => e.id === id);
-    toast.success(employee?.acceptedAt ? "Funcionário ativado" : "Funcionário desativado");
+    toast.success("Nova senha provisória gerada!", {
+      description: `Senha: ${newPassword}`,
+      duration: 10000,
+    });
   };
 
   const handleSelectEmployee = (employeeId: string, checked: boolean) => {
@@ -487,11 +495,11 @@ const DashboardEmpresa = () => {
                         <Button
                           variant="ghost"
                           size="icon"
-                          onClick={() => handleToggleManagerStatus(person.id)}
-                          className={person.acceptedAt ? "text-green-600 hover:text-green-700" : "text-muted-foreground hover:text-foreground"}
-                          title={person.acceptedAt ? "Desativar" : "Ativar"}
+                          onClick={() => handleResetManagerPassword(person.id)}
+                          className="text-amber-600 hover:text-amber-700"
+                          title="Gerar nova senha provisória"
                         >
-                          <Power className="w-4 h-4" />
+                          <KeyRound className="w-4 h-4" />
                         </Button>
                         <Button
                           variant="ghost"
@@ -583,11 +591,11 @@ const DashboardEmpresa = () => {
                         <Button
                           variant="ghost"
                           size="icon"
-                          onClick={() => handleToggleEmployeeStatus(person.id)}
-                          className={person.acceptedAt ? "text-green-600 hover:text-green-700" : "text-muted-foreground hover:text-foreground"}
-                          title={person.acceptedAt ? "Desativar" : "Ativar"}
+                          onClick={() => handleResetEmployeePassword(person.id)}
+                          className="text-amber-600 hover:text-amber-700"
+                          title="Gerar nova senha provisória"
                         >
-                          <Power className="w-4 h-4" />
+                          <KeyRound className="w-4 h-4" />
                         </Button>
                         <Button
                           variant="ghost"
