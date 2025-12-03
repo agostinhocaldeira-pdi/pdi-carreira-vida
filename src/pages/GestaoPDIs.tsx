@@ -4,7 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { ArrowLeft, Users, Shield, Eye, ChevronRight, AlertCircle, Building2, Home, MessageSquare, Send } from "lucide-react";
+import { ArrowLeft, Users, Shield, Eye, ChevronRight, AlertCircle, Building2, Home, MessageSquare, Send, LogOut } from "lucide-react";
+import LogoutButton from "@/components/LogoutButton";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
@@ -282,6 +283,7 @@ const GestaoPDIs = () => {
                 Painel Admin
               </Button>
             )}
+            <LogoutButton />
           </div>
         </div>
       </header>
