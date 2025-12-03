@@ -183,13 +183,14 @@ const Login = () => {
       people[personIndex].provisionalPassword = null;
       localStorage.setItem(storageKey, JSON.stringify(people));
 
-      // Criar sessão do usuário
+      // Criar sessão do usuário com flag de primeiro acesso
       localStorage.setItem("user", JSON.stringify({
         name: people[personIndex].name,
         email: people[personIndex].email,
         role: pendingLogin.type === "manager" ? "gestor" : "user",
         companyId: pendingLogin.companyId,
         [pendingLogin.type === "manager" ? "managerId" : "employeeId"]: pendingLogin.personId,
+        isFirstAccess: true,
       }));
 
       toast.success("Senha atualizada com sucesso!");
@@ -200,7 +201,8 @@ const Login = () => {
       if (pendingLogin.type === "manager") {
         setShowManagerModal(true);
       } else {
-        navigate("/home");
+        // Funcionário - direcionar ao onboarding no primeiro acesso
+        navigate("/onboarding");
       }
     }
   };
