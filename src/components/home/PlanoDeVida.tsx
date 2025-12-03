@@ -550,9 +550,9 @@ const PlanoDeVida = ({ onTabChange, onOpenChange, forcedTab, forcedOpen }: Plano
             </div>
             <CollapsibleTrigger asChild>
               <Button 
-                variant="outline" 
+                variant="secondary" 
                 size="sm" 
-                className="gap-1.5 hover:bg-primary/10 hover:border-primary transition-all shadow-sm min-w-[44px]"
+                className="gap-1.5 hover:bg-primary hover:text-primary-foreground transition-all shadow-sm min-w-[44px] border border-border"
               >
                 {!isOpen && (
                   <span className="text-xs font-medium">Expandir</span>
