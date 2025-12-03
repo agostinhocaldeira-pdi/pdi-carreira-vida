@@ -136,7 +136,7 @@ const Onboarding = () => {
                   </p>
                   <div className="p-4 bg-primary/5 border border-primary/20 rounded-lg">
                     <p className="text-sm">
-                      💡 <strong>Nossa abordagem holística</strong> considera que um profissional realizado 
+                      💡 <strong>Nossa abordagem</strong> considera que um profissional realizado
                       é também alguém que cuida da saúde, dos relacionamentos, das finanças, do 
                       desenvolvimento pessoal e do bem-estar emocional.
                     </p>
