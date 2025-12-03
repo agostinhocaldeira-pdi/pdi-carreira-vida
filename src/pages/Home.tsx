@@ -173,7 +173,7 @@ const Home = () => {
             
             <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0">
               <LanguageSelector />
-              <Button variant="outline" size="sm" className="gap-1 sm:gap-2 px-2 sm:px-3">
+              <Button variant="outline" size="sm" className="gap-1 sm:gap-2 px-2 sm:px-3" onClick={() => navigate("/perfil")}>
                 <User className="w-4 h-4" />
                 <span className="hidden sm:inline">Perfil</span>
               </Button>
