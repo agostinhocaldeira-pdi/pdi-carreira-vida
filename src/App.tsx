@@ -17,6 +17,7 @@ import ConstrucaoGuiada from "./pages/ConstrucaoGuiada";
 import Ferramentas from "./pages/Ferramentas";
 import Suporte from "./pages/Suporte";
 import Admin from "./pages/Admin";
+import AdminUsuarios from "./pages/AdminUsuarios";
 import RodaDaVida from "./pages/RodaDaVida";
 import Valores from "./pages/Valores";
 import MatrizEisenhower from "./pages/MatrizEisenhower";
@@ -49,6 +50,7 @@ const App = () => (
             <Route path="/ferramentas" element={<Ferramentas />} />
             <Route path="/suporte" element={<Suporte />} />
             <Route path="/admin" element={<Admin />} />
+            <Route path="/admin/usuarios" element={<AdminUsuarios />} />
             <Route path="/roda-da-vida" element={<RodaDaVida />} />
           <Route path="/ferramentas/valores" element={<Valores />} />
           <Route path="/ferramentas/eisenhower" element={<MatrizEisenhower />} />
