@@ -1,5 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { MessagesSquare, Send, Compass, Home, Users, Headphones, Wrench } from "lucide-react";
+import { MessagesSquare, Send, Compass, Home, Users, Headphones, Wrench, HelpCircle } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
@@ -927,6 +927,12 @@ const Suporte = () => {
                 <Button variant="outline" className="w-full sm:w-auto gap-2">
                   <Home className="w-4 h-4" />
                   Voltar ao Dashboard
+                </Button>
+              </Link>
+              <Link to="/faq">
+                <Button variant="outline" className="w-full sm:w-auto gap-2">
+                  <HelpCircle className="w-4 h-4" />
+                  FAQ / Ajuda
                 </Button>
               </Link>
               <Link to="/ferramentas">
