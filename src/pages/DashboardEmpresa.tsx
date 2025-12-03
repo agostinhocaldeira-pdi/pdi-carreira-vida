@@ -41,7 +41,7 @@ import {
   Loader2
 } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
-import { generateProvisionalPassword } from "@/types/company";
+import { generateProvisionalPassword } from "@/types/company"; // Legacy - keep for backwards compatibility
 import EmployeeProgressModal from "@/components/EmployeeProgressModal";
 import ConfirmDeleteDialog from "@/components/ConfirmDeleteDialog";
 import { CompanyReportsTab } from "@/components/company/CompanyReportsTab";
@@ -56,9 +56,9 @@ interface Manager {
   name: string;
   email: string;
   phone: string;
-  provisionalPassword: string;
   acceptedAt: string | null;
   createdAt: string;
+  inviteSent?: boolean;
 }
 
 interface Employee {
@@ -67,11 +67,11 @@ interface Employee {
   name: string;
   email: string;
   phone: string;
-  provisionalPassword: string;
   acceptedAt: string | null;
   managerId?: string;
   managerName?: string;
   createdAt: string;
+  inviteSent?: boolean;
 }
 
 interface PersonProgress {
@@ -152,9 +152,9 @@ const DashboardEmpresa = () => {
           name: m.name,
           email: m.email,
           phone: m.phone || "",
-          provisionalPassword: m.provisional_password || "",
           acceptedAt: m.accepted_at,
           createdAt: m.created_at,
+          inviteSent: true,
         }));
         setManagers(formattedManagers);
 
@@ -172,11 +172,11 @@ const DashboardEmpresa = () => {
             name: e.name,
             email: e.email,
             phone: e.phone || "",
-            provisionalPassword: e.provisional_password || "",
             acceptedAt: e.accepted_at,
             managerId: e.manager_id,
             managerName: manager?.name,
             createdAt: e.created_at,
+            inviteSent: true,
           };
         });
         setEmployees(formattedEmployees);
@@ -204,17 +204,16 @@ const DashboardEmpresa = () => {
     }
 
     setIsAddingPerson(true);
-    const provisionalPassword = generateProvisionalPassword();
 
     try {
-      const { data, error } = await supabase.functions.invoke('create-company-user', {
+      const { data, error } = await supabase.functions.invoke('invite-company-user', {
         body: {
           email: newPerson.email,
-          password: provisionalPassword,
           name: newPerson.name,
           phone: newPerson.phone,
           userType: 'manager',
           companyId,
+          redirectUrl: window.location.origin,
         }
       });
 
@@ -235,15 +234,15 @@ const DashboardEmpresa = () => {
         name: m.name,
         email: m.email,
         phone: m.phone || "",
-        provisionalPassword: m.provisional_password || "",
         acceptedAt: m.accepted_at,
         createdAt: m.created_at,
+        inviteSent: true,
       }));
       setManagers(formattedManagers);
 
       toast.success("Gestor adicionado!", {
-        description: `Senha provisória: ${provisionalPassword}`,
-        duration: 10000,
+        description: "Um email de convite foi enviado para configurar a senha.",
+        duration: 8000,
       });
 
       setNewPerson({ name: "", email: "", phone: "" });
@@ -269,17 +268,16 @@ const DashboardEmpresa = () => {
     }
 
     setIsAddingPerson(true);
-    const provisionalPassword = generateProvisionalPassword();
 
     try {
-      const { data, error } = await supabase.functions.invoke('create-company-user', {
+      const { data, error } = await supabase.functions.invoke('invite-company-user', {
         body: {
           email: newPerson.email,
-          password: provisionalPassword,
           name: newPerson.name,
           phone: newPerson.phone,
           userType: 'employee',
           companyId,
+          redirectUrl: window.location.origin,
         }
       });
 
@@ -302,18 +300,18 @@ const DashboardEmpresa = () => {
           name: e.name,
           email: e.email,
           phone: e.phone || "",
-          provisionalPassword: e.provisional_password || "",
           acceptedAt: e.accepted_at,
           managerId: e.manager_id,
           managerName: manager?.name,
           createdAt: e.created_at,
+          inviteSent: true,
         };
       });
       setEmployees(formattedEmployees);
 
       toast.success("Funcionário adicionado!", {
-        description: `Senha provisória: ${provisionalPassword}`,
-        duration: 10000,
+        description: "Um email de convite foi enviado para configurar a senha.",
+        duration: 8000,
       });
 
       setNewPerson({ name: "", email: "", phone: "" });
@@ -352,32 +350,29 @@ const DashboardEmpresa = () => {
       return;
     }
 
-    const newPassword = generateProvisionalPassword();
-
-    const { error } = await supabase.functions.invoke('reset-user-password', {
+    const { error } = await supabase.functions.invoke('send-password-setup', {
       body: {
         userId: manager.user_id,
-        newPassword,
-        userType: 'manager',
-        companyId: selectedCompanyId,
+        email: manager.email,
+        redirectUrl: window.location.origin,
       }
     });
 
     if (error) {
-      toast.error("Erro ao gerar nova senha");
+      toast.error("Erro ao enviar email de redefinição");
       return;
     }
 
     const updatedManagers = managers.map(m => {
       if (m.id === id) {
-        return { ...m, provisionalPassword: newPassword, acceptedAt: null };
+        return { ...m, acceptedAt: null };
       }
       return m;
     });
     setManagers(updatedManagers);
-    toast.success("Nova senha provisória gerada!", {
-      description: `Senha: ${newPassword}`,
-      duration: 10000,
+    toast.success("Email de redefinição de senha enviado!", {
+      description: "O gestor receberá um link para configurar uma nova senha.",
+      duration: 8000,
     });
   };
 
@@ -408,32 +403,29 @@ const DashboardEmpresa = () => {
       return;
     }
 
-    const newPassword = generateProvisionalPassword();
-
-    const { error } = await supabase.functions.invoke('reset-user-password', {
+    const { error } = await supabase.functions.invoke('send-password-setup', {
       body: {
         userId: employee.user_id,
-        newPassword,
-        userType: 'employee',
-        companyId: selectedCompanyId,
+        email: employee.email,
+        redirectUrl: window.location.origin,
       }
     });
 
     if (error) {
-      toast.error("Erro ao gerar nova senha");
+      toast.error("Erro ao enviar email de redefinição");
       return;
     }
 
     const updatedEmployees = employees.map(e => {
       if (e.id === id) {
-        return { ...e, provisionalPassword: newPassword, acceptedAt: null };
+        return { ...e, acceptedAt: null };
       }
       return e;
     });
     setEmployees(updatedEmployees);
-    toast.success("Nova senha provisória gerada!", {
-      description: `Senha: ${newPassword}`,
-      duration: 10000,
+    toast.success("Email de redefinição de senha enviado!", {
+      description: "O funcionário receberá um link para configurar uma nova senha.",
+      duration: 8000,
     });
   };
 
@@ -746,9 +738,9 @@ const DashboardEmpresa = () => {
                           size="icon"
                           onClick={() => handleResetManagerPassword(person.id)}
                           className="text-amber-600 hover:text-amber-700"
-                          title="Gerar nova senha provisória"
+                          title="Enviar email de redefinição de senha"
                         >
-                          <KeyRound className="w-4 h-4" />
+                          <Mail className="w-4 h-4" />
                         </Button>
                         <Button
                           variant="ghost"
@@ -842,9 +834,9 @@ const DashboardEmpresa = () => {
                           size="icon"
                           onClick={() => handleResetEmployeePassword(person.id)}
                           className="text-amber-600 hover:text-amber-700"
-                          title="Gerar nova senha provisória"
+                          title="Enviar email de redefinição de senha"
                         >
-                          <KeyRound className="w-4 h-4" />
+                          <Mail className="w-4 h-4" />
                         </Button>
                         <Button
                           variant="ghost"
