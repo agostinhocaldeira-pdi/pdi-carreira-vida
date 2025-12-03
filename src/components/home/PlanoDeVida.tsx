@@ -849,7 +849,8 @@ const PlanoDeVida = ({ onTabChange, onOpenChange, forcedTab, forcedOpen }: Plano
 
               {/* Formulário de cadastro */}
               <div className="space-y-4 p-4 border rounded-lg bg-muted/30">
-                <h4 className="font-medium text-sm">Atenção: "Quem muito quer, pouco consegue!" (Tenha no máximo 3 objetivos por vez)</h4>
+                <h4 className="font-medium text-sm">"Quem muito quer, pouco consegue"</h4>
+                <p className="text-xs text-muted-foreground">Sugestão: Tenha um único grande objetivo, quebrado em metas e ações!</p>
                 
                 <div className="space-y-2">
                   <Label htmlFor="objetivo">Objetivo em Foco</Label>
