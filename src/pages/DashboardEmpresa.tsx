@@ -301,6 +301,29 @@ const DashboardEmpresa = () => {
     toast.success(`Gestor ${manager?.name} associado a ${selectedEmployees.length} funcionário(s)`);
   };
 
+  const handleUnassignManager = () => {
+    if (!selectedCompanyId || selectedEmployees.length === 0) return;
+    
+    const updatedEmployees = employees.map(emp => {
+      if (selectedEmployees.includes(emp.id)) {
+        return { ...emp, managerId: undefined, managerName: undefined };
+      }
+      return emp;
+    });
+    
+    setEmployees(updatedEmployees);
+    localStorage.setItem(`employees_${selectedCompanyId}`, JSON.stringify(updatedEmployees));
+    const count = selectedEmployees.length;
+    setSelectedEmployees([]);
+    toast.success(`Gestor desassociado de ${count} funcionário(s)`);
+  };
+
+  // Verifica se algum funcionário selecionado tem gestor associado
+  const hasSelectedWithManager = selectedEmployees.some(id => {
+    const emp = employees.find(e => e.id === id);
+    return emp?.managerId;
+  });
+
   const handleLogout = () => {
     localStorage.removeItem("user");
     navigate("/");
@@ -433,12 +456,20 @@ const DashboardEmpresa = () => {
                 }
               </CardDescription>
             </div>
-            <div className="flex gap-2">
+            <div className="flex gap-2 flex-wrap">
               {activeTab === "employees" && selectedEmployees.length > 0 && (
-                <Button variant="outline" onClick={() => setShowAssignManagerModal(true)}>
-                  <UserPlus className="w-4 h-4 mr-2" />
-                  Associar Gestor ({selectedEmployees.length})
-                </Button>
+                <>
+                  <Button variant="outline" onClick={() => setShowAssignManagerModal(true)}>
+                    <UserPlus className="w-4 h-4 mr-2" />
+                    Associar Gestor ({selectedEmployees.length})
+                  </Button>
+                  {hasSelectedWithManager && (
+                    <Button variant="outline" onClick={handleUnassignManager} className="text-destructive border-destructive/50 hover:bg-destructive/10">
+                      <UserPlus className="w-4 h-4 mr-2 rotate-45" />
+                      Desassociar Gestor
+                    </Button>
+                  )}
+                </>
               )}
               <Button onClick={() => activeTab === "managers" ? setShowAddManagerModal(true) : setShowAddEmployeeModal(true)}>
                 <Plus className="w-4 h-4 mr-2" />
