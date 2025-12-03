@@ -100,10 +100,12 @@ class CompanyPDFHelper {
     this.checkPageBreak(10);
     this.doc.setFontSize(10);
     this.doc.setFont("helvetica", "bold");
-    this.doc.text(`${key}:`, this.leftMargin, this.yPos);
-    this.doc.setFont("helvetica", "normal");
+    const keyText = `${key}: `;
+    const keyWidth = this.doc.getTextWidth(keyText);
+    this.doc.text(keyText, this.leftMargin, this.yPos);
     
-    const valueX = this.leftMargin + this.doc.getTextWidth(`${key}: `) + 2;
+    this.doc.setFont("helvetica", "normal");
+    const valueX = this.leftMargin + keyWidth;
     const maxWidth = this.rightMargin - valueX;
     const lines = this.doc.splitTextToSize(value, maxWidth);
     this.doc.text(lines, valueX, this.yPos);
