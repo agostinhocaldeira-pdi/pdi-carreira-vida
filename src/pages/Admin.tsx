@@ -236,7 +236,20 @@ const Admin = () => {
               </div>
               <h3 className="text-2xl font-bold mb-1 text-green-600">72%</h3>
               <p className="text-sm text-muted-foreground">Taxa de Sucesso</p>
-              <p className="text-xs text-muted-foreground mt-1">Média de conclusão (obj/metas/ações)</p>
+              <div className="mt-3 pt-3 border-t border-border/50 space-y-1">
+                <div className="flex justify-between text-xs">
+                  <span className="text-muted-foreground">Objetivos:</span>
+                  <span className="font-medium">342</span>
+                </div>
+                <div className="flex justify-between text-xs">
+                  <span className="text-muted-foreground">Metas:</span>
+                  <span className="font-medium">891</span>
+                </div>
+                <div className="flex justify-between text-xs">
+                  <span className="text-muted-foreground">Ações:</span>
+                  <span className="font-medium">2.156</span>
+                </div>
+              </div>
             </CardContent>
           </Card>
 
