@@ -498,6 +498,7 @@ const DashboardEmpresa = () => {
         {activeTab === "reports" && selectedCompanyId && (
           <CompanyReportsTab
             companyId={selectedCompanyId}
+            companyName={company?.razao_social || "Empresa"}
             employees={employees.map(e => ({ id: e.id, name: e.name, email: e.email }))}
             managers={managers.map(m => ({ id: m.id, name: m.name, email: m.email }))}
           />

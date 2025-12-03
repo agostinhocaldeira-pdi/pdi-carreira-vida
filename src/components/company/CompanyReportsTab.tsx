@@ -6,6 +6,8 @@ import { Badge } from "@/components/ui/badge";
 import { BarChart3, Users, Target, TrendingUp, Calendar, FileDown, Link2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from "recharts";
+import { exportCompanyReportToPDF } from "@/utils/companyPdfExport";
+import { toast } from "sonner";
 
 interface EmployeeStats {
   id: string;
@@ -20,13 +22,14 @@ interface EmployeeStats {
 
 interface CompanyReportsTabProps {
   companyId: string;
+  companyName?: string;
   employees: Array<{ id: string; name: string; email: string }>;
   managers: Array<{ id: string; name: string; email: string }>;
 }
 
 const COLORS = ['#22c55e', '#3b82f6', '#f59e0b', '#ef4444', '#8b5cf6'];
 
-export function CompanyReportsTab({ companyId, employees, managers }: CompanyReportsTabProps) {
+export function CompanyReportsTab({ companyId, companyName = "Empresa", employees, managers }: CompanyReportsTabProps) {
   const [period, setPeriod] = useState("month");
   const [employeeStats, setEmployeeStats] = useState<EmployeeStats[]>([]);
   const [okrAlignmentRate, setOkrAlignmentRate] = useState(0);
@@ -134,7 +137,27 @@ export function CompanyReportsTab({ companyId, employees, managers }: CompanyRep
               <SelectItem value="year">Ano</SelectItem>
             </SelectContent>
           </Select>
-          <Button variant="outline" size="sm">
+          <Button 
+            variant="outline" 
+            size="sm"
+            onClick={() => {
+              const now = new Date();
+              exportCompanyReportToPDF({
+                companyName,
+                period,
+                generatedAt: now.toLocaleDateString("pt-BR") + " " + now.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" }),
+                totalEmployees: employees.length,
+                totalManagers: managers.length,
+                aggregatedStats,
+                taxaConclusaoObjetivos,
+                taxaConclusaoMetas,
+                okrAlignmentRate,
+                employeeStats,
+                managers,
+              });
+              toast.success("Relatório exportado com sucesso!");
+            }}
+          >
             <FileDown className="w-4 h-4 mr-2" />
             Exportar
           </Button>
