@@ -4,9 +4,11 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
-import { UserPlus, Eye, EyeOff, Loader2 } from "lucide-react";
+import { UserPlus, Eye, EyeOff, Loader2, Shield } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { LGPDConsentModal } from "@/components/lgpd/LGPDConsentModal";
 
 const Signup = () => {
   const navigate = useNavigate();
@@ -18,20 +20,37 @@ const Signup = () => {
   });
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [showLGPDModal, setShowLGPDModal] = useState(false);
+  const [lgpdAccepted, setLgpdAccepted] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
+  const validateForm = () => {
     if (!formData.name || !formData.email || !formData.phone || !formData.password) {
       toast.error("Por favor, preencha todos os campos");
-      return;
+      return false;
     }
 
     if (formData.password.length < 6) {
       toast.error("A senha deve ter pelo menos 6 caracteres");
+      return false;
+    }
+
+    return true;
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!validateForm()) return;
+
+    if (!lgpdAccepted) {
+      setShowLGPDModal(true);
       return;
     }
 
+    await performSignup();
+  };
+
+  const performSignup = async () => {
     setIsLoading(true);
 
     try {
@@ -58,7 +77,16 @@ const Signup = () => {
       }
 
       if (data.user) {
-        // Trigger automático cria role 'user' no banco
+        // Registrar consentimentos LGPD
+        const consents = [
+          { user_id: data.user.id, consent_type: 'terms_of_service' },
+          { user_id: data.user.id, consent_type: 'privacy_policy' },
+          { user_id: data.user.id, consent_type: 'data_processing' },
+        ];
+
+        await supabase
+          .from('user_consents')
+          .upsert(consents, { onConflict: 'user_id,consent_type' });
 
         // Manter localStorage para compatibilidade com código existente
         localStorage.setItem("user", JSON.stringify({
@@ -70,6 +98,9 @@ const Signup = () => {
           createdAt: new Date().toISOString()
         }));
 
+        localStorage.setItem('lgpd_consent_accepted', 'true');
+        localStorage.setItem('lgpd_consent_date', new Date().toISOString());
+
         toast.success("Perfil criado com sucesso!");
         navigate("/onboarding");
       }
@@ -79,6 +110,12 @@ const Signup = () => {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleLGPDAccept = () => {
+    setLgpdAccepted(true);
+    setShowLGPDModal(false);
+    performSignup();
   };
 
   return (
@@ -155,6 +192,34 @@ const Signup = () => {
               </div>
             </div>
 
+            {/* Checkbox de aceite prévio */}
+            <div className="flex items-start space-x-2 pt-2">
+              <Checkbox 
+                id="lgpd-preview" 
+                checked={lgpdAccepted}
+                onCheckedChange={(checked) => {
+                  if (checked) {
+                    setShowLGPDModal(true);
+                  } else {
+                    setLgpdAccepted(false);
+                  }
+                }}
+                disabled={isLoading}
+              />
+              <label htmlFor="lgpd-preview" className="text-xs text-muted-foreground cursor-pointer leading-relaxed">
+                <Shield className="w-3 h-3 inline mr-1" />
+                Li e aceito os{" "}
+                <button 
+                  type="button" 
+                  onClick={() => setShowLGPDModal(true)}
+                  className="text-primary hover:underline"
+                >
+                  Termos de Uso e Política de Privacidade
+                </button>
+                {" "}(LGPD)
+              </label>
+            </div>
+
             <Button type="submit" className="w-full mt-4 sm:mt-6" size="lg" disabled={isLoading}>
               {isLoading ? (
                 <Loader2 className="w-4 h-4 mr-2 animate-spin" />
@@ -175,6 +240,13 @@ const Signup = () => {
           </div>
         </CardContent>
       </Card>
+
+      {/* Modal LGPD */}
+      <LGPDConsentModal 
+        open={showLGPDModal}
+        onAccept={handleLGPDAccept}
+        onDecline={() => setShowLGPDModal(false)}
+      />
     </div>
   );
 };

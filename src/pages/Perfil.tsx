@@ -9,6 +9,7 @@ import { toast } from "sonner";
 import { ArrowLeft, User, Building2, Eye, EyeOff, Save, Crown, Sparkles, Star, Database } from "lucide-react";
 import { NotificationPreferences } from "@/components/notifications/NotificationPreferences";
 import { ExportPDFButton } from "@/components/reports/ExportPDFButton";
+import { LGPDDataSection } from "@/components/lgpd/LGPDDataSection";
 
 const generateMockData = (userName: string) => {
   // Onboarding
@@ -768,6 +769,9 @@ const Perfil = () => {
 
         {/* Notificações */}
         <NotificationPreferences />
+
+        {/* Seção LGPD - Privacidade e Dados */}
+        <LGPDDataSection />
       </div>
     </div>
   );
