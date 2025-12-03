@@ -78,40 +78,31 @@ export function OKRLinkSection({ objetivoId, objetivoTexto, onLinkChange }: OKRL
         setCompanyName(companyData.razao_social);
       }
 
-      // Buscar OKRs da empresa que estão vinculados ao funcionário (via localStorage para linked_employee_ids)
-      // Primeiro buscar OKRs do Supabase
-      const { data: okrsData } = await supabase
-        .from('company_okrs')
-        .select(`
-          id, title, description, period_start, period_end, status,
-          okr_key_results (id, title, target_value, current_value, unit)
-        `)
-        .eq('company_id', employeeData.company_id)
-        .eq('status', 'active');
+      // Buscar OKRs vinculados ao funcionário do Supabase
+      const { data: linksData } = await supabase
+        .from('company_okr_employee_links')
+        .select('okr_id')
+        .eq('employee_id', employeeData.id);
 
-      if (okrsData && okrsData.length > 0) {
-        // OKRs existem no Supabase - verificar localStorage para linked_employee_ids
-        const localOkrs = localStorage.getItem(`okrs_${employeeData.company_id}`);
-        const linkedEmployeesMap: Record<string, string[]> = {};
-        
-        if (localOkrs) {
-          const parsedLocal = JSON.parse(localOkrs);
-          parsedLocal.forEach((okr: any) => {
-            linkedEmployeesMap[okr.id] = okr.linked_employee_ids || [];
-          });
-        }
+      if (linksData && linksData.length > 0) {
+        const linkedOkrIds = linksData.map(l => l.okr_id);
 
-        const filteredOkrs = okrsData
-          .filter(okr => {
-            const linkedIds = linkedEmployeesMap[okr.id] || [];
-            return linkedIds.includes(employeeData.id);
-          })
-          .map(okr => ({
+        const { data: okrsData } = await supabase
+          .from('company_okrs')
+          .select(`
+            id, title, description, period_start, period_end, status,
+            okr_key_results (id, title, target_value, current_value, unit)
+          `)
+          .in('id', linkedOkrIds)
+          .eq('status', 'active');
+
+        if (okrsData) {
+          const mappedOkrs = okrsData.map(okr => ({
             ...okr,
             key_results: okr.okr_key_results || []
           }));
-
-        setCompanyOKRs(filteredOkrs);
+          setCompanyOKRs(mappedOkrs);
+        }
       } else {
         // Fallback para localStorage (dados antigos)
         const stored = localStorage.getItem(`okrs_${employeeData.company_id}`);
