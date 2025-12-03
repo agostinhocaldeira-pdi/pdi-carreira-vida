@@ -730,25 +730,15 @@ const Suporte = () => {
 
                         {/* Campo de resposta */}
                         <div className="space-y-2 pt-4 border-t">
-                          <Label htmlFor={`reply-${conv.id}`}>Responder</Label>
+                          <Label htmlFor={`reply-${conv.id}`}>Resposta</Label>
                           <Textarea
                             id={`reply-${conv.id}`}
                             placeholder="Escreva sua resposta..."
                             value={replyTexts[conv.id] || ""}
                             onChange={(e) => setReplyTexts(prev => ({ ...prev, [conv.id]: e.target.value }))}
                             className="min-h-[80px]"
+                            disabled
                           />
-                          <Button
-                            onClick={() => {
-                              handleReplyToManagerConversation(conv.id, replyTexts[conv.id] || "");
-                              setReplyTexts(prev => ({ ...prev, [conv.id]: "" }));
-                            }}
-                            disabled={isLoading || !replyTexts[conv.id]?.trim()}
-                            className="w-full"
-                          >
-                            <Send className="w-4 h-4 mr-2" />
-                            Enviar Resposta
-                          </Button>
                         </div>
                       </div>
                     );
