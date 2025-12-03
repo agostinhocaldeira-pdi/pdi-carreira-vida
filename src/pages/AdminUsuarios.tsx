@@ -16,6 +16,7 @@ interface MockUser {
   email: string;
   phone: string;
   dataCadastro: string;
+  ultimoAcesso: string;
   status: "ativo" | "inativo";
   atividades: {
     objetivos: number;
@@ -33,6 +34,7 @@ const mockUsers: MockUser[] = [
     email: "maria.silva@email.com",
     phone: "(11) 98765-4321",
     dataCadastro: "2024-01-15",
+    ultimoAcesso: "2024-12-03",
     status: "ativo",
     atividades: { objetivos: 80, metas: 65, acoes: 45, diario: 90 }
   },
@@ -42,6 +44,7 @@ const mockUsers: MockUser[] = [
     email: "joao.santos@email.com",
     phone: "(21) 99876-5432",
     dataCadastro: "2024-02-20",
+    ultimoAcesso: "2024-12-01",
     status: "ativo",
     atividades: { objetivos: 50, metas: 40, acoes: 30, diario: 60 }
   },
@@ -51,6 +54,7 @@ const mockUsers: MockUser[] = [
     email: "ana.costa@email.com",
     phone: "(31) 91234-5678",
     dataCadastro: "2024-03-10",
+    ultimoAcesso: "2024-10-15",
     status: "inativo",
     atividades: { objetivos: 20, metas: 15, acoes: 10, diario: 25 }
   },
@@ -60,6 +64,7 @@ const mockUsers: MockUser[] = [
     email: "carlos.oliveira@email.com",
     phone: "(41) 92345-6789",
     dataCadastro: "2024-04-05",
+    ultimoAcesso: "2024-12-02",
     status: "ativo",
     atividades: { objetivos: 95, metas: 88, acoes: 75, diario: 100 }
   },
@@ -69,6 +74,7 @@ const mockUsers: MockUser[] = [
     email: "fernanda.lima@email.com",
     phone: "(51) 93456-7890",
     dataCadastro: "2024-05-12",
+    ultimoAcesso: "2024-11-28",
     status: "ativo",
     atividades: { objetivos: 70, metas: 55, acoes: 60, diario: 80 }
   },
@@ -78,6 +84,7 @@ const mockUsers: MockUser[] = [
     email: "roberto.almeida@email.com",
     phone: "(61) 94567-8901",
     dataCadastro: "2024-06-18",
+    ultimoAcesso: "2024-08-20",
     status: "inativo",
     atividades: { objetivos: 10, metas: 5, acoes: 0, diario: 15 }
   },
@@ -87,6 +94,7 @@ const mockUsers: MockUser[] = [
     email: "patricia.mendes@email.com",
     phone: "(71) 95678-9012",
     dataCadastro: "2024-07-22",
+    ultimoAcesso: "2024-12-03",
     status: "ativo",
     atividades: { objetivos: 85, metas: 72, acoes: 68, diario: 95 }
   },
@@ -96,6 +104,7 @@ const mockUsers: MockUser[] = [
     email: "lucas.ferreira@email.com",
     phone: "(81) 96789-0123",
     dataCadastro: "2024-08-30",
+    ultimoAcesso: "2024-11-30",
     status: "ativo",
     atividades: { objetivos: 60, metas: 48, acoes: 35, diario: 70 }
   },
@@ -105,6 +114,7 @@ const mockUsers: MockUser[] = [
     email: "juliana.rocha@email.com",
     phone: "(91) 97890-1234",
     dataCadastro: "2024-09-14",
+    ultimoAcesso: "2024-11-25",
     status: "ativo",
     atividades: { objetivos: 45, metas: 38, acoes: 25, diario: 55 }
   },
@@ -114,6 +124,7 @@ const mockUsers: MockUser[] = [
     email: "marcos.souza@email.com",
     phone: "(11) 98901-2345",
     dataCadastro: "2024-10-08",
+    ultimoAcesso: "2024-10-10",
     status: "inativo",
     atividades: { objetivos: 5, metas: 0, acoes: 0, diario: 10 }
   }
@@ -167,6 +178,14 @@ const AdminUsuarios = () => {
   const getProgressAverage = (atividades: MockUser["atividades"]) => {
     const { objetivos, metas, acoes, diario } = atividades;
     return Math.round((objetivos + metas + acoes + diario) / 4);
+  };
+
+  const getDaysSinceLastAccess = (ultimoAcesso: string) => {
+    const lastAccess = new Date(ultimoAcesso);
+    const today = new Date();
+    const diffTime = today.getTime() - lastAccess.getTime();
+    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+    return diffDays;
   };
 
   if (!isAdmin) {
@@ -253,13 +272,14 @@ const AdminUsuarios = () => {
                     <TableHead className="hidden md:table-cell">Telefone</TableHead>
                     <TableHead className="hidden lg:table-cell">Data Cadastro</TableHead>
                     <TableHead>Status</TableHead>
+                    <TableHead className="text-center">Dias sem Acesso</TableHead>
                     <TableHead className="min-w-[200px]">Atividades</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {filteredUsers.length === 0 ? (
                     <TableRow>
-                      <TableCell colSpan={6} className="text-center text-muted-foreground py-8">
+                      <TableCell colSpan={8} className="text-center text-muted-foreground py-8">
                         Nenhum usuário encontrado
                       </TableCell>
                     </TableRow>
@@ -286,6 +306,20 @@ const AdminUsuarios = () => {
                               Inativo
                             </Badge>
                           )}
+                        </TableCell>
+                        <TableCell className="text-center">
+                          {(() => {
+                            const days = getDaysSinceLastAccess(user.ultimoAcesso);
+                            if (days === 0) {
+                              return <Badge variant="default" className="bg-green-600">Hoje</Badge>;
+                            } else if (days <= 7) {
+                              return <Badge variant="secondary">{days} dias</Badge>;
+                            } else if (days <= 30) {
+                              return <Badge variant="outline" className="text-yellow-600 border-yellow-600">{days} dias</Badge>;
+                            } else {
+                              return <Badge variant="destructive">{days} dias</Badge>;
+                            }
+                          })()}
                         </TableCell>
                         <TableCell>
                           <div className="space-y-2">
