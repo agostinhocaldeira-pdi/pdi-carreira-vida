@@ -12,9 +12,9 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { toast } from "sonner";
-import { LogIn, KeyRound, UserPlus, Database, Eye, EyeOff } from "lucide-react";
+import { LogIn, KeyRound, Eye, EyeOff, Loader2 } from "lucide-react";
 import ManagerRoleModal from "@/components/ManagerRoleModal";
-import { createMockCompanyData } from "@/utils/mockCompanyData";
+import { supabase } from "@/integrations/supabase/client";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -23,32 +23,15 @@ const Login = () => {
     password: "",
   });
   const [showForgotPasswordModal, setShowForgotPasswordModal] = useState(false);
-  const [forgotPasswordData, setForgotPasswordData] = useState({
-    email: "",
-    newPassword: "",
-    confirmPassword: "",
-  });
+  const [forgotPasswordEmail, setForgotPasswordEmail] = useState("");
   const [showManagerModal, setShowManagerModal] = useState(false);
-  const [showNewPasswordModal, setShowNewPasswordModal] = useState(false);
-  const [newPasswordData, setNewPasswordData] = useState({
-    newPassword: "",
-    confirmPassword: "",
-  });
-  const [pendingLogin, setPendingLogin] = useState<{
-    type: "manager" | "employee";
-    companyId: string;
-    personId: string;
-    email: string;
-  } | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isResetting, setIsResetting] = useState(false);
 
   // Password visibility states
   const [showPassword, setShowPassword] = useState(false);
-  const [showNewPw, setShowNewPw] = useState(false);
-  const [showConfirmPw, setShowConfirmPw] = useState(false);
-  const [showForgotNewPw, setShowForgotNewPw] = useState(false);
-  const [showForgotConfirmPw, setShowForgotConfirmPw] = useState(false);
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!loginData.email || !loginData.password) {
@@ -56,198 +39,113 @@ const Login = () => {
       return;
     }
 
-    // Verificar credenciais de usuário comum
-    const existingUser = localStorage.getItem("user");
-    if (existingUser) {
-      const userData = JSON.parse(existingUser);
-      if (userData.email.toLowerCase() === loginData.email.toLowerCase() && userData.password === loginData.password) {
-        toast.success("Login realizado com sucesso!");
-        
-        // Redirecionar baseado no role
-        if (userData.role === "empresa") {
-          navigate("/dashboard-empresa");
-        } else if (userData.role === "gestor") {
-          setShowManagerModal(true);
+    setIsLoading(true);
+
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email: loginData.email,
+        password: loginData.password,
+      });
+
+      if (error) {
+        if (error.message.includes("Invalid login credentials")) {
+          toast.error("E-mail ou senha incorretos");
         } else {
-          navigate("/home");
+          toast.error(error.message);
         }
         return;
       }
-    }
 
-    // Verificar se é uma empresa
-    const companies = JSON.parse(localStorage.getItem("companies") || "[]");
-    const company = companies.find((c: any) => c.email.toLowerCase() === loginData.email.toLowerCase());
-    
-    if (company && company.password === loginData.password) {
-      localStorage.setItem("user", JSON.stringify({
-        name: company.razao_social || company.razaoSocial,
-        email: company.email,
-        role: "empresa",
-        companyId: company.id,
-      }));
-      toast.success("Login realizado com sucesso!");
-      navigate("/dashboard-empresa");
-      return;
-    }
-    
-    // Verificar se é gestor ou funcionário de alguma empresa
-    for (const comp of companies) {
-      // Verificar gestores
-      const managers = JSON.parse(localStorage.getItem(`managers_${comp.id}`) || "[]");
-      const manager = managers.find((m: any) => m.email.toLowerCase() === loginData.email.toLowerCase());
-      
-      if (manager) {
-        if (manager.provisionalPassword === loginData.password && !manager.acceptedAt) {
-          // Primeiro login do gestor - precisa trocar senha
-          setPendingLogin({ type: "manager", companyId: comp.id, personId: manager.id, email: manager.email });
-          setShowNewPasswordModal(true);
-          return;
-        } else if (manager.password === loginData.password) {
-          // Login normal do gestor
-          localStorage.setItem("user", JSON.stringify({
-            name: manager.name,
-            email: manager.email,
-            role: "gestor",
-            companyId: comp.id,
-            managerId: manager.id,
-          }));
-          toast.success("Login realizado com sucesso!");
+      if (data.user) {
+        // Buscar role do usuário
+        const { data: roleData } = await supabase
+          .from('user_roles')
+          .select('role')
+          .eq('user_id', data.user.id)
+          .single();
+
+        const userRole = roleData?.role || 'user';
+        const userName = data.user.user_metadata?.name || data.user.email?.split('@')[0] || 'Usuário';
+        const userPhone = data.user.user_metadata?.phone || '';
+
+        // Salvar em localStorage para compatibilidade
+        localStorage.setItem("user", JSON.stringify({
+          id: data.user.id,
+          name: userName,
+          email: data.user.email,
+          phone: userPhone,
+          role: userRole,
+        }));
+
+        // Verificar se é admin
+        const { data: adminCheck } = await supabase
+          .from('user_roles')
+          .select('role')
+          .eq('user_id', data.user.id)
+          .eq('role', 'admin')
+          .single();
+
+        if (adminCheck) {
+          const admins = JSON.parse(localStorage.getItem("administrators") || "[]");
+          if (!admins.some((a: any) => a.email?.toLowerCase() === data.user.email?.toLowerCase())) {
+            admins.push({ name: userName, email: data.user.email, phone: userPhone });
+            localStorage.setItem("administrators", JSON.stringify(admins));
+          }
+        }
+
+        toast.success("Login realizado com sucesso!");
+
+        // Redirecionar baseado no role
+        if (userRole === "empresa") {
+          navigate("/dashboard-empresa");
+        } else if (userRole === "gestor") {
           setShowManagerModal(true);
-          return;
-        }
-      }
-
-      // Verificar funcionários
-      const employees = JSON.parse(localStorage.getItem(`employees_${comp.id}`) || "[]");
-      const employee = employees.find((emp: any) => emp.email.toLowerCase() === loginData.email.toLowerCase());
-      
-      if (employee) {
-        if (employee.provisionalPassword === loginData.password && !employee.acceptedAt) {
-          // Primeiro login do funcionário - precisa trocar senha
-          setPendingLogin({ type: "employee", companyId: comp.id, personId: employee.id, email: employee.email });
-          setShowNewPasswordModal(true);
-          return;
-        } else if (employee.password === loginData.password) {
-          // Login normal do funcionário
-          localStorage.setItem("user", JSON.stringify({
-            name: employee.name,
-            email: employee.email,
-            role: "user",
-            companyId: comp.id,
-            employeeId: employee.id,
-          }));
-          toast.success("Login realizado com sucesso!");
+        } else if (userRole === "admin") {
+          navigate("/admin");
+        } else {
           navigate("/home");
-          return;
         }
       }
-    }
-
-    // Nenhuma credencial encontrada
-    if (existingUser) {
-      toast.error("E-mail ou senha incorretos");
-    } else {
-      toast.error("Nenhum usuário cadastrado neste navegador. Cadastre-se primeiro.", {
-        description: "Os dados de cadastro são salvos localmente e não são compartilhados entre abas diferentes.",
-        duration: 5000
-      });
-    }
-  };
-
-  const handleNewPasswordSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (newPasswordData.newPassword.length < 6) {
-      toast.error("A senha deve ter pelo menos 6 caracteres");
-      return;
-    }
-
-    if (newPasswordData.newPassword !== newPasswordData.confirmPassword) {
-      toast.error("As senhas não coincidem");
-      return;
-    }
-
-    if (!pendingLogin) return;
-
-    const storageKey = pendingLogin.type === "manager" 
-      ? `managers_${pendingLogin.companyId}` 
-      : `employees_${pendingLogin.companyId}`;
-    
-    const people = JSON.parse(localStorage.getItem(storageKey) || "[]");
-    const personIndex = people.findIndex((p: any) => p.id === pendingLogin.personId);
-    
-    if (personIndex >= 0) {
-      people[personIndex].password = newPasswordData.newPassword;
-      people[personIndex].acceptedAt = new Date().toISOString();
-      people[personIndex].provisionalPassword = null;
-      localStorage.setItem(storageKey, JSON.stringify(people));
-
-      // Criar sessão do usuário com flag de primeiro acesso
-      localStorage.setItem("user", JSON.stringify({
-        name: people[personIndex].name,
-        email: people[personIndex].email,
-        role: pendingLogin.type === "manager" ? "gestor" : "user",
-        companyId: pendingLogin.companyId,
-        [pendingLogin.type === "manager" ? "managerId" : "employeeId"]: pendingLogin.personId,
-        isFirstAccess: true,
-      }));
-
-      toast.success("Senha atualizada com sucesso!");
-      setShowNewPasswordModal(false);
-      setNewPasswordData({ newPassword: "", confirmPassword: "" });
-      setPendingLogin(null);
-
-      if (pendingLogin.type === "manager") {
-        setShowManagerModal(true);
-      } else {
-        // Funcionário - direcionar ao onboarding no primeiro acesso
-        navigate("/onboarding");
-      }
+    } catch (error: any) {
+      console.error("Erro no login:", error);
+      toast.error("Erro ao fazer login. Tente novamente.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const handleForgotPassword = () => {
-    setForgotPasswordData({ email: loginData.email, newPassword: "", confirmPassword: "" });
+    setForgotPasswordEmail(loginData.email);
     setShowForgotPasswordModal(true);
   };
 
-  const handleResetPassword = (e: React.FormEvent) => {
+  const handleResetPassword = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!forgotPasswordData.email || !forgotPasswordData.newPassword || !forgotPasswordData.confirmPassword) {
-      toast.error("Por favor, preencha todos os campos");
+    if (!forgotPasswordEmail) {
+      toast.error("Por favor, digite seu e-mail");
       return;
     }
 
-    if (forgotPasswordData.newPassword !== forgotPasswordData.confirmPassword) {
-      toast.error("As senhas não coincidem");
-      return;
-    }
+    setIsResetting(true);
 
-    if (forgotPasswordData.newPassword.length < 6) {
-      toast.error("A senha deve ter pelo menos 6 caracteres");
-      return;
-    }
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(forgotPasswordEmail, {
+        redirectTo: `${window.location.origin}/login`,
+      });
 
-    // Verificar se o usuário existe
-    const existingUser = localStorage.getItem("user");
-    if (existingUser) {
-      const userData = JSON.parse(existingUser);
-      if (userData.email.toLowerCase() === forgotPasswordData.email.toLowerCase()) {
-        userData.password = forgotPasswordData.newPassword;
-        localStorage.setItem("user", JSON.stringify(userData));
-        toast.success("Senha alterada com sucesso!");
-        setShowForgotPasswordModal(false);
-        setLoginData({ email: userData.email, password: "" });
+      if (error) {
+        toast.error(error.message);
         return;
       }
-    }
 
-    toast.error("Nenhum usuário cadastrado neste navegador com este e-mail.", {
-      description: "Os dados são salvos localmente. Se abriu em nova aba, cadastre-se novamente.",
-      duration: 5000
-    });
+      toast.success("E-mail de redefinição enviado! Verifique sua caixa de entrada.");
+      setShowForgotPasswordModal(false);
+    } catch (error) {
+      toast.error("Erro ao enviar e-mail de redefinição");
+    } finally {
+      setIsResetting(false);
+    }
   };
 
   const PasswordToggle = ({ show, onToggle }: { show: boolean; onToggle: () => void }) => (
@@ -262,57 +160,6 @@ const Login = () => {
 
   return (
     <>
-      {/* Modal de troca de senha (primeiro acesso) */}
-      <Dialog open={showNewPasswordModal} onOpenChange={setShowNewPasswordModal}>
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              <KeyRound className="w-5 h-5 text-primary" />
-              Crie sua nova senha
-            </DialogTitle>
-            <DialogDescription>
-              Este é seu primeiro acesso. Por favor, crie uma nova senha para sua conta.
-            </DialogDescription>
-          </DialogHeader>
-          <form onSubmit={handleNewPasswordSubmit} className="space-y-4 mt-4">
-            <div className="space-y-2">
-              <Label htmlFor="new-pw">Nova senha</Label>
-              <div className="relative">
-                <Input
-                  id="new-pw"
-                  type={showNewPw ? "text" : "password"}
-                  placeholder="Mínimo 6 caracteres"
-                  value={newPasswordData.newPassword}
-                  onChange={(e) => setNewPasswordData({ ...newPasswordData, newPassword: e.target.value })}
-                  required
-                  className="pr-10"
-                />
-                <PasswordToggle show={showNewPw} onToggle={() => setShowNewPw(!showNewPw)} />
-              </div>
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="confirm-pw">Confirmar nova senha</Label>
-              <div className="relative">
-                <Input
-                  id="confirm-pw"
-                  type={showConfirmPw ? "text" : "password"}
-                  placeholder="Confirme sua nova senha"
-                  value={newPasswordData.confirmPassword}
-                  onChange={(e) => setNewPasswordData({ ...newPasswordData, confirmPassword: e.target.value })}
-                  required
-                  className="pr-10"
-                />
-                <PasswordToggle show={showConfirmPw} onToggle={() => setShowConfirmPw(!showConfirmPw)} />
-              </div>
-            </div>
-            <Button type="submit" className="w-full">
-              <KeyRound className="w-4 h-4 mr-2" />
-              Confirmar
-            </Button>
-          </form>
-        </DialogContent>
-      </Dialog>
-
       {/* Modal de seleção para gestor */}
       <ManagerRoleModal open={showManagerModal} onOpenChange={setShowManagerModal} />
 
@@ -325,7 +172,7 @@ const Login = () => {
               Redefinir senha
             </DialogTitle>
             <DialogDescription>
-              Digite seu e-mail e crie uma nova senha para acessar sua conta.
+              Digite seu e-mail para receber um link de redefinição de senha.
             </DialogDescription>
           </DialogHeader>
           <form onSubmit={handleResetPassword} className="space-y-4 mt-4">
@@ -335,42 +182,11 @@ const Login = () => {
                 id="forgot-email"
                 type="email"
                 placeholder="seu@email.com"
-                value={forgotPasswordData.email}
-                onChange={(e) => setForgotPasswordData({ ...forgotPasswordData, email: e.target.value })}
+                value={forgotPasswordEmail}
+                onChange={(e) => setForgotPasswordEmail(e.target.value)}
                 required
+                disabled={isResetting}
               />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="new-password">Nova senha</Label>
-              <div className="relative">
-                <Input
-                  id="new-password"
-                  type={showForgotNewPw ? "text" : "password"}
-                  placeholder="Digite sua nova senha"
-                  value={forgotPasswordData.newPassword}
-                  onChange={(e) => setForgotPasswordData({ ...forgotPasswordData, newPassword: e.target.value })}
-                  required
-                  className="pr-10"
-                />
-                <PasswordToggle show={showForgotNewPw} onToggle={() => setShowForgotNewPw(!showForgotNewPw)} />
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="confirm-password">Confirmar nova senha</Label>
-              <div className="relative">
-                <Input
-                  id="confirm-password"
-                  type={showForgotConfirmPw ? "text" : "password"}
-                  placeholder="Confirme sua nova senha"
-                  value={forgotPasswordData.confirmPassword}
-                  onChange={(e) => setForgotPasswordData({ ...forgotPasswordData, confirmPassword: e.target.value })}
-                  required
-                  className="pr-10"
-                />
-                <PasswordToggle show={showForgotConfirmPw} onToggle={() => setShowForgotConfirmPw(!showForgotConfirmPw)} />
-              </div>
             </div>
 
             <div className="flex gap-3 pt-2">
@@ -379,12 +195,17 @@ const Login = () => {
                 variant="outline"
                 onClick={() => setShowForgotPasswordModal(false)}
                 className="flex-1"
+                disabled={isResetting}
               >
                 Cancelar
               </Button>
-              <Button type="submit" className="flex-1">
-                <KeyRound className="w-4 h-4 mr-2" />
-                Redefinir
+              <Button type="submit" className="flex-1" disabled={isResetting}>
+                {isResetting ? (
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                ) : (
+                  <KeyRound className="w-4 h-4 mr-2" />
+                )}
+                {isResetting ? "Enviando..." : "Enviar Link"}
               </Button>
             </div>
           </form>
@@ -410,6 +231,7 @@ const Login = () => {
                   value={loginData.email}
                   onChange={(e) => setLoginData({ ...loginData, email: e.target.value })}
                   required
+                  disabled={isLoading}
                 />
               </div>
 
@@ -424,6 +246,7 @@ const Login = () => {
                     onChange={(e) => setLoginData({ ...loginData, password: e.target.value })}
                     required
                     className="pr-10"
+                    disabled={isLoading}
                   />
                   <PasswordToggle show={showPassword} onToggle={() => setShowPassword(!showPassword)} />
                 </div>
@@ -433,13 +256,18 @@ const Login = () => {
                 type="button"
                 onClick={handleForgotPassword}
                 className="text-sm text-primary hover:underline"
+                disabled={isLoading}
               >
                 Esqueci minha senha
               </button>
 
-              <Button type="submit" className="w-full mt-4 sm:mt-6" size="lg">
-                <LogIn className="w-4 h-4 mr-2" />
-                Entrar
+              <Button type="submit" className="w-full mt-4 sm:mt-6" size="lg" disabled={isLoading}>
+                {isLoading ? (
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                ) : (
+                  <LogIn className="w-4 h-4 mr-2" />
+                )}
+                {isLoading ? "Entrando..." : "Entrar"}
               </Button>
             </form>
 
@@ -450,23 +278,6 @@ const Login = () => {
                   Cadastre-se
                 </Link>
               </p>
-            </div>
-
-            {/* Botão de teste - remover em produção */}
-            <div className="mt-4 pt-4 border-t border-border">
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                className="w-full text-xs"
-                onClick={() => {
-                  createMockCompanyData();
-                  toast.success("Dados de teste criados! Veja as credenciais no console (F12)");
-                }}
-              >
-                <Database className="w-3 h-3 mr-2" />
-                Criar dados de teste (empresa, gestores, funcionários)
-              </Button>
             </div>
           </CardContent>
         </Card>
