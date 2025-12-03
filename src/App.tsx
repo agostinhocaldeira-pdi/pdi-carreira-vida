@@ -30,6 +30,7 @@ import Integracoes from "./pages/Integracoes";
 import CadastrarEmpresa from "./pages/CadastrarEmpresa";
 import DashboardEmpresa from "./pages/DashboardEmpresa";
 import GestaoPDIs from "./pages/GestaoPDIs";
+import Perfil from "./pages/Perfil";
 
 const queryClient = new QueryClient();
 
@@ -66,6 +67,7 @@ const App = () => (
             <Route path="/cadastrar-empresa" element={<CadastrarEmpresa />} />
             <Route path="/dashboard-empresa" element={<DashboardEmpresa />} />
             <Route path="/gestao-pdis" element={<GestaoPDIs />} />
+            <Route path="/perfil" element={<Perfil />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
