@@ -9,12 +9,13 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Compass, Heart, Target, Lightbulb, ChevronDown, ArrowRight, Edit, Sparkles, Loader2, ExternalLink, Plus, Trash2, Pencil, Check, X } from "lucide-react";
+import { Compass, Heart, Target, Lightbulb, ChevronDown, ArrowRight, Edit, Sparkles, Loader2, ExternalLink, Plus, Trash2, Pencil, Check, X, Building2 } from "lucide-react";
 import { toast } from "sonner";
 import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import ConfirmDeleteDialog from "@/components/ConfirmDeleteDialog";
+import { OKRLinkSection, CompanyOKRsOverview } from "@/components/home/OKRLinkSection";
 
 interface PlanoDeVidaProps {
   onTabChange?: (tab: string) => void;
@@ -897,6 +898,9 @@ const PlanoDeVida = ({ onTabChange, onOpenChange, forcedTab, forcedOpen }: Plano
 
           {/* Para onde vou */}
           <TabsContent value="para-onde" className="space-y-6 mt-6">
+            {/* Overview de OKRs da empresa */}
+            <CompanyOKRsOverview />
+            
             <div className="space-y-4">
               <div className="flex items-center gap-2 mb-4">
                 <Target className="w-5 h-5 text-primary" />
@@ -996,7 +1000,13 @@ const PlanoDeVida = ({ onTabChange, onOpenChange, forcedTab, forcedOpen }: Plano
                                   className="text-xs sm:text-sm"
                                 />
                               ) : (
-                                obj.texto
+                                <div>
+                                  <div>{obj.texto}</div>
+                                  <OKRLinkSection 
+                                    objetivoId={obj.id.toString()} 
+                                    objetivoTexto={obj.texto}
+                                  />
+                                </div>
                               )}
                             </TableCell>
                             <TableCell className="text-xs sm:text-sm">

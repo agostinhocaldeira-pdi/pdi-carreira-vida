@@ -40,34 +40,39 @@ const generateMockData = (userName: string) => {
     { area: "Contribuição Social", nota_atual: 4, nota_desejada: 7 }
   ]));
 
-  // Objetivos
+  // Objetivos - Salvar em "objetivos" que é a chave usada pelo PlanoDeVida
   const objetivos = [
     {
-      id: "obj_1",
+      id: 1001,
       texto: "Assumir uma posição de liderança na empresa",
-      objetivo: "Assumir uma posição de liderança na empresa",
-      status: "em_andamento",
-      data_alvo: "2025-06-30",
-      conexao_vvd: "Ser reconhecida como líder na minha área"
+      dataAlvo: "2025-06-30",
+      conexaoVvd: "Ser reconhecida como líder na minha área",
+      status: "em-andamento"
     },
     {
-      id: "obj_2",
+      id: 1002,
       texto: "Conquistar independência financeira",
-      objetivo: "Conquistar independência financeira",
-      status: "em_andamento",
-      data_alvo: "2026-12-31",
-      conexao_vvd: "Ter liberdade financeira para realizar sonhos"
+      dataAlvo: "2026-12-31",
+      conexaoVvd: "Ter liberdade financeira para realizar sonhos",
+      status: "em-andamento"
     },
     {
-      id: "obj_3",
+      id: 1003,
       texto: "Melhorar qualidade de vida e saúde",
-      objetivo: "Melhorar qualidade de vida e saúde",
-      status: "a_fazer",
-      data_alvo: "2025-12-31",
-      conexao_vvd: "Saúde física e mental em dia"
+      dataAlvo: "2025-12-31",
+      conexaoVvd: "Saúde física e mental em dia",
+      status: "a-fazer"
     }
   ];
-  localStorage.setItem("meus_objetivos", JSON.stringify(objetivos));
+  localStorage.setItem("objetivos", JSON.stringify(objetivos));
+  // Também salvar em meus_objetivos para compatibilidade
+  localStorage.setItem("meus_objetivos", JSON.stringify(objetivos.map(obj => ({
+    ...obj,
+    id: `obj_${obj.id}`,
+    objetivo: obj.texto,
+    data_alvo: obj.dataAlvo,
+    conexao_vvd: obj.conexaoVvd
+  }))));
 
   // Metas com ações e passos
   const metas = [
@@ -320,6 +325,99 @@ const generateMockData = (userName: string) => {
     urgente_nao_importante: ["Responder e-mails", "Ligação com fornecedor"],
     nao_urgente_nao_importante: ["Organizar desktop", "Atualizar redes sociais"]
   }));
+
+  // ==== EMPRESA E OKRs ====
+  const companyId = "company_mock_001";
+  const employeeId = "emp_mock_001";
+
+  // Empresa mockada
+  const companies = [{
+    id: companyId,
+    razao_social: "TechVision Soluções Ltda",
+    cnpj: "12.345.678/0001-99",
+    email: "contato@techvision.com.br",
+    telefone: "(11) 99999-0000",
+    is_active: true,
+    created_at: "2024-01-15"
+  }];
+  localStorage.setItem("companies", JSON.stringify(companies));
+
+  // Funcionário vinculado
+  const user = localStorage.getItem("user");
+  if (user) {
+    const userData = JSON.parse(user);
+    const employees = [{
+      id: employeeId,
+      company_id: companyId,
+      name: userData.name,
+      email: userData.email,
+      phone: userData.phone || "",
+      is_active: true,
+      accepted_at: "2024-02-01",
+      user_id: userData.id || "user_001"
+    }];
+    localStorage.setItem("company_employees", JSON.stringify(employees));
+
+    // Atualizar user com companyId para o OKRLinkSection funcionar
+    userData.companyId = companyId;
+    localStorage.setItem("user", JSON.stringify(userData));
+  }
+
+  // OKRs da empresa
+  const companyOKRs = [
+    {
+      id: "okr_001",
+      title: "Aumentar satisfação dos clientes em 30%",
+      description: "Melhorar NPS e reduzir churn através de melhorias no produto e atendimento",
+      period_start: "2025-01-01",
+      period_end: "2025-06-30",
+      status: "active",
+      linked_employee_ids: [employeeId],
+      key_results: [
+        { id: "kr_001", title: "NPS de 50 para 70", target: 70, current: 58, unit: "pts" },
+        { id: "kr_002", title: "Reduzir churn de 5% para 2%", target: 2, current: 3.5, unit: "%" },
+        { id: "kr_003", title: "100 avaliações positivas", target: 100, current: 72, unit: "avaliações" }
+      ]
+    },
+    {
+      id: "okr_002",
+      title: "Expandir equipe e desenvolver talentos",
+      description: "Contratar e desenvolver profissionais de alta performance",
+      period_start: "2025-01-01",
+      period_end: "2025-12-31",
+      status: "active",
+      linked_employee_ids: [employeeId],
+      key_results: [
+        { id: "kr_004", title: "Contratar 10 novos colaboradores", target: 10, current: 4, unit: "pessoas" },
+        { id: "kr_005", title: "90% de conclusão em treinamentos", target: 90, current: 65, unit: "%" },
+        { id: "kr_006", title: "Promover 3 líderes internos", target: 3, current: 1, unit: "promoções" }
+      ]
+    },
+    {
+      id: "okr_003",
+      title: "Aumentar receita em 25%",
+      description: "Crescer faturamento através de novos clientes e upsell",
+      period_start: "2025-01-01",
+      period_end: "2025-12-31",
+      status: "active",
+      linked_employee_ids: [],
+      key_results: [
+        { id: "kr_007", title: "50 novos clientes", target: 50, current: 18, unit: "clientes" },
+        { id: "kr_008", title: "Upsell em 30% da base", target: 30, current: 12, unit: "%" }
+      ]
+    }
+  ];
+  localStorage.setItem(`okrs_${companyId}`, JSON.stringify(companyOKRs));
+
+  // Vincular objetivo pessoal ao OKR corporativo
+  const okrLinks = [
+    {
+      objetivoId: "1001",
+      okrId: "okr_002",
+      okrTitle: "Expandir equipe e desenvolver talentos"
+    }
+  ];
+  localStorage.setItem("user_okr_links", JSON.stringify(okrLinks));
 };
 
 
