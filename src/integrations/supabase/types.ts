@@ -14,6 +14,45 @@ export type Database = {
   }
   public: {
     Tables: {
+      achievement_definitions: {
+        Row: {
+          category: string
+          code: string
+          created_at: string
+          description: string
+          icon: string
+          id: string
+          name: string
+          points: number
+          requirement_type: string
+          requirement_value: number
+        }
+        Insert: {
+          category: string
+          code: string
+          created_at?: string
+          description: string
+          icon: string
+          id?: string
+          name: string
+          points?: number
+          requirement_type: string
+          requirement_value: number
+        }
+        Update: {
+          category?: string
+          code?: string
+          created_at?: string
+          description?: string
+          icon?: string
+          id?: string
+          name?: string
+          points?: number
+          requirement_type?: string
+          requirement_value?: number
+        }
+        Relationships: []
+      }
       companies: {
         Row: {
           cnpj: string
@@ -159,6 +198,53 @@ export type Database = {
           },
         ]
       }
+      company_okrs: {
+        Row: {
+          company_id: string
+          created_at: string
+          created_by: string
+          description: string | null
+          id: string
+          period_end: string
+          period_start: string
+          status: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          company_id: string
+          created_at?: string
+          created_by: string
+          description?: string | null
+          id?: string
+          period_end: string
+          period_start: string
+          status?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          company_id?: string
+          created_at?: string
+          created_by?: string
+          description?: string | null
+          id?: string
+          period_end?: string
+          period_start?: string
+          status?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "company_okrs_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       company_representatives: {
         Row: {
           company_id: string
@@ -199,6 +285,47 @@ export type Database = {
             columns: ["company_id"]
             isOneToOne: false
             referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      okr_key_results: {
+        Row: {
+          created_at: string
+          current_value: number
+          id: string
+          okr_id: string
+          target_value: number
+          title: string
+          unit: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          current_value?: number
+          id?: string
+          okr_id: string
+          target_value: number
+          title: string
+          unit?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          current_value?: number
+          id?: string
+          okr_id?: string
+          target_value?: number
+          title?: string
+          unit?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "okr_key_results_okr_id_fkey"
+            columns: ["okr_id"]
+            isOneToOne: false
+            referencedRelation: "company_okrs"
             referencedColumns: ["id"]
           },
         ]
@@ -268,6 +395,35 @@ export type Database = {
         }
         Relationships: []
       }
+      user_achievements: {
+        Row: {
+          achievement_id: string
+          id: string
+          unlocked_at: string
+          user_id: string
+        }
+        Insert: {
+          achievement_id: string
+          id?: string
+          unlocked_at?: string
+          user_id: string
+        }
+        Update: {
+          achievement_id?: string
+          id?: string
+          unlocked_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_achievements_achievement_id_fkey"
+            columns: ["achievement_id"]
+            isOneToOne: false
+            referencedRelation: "achievement_definitions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_addresses: {
         Row: {
           bairro: string | null
@@ -309,6 +465,131 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      user_integrations: {
+        Row: {
+          access_token: string | null
+          connected_at: string | null
+          created_at: string
+          id: string
+          integration_type: string
+          is_connected: boolean
+          last_sync_at: string | null
+          refresh_token: string | null
+          settings: Json | null
+          token_expires_at: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          access_token?: string | null
+          connected_at?: string | null
+          created_at?: string
+          id?: string
+          integration_type: string
+          is_connected?: boolean
+          last_sync_at?: string | null
+          refresh_token?: string | null
+          settings?: Json | null
+          token_expires_at?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          access_token?: string | null
+          connected_at?: string | null
+          created_at?: string
+          id?: string
+          integration_type?: string
+          is_connected?: boolean
+          last_sync_at?: string | null
+          refresh_token?: string | null
+          settings?: Json | null
+          token_expires_at?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_notification_preferences: {
+        Row: {
+          created_at: string
+          diary_reminder_enabled: boolean
+          diary_reminder_time: string
+          email_enabled: boolean
+          goal_deadline_days_before: number
+          goal_deadline_reminder: boolean
+          id: string
+          updated_at: string
+          user_id: string
+          weekly_summary_day: number
+          weekly_summary_enabled: boolean
+          whatsapp_enabled: boolean
+        }
+        Insert: {
+          created_at?: string
+          diary_reminder_enabled?: boolean
+          diary_reminder_time?: string
+          email_enabled?: boolean
+          goal_deadline_days_before?: number
+          goal_deadline_reminder?: boolean
+          id?: string
+          updated_at?: string
+          user_id: string
+          weekly_summary_day?: number
+          weekly_summary_enabled?: boolean
+          whatsapp_enabled?: boolean
+        }
+        Update: {
+          created_at?: string
+          diary_reminder_enabled?: boolean
+          diary_reminder_time?: string
+          email_enabled?: boolean
+          goal_deadline_days_before?: number
+          goal_deadline_reminder?: boolean
+          id?: string
+          updated_at?: string
+          user_id?: string
+          weekly_summary_day?: number
+          weekly_summary_enabled?: boolean
+          whatsapp_enabled?: boolean
+        }
+        Relationships: []
+      }
+      user_okr_links: {
+        Row: {
+          contribution_percentage: number | null
+          created_at: string
+          id: string
+          objetivo_id: string
+          okr_id: string
+          user_id: string
+        }
+        Insert: {
+          contribution_percentage?: number | null
+          created_at?: string
+          id?: string
+          objetivo_id: string
+          okr_id: string
+          user_id: string
+        }
+        Update: {
+          contribution_percentage?: number | null
+          created_at?: string
+          id?: string
+          objetivo_id?: string
+          okr_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_okr_links_okr_id_fkey"
+            columns: ["okr_id"]
+            isOneToOne: false
+            referencedRelation: "company_okrs"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_onboarding: {
         Row: {
@@ -354,6 +635,39 @@ export type Database = {
           created_at?: string | null
           id?: string
           role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_streaks: {
+        Row: {
+          current_streak: number
+          id: string
+          last_activity_date: string | null
+          level: number
+          longest_streak: number
+          total_points: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          current_streak?: number
+          id?: string
+          last_activity_date?: string | null
+          level?: number
+          longest_streak?: number
+          total_points?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          current_streak?: number
+          id?: string
+          last_activity_date?: string | null
+          level?: number
+          longest_streak?: number
+          total_points?: number
+          updated_at?: string
           user_id?: string
         }
         Relationships: []
