@@ -7,7 +7,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Target, Plus, Pencil, Trash2, TrendingUp, Calendar, Users } from "lucide-react";
+import { Target, Plus, Pencil, Trash2, TrendingUp, Calendar, Users, UserPlus, X } from "lucide-react";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
 import ConfirmDeleteDialog from "@/components/ConfirmDeleteDialog";
 
@@ -27,7 +29,7 @@ interface OKR {
   period_end: string;
   status: "active" | "completed" | "archived";
   key_results: KeyResult[];
-  linked_employees: number;
+  linked_employee_ids: string[];
 }
 
 interface OKRsTabProps {
@@ -49,6 +51,7 @@ export function OKRsTab({ companyId, employees }: OKRsTabProps) {
   const [newKeyResults, setNewKeyResults] = useState<Omit<KeyResult, "id">[]>([
     { title: "", target_value: 100, current_value: 0, unit: "%" },
   ]);
+  const [selectedEmployeeIds, setSelectedEmployeeIds] = useState<string[]>([]);
 
   useEffect(() => {
     loadOKRs();
@@ -73,7 +76,7 @@ export function OKRsTab({ companyId, employees }: OKRsTabProps) {
             { id: "kr2", title: "Aumentar entregas no prazo", target_value: 90, current_value: 75, unit: "%" },
             { id: "kr3", title: "Implementar automações", target_value: 5, current_value: 3, unit: "processos" },
           ],
-          linked_employees: 8,
+          linked_employee_ids: [],
         },
         {
           id: "2",
@@ -86,7 +89,7 @@ export function OKRsTab({ companyId, employees }: OKRsTabProps) {
             { id: "kr4", title: "Certificações obtidas", target_value: 15, current_value: 7, unit: "certificações" },
             { id: "kr5", title: "Horas de treinamento", target_value: 200, current_value: 120, unit: "horas" },
           ],
-          linked_employees: 12,
+          linked_employee_ids: [],
         },
       ];
       setOkrs(sampleOKRs);
@@ -116,13 +119,14 @@ export function OKRsTab({ companyId, employees }: OKRsTabProps) {
       ...newOKR,
       status: "active",
       key_results: validKeyResults.map((kr) => ({ ...kr, id: crypto.randomUUID() })),
-      linked_employees: 0,
+      linked_employee_ids: selectedEmployeeIds,
     };
 
     saveOKRs([...okrs, okr]);
     setShowAddModal(false);
     setNewOKR({ title: "", description: "", period_start: "", period_end: "" });
     setNewKeyResults([{ title: "", target_value: 100, current_value: 0, unit: "%" }]);
+    setSelectedEmployeeIds([]);
     toast.success("OKR criado com sucesso!");
   };
 
@@ -166,6 +170,26 @@ export function OKRsTab({ companyId, employees }: OKRsTabProps) {
     const updated = [...newKeyResults];
     updated[index] = { ...updated[index], [field]: value };
     setNewKeyResults(updated);
+  };
+
+  const toggleEmployeeForOKR = (okrId: string, employeeId: string) => {
+    const updated = okrs.map((okr) => {
+      if (okr.id === okrId) {
+        const isLinked = okr.linked_employee_ids.includes(employeeId);
+        return {
+          ...okr,
+          linked_employee_ids: isLinked
+            ? okr.linked_employee_ids.filter((id) => id !== employeeId)
+            : [...okr.linked_employee_ids, employeeId],
+        };
+      }
+      return okr;
+    });
+    saveOKRs(updated);
+  };
+
+  const getEmployeeName = (employeeId: string) => {
+    return employees.find((e) => e.id === employeeId)?.name || "Desconhecido";
   };
 
   return (
@@ -276,6 +300,39 @@ export function OKRsTab({ companyId, employees }: OKRsTabProps) {
                 ))}
               </div>
 
+              <div className="space-y-3">
+                <Label>Funcionários vinculados</Label>
+                {employees.length === 0 ? (
+                  <p className="text-sm text-muted-foreground">Nenhum funcionário cadastrado</p>
+                ) : (
+                  <div className="max-h-40 overflow-y-auto border rounded-lg p-3 space-y-2">
+                    {employees.map((emp) => (
+                      <div key={emp.id} className="flex items-center gap-2">
+                        <Checkbox
+                          id={`new-okr-emp-${emp.id}`}
+                          checked={selectedEmployeeIds.includes(emp.id)}
+                          onCheckedChange={(checked) => {
+                            if (checked) {
+                              setSelectedEmployeeIds([...selectedEmployeeIds, emp.id]);
+                            } else {
+                              setSelectedEmployeeIds(selectedEmployeeIds.filter((id) => id !== emp.id));
+                            }
+                          }}
+                        />
+                        <label htmlFor={`new-okr-emp-${emp.id}`} className="text-sm cursor-pointer flex-1">
+                          {emp.name}
+                        </label>
+                      </div>
+                    ))}
+                  </div>
+                )}
+                {selectedEmployeeIds.length > 0 && (
+                  <p className="text-xs text-muted-foreground">
+                    {selectedEmployeeIds.length} funcionário(s) selecionado(s)
+                  </p>
+                )}
+              </div>
+
               <div className="flex justify-end gap-2 pt-4">
                 <Button variant="outline" onClick={() => setShowAddModal(false)}>
                   Cancelar
@@ -321,10 +378,41 @@ export function OKRsTab({ companyId, employees }: OKRsTabProps) {
                           <Calendar className="w-3 h-3" />
                           {new Date(okr.period_start).toLocaleDateString("pt-BR")} - {new Date(okr.period_end).toLocaleDateString("pt-BR")}
                         </span>
-                        <span className="flex items-center gap-1">
-                          <Users className="w-3 h-3" />
-                          {okr.linked_employees} funcionários vinculados
-                        </span>
+                        <Popover>
+                          <PopoverTrigger asChild>
+                            <button className="flex items-center gap-1 hover:text-primary transition-colors">
+                              <Users className="w-3 h-3" />
+                              {okr.linked_employee_ids.length} funcionários vinculados
+                              <UserPlus className="w-3 h-3 ml-1" />
+                            </button>
+                          </PopoverTrigger>
+                          <PopoverContent className="w-72 p-3" align="start">
+                            <div className="space-y-3">
+                              <h4 className="font-medium text-sm">Funcionários vinculados</h4>
+                              {employees.length === 0 ? (
+                                <p className="text-sm text-muted-foreground">Nenhum funcionário cadastrado</p>
+                              ) : (
+                                <div className="max-h-48 overflow-y-auto space-y-2">
+                                  {employees.map((emp) => (
+                                    <div key={emp.id} className="flex items-center gap-2">
+                                      <Checkbox
+                                        id={`emp-${okr.id}-${emp.id}`}
+                                        checked={okr.linked_employee_ids.includes(emp.id)}
+                                        onCheckedChange={() => toggleEmployeeForOKR(okr.id, emp.id)}
+                                      />
+                                      <label
+                                        htmlFor={`emp-${okr.id}-${emp.id}`}
+                                        className="text-sm cursor-pointer flex-1"
+                                      >
+                                        {emp.name}
+                                      </label>
+                                    </div>
+                                  ))}
+                                </div>
+                              )}
+                            </div>
+                          </PopoverContent>
+                        </Popover>
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
