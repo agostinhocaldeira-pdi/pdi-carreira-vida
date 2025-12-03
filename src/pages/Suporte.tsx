@@ -737,8 +737,18 @@ const Suporte = () => {
                             value={replyTexts[conv.id] || ""}
                             onChange={(e) => setReplyTexts(prev => ({ ...prev, [conv.id]: e.target.value }))}
                             className="min-h-[80px]"
-                            disabled
                           />
+                          <Button
+                            onClick={() => {
+                              handleReplyToManagerConversation(conv.id, replyTexts[conv.id] || "");
+                              setReplyTexts(prev => ({ ...prev, [conv.id]: "" }));
+                            }}
+                            disabled={isLoading || !replyTexts[conv.id]?.trim()}
+                            className="w-full"
+                          >
+                            <Send className="w-4 h-4 mr-2" />
+                            Enviar Resposta
+                          </Button>
                         </div>
                       </div>
                     );
