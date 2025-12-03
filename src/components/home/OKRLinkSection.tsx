@@ -7,12 +7,13 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Target, Link2, Building2, TrendingUp, Unlink } from "lucide-react";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
 
 interface KeyResult {
   id: string;
   title: string;
-  target: number;
-  current: number;
+  target_value: number;
+  current_value: number;
   unit: string;
 }
 
@@ -22,9 +23,8 @@ interface OKR {
   description: string;
   period_start: string;
   period_end: string;
-  status: "active" | "completed" | "archived";
+  status: string;
   key_results: KeyResult[];
-  linked_employee_ids: string[];
 }
 
 interface OKRLink {
@@ -44,105 +44,171 @@ export function OKRLinkSection({ objetivoId, objetivoTexto, onLinkChange }: OKRL
   const [linkedOKR, setLinkedOKR] = useState<OKR | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [companyName, setCompanyName] = useState<string>("");
+  const [employeeId, setEmployeeId] = useState<string>("");
 
   useEffect(() => {
     loadCompanyOKRs();
     loadLinkedOKR();
   }, [objetivoId]);
 
-  const loadCompanyOKRs = () => {
-    // Get user's company from localStorage
-    const user = localStorage.getItem("user");
-    if (!user) return;
+  const loadCompanyOKRs = async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
 
-    const userData = JSON.parse(user);
-    const employeeCompanyId = userData.companyId;
-    
-    if (!employeeCompanyId) return;
+      // Buscar employee data para obter company_id e employee id
+      const { data: employeeData } = await supabase
+        .from('company_employees')
+        .select('id, company_id')
+        .eq('user_id', user.id)
+        .single();
 
-    // Load company name
-    const companies = localStorage.getItem("companies");
-    if (companies) {
-      const companiesList = JSON.parse(companies);
-      const company = companiesList.find((c: any) => c.id === employeeCompanyId);
-      if (company) {
-        setCompanyName(company.razao_social);
+      if (!employeeData) return;
+
+      setEmployeeId(employeeData.id);
+
+      // Buscar nome da empresa
+      const { data: companyData } = await supabase
+        .from('companies')
+        .select('razao_social')
+        .eq('id', employeeData.company_id)
+        .single();
+
+      if (companyData) {
+        setCompanyName(companyData.razao_social);
       }
-    }
 
-    // Load company OKRs
-    const stored = localStorage.getItem(`okrs_${employeeCompanyId}`);
-    if (stored) {
-      const okrs = JSON.parse(stored).filter((okr: OKR) => okr.status === "active");
-      setCompanyOKRs(okrs);
-    }
-  };
+      // Buscar OKRs da empresa que estão vinculados ao funcionário (via localStorage para linked_employee_ids)
+      // Primeiro buscar OKRs do Supabase
+      const { data: okrsData } = await supabase
+        .from('company_okrs')
+        .select(`
+          id, title, description, period_start, period_end, status,
+          okr_key_results (id, title, target_value, current_value, unit)
+        `)
+        .eq('company_id', employeeData.company_id)
+        .eq('status', 'active');
 
-  const loadLinkedOKR = () => {
-    const links = localStorage.getItem("user_okr_links");
-    if (!links) return;
+      if (okrsData && okrsData.length > 0) {
+        // OKRs existem no Supabase - verificar localStorage para linked_employee_ids
+        const localOkrs = localStorage.getItem(`okrs_${employeeData.company_id}`);
+        const linkedEmployeesMap: Record<string, string[]> = {};
+        
+        if (localOkrs) {
+          const parsedLocal = JSON.parse(localOkrs);
+          parsedLocal.forEach((okr: any) => {
+            linkedEmployeesMap[okr.id] = okr.linked_employee_ids || [];
+          });
+        }
 
-    const linksList: OKRLink[] = JSON.parse(links);
-    const link = linksList.find(l => l.objetivoId === objetivoId);
-    
-    if (link) {
-      // Find the OKR details
-      const user = localStorage.getItem("user");
-      if (user) {
-        const userData = JSON.parse(user);
-        const stored = localStorage.getItem(`okrs_${userData.companyId}`);
+        const filteredOkrs = okrsData
+          .filter(okr => {
+            const linkedIds = linkedEmployeesMap[okr.id] || [];
+            return linkedIds.includes(employeeData.id);
+          })
+          .map(okr => ({
+            ...okr,
+            key_results: okr.okr_key_results || []
+          }));
+
+        setCompanyOKRs(filteredOkrs);
+      } else {
+        // Fallback para localStorage (dados antigos)
+        const stored = localStorage.getItem(`okrs_${employeeData.company_id}`);
         if (stored) {
-          const okrs = JSON.parse(stored);
-          const okr = okrs.find((o: OKR) => o.id === link.okrId);
-          if (okr) {
-            setLinkedOKR(okr);
-          }
+          const okrs = JSON.parse(stored)
+            .filter((okr: any) => okr.status === "active")
+            .filter((okr: any) => (okr.linked_employee_ids || []).includes(employeeData.id));
+          setCompanyOKRs(okrs);
         }
       }
+    } catch (error) {
+      console.error('Error loading company OKRs:', error);
     }
   };
 
-  const handleLinkOKR = (okrId: string) => {
+  const loadLinkedOKR = async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      // Buscar vínculo do Supabase
+      const { data: linkData } = await supabase
+        .from('user_okr_links')
+        .select(`
+          okr_id,
+          company_okrs (
+            id, title, description, period_start, period_end, status,
+            okr_key_results (id, title, target_value, current_value, unit)
+          )
+        `)
+        .eq('user_id', user.id)
+        .eq('objetivo_id', objetivoId)
+        .single();
+
+      if (linkData?.company_okrs) {
+        const okr = linkData.company_okrs as any;
+        setLinkedOKR({
+          ...okr,
+          key_results: okr.okr_key_results || []
+        });
+      }
+    } catch (error) {
+      // No link found, which is fine
+    }
+  };
+
+  const handleLinkOKR = async (okrId: string) => {
     const okr = companyOKRs.find(o => o.id === okrId);
     if (!okr) return;
 
-    const links = localStorage.getItem("user_okr_links");
-    const linksList: OKRLink[] = links ? JSON.parse(links) : [];
-    
-    // Remove existing link for this objective
-    const filteredLinks = linksList.filter(l => l.objetivoId !== objetivoId);
-    
-    // Add new link
-    filteredLinks.push({
-      objetivoId,
-      okrId,
-      okrTitle: okr.title
-    });
-    
-    localStorage.setItem("user_okr_links", JSON.stringify(filteredLinks));
-    setLinkedOKR(okr);
-    setIsDialogOpen(false);
-    toast.success("Objetivo vinculado ao OKR!");
-    onLinkChange?.();
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      // Salvar vínculo no Supabase
+      await supabase
+        .from('user_okr_links')
+        .upsert({
+          user_id: user.id,
+          objetivo_id: objetivoId,
+          okr_id: okrId
+        }, { onConflict: 'user_id,objetivo_id' });
+
+      setLinkedOKR(okr);
+      setIsDialogOpen(false);
+      toast.success("Objetivo vinculado ao OKR!");
+      onLinkChange?.();
+    } catch (error) {
+      console.error('Error linking OKR:', error);
+      toast.error("Erro ao vincular objetivo");
+    }
   };
 
-  const handleUnlinkOKR = () => {
-    const links = localStorage.getItem("user_okr_links");
-    if (!links) return;
+  const handleUnlinkOKR = async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
 
-    const linksList: OKRLink[] = JSON.parse(links);
-    const filteredLinks = linksList.filter(l => l.objetivoId !== objetivoId);
-    
-    localStorage.setItem("user_okr_links", JSON.stringify(filteredLinks));
-    setLinkedOKR(null);
-    toast.success("Vínculo removido!");
-    onLinkChange?.();
+      await supabase
+        .from('user_okr_links')
+        .delete()
+        .eq('user_id', user.id)
+        .eq('objetivo_id', objetivoId);
+
+      setLinkedOKR(null);
+      toast.success("Vínculo removido!");
+      onLinkChange?.();
+    } catch (error) {
+      console.error('Error unlinking OKR:', error);
+      toast.error("Erro ao remover vínculo");
+    }
   };
 
   const calculateOKRProgress = (okr: OKR): number => {
     if (okr.key_results.length === 0) return 0;
     const total = okr.key_results.reduce((acc, kr) => {
-      const progress = Math.min((kr.current / kr.target) * 100, 100);
+      const progress = Math.min((kr.current_value / kr.target_value) * 100, 100);
       return acc + progress;
     }, 0);
     return Math.round(total / okr.key_results.length);
@@ -224,7 +290,7 @@ export function OKRLinkSection({ objetivoId, objetivoTexto, onLinkChange }: OKRL
                             <div key={kr.id} className="flex items-center gap-2 text-xs text-muted-foreground">
                               <TrendingUp className="h-3 w-3" />
                               <span className="truncate">{kr.title}</span>
-                              <span className="ml-auto">{kr.current}/{kr.target} {kr.unit}</span>
+                              <span className="ml-auto">{kr.current_value}/{kr.target_value} {kr.unit}</span>
                             </div>
                           ))}
                           {okr.key_results.length > 2 && (
@@ -301,7 +367,7 @@ export function CompanyOKRsOverview() {
   const calculateOKRProgress = (okr: OKR): number => {
     if (okr.key_results.length === 0) return 0;
     const total = okr.key_results.reduce((acc, kr) => {
-      const progress = Math.min((kr.current / kr.target) * 100, 100);
+      const progress = Math.min((kr.current_value / kr.target_value) * 100, 100);
       return acc + progress;
     }, 0);
     return Math.round(total / okr.key_results.length);
