@@ -19,6 +19,20 @@ const ManagerRoleModal = ({ open, onOpenChange }: ManagerRoleModalProps) => {
 
   const handleMeuPDI = () => {
     onOpenChange(false);
+    
+    // Verificar se é primeiro acesso para mostrar onboarding
+    const user = localStorage.getItem("user");
+    if (user) {
+      const userData = JSON.parse(user);
+      if (userData.isFirstAccess) {
+        // Remover flag de primeiro acesso após usar
+        userData.isFirstAccess = false;
+        localStorage.setItem("user", JSON.stringify(userData));
+        navigate("/onboarding");
+        return;
+      }
+    }
+    
     navigate("/home");
   };
 
