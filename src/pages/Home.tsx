@@ -103,6 +103,8 @@ const Home = () => {
     
     if (!roleLoading && userRole) {
       loadUserData();
+      // Definir se é gestor baseado no role do Supabase
+      setIsGestor(userRole === "gestor");
     }
   }, [roleLoading, userRole]);
 
