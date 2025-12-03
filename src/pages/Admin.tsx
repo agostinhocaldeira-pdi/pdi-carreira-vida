@@ -229,13 +229,14 @@ const Admin = () => {
           <Card className="hover:shadow-medium transition-all">
             <CardContent className="pt-6">
               <div className="flex items-center justify-between mb-4">
-                <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
-                  <Activity className="w-6 h-6 text-primary" />
+                <div className="w-12 h-12 bg-green-500/10 rounded-lg flex items-center justify-center">
+                  <TrendingUp className="w-6 h-6 text-green-600" />
                 </div>
                 <Badge variant="secondary">Mockado</Badge>
               </div>
-              <h3 className="text-2xl font-bold mb-1">1.234</h3>
-              <p className="text-sm text-muted-foreground">Objetivos Criados</p>
+              <h3 className="text-2xl font-bold mb-1 text-green-600">72%</h3>
+              <p className="text-sm text-muted-foreground">Taxa de Sucesso</p>
+              <p className="text-xs text-muted-foreground mt-1">Média de conclusão (obj/metas/ações)</p>
             </CardContent>
           </Card>
 
