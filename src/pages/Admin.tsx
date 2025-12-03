@@ -263,6 +263,103 @@ const Admin = () => {
           </CardContent>
         </Card>
 
+        {/* Notificações Pendentes - Admin */}
+        {(() => {
+          // Contar mensagens de suporte não lidas
+          const supportTickets = JSON.parse(localStorage.getItem("support_tickets") || "[]");
+          const supportMessages = JSON.parse(localStorage.getItem("support_messages") || "[]");
+          
+          // Mensagens de usuários aguardando resposta do admin
+          const pendingSupportMessages = supportTickets.filter((ticket: any) => {
+            const ticketMessages = supportMessages.filter((msg: any) => msg.ticketId === ticket.id);
+            if (ticketMessages.length === 0) return true;
+            const lastMessage = ticketMessages[ticketMessages.length - 1];
+            return !lastMessage.isAdminResponse;
+          }).length;
+
+          // Contar conversas de gestores aguardando resposta
+          const allUsers = JSON.parse(localStorage.getItem("users") || "[]");
+          let pendingManagerConversations = 0;
+          let pendingEmployeeConversations = 0;
+
+          allUsers.forEach((user: any) => {
+            const conversations = JSON.parse(localStorage.getItem(`manager_conversations_${user.id}`) || "[]");
+            conversations.forEach((conv: any) => {
+              if (conv.messages && conv.messages.length > 0) {
+                const lastMsg = conv.messages[conv.messages.length - 1];
+                if (lastMsg.from === "employee") {
+                  pendingManagerConversations++;
+                } else if (lastMsg.from === "manager") {
+                  pendingEmployeeConversations++;
+                }
+              }
+            });
+          });
+
+          const totalNotifications = pendingSupportMessages + pendingManagerConversations + pendingEmployeeConversations;
+
+          if (totalNotifications > 0) {
+            return (
+              <Card className="shadow-medium border-accent/30 bg-accent/5">
+                <CardHeader className="pb-3">
+                  <CardTitle className="text-lg flex items-center gap-2">
+                    <Mail className="w-5 h-5 text-accent" />
+                    Notificações Pendentes
+                    <Badge variant="destructive" className="ml-2">{totalNotifications}</Badge>
+                  </CardTitle>
+                  <CardDescription>
+                    Mensagens aguardando atenção de todos os perfis
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    {pendingSupportMessages > 0 && (
+                      <div 
+                        className="p-3 bg-background rounded-lg border border-border/50 cursor-pointer hover:border-primary/50 transition-all"
+                        onClick={() => navigate("/suporte")}
+                      >
+                        <div className="flex items-center gap-2 mb-1">
+                          <Mail className="w-4 h-4 text-primary" />
+                          <span className="font-medium text-sm">Suporte</span>
+                          <Badge variant="secondary" className="ml-auto">{pendingSupportMessages}</Badge>
+                        </div>
+                        <p className="text-xs text-muted-foreground">Tickets aguardando resposta</p>
+                      </div>
+                    )}
+                    {pendingManagerConversations > 0 && (
+                      <div 
+                        className="p-3 bg-background rounded-lg border border-border/50 cursor-pointer hover:border-primary/50 transition-all"
+                        onClick={() => navigate("/gestao-pdis")}
+                      >
+                        <div className="flex items-center gap-2 mb-1">
+                          <UserCog className="w-4 h-4 text-blue-500" />
+                          <span className="font-medium text-sm">Gestores</span>
+                          <Badge variant="secondary" className="ml-auto">{pendingManagerConversations}</Badge>
+                        </div>
+                        <p className="text-xs text-muted-foreground">Mensagens de funcionários</p>
+                      </div>
+                    )}
+                    {pendingEmployeeConversations > 0 && (
+                      <div 
+                        className="p-3 bg-background rounded-lg border border-border/50 cursor-pointer hover:border-primary/50 transition-all"
+                        onClick={() => navigate("/gestao-pdis")}
+                      >
+                        <div className="flex items-center gap-2 mb-1">
+                          <UserCheck className="w-4 h-4 text-green-500" />
+                          <span className="font-medium text-sm">Funcionários</span>
+                          <Badge variant="secondary" className="ml-auto">{pendingEmployeeConversations}</Badge>
+                        </div>
+                        <p className="text-xs text-muted-foreground">Respostas dos gestores</p>
+                      </div>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+            );
+          }
+          return null;
+        })()}
+
         {/* Quick Access - Admin pode acessar todas as páginas */}
         <Card className="shadow-medium border-primary/20">
           <CardHeader>
