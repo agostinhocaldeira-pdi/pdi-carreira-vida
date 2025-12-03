@@ -100,9 +100,43 @@ const Suporte = () => {
   const ticketsContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    checkUserRole();
-    loadTickets();
-    loadManagerConversations();
+    const initializeData = async () => {
+      // Aguardar sessão de autenticação
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      console.log("Suporte - Session check:", { 
+        hasSession: !!session, 
+        userId: session?.user?.id,
+        email: session?.user?.email 
+      });
+      
+      if (session?.user) {
+        setUserId(session.user.email || "");
+        
+        // Verificar se é funcionário de alguma empresa no Supabase
+        const { data: employeeData, error } = await supabase
+          .from("company_employees")
+          .select("id, company_id, name, email, manager_id, is_active")
+          .eq("user_id", session.user.id)
+          .eq("is_active", true)
+          .maybeSingle();
+
+        console.log("Employee check result:", { employeeData, error, userId: session.user.id });
+
+        if (employeeData && !error) {
+          console.log("Setting isEmployee to TRUE");
+          setIsEmployee(true);
+          setEmployeeData(employeeData);
+        } else if (error) {
+          console.error("Error fetching employee data:", error);
+        }
+      }
+      
+      loadTickets();
+      loadManagerConversations();
+    };
+    
+    initializeData();
   }, []);
 
   // Handle navigation state to auto-focus on pending tickets
@@ -114,29 +148,6 @@ const Suporte = () => {
       }, 300);
     }
   }, [location.state, tickets]);
-
-  const checkUserRole = async () => {
-    const { data: { session } } = await supabase.auth.getSession();
-    if (!session?.user) return;
-
-    setUserId(session.user.email || "");
-
-    // Verificar se é funcionário de alguma empresa no Supabase
-    const { data: employeeData, error } = await supabase
-      .from("company_employees")
-      .select("id, company_id, name, email, manager_id, is_active")
-      .eq("user_id", session.user.id)
-      .eq("is_active", true)
-      .maybeSingle();
-
-    console.log("Employee check:", { employeeData, error, userId: session.user.id });
-
-    if (employeeData) {
-      setIsEmployee(true);
-      setEmployeeData(employeeData);
-      console.log("Employee detected, showing toggle");
-    }
-  };
 
   const loadTickets = () => {
     const user = localStorage.getItem("user");
