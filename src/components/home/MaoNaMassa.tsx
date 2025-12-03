@@ -11,6 +11,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Rocket, Plus, Trash2, Pencil, Check, X, ChevronDown, Lightbulb } from "lucide-react";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
+import ConfirmDeleteDialog from "@/components/ConfirmDeleteDialog";
 
 const MaoNaMassa = () => {
   const formRef = useRef<HTMLDivElement>(null);
@@ -64,6 +65,11 @@ const MaoNaMassa = () => {
 
   const [metasCadastradas, setMetasCadastradas] = useState<Array<any>>([]);
   const [editandoMetaId, setEditandoMetaId] = useState<number | null>(null);
+
+  // Estados para confirmação de exclusão
+  const [deleteAcaoId, setDeleteAcaoId] = useState<number | null>(null);
+  const [deletePassoId, setDeletePassoId] = useState<number | null>(null);
+  const [deleteMetaId, setDeleteMetaId] = useState<number | null>(null);
 
   useEffect(() => {
     try {
@@ -192,8 +198,15 @@ const MaoNaMassa = () => {
   };
 
   const handleRemoveAcao = (id: number) => {
-    setAcoes(acoes.filter((acao) => acao.id !== id));
-    toast.success("Ação removida!");
+    setDeleteAcaoId(id);
+  };
+
+  const confirmRemoveAcao = () => {
+    if (deleteAcaoId) {
+      setAcoes(acoes.filter((acao) => acao.id !== deleteAcaoId));
+      toast.success("Ação removida!");
+      setDeleteAcaoId(null);
+    }
   };
 
   const handleStartEdit = (acao: any) => {
@@ -233,8 +246,15 @@ const MaoNaMassa = () => {
   };
 
   const handleRemovePasso = (id: number) => {
-    setPassos(passos.filter((passo) => passo.id !== id));
-    toast.success("Passo removido!");
+    setDeletePassoId(id);
+  };
+
+  const confirmRemovePasso = () => {
+    if (deletePassoId) {
+      setPassos(passos.filter((passo) => passo.id !== deletePassoId));
+      toast.success("Passo removido!");
+      setDeletePassoId(null);
+    }
   };
 
   const handleStartEditPasso = (passo: any) => {
@@ -340,10 +360,17 @@ const MaoNaMassa = () => {
   };
 
   const handleDeleteMeta = (metaId: number) => {
-    const metasAtualizadas = metasCadastradas.filter((m) => m.id !== metaId);
-    localStorage.setItem("metas", JSON.stringify(metasAtualizadas));
-    setMetasCadastradas(metasAtualizadas);
-    toast.success("Meta removida!");
+    setDeleteMetaId(metaId);
+  };
+
+  const confirmDeleteMeta = () => {
+    if (deleteMetaId) {
+      const metasAtualizadas = metasCadastradas.filter((m) => m.id !== deleteMetaId);
+      localStorage.setItem("metas", JSON.stringify(metasAtualizadas));
+      setMetasCadastradas(metasAtualizadas);
+      toast.success("Meta removida!");
+      setDeleteMetaId(null);
+    }
   };
 
   return (
@@ -1007,6 +1034,31 @@ const MaoNaMassa = () => {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Dialogs de Confirmação de Exclusão */}
+      <ConfirmDeleteDialog
+        open={deleteAcaoId !== null}
+        onOpenChange={() => setDeleteAcaoId(null)}
+        onConfirm={confirmRemoveAcao}
+        title="Excluir Ação"
+        description="Tem certeza que deseja excluir esta ação?"
+      />
+
+      <ConfirmDeleteDialog
+        open={deletePassoId !== null}
+        onOpenChange={() => setDeletePassoId(null)}
+        onConfirm={confirmRemovePasso}
+        title="Excluir Passo"
+        description="Tem certeza que deseja excluir este passo?"
+      />
+
+      <ConfirmDeleteDialog
+        open={deleteMetaId !== null}
+        onOpenChange={() => setDeleteMetaId(null)}
+        onConfirm={confirmDeleteMeta}
+        title="Excluir Meta"
+        description="Tem certeza que deseja excluir esta meta? Esta ação não pode ser desfeita."
+      />
     </Card>
   );
 };

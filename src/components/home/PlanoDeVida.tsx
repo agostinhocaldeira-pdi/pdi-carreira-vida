@@ -14,6 +14,7 @@ import { toast } from "sonner";
 import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import ConfirmDeleteDialog from "@/components/ConfirmDeleteDialog";
 
 interface PlanoDeVidaProps {
   onTabChange?: (tab: string) => void;
@@ -66,6 +67,10 @@ const PlanoDeVida = ({ onTabChange, onOpenChange, forcedTab, forcedOpen }: Plano
   // Estado para modal de cadastro de meta
   const [showMetaModal, setShowMetaModal] = useState(false);
   const [objetivoRecemCriado, setObjetivoRecemCriado] = useState<number | null>(null);
+
+  // Estados para confirmação de exclusão
+  const [deleteObjetivoId, setDeleteObjetivoId] = useState<number | null>(null);
+  const [deleteHabilidadeId, setDeleteHabilidadeId] = useState<number | null>(null);
 
   // Estados para Habilidades
   const [novaHabilidade, setNovaHabilidade] = useState("");
@@ -464,10 +469,17 @@ const PlanoDeVida = ({ onTabChange, onOpenChange, forcedTab, forcedOpen }: Plano
   };
 
   const handleRemoveObjetivo = (id: number) => {
-    const novosObjetivos = objetivos.filter((obj) => obj.id !== id);
-    setObjetivos(novosObjetivos);
-    localStorage.setItem("objetivos", JSON.stringify(novosObjetivos));
-    toast.success("Objetivo removido!");
+    setDeleteObjetivoId(id);
+  };
+
+  const confirmRemoveObjetivo = () => {
+    if (deleteObjetivoId) {
+      const novosObjetivos = objetivos.filter((obj) => obj.id !== deleteObjetivoId);
+      setObjetivos(novosObjetivos);
+      localStorage.setItem("objetivos", JSON.stringify(novosObjetivos));
+      toast.success("Objetivo removido!");
+      setDeleteObjetivoId(null);
+    }
   };
 
   const handleStartEditObjetivo = (obj: any) => {
@@ -519,10 +531,17 @@ const PlanoDeVida = ({ onTabChange, onOpenChange, forcedTab, forcedOpen }: Plano
   };
 
   const handleRemoveHabilidade = (id: number) => {
-    const novasHabilidades = habilidades.filter((hab) => hab.id !== id);
-    setHabilidades(novasHabilidades);
-    localStorage.setItem("habilidades", JSON.stringify(novasHabilidades));
-    toast.success("Habilidade removida!");
+    setDeleteHabilidadeId(id);
+  };
+
+  const confirmRemoveHabilidade = () => {
+    if (deleteHabilidadeId) {
+      const novasHabilidades = habilidades.filter((hab) => hab.id !== deleteHabilidadeId);
+      setHabilidades(novasHabilidades);
+      localStorage.setItem("habilidades", JSON.stringify(novasHabilidades));
+      toast.success("Habilidade removida!");
+      setDeleteHabilidadeId(null);
+    }
   };
 
   const handleStartEditHabilidade = (habilidade: { id: number; texto: string }) => {
@@ -1222,6 +1241,23 @@ const PlanoDeVida = ({ onTabChange, onOpenChange, forcedTab, forcedOpen }: Plano
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Dialogs de Confirmação de Exclusão */}
+      <ConfirmDeleteDialog
+        open={deleteObjetivoId !== null}
+        onOpenChange={() => setDeleteObjetivoId(null)}
+        onConfirm={confirmRemoveObjetivo}
+        title="Excluir Objetivo"
+        description="Tem certeza que deseja excluir este objetivo? Esta ação não pode ser desfeita."
+      />
+
+      <ConfirmDeleteDialog
+        open={deleteHabilidadeId !== null}
+        onOpenChange={() => setDeleteHabilidadeId(null)}
+        onConfirm={confirmRemoveHabilidade}
+        title="Excluir Habilidade"
+        description="Tem certeza que deseja excluir esta habilidade?"
+      />
     </Collapsible>
   );
 };

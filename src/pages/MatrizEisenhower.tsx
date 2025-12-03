@@ -452,9 +452,9 @@ const MatrizEisenhower = () => {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancelar</AlertDialogCancel>
-            <AlertDialogAction onClick={() => tarefaParaDeletar && handleDeletarTarefa(tarefaParaDeletar)}>
-              Remover
+            <AlertDialogCancel>Não</AlertDialogCancel>
+            <AlertDialogAction onClick={() => tarefaParaDeletar && handleDeletarTarefa(tarefaParaDeletar)} className="bg-destructive hover:bg-destructive/90">
+              Sim
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
