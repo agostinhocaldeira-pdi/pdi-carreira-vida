@@ -12,7 +12,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { toast } from "sonner";
-import { LogIn, KeyRound, UserPlus, Database } from "lucide-react";
+import { LogIn, KeyRound, UserPlus, Database, Eye, EyeOff } from "lucide-react";
 import ManagerRoleModal from "@/components/ManagerRoleModal";
 import { createMockCompanyData } from "@/utils/mockCompanyData";
 
@@ -40,6 +40,13 @@ const Login = () => {
     personId: string;
     email: string;
   } | null>(null);
+
+  // Password visibility states
+  const [showPassword, setShowPassword] = useState(false);
+  const [showNewPw, setShowNewPw] = useState(false);
+  const [showConfirmPw, setShowConfirmPw] = useState(false);
+  const [showForgotNewPw, setShowForgotNewPw] = useState(false);
+  const [showForgotConfirmPw, setShowForgotConfirmPw] = useState(false);
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
@@ -227,6 +234,16 @@ const Login = () => {
     });
   };
 
+  const PasswordToggle = ({ show, onToggle }: { show: boolean; onToggle: () => void }) => (
+    <button
+      type="button"
+      onClick={onToggle}
+      className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+    >
+      {show ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+    </button>
+  );
+
   return (
     <>
       {/* Modal de troca de senha (primeiro acesso) */}
@@ -244,25 +261,33 @@ const Login = () => {
           <form onSubmit={handleNewPasswordSubmit} className="space-y-4 mt-4">
             <div className="space-y-2">
               <Label htmlFor="new-pw">Nova senha</Label>
-              <Input
-                id="new-pw"
-                type="password"
-                placeholder="Mínimo 6 caracteres"
-                value={newPasswordData.newPassword}
-                onChange={(e) => setNewPasswordData({ ...newPasswordData, newPassword: e.target.value })}
-                required
-              />
+              <div className="relative">
+                <Input
+                  id="new-pw"
+                  type={showNewPw ? "text" : "password"}
+                  placeholder="Mínimo 6 caracteres"
+                  value={newPasswordData.newPassword}
+                  onChange={(e) => setNewPasswordData({ ...newPasswordData, newPassword: e.target.value })}
+                  required
+                  className="pr-10"
+                />
+                <PasswordToggle show={showNewPw} onToggle={() => setShowNewPw(!showNewPw)} />
+              </div>
             </div>
             <div className="space-y-2">
               <Label htmlFor="confirm-pw">Confirmar nova senha</Label>
-              <Input
-                id="confirm-pw"
-                type="password"
-                placeholder="Confirme sua nova senha"
-                value={newPasswordData.confirmPassword}
-                onChange={(e) => setNewPasswordData({ ...newPasswordData, confirmPassword: e.target.value })}
-                required
-              />
+              <div className="relative">
+                <Input
+                  id="confirm-pw"
+                  type={showConfirmPw ? "text" : "password"}
+                  placeholder="Confirme sua nova senha"
+                  value={newPasswordData.confirmPassword}
+                  onChange={(e) => setNewPasswordData({ ...newPasswordData, confirmPassword: e.target.value })}
+                  required
+                  className="pr-10"
+                />
+                <PasswordToggle show={showConfirmPw} onToggle={() => setShowConfirmPw(!showConfirmPw)} />
+              </div>
             </div>
             <Button type="submit" className="w-full">
               <KeyRound className="w-4 h-4 mr-2" />
@@ -302,26 +327,34 @@ const Login = () => {
 
             <div className="space-y-2">
               <Label htmlFor="new-password">Nova senha</Label>
-              <Input
-                id="new-password"
-                type="password"
-                placeholder="Digite sua nova senha"
-                value={forgotPasswordData.newPassword}
-                onChange={(e) => setForgotPasswordData({ ...forgotPasswordData, newPassword: e.target.value })}
-                required
-              />
+              <div className="relative">
+                <Input
+                  id="new-password"
+                  type={showForgotNewPw ? "text" : "password"}
+                  placeholder="Digite sua nova senha"
+                  value={forgotPasswordData.newPassword}
+                  onChange={(e) => setForgotPasswordData({ ...forgotPasswordData, newPassword: e.target.value })}
+                  required
+                  className="pr-10"
+                />
+                <PasswordToggle show={showForgotNewPw} onToggle={() => setShowForgotNewPw(!showForgotNewPw)} />
+              </div>
             </div>
 
             <div className="space-y-2">
               <Label htmlFor="confirm-password">Confirmar nova senha</Label>
-              <Input
-                id="confirm-password"
-                type="password"
-                placeholder="Confirme sua nova senha"
-                value={forgotPasswordData.confirmPassword}
-                onChange={(e) => setForgotPasswordData({ ...forgotPasswordData, confirmPassword: e.target.value })}
-                required
-              />
+              <div className="relative">
+                <Input
+                  id="confirm-password"
+                  type={showForgotConfirmPw ? "text" : "password"}
+                  placeholder="Confirme sua nova senha"
+                  value={forgotPasswordData.confirmPassword}
+                  onChange={(e) => setForgotPasswordData({ ...forgotPasswordData, confirmPassword: e.target.value })}
+                  required
+                  className="pr-10"
+                />
+                <PasswordToggle show={showForgotConfirmPw} onToggle={() => setShowForgotConfirmPw(!showForgotConfirmPw)} />
+              </div>
             </div>
 
             <div className="flex gap-3 pt-2">
@@ -366,14 +399,18 @@ const Login = () => {
 
               <div className="space-y-2">
                 <Label htmlFor="password">Senha</Label>
-                <Input
-                  id="password"
-                  type="password"
-                  placeholder="Digite sua senha"
-                  value={loginData.password}
-                  onChange={(e) => setLoginData({ ...loginData, password: e.target.value })}
-                  required
-                />
+                <div className="relative">
+                  <Input
+                    id="password"
+                    type={showPassword ? "text" : "password"}
+                    placeholder="Digite sua senha"
+                    value={loginData.password}
+                    onChange={(e) => setLoginData({ ...loginData, password: e.target.value })}
+                    required
+                    className="pr-10"
+                  />
+                  <PasswordToggle show={showPassword} onToggle={() => setShowPassword(!showPassword)} />
+                </div>
               </div>
 
               <button
