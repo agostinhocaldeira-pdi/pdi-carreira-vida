@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Link } from "react-router-dom";
-import { Target, TrendingUp, BookOpen, MessagesSquare, Book, Sparkles, User, Zap, Star, Shield, Lock, ChevronDown, AlertCircle } from "lucide-react";
+import { Target, TrendingUp, BookOpen, MessagesSquare, Book, Sparkles, User, Zap, Star, Shield, Lock, ChevronDown, AlertCircle, Building2 } from "lucide-react";
 import ProgressSection from "@/components/home/ProgressSection";
 import DiarioSection from "@/components/home/DiarioSection";
 import PlanoDeVida from "@/components/home/PlanoDeVida";
@@ -178,10 +178,16 @@ const Home = () => {
               </p>
             </div>
             
-            <Badge variant="secondary" className="gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1 whitespace-nowrap self-start sm:self-auto">
-              <TrendingUp className="w-3 h-3" />
-              <span className="text-xs">Em progresso</span>
-            </Badge>
+            <div className="flex items-center gap-2 self-start sm:self-auto">
+              <Badge variant="secondary" className="gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1 whitespace-nowrap">
+                <TrendingUp className="w-3 h-3" />
+                <span className="text-xs">Em progresso</span>
+              </Badge>
+              <Button size="sm" className="gap-1.5 whitespace-nowrap">
+                <Building2 className="w-4 h-4" />
+                <span className="text-xs sm:text-sm">Cadastrar minha empresa</span>
+              </Button>
+            </div>
           </div>
         </div>
       </header>
