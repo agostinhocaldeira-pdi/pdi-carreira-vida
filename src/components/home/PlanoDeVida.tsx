@@ -8,6 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Compass, Heart, Target, Lightbulb, ChevronDown, ArrowRight, Edit, Sparkles, Loader2, ExternalLink, Plus, Trash2, Pencil, Check, X } from "lucide-react";
 import { toast } from "sonner";
 import { Link } from "react-router-dom";
@@ -61,6 +62,10 @@ const PlanoDeVida = ({ onTabChange, onOpenChange, forcedTab, forcedOpen }: Plano
     conexaoVvd: string;
     status: string;
   } | null>(null);
+
+  // Estado para modal de cadastro de meta
+  const [showMetaModal, setShowMetaModal] = useState(false);
+  const [objetivoRecemCriado, setObjetivoRecemCriado] = useState<number | null>(null);
 
   // Estados para Habilidades
   const [novaHabilidade, setNovaHabilidade] = useState("");
@@ -432,10 +437,30 @@ const PlanoDeVida = ({ onTabChange, onOpenChange, forcedTab, forcedOpen }: Plano
     toast.success("Objetivo cadastrado!");
     setObjetivo({ texto: "", dataAlvo: "", conexaoVvd: "", status: "em-andamento" });
     
+    // Guardar ID do objetivo recém criado e mostrar modal
+    setObjetivoRecemCriado(novoObjetivo.id);
+    setShowMetaModal(true);
+    
     // Disparar pesquisa de satisfação
     if (typeof window !== 'undefined' && (window as any).markSectionCompleted) {
       (window as any).markSectionCompleted("Meus Objetivos");
     }
+  };
+
+  const handleMetaModalConfirm = () => {
+    setShowMetaModal(false);
+    // Disparar evento para abrir formulário de metas com o objetivo selecionado
+    if (objetivoRecemCriado) {
+      window.dispatchEvent(new CustomEvent('openMetaForm', { 
+        detail: { objetivoId: objetivoRecemCriado.toString() } 
+      }));
+    }
+    setObjetivoRecemCriado(null);
+  };
+
+  const handleMetaModalCancel = () => {
+    setShowMetaModal(false);
+    setObjetivoRecemCriado(null);
   };
 
   const handleRemoveObjetivo = (id: number) => {
@@ -1177,6 +1202,26 @@ const PlanoDeVida = ({ onTabChange, onOpenChange, forcedTab, forcedOpen }: Plano
         </CardContent>
         </CollapsibleContent>
       </Card>
+
+      {/* Modal para perguntar se quer cadastrar meta */}
+      <Dialog open={showMetaModal} onOpenChange={setShowMetaModal}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Objetivo cadastrado com sucesso!</DialogTitle>
+            <DialogDescription>
+              Deseja cadastrar uma meta agora para este objetivo?
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="flex gap-2 sm:gap-0">
+            <Button variant="outline" onClick={handleMetaModalCancel}>
+              Não, depois
+            </Button>
+            <Button onClick={handleMetaModalConfirm}>
+              Sim, cadastrar meta
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </Collapsible>
   );
 };
