@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { MessagesSquare, Send, Compass, Home, Users, Headphones } from "lucide-react";
-import { Link } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { Link, useLocation } from "react-router-dom";
+import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -70,8 +70,9 @@ interface ManagerMessage {
 }
 
 const Suporte = () => {
-  useRoleProtection({ allowedRoles: ["user", "gestor"] });
+  useRoleProtection({ allowedRoles: ["user", "gestor", "admin"] });
   const { toast } = useToast();
+  const location = useLocation();
   const [category, setCategory] = useState<string>("");
   const [question, setQuestion] = useState<string>("");
   const [adminResponse, setAdminResponse] = useState<string>("");
@@ -83,6 +84,7 @@ const Suporte = () => {
   const [isEmployee, setIsEmployee] = useState(false);
   const [employeeData, setEmployeeData] = useState<any>(null);
   const [activeTab, setActiveTab] = useState("atendimento");
+  const [adminResponseTexts, setAdminResponseTexts] = useState<Record<string, string>>({});
   
   // Estados para conversa com gestor
   const [managerSubject, setManagerSubject] = useState("");
@@ -95,11 +97,24 @@ const Suporte = () => {
   const [unreadSupportCount, setUnreadSupportCount] = useState(0);
   const [unreadManagerCount, setUnreadManagerCount] = useState(0);
 
+  // Ref para scroll automático
+  const ticketsContainerRef = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
     checkUserRole();
     loadTickets();
     loadManagerConversations();
   }, []);
+
+  // Handle navigation state to auto-focus on pending tickets
+  useEffect(() => {
+    const state = location.state as { showPendingTickets?: boolean } | null;
+    if (state?.showPendingTickets && ticketsContainerRef.current) {
+      setTimeout(() => {
+        ticketsContainerRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 300);
+    }
+  }, [location.state, tickets]);
 
   const checkUserRole = () => {
     const user = localStorage.getItem("user");
@@ -109,8 +124,12 @@ const Suporte = () => {
     setUserId(userData.email);
 
     // Verificar se é admin
-    const userRoles = JSON.parse(localStorage.getItem("userRoles") || "{}");
-    if (userRoles[userData.email] === "admin") {
+    const administrators = JSON.parse(localStorage.getItem("administrators") || "[]");
+    const userIsAdmin = administrators.some((admin: any) => 
+      admin.email?.toLowerCase() === userData.email?.toLowerCase()
+    );
+    
+    if (userIsAdmin) {
       setIsAdmin(true);
     }
 
@@ -134,19 +153,29 @@ const Suporte = () => {
     const allTickets = JSON.parse(localStorage.getItem("supportTickets") || "[]");
     const allMessages = JSON.parse(localStorage.getItem("supportMessages") || "[]");
 
-    // Filtrar tickets do usuário atual
-    const userTickets = allTickets.filter((t: SupportTicket) => 
-      t.user_email?.toLowerCase() === userData.email?.toLowerCase()
-    ).sort((a: SupportTicket, b: SupportTicket) =>
-      new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+    // Verificar se é admin para mostrar todos os tickets
+    const administrators = JSON.parse(localStorage.getItem("administrators") || "[]");
+    const userIsAdmin = administrators.some((admin: any) => 
+      admin.email?.toLowerCase() === userData.email?.toLowerCase()
     );
 
-    setTickets(userTickets);
+    // Admin vê todos os tickets, outros usuários veem apenas os seus
+    const filteredTickets = userIsAdmin 
+      ? allTickets.sort((a: SupportTicket, b: SupportTicket) =>
+          new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+        )
+      : allTickets.filter((t: SupportTicket) => 
+          t.user_email?.toLowerCase() === userData.email?.toLowerCase()
+        ).sort((a: SupportTicket, b: SupportTicket) =>
+          new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+        );
+
+    setTickets(filteredTickets);
 
     const messagesMap: Record<string, SupportMessage[]> = {};
     let unreadCount = 0;
     
-    userTickets.forEach((ticket: SupportTicket) => {
+    filteredTickets.forEach((ticket: SupportTicket) => {
       const ticketMessages = allMessages
         .filter((m: SupportMessage) => m.ticket_id === ticket.id)
         .sort((a: SupportMessage, b: SupportMessage) =>
@@ -154,12 +183,14 @@ const Suporte = () => {
         );
       messagesMap[ticket.id] = ticketMessages;
       
-      // Contar mensagens não lidas do admin
-      ticketMessages.forEach((msg: SupportMessage) => {
-        if (msg.is_admin_response && !msg.read_by_user) {
-          unreadCount++;
-        }
-      });
+      // Contar mensagens não lidas do admin (para usuários normais)
+      if (!userIsAdmin) {
+        ticketMessages.forEach((msg: SupportMessage) => {
+          if (msg.is_admin_response && !msg.read_by_user) {
+            unreadCount++;
+          }
+        });
+      }
     });
     
     setMessages(messagesMap);
@@ -309,6 +340,42 @@ const Suporte = () => {
       id: `msg-${Date.now()}`,
       ticket_id: ticketId,
       message: adminResponse.trim(),
+      is_admin_response: false,
+      created_at: new Date().toISOString(),
+      read_by_user: true,
+    };
+
+    const allMessages = JSON.parse(localStorage.getItem("supportMessages") || "[]");
+    allMessages.push(newMessage);
+    localStorage.setItem("supportMessages", JSON.stringify(allMessages));
+
+    toast({
+      title: "Sucesso",
+      description: "Mensagem enviada!",
+    });
+    
+    setAdminResponse("");
+    loadTickets();
+    setIsLoading(false);
+  };
+
+  const handleAdminSubmitResponse = (ticketId: string) => {
+    const responseText = adminResponseTexts[ticketId];
+    if (!responseText?.trim()) {
+      toast({
+        title: "Erro",
+        description: "Escreva uma resposta",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsLoading(true);
+
+    const newMessage: SupportMessage = {
+      id: `msg-${Date.now()}`,
+      ticket_id: ticketId,
+      message: responseText.trim(),
       is_admin_response: true,
       created_at: new Date().toISOString(),
       read_by_user: false,
@@ -320,10 +387,10 @@ const Suporte = () => {
 
     toast({
       title: "Sucesso",
-      description: "Resposta enviada!",
+      description: "Resposta enviada ao usuário!",
     });
     
-    setAdminResponse("");
+    setAdminResponseTexts(prev => ({ ...prev, [ticketId]: "" }));
     loadTickets();
     setIsLoading(false);
   };
@@ -426,6 +493,13 @@ const Suporte = () => {
     return ticketMessages.filter(msg => msg.is_admin_response && !msg.read_by_user).length;
   };
 
+  const getPendingTicketsForAdmin = (ticketId: string) => {
+    const ticketMessages = messages[ticketId] || [];
+    if (ticketMessages.length === 0) return true;
+    const lastMessage = ticketMessages[ticketMessages.length - 1];
+    return !lastMessage.is_admin_response;
+  };
+
   const getUnreadCountForConversation = (conversationId: string) => {
     const convMessages = managerMessages[conversationId] || [];
     return convMessages.filter(msg => msg.is_manager_response && !msg.read_by_employee).length;
@@ -433,56 +507,63 @@ const Suporte = () => {
 
   const renderSupportForm = () => (
     <>
-      {/* Formulário de Nova Dúvida */}
-      <Card className="max-w-4xl mx-auto shadow-large">
-        <CardHeader>
-          <CardTitle>Enviar Nova Dúvida</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="category">Sobre o que é sua dúvida?</Label>
-            <Select value={category} onValueChange={setCategory}>
-              <SelectTrigger id="category">
-                <SelectValue placeholder="Selecione uma opção" />
-              </SelectTrigger>
-              <SelectContent className="max-h-[300px] overflow-y-auto bg-popover">
-                {CATEGORIES.map((cat) => (
-                  <SelectItem key={cat.value} value={cat.value}>
-                    {cat.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
+      {/* Formulário de Nova Dúvida - Ocultar para Admin */}
+      {!isAdmin && (
+        <Card className="max-w-4xl mx-auto shadow-large">
+          <CardHeader>
+            <CardTitle>Enviar Nova Dúvida</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="category">Sobre o que é sua dúvida?</Label>
+              <Select value={category} onValueChange={setCategory}>
+                <SelectTrigger id="category">
+                  <SelectValue placeholder="Selecione uma opção" />
+                </SelectTrigger>
+                <SelectContent className="max-h-[300px] overflow-y-auto bg-popover">
+                  {CATEGORIES.map((cat) => (
+                    <SelectItem key={cat.value} value={cat.value}>
+                      {cat.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="question">Sua dúvida</Label>
-            <Textarea
-              id="question"
-              placeholder="Descreva sua dúvida em detalhes..."
-              value={question}
-              onChange={(e) => setQuestion(e.target.value)}
-              className="min-h-[120px]"
-            />
-          </div>
+            <div className="space-y-2">
+              <Label htmlFor="question">Sua dúvida</Label>
+              <Textarea
+                id="question"
+                placeholder="Descreva sua dúvida em detalhes..."
+                value={question}
+                onChange={(e) => setQuestion(e.target.value)}
+                className="min-h-[120px]"
+              />
+            </div>
 
-          <Button 
-            onClick={handleSubmitQuestion} 
-            disabled={isLoading}
-            className="w-full"
-          >
-            <Send className="w-4 h-4 mr-2" />
-            Enviar Dúvida
-          </Button>
-        </CardContent>
-      </Card>
+            <Button 
+              onClick={handleSubmitQuestion} 
+              disabled={isLoading}
+              className="w-full"
+            >
+              <Send className="w-4 h-4 mr-2" />
+              Enviar Dúvida
+            </Button>
+          </CardContent>
+        </Card>
+      )}
 
-      {/* Histórico de Conversas */}
-      <Card className="max-w-4xl mx-auto shadow-large">
+      {/* Histórico de Conversas / Tickets Pendentes (para Admin) */}
+      <Card className="max-w-4xl mx-auto shadow-large" ref={ticketsContainerRef}>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            Histórico de Conversas
-            {unreadSupportCount > 0 && (
+            {isAdmin ? "Tickets de Suporte" : "Histórico de Conversas"}
+            {isAdmin && (
+              <Badge variant="secondary" className="ml-2">
+                {tickets.filter(t => getPendingTicketsForAdmin(t.id)).length} pendente(s)
+              </Badge>
+            )}
+            {!isAdmin && unreadSupportCount > 0 && (
               <Badge variant="destructive" className="ml-2">
                 {unreadSupportCount} nova{unreadSupportCount > 1 ? "s" : ""}
               </Badge>
@@ -492,27 +573,32 @@ const Suporte = () => {
         <CardContent className="space-y-6">
           {tickets.length === 0 ? (
             <p className="text-muted-foreground text-center py-8">
-              Nenhuma conversa ainda
+              {isAdmin ? "Nenhum ticket de suporte" : "Nenhuma conversa ainda"}
             </p>
           ) : (
             tickets.map((ticket) => {
-              const ticketUnread = getUnreadCountForTicket(ticket.id);
+              const ticketUnread = isAdmin ? getPendingTicketsForAdmin(ticket.id) : getUnreadCountForTicket(ticket.id) > 0;
               return (
                 <div 
                   key={ticket.id} 
-                  className={`border rounded-lg p-4 space-y-4 ${ticketUnread > 0 ? 'border-primary/50 bg-primary/5' : ''}`}
-                  onClick={() => markSupportMessagesAsRead(ticket.id)}
+                  className={`border rounded-lg p-4 space-y-4 ${ticketUnread ? 'border-primary/50 bg-primary/5' : ''}`}
+                  onClick={() => !isAdmin && markSupportMessagesAsRead(ticket.id)}
                 >
                   <div className="space-y-2">
                     <div className="flex items-start justify-between">
                       <div>
-                        <div className="flex items-center gap-2 mb-2">
+                        <div className="flex items-center gap-2 mb-2 flex-wrap">
                           <span className="inline-block px-2 py-1 rounded-md bg-primary/10 text-primary text-xs font-medium">
                             {CATEGORIES.find((c) => c.value === ticket.category)?.label}
                           </span>
-                          {ticketUnread > 0 && (
+                          {isAdmin && (
+                            <span className="text-xs text-muted-foreground bg-muted px-2 py-1 rounded">
+                              De: {ticket.user_email}
+                            </span>
+                          )}
+                          {ticketUnread && (
                             <Badge variant="destructive" className="text-xs">
-                              {ticketUnread} nova{ticketUnread > 1 ? "s" : ""}
+                              {isAdmin ? "Aguardando resposta" : `${getUnreadCountForTicket(ticket.id)} nova${getUnreadCountForTicket(ticket.id) > 1 ? "s" : ""}`}
                             </Badge>
                           )}
                         </div>
@@ -528,22 +614,24 @@ const Suporte = () => {
 
                   {messages[ticket.id] && messages[ticket.id].length > 0 && (
                     <div className="space-y-2">
-                      <Label>Histórico de Conversas</Label>
+                      <Label>Histórico de Mensagens</Label>
                       <div className="space-y-3 pl-4 border-l-2 border-border">
                         {messages[ticket.id].map((msg) => (
                           <div
                             key={msg.id}
                             className={`p-3 rounded-lg ${
                               msg.is_admin_response
-                                ? `bg-primary/5 border border-primary/20 ${!msg.read_by_user ? 'ring-2 ring-primary/30' : ''}`
+                                ? `bg-primary/5 border border-primary/20 ${!msg.read_by_user && !isAdmin ? 'ring-2 ring-primary/30' : ''}`
                                 : "bg-muted"
                             }`}
                           >
                             <div className="flex items-center gap-2 mb-1">
                               <span className="text-xs font-semibold">
-                                {msg.is_admin_response ? "Suporte" : "Você"}
+                                {msg.is_admin_response 
+                                  ? (isAdmin ? "Você (Suporte)" : "Suporte") 
+                                  : (isAdmin ? ticket.user_email : "Você")}
                               </span>
-                              {msg.is_admin_response && !msg.read_by_user && (
+                              {msg.is_admin_response && !msg.read_by_user && !isAdmin && (
                                 <Badge variant="secondary" className="text-xs">Nova</Badge>
                               )}
                               <span className="text-xs text-muted-foreground">
@@ -560,23 +648,35 @@ const Suporte = () => {
                   )}
 
                   <div className="space-y-2 pt-4 border-t">
-                    <Label htmlFor={`admin-response-${ticket.id}`}>
-                      Enviar nova mensagem
+                    <Label htmlFor={`response-${ticket.id}`}>
+                      {isAdmin ? "Responder ao usuário" : "Enviar nova mensagem"}
                     </Label>
                     <Textarea
-                      id={`admin-response-${ticket.id}`}
-                      placeholder="Escreva sua mensagem..."
-                      value={adminResponse}
-                      onChange={(e) => setAdminResponse(e.target.value)}
+                      id={`response-${ticket.id}`}
+                      placeholder={isAdmin ? "Escreva sua resposta para o usuário..." : "Escreva sua mensagem..."}
+                      value={isAdmin ? (adminResponseTexts[ticket.id] || "") : adminResponse}
+                      onChange={(e) => {
+                        if (isAdmin) {
+                          setAdminResponseTexts(prev => ({ ...prev, [ticket.id]: e.target.value }));
+                        } else {
+                          setAdminResponse(e.target.value);
+                        }
+                      }}
                       className="min-h-[100px]"
                     />
                     <Button
-                      onClick={() => handleSubmitAdminResponse(ticket.id)}
-                      disabled={isLoading || !adminResponse.trim()}
+                      onClick={() => {
+                        if (isAdmin) {
+                          handleAdminSubmitResponse(ticket.id);
+                        } else {
+                          handleSubmitAdminResponse(ticket.id);
+                        }
+                      }}
+                      disabled={isLoading || (isAdmin ? !(adminResponseTexts[ticket.id]?.trim()) : !adminResponse.trim())}
                       className="w-full"
                     >
                       <Send className="w-4 h-4 mr-2" />
-                      Enviar
+                      {isAdmin ? "Enviar Resposta" : "Enviar"}
                     </Button>
                   </div>
                 </div>

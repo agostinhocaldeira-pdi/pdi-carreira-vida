@@ -316,7 +316,7 @@ const Admin = () => {
                     {pendingSupportMessages > 0 && (
                       <div 
                         className="p-3 bg-background rounded-lg border border-border/50 cursor-pointer hover:border-primary/50 transition-all"
-                        onClick={() => navigate("/suporte")}
+                        onClick={() => navigate("/suporte", { state: { showPendingTickets: true } })}
                       >
                         <div className="flex items-center gap-2 mb-1">
                           <Mail className="w-4 h-4 text-primary" />
@@ -329,7 +329,7 @@ const Admin = () => {
                     {pendingManagerConversations > 0 && (
                       <div 
                         className="p-3 bg-background rounded-lg border border-border/50 cursor-pointer hover:border-primary/50 transition-all"
-                        onClick={() => navigate("/gestao-pdis")}
+                        onClick={() => navigate("/gestao-pdis", { state: { showMessages: true } })}
                       >
                         <div className="flex items-center gap-2 mb-1">
                           <UserCog className="w-4 h-4 text-blue-500" />
@@ -342,7 +342,7 @@ const Admin = () => {
                     {pendingEmployeeConversations > 0 && (
                       <div 
                         className="p-3 bg-background rounded-lg border border-border/50 cursor-pointer hover:border-primary/50 transition-all"
-                        onClick={() => navigate("/gestao-pdis")}
+                        onClick={() => navigate("/gestao-pdis", { state: { showMessages: true } })}
                       >
                         <div className="flex items-center gap-2 mb-1">
                           <UserCheck className="w-4 h-4 text-green-500" />
