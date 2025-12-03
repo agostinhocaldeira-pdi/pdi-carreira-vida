@@ -46,8 +46,11 @@ export const ROLES: Record<AppRole, RoleConfig> = {
     permissions: [
       'view_company_employees',
       'view_employee_progress',
+      'view_employee_pdi',
       'view_company_analytics',
       'manage_employee_access',
+      'view_own_profile',
+      'edit_own_profile',
     ],
   },
   empresa: {
@@ -55,11 +58,13 @@ export const ROLES: Record<AppRole, RoleConfig> = {
     label: 'Empresa',
     description: 'Perfil corporativo que pode assinar a aplicação para seus funcionários',
     permissions: [
+      'manage_company_data',
+      'manage_representatives',
+      'manage_gestores',
+      'manage_employees',
       'manage_subscription',
-      'add_employees',
-      'remove_employees',
-      'assign_gestores',
       'view_company_reports',
+      'view_all_employee_pdi',
       'billing_access',
     ],
   },

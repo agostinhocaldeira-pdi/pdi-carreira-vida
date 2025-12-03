@@ -14,6 +14,195 @@ export type Database = {
   }
   public: {
     Tables: {
+      companies: {
+        Row: {
+          cnpj: string
+          created_at: string
+          email: string
+          id: string
+          is_active: boolean | null
+          owner_user_id: string | null
+          razao_social: string
+          telefone: string | null
+          updated_at: string
+        }
+        Insert: {
+          cnpj: string
+          created_at?: string
+          email: string
+          id?: string
+          is_active?: boolean | null
+          owner_user_id?: string | null
+          razao_social: string
+          telefone?: string | null
+          updated_at?: string
+        }
+        Update: {
+          cnpj?: string
+          created_at?: string
+          email?: string
+          id?: string
+          is_active?: boolean | null
+          owner_user_id?: string | null
+          razao_social?: string
+          telefone?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      company_employees: {
+        Row: {
+          accepted_at: string | null
+          company_id: string
+          created_at: string
+          email: string
+          id: string
+          invited_at: string
+          is_active: boolean | null
+          is_subscription_exempt: boolean | null
+          name: string
+          phone: string | null
+          provisional_password: string | null
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          accepted_at?: string | null
+          company_id: string
+          created_at?: string
+          email: string
+          id?: string
+          invited_at?: string
+          is_active?: boolean | null
+          is_subscription_exempt?: boolean | null
+          name: string
+          phone?: string | null
+          provisional_password?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          accepted_at?: string | null
+          company_id?: string
+          created_at?: string
+          email?: string
+          id?: string
+          invited_at?: string
+          is_active?: boolean | null
+          is_subscription_exempt?: boolean | null
+          name?: string
+          phone?: string | null
+          provisional_password?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "company_employees_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      company_managers: {
+        Row: {
+          accepted_at: string | null
+          company_id: string
+          created_at: string
+          email: string
+          id: string
+          invited_at: string
+          is_active: boolean | null
+          name: string
+          phone: string | null
+          provisional_password: string | null
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          accepted_at?: string | null
+          company_id: string
+          created_at?: string
+          email: string
+          id?: string
+          invited_at?: string
+          is_active?: boolean | null
+          name: string
+          phone?: string | null
+          provisional_password?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          accepted_at?: string | null
+          company_id?: string
+          created_at?: string
+          email?: string
+          id?: string
+          invited_at?: string
+          is_active?: boolean | null
+          name?: string
+          phone?: string | null
+          provisional_password?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "company_managers_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      company_representatives: {
+        Row: {
+          company_id: string
+          created_at: string
+          email: string
+          id: string
+          is_primary: boolean | null
+          name: string
+          phone: string | null
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          company_id: string
+          created_at?: string
+          email: string
+          id?: string
+          is_primary?: boolean | null
+          name: string
+          phone?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          company_id?: string
+          created_at?: string
+          email?: string
+          id?: string
+          is_primary?: boolean | null
+          name?: string
+          phone?: string | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "company_representatives_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       support_messages: {
         Row: {
           created_at: string | null
