@@ -11,6 +11,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import { toast } from "sonner";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, LineChart, Line } from "recharts";
 import LogoutButton from "@/components/LogoutButton";
+import ConfirmDeleteDialog from "@/components/ConfirmDeleteDialog";
 
 interface Administrator {
   id: string;
@@ -57,6 +58,7 @@ const Admin = () => {
     email: "",
     phone: ""
   });
+  const [deleteAdminId, setDeleteAdminId] = useState<string | null>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -180,10 +182,17 @@ const Admin = () => {
       return;
     }
 
-    const updatedAdmins = administrators.filter(admin => admin.id !== id);
-    setAdministrators(updatedAdmins);
-    localStorage.setItem("administrators", JSON.stringify(updatedAdmins));
-    toast.success("Administrador removido com sucesso!");
+    setDeleteAdminId(id);
+  };
+
+  const confirmDeleteAdmin = () => {
+    if (deleteAdminId) {
+      const updatedAdmins = administrators.filter(admin => admin.id !== deleteAdminId);
+      setAdministrators(updatedAdmins);
+      localStorage.setItem("administrators", JSON.stringify(updatedAdmins));
+      toast.success("Administrador removido com sucesso!");
+      setDeleteAdminId(null);
+    }
   };
 
   if (!isAdmin) {
@@ -919,6 +928,15 @@ const Admin = () => {
           </CardContent>
         </Card>
       </main>
+
+      {/* Dialog de Confirmação de Exclusão */}
+      <ConfirmDeleteDialog
+        open={deleteAdminId !== null}
+        onOpenChange={() => setDeleteAdminId(null)}
+        onConfirm={confirmDeleteAdmin}
+        title="Excluir Administrador"
+        description="Tem certeza que deseja excluir este administrador? Esta ação não pode ser desfeita."
+      />
     </div>
   );
 };

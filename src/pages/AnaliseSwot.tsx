@@ -9,6 +9,7 @@ import { Link } from "react-router-dom";
 import { ArrowLeft, Home, TrendingUp, AlertTriangle, Target, Shield, Plus, Trash2, CheckCircle2, Lightbulb } from "lucide-react";
 import { toast } from "sonner";
 import LogoutButton from "@/components/LogoutButton";
+import ConfirmDeleteDialog from "@/components/ConfirmDeleteDialog";
 
 interface SwotItem {
   id: number;
@@ -40,6 +41,10 @@ const AnaliseSwot = () => {
   });
 
   const [novasHabilidades, setNovasHabilidades] = useState<{ [key: number]: string }>({});
+
+  // Estados para confirmação de exclusão
+  const [deleteItem, setDeleteItem] = useState<{ tipo: "forcas" | "fraquezas" | "oportunidades" | "ameacas"; id: number } | null>(null);
+  const [deleteHabilidadeId, setDeleteHabilidadeId] = useState<number | null>(null);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -105,26 +110,32 @@ const AnaliseSwot = () => {
   };
 
   const removerItem = (tipo: "forcas" | "fraquezas" | "oportunidades" | "ameacas", id: number) => {
-    const novosSwotData = {
-      ...swotData,
-      [tipo]: swotData[tipo].filter((item) => item.id !== id),
-    };
+    setDeleteItem({ tipo, id });
+  };
 
-    // Se removeu uma fraqueza, remover também a habilidade associada
-    if (tipo === "fraquezas") {
-      novosSwotData.habilidadesADesenvolver = swotData.habilidadesADesenvolver.filter(
-        (hab) => hab.id !== id
-      );
+  const confirmRemoverItem = () => {
+    if (deleteItem) {
+      const novosSwotData = {
+        ...swotData,
+        [deleteItem.tipo]: swotData[deleteItem.tipo].filter((item) => item.id !== deleteItem.id),
+      };
+
+      if (deleteItem.tipo === "fraquezas") {
+        novosSwotData.habilidadesADesenvolver = swotData.habilidadesADesenvolver.filter(
+          (hab) => hab.id !== deleteItem.id
+        );
+      }
+
+      salvarSwot(novosSwotData);
+      toast.success("Item removido!");
+      setDeleteItem(null);
     }
-
-    salvarSwot(novosSwotData);
-    toast.success("Item removido!");
   };
 
   const adicionarHabilidade = (fraquezaId: number, fraquezaTexto: string) => {
     const habilidade = novasHabilidades[fraquezaId];
     if (!habilidade || !habilidade.trim()) {
-      return; // Opcional, não exibir erro
+      return;
     }
 
     const novaHabilidade = { id: fraquezaId, fraqueza: fraquezaTexto, habilidade };
@@ -133,19 +144,26 @@ const AnaliseSwot = () => {
       habilidadesADesenvolver: [...swotData.habilidadesADesenvolver, novaHabilidade],
     };
 
-    salvarSwot(novosSwotData, true); // true para mostrar notificação de sincronização
+    salvarSwot(novosSwotData, true);
     setNovasHabilidades({ ...novasHabilidades, [fraquezaId]: "" });
     toast.success("Habilidade adicionada!");
   };
 
   const removerHabilidade = (id: number) => {
-    const novosSwotData = {
-      ...swotData,
-      habilidadesADesenvolver: swotData.habilidadesADesenvolver.filter((hab) => hab.id !== id),
-    };
+    setDeleteHabilidadeId(id);
+  };
 
-    salvarSwot(novosSwotData);
-    toast.success("Habilidade removida!");
+  const confirmRemoverHabilidade = () => {
+    if (deleteHabilidadeId) {
+      const novosSwotData = {
+        ...swotData,
+        habilidadesADesenvolver: swotData.habilidadesADesenvolver.filter((hab) => hab.id !== deleteHabilidadeId),
+      };
+
+      salvarSwot(novosSwotData);
+      toast.success("Habilidade removida!");
+      setDeleteHabilidadeId(null);
+    }
   };
 
   const quadrantes = [
@@ -398,6 +416,23 @@ const AnaliseSwot = () => {
           </Link>
         </div>
       </div>
+
+      {/* Dialogs de Confirmação de Exclusão */}
+      <ConfirmDeleteDialog
+        open={deleteItem !== null}
+        onOpenChange={() => setDeleteItem(null)}
+        onConfirm={confirmRemoverItem}
+        title="Excluir Item"
+        description="Tem certeza que deseja excluir este item?"
+      />
+
+      <ConfirmDeleteDialog
+        open={deleteHabilidadeId !== null}
+        onOpenChange={() => setDeleteHabilidadeId(null)}
+        onConfirm={confirmRemoverHabilidade}
+        title="Excluir Habilidade"
+        description="Tem certeza que deseja excluir esta habilidade?"
+      />
     </div>
   );
 };

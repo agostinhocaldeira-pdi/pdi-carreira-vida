@@ -42,6 +42,7 @@ import {
 import { Checkbox } from "@/components/ui/checkbox";
 import { generateProvisionalPassword } from "@/types/company";
 import EmployeeProgressModal from "@/components/EmployeeProgressModal";
+import ConfirmDeleteDialog from "@/components/ConfirmDeleteDialog";
 
 interface Manager {
   id: string;
@@ -89,6 +90,8 @@ const DashboardEmpresa = () => {
   const [selectedPerson, setSelectedPerson] = useState<PersonProgress | null>(null);
   const [newPerson, setNewPerson] = useState({ name: "", email: "", phone: "" });
   const [selectedEmployees, setSelectedEmployees] = useState<string[]>([]);
+  const [deleteManagerId, setDeleteManagerId] = useState<string | null>(null);
+  const [deleteEmployeeId, setDeleteEmployeeId] = useState<string | null>(null);
 
   // Verificar se é admin
   const checkIsAdmin = (email: string): boolean => {
@@ -212,10 +215,17 @@ const DashboardEmpresa = () => {
 
   const handleRemoveManager = (id: string) => {
     if (!selectedCompanyId) return;
-    const updatedManagers = managers.filter(m => m.id !== id);
-    setManagers(updatedManagers);
-    localStorage.setItem(`managers_${selectedCompanyId}`, JSON.stringify(updatedManagers));
-    toast.success("Gestor removido");
+    setDeleteManagerId(id);
+  };
+
+  const confirmRemoveManager = () => {
+    if (deleteManagerId && selectedCompanyId) {
+      const updatedManagers = managers.filter(m => m.id !== deleteManagerId);
+      setManagers(updatedManagers);
+      localStorage.setItem(`managers_${selectedCompanyId}`, JSON.stringify(updatedManagers));
+      toast.success("Gestor removido");
+      setDeleteManagerId(null);
+    }
   };
 
   const handleResetManagerPassword = (id: string) => {
@@ -242,10 +252,17 @@ const DashboardEmpresa = () => {
 
   const handleRemoveEmployee = (id: string) => {
     if (!selectedCompanyId) return;
-    const updatedEmployees = employees.filter(e => e.id !== id);
-    setEmployees(updatedEmployees);
-    localStorage.setItem(`employees_${selectedCompanyId}`, JSON.stringify(updatedEmployees));
-    toast.success("Funcionário removido");
+    setDeleteEmployeeId(id);
+  };
+
+  const confirmRemoveEmployee = () => {
+    if (deleteEmployeeId && selectedCompanyId) {
+      const updatedEmployees = employees.filter(e => e.id !== deleteEmployeeId);
+      setEmployees(updatedEmployees);
+      localStorage.setItem(`employees_${selectedCompanyId}`, JSON.stringify(updatedEmployees));
+      toast.success("Funcionário removido");
+      setDeleteEmployeeId(null);
+    }
   };
 
   const handleResetEmployeePassword = (id: string) => {
@@ -949,6 +966,23 @@ const DashboardEmpresa = () => {
           }}
         />
       )}
+
+      {/* Dialogs de Confirmação de Exclusão */}
+      <ConfirmDeleteDialog
+        open={deleteManagerId !== null}
+        onOpenChange={() => setDeleteManagerId(null)}
+        onConfirm={confirmRemoveManager}
+        title="Excluir Gestor"
+        description="Tem certeza que deseja excluir este gestor? Esta ação não pode ser desfeita."
+      />
+
+      <ConfirmDeleteDialog
+        open={deleteEmployeeId !== null}
+        onOpenChange={() => setDeleteEmployeeId(null)}
+        onConfirm={confirmRemoveEmployee}
+        title="Excluir Funcionário"
+        description="Tem certeza que deseja excluir este funcionário? Esta ação não pode ser desfeita."
+      />
     </div>
   );
 };
