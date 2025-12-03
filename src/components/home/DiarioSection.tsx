@@ -8,15 +8,18 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Calendar } from "@/components/ui/calendar";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Book, Smile, Frown, Meh, ChevronDown, CalendarIcon } from "lucide-react";
+import { Book, Smile, Frown, Meh, ChevronDown, PenLine, History } from "lucide-react";
 import { toast } from "sonner";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 import { format } from "date-fns";
+import { ptBR } from "date-fns/locale";
 import { cn } from "@/lib/utils";
+
+type ViewMode = "registro" | "historico";
 
 const DiarioSection = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [viewMode, setViewMode] = useState<ViewMode>("registro");
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [entrada, setEntrada] = useState({
     humor: "",
@@ -82,6 +85,13 @@ const DiarioSection = () => {
       });
     }
   }, [selectedDate]);
+
+  // Reset para hoje ao mudar para modo registro
+  useEffect(() => {
+    if (viewMode === "registro") {
+      setSelectedDate(new Date());
+    }
+  }, [viewMode]);
 
   const generateMockData = () => {
     const mockEntradas = [];
@@ -244,6 +254,23 @@ const DiarioSection = () => {
     return data;
   }, [entradas, selectedPeriod]);
 
+  // Verificar se a data selecionada tem entrada
+  const selectedDateHasEntry = useMemo(() => {
+    const dateStr = selectedDate.toISOString().split("T")[0];
+    return entradas.some((e) => e.data === dateStr);
+  }, [selectedDate, entradas]);
+
+  // Obter entrada da data selecionada no histórico
+  const selectedHistoryEntry = useMemo(() => {
+    const dateStr = selectedDate.toISOString().split("T")[0];
+    return entradas.find((e) => e.data === dateStr);
+  }, [selectedDate, entradas]);
+
+  // Datas que possuem entradas (para destacar no calendário)
+  const datesWithEntries = useMemo(() => {
+    return entradas.map((e) => new Date(e.data + "T12:00:00"));
+  }, [entradas]);
+
   const CustomTooltip = ({ active, payload }: any) => {
     if (active && payload && payload[0]) {
       const data = payload[0].payload;
@@ -369,277 +396,377 @@ const DiarioSection = () => {
           </div>
         </CardHeader>
         <CollapsibleContent>
-          {/* Título Novo Registro */}
-          <div className="px-6 pt-6 mb-2">
-            <h3 className="text-lg font-semibold">Novo Registro</h3>
-          </div>
-          
-          <CardContent className="space-y-4 sm:space-y-6 px-3 sm:px-6">
-        {!isToday && (
-          <div className="bg-muted/50 border border-muted-foreground/20 rounded-lg p-3 sm:p-4 mb-3 sm:mb-4">
-            <p className="text-xs sm:text-sm text-muted-foreground text-center">
-              📅 Você está visualizando uma entrada de outra data. Apenas a data de hoje pode ser editada.
-            </p>
-          </div>
-        )}
-        
-        {/* Seletor de Data */}
-        <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
-          <Popover>
-            <PopoverTrigger asChild>
+          {/* Toggle de Modo */}
+          <div className="px-3 sm:px-6 pb-4">
+            <div className="flex rounded-lg bg-muted p-1 gap-1">
               <Button
-                variant="outline"
+                variant={viewMode === "registro" ? "default" : "ghost"}
+                size="sm"
                 className={cn(
-                  "w-full sm:w-auto justify-start text-left font-normal text-sm",
-                  !selectedDate && "text-muted-foreground"
+                  "flex-1 gap-2 transition-all",
+                  viewMode === "registro" 
+                    ? "shadow-sm" 
+                    : "hover:bg-background/50"
                 )}
+                onClick={() => setViewMode("registro")}
               >
-                <CalendarIcon className="mr-2 h-4 w-4 flex-shrink-0" />
-                <span className="truncate">
-                  {selectedDate ? format(selectedDate, "dd/MM/yyyy") : "Selecionar data"}
-                </span>
+                <PenLine className="w-4 h-4" />
+                <span className="hidden sm:inline">Registro de Hoje</span>
+                <span className="sm:hidden">Hoje</span>
               </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-auto p-0" align="start">
-              <Calendar
-                mode="single"
-                selected={selectedDate}
-                onSelect={(date) => date && setSelectedDate(date)}
-                initialFocus
-                className="pointer-events-auto"
-              />
-            </PopoverContent>
-          </Popover>
-          
-          <p className="text-xs sm:text-sm text-muted-foreground">
-            Altere a data para ver o histórico de dias anteriores
-          </p>
-        </div>
-        
-        {/* Humor */}
-        <div className="space-y-3">
-          <Label>Como você está se sentindo hoje?</Label>
-          <RadioGroup 
-            value={entrada.humor} 
-            onValueChange={(value) => setEntrada({ ...entrada, humor: value })}
-            disabled={!isToday}
-          >
-            <div className="flex gap-4">
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="feliz" id="feliz" disabled={!isToday} />
-                <Label htmlFor="feliz" className="flex items-center gap-2 cursor-pointer">
-                  <Smile className="w-5 h-5 text-primary" />
-                  Feliz
-                </Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="neutro" id="neutro" disabled={!isToday} />
-                <Label htmlFor="neutro" className="flex items-center gap-2 cursor-pointer">
-                  <Meh className="w-5 h-5 text-muted-foreground" />
-                  Neutro
-                </Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="triste" id="triste" disabled={!isToday} />
-                <Label htmlFor="triste" className="flex items-center gap-2 cursor-pointer">
-                  <Frown className="w-5 h-5 text-destructive" />
-                  Triste
-                </Label>
-              </div>
-            </div>
-          </RadioGroup>
-        </div>
-
-        {/* Reflexões */}
-        <div className="space-y-2">
-          <Label htmlFor="reflexoes">Reflexões do Dia</Label>
-          <Textarea
-            id="reflexoes"
-            placeholder="O que você aprendeu ou percebeu hoje?"
-            value={entrada.reflexoes}
-            onChange={(e) => setEntrada({ ...entrada, reflexoes: e.target.value })}
-            rows={4}
-            disabled={!isToday}
-            spellCheck="true"
-          />
-        </div>
-
-        {/* Avanços */}
-        <div className="space-y-2">
-          <Label htmlFor="avancos">Avanços e Conquistas</Label>
-          <Textarea
-            id="avancos"
-            placeholder="Quais foram seus avanços em relação ao seu PDI?"
-            value={entrada.avancos}
-            onChange={(e) => setEntrada({ ...entrada, avancos: e.target.value })}
-            rows={3}
-            disabled={!isToday}
-            spellCheck="true"
-          />
-        </div>
-
-        {/* Hábitos */}
-        <div className="space-y-2">
-          <Label htmlFor="habitos">Hábitos Realizados</Label>
-          <Textarea
-            id="habitos"
-            placeholder="Quais hábitos você praticou hoje?"
-            value={entrada.habitos}
-            onChange={(e) => setEntrada({ ...entrada, habitos: e.target.value })}
-            rows={3}
-            disabled={!isToday}
-            spellCheck="true"
-          />
-        </div>
-
-        {/* Gratidão */}
-        <div className="space-y-2">
-          <Label htmlFor="gratidao">Gratidão</Label>
-          <Textarea
-            id="gratidao"
-            placeholder="Pelo que você é grato hoje?"
-            value={entrada.gratidao}
-            onChange={(e) => setEntrada({ ...entrada, gratidao: e.target.value })}
-            rows={3}
-            disabled={!isToday}
-            spellCheck="true"
-          />
-        </div>
-
-        <Button onClick={handleSave} className="w-full" size="lg" disabled={!isToday || !isFormComplete}>
-          {entradas.some((e) => e.data === entrada.data) ? "Atualizar reflexões do dia" : "Salvar reflexões do dia"}
-        </Button>
-          </CardContent>
-
-          {/* Gráfico de histórico de humor */}
-          <div className="px-6 pb-6 space-y-4">
-            {/* Explicação sobre a importância do diário */}
-            <div className="bg-primary/5 border border-primary/20 rounded-lg p-4">
-              <p className="text-sm text-muted-foreground leading-relaxed">
-                💡 <strong>Por que ter um diário?</strong> Manter um registro diário fortalece o autoconhecimento, 
-                ajuda a identificar padrões emocionais e permite acompanhar seu progresso ao longo do tempo. 
-                É uma ferramenta poderosa para reflexão e crescimento pessoal.
-              </p>
-            </div>
-
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-              <h3 className="text-base sm:text-lg font-semibold">Histórico de Humor</h3>
-              <div className="flex flex-col sm:flex-row gap-2">
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  onClick={generateMockData}
-                  className="text-xs sm:text-sm"
-                >
-                  Gerar Dados Teste
-                </Button>
-                <Select value={selectedPeriod} onValueChange={setSelectedPeriod}>
-                  <SelectTrigger className="w-full sm:w-[180px]">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {periodOptions.map((option) => (
-                      <SelectItem key={option.value} value={option.value}>
-                        {option.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-            
-            <div className="h-[250px] sm:h-[300px] w-full overflow-x-auto">
-              <ResponsiveContainer width="100%" height="100%" minWidth={300}>
-                {selectedPeriod === "30dias" ? (
-                  <LineChart data={chartData}>
-                    <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
-                    <XAxis 
-                      dataKey="dia" 
-                      label={{ value: "Dia", position: "insideBottom", offset: -5 }}
-                      className="text-xs"
-                    />
-                    <YAxis 
-                      domain={[0, 4]}
-                      ticks={[1, 2, 3]}
-                      tickFormatter={(value) => {
-                        if (value === 1) return "Triste";
-                        if (value === 2) return "Neutro";
-                        if (value === 3) return "Feliz";
-                        return "";
-                      }}
-                      className="text-xs"
-                    />
-                    <Tooltip content={<CustomTooltip />} />
-                    <Line 
-                      type="monotone" 
-                      dataKey="humor" 
-                      stroke="hsl(var(--primary))" 
-                      strokeWidth={2}
-                      dot={{ fill: "hsl(var(--primary))", r: 4 }}
-                      connectNulls={false}
-                    />
-                  </LineChart>
-                ) : (
-                  <LineChart data={chartData}>
-                    <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
-                    <XAxis 
-                      dataKey="semana" 
-                      className="text-xs"
-                    />
-                    <YAxis 
-                      domain={[0, 100]}
-                      label={{ value: "%", position: "insideLeft" }}
-                      className="text-xs"
-                    />
-                    <Tooltip content={<CustomTooltip />} />
-                    <Line 
-                      type="monotone" 
-                      dataKey="feliz" 
-                      stroke="hsl(var(--primary))" 
-                      strokeWidth={2}
-                      dot={{ fill: "hsl(var(--primary))", r: 4 }}
-                      name="Feliz"
-                      connectNulls={false}
-                    />
-                    <Line 
-                      type="monotone" 
-                      dataKey="neutro" 
-                      stroke="hsl(var(--muted-foreground))" 
-                      strokeWidth={2}
-                      dot={{ fill: "hsl(var(--muted-foreground))", r: 4 }}
-                      name="Neutro"
-                      connectNulls={false}
-                    />
-                    <Line 
-                      type="monotone" 
-                      dataKey="triste" 
-                      stroke="hsl(var(--destructive))" 
-                      strokeWidth={2}
-                      dot={{ fill: "hsl(var(--destructive))", r: 4 }}
-                      name="Triste"
-                      connectNulls={false}
-                    />
-                  </LineChart>
+              <Button
+                variant={viewMode === "historico" ? "default" : "ghost"}
+                size="sm"
+                className={cn(
+                  "flex-1 gap-2 transition-all",
+                  viewMode === "historico" 
+                    ? "shadow-sm" 
+                    : "hover:bg-background/50"
                 )}
-              </ResponsiveContainer>
-            </div>
-
-            {/* Legenda do gráfico */}
-            <div className="flex items-center justify-center gap-6 mt-4">
-              <div className="flex items-center gap-2">
-                <div className="w-4 h-1 rounded" style={{ backgroundColor: 'hsl(var(--primary))' }} />
-                <span className="text-sm text-muted-foreground">😊 Feliz</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="w-4 h-1 rounded" style={{ backgroundColor: 'hsl(var(--muted-foreground))' }} />
-                <span className="text-sm text-muted-foreground">😐 Neutro</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="w-4 h-1 rounded" style={{ backgroundColor: 'hsl(var(--destructive))' }} />
-                <span className="text-sm text-muted-foreground">😔 Triste</span>
-              </div>
+                onClick={() => setViewMode("historico")}
+              >
+                <History className="w-4 h-4" />
+                <span className="hidden sm:inline">Ver Histórico</span>
+                <span className="sm:hidden">Histórico</span>
+              </Button>
             </div>
           </div>
+
+          {/* MODO REGISTRO */}
+          {viewMode === "registro" && (
+            <CardContent className="space-y-4 sm:space-y-6 px-3 sm:px-6">
+              {/* Humor */}
+              <div className="space-y-3">
+                <Label>Como você está se sentindo hoje?</Label>
+                <RadioGroup 
+                  value={entrada.humor} 
+                  onValueChange={(value) => setEntrada({ ...entrada, humor: value })}
+                >
+                  <div className="flex gap-4">
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="feliz" id="feliz" />
+                      <Label htmlFor="feliz" className="flex items-center gap-2 cursor-pointer">
+                        <Smile className="w-5 h-5 text-primary" />
+                        Feliz
+                      </Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="neutro" id="neutro" />
+                      <Label htmlFor="neutro" className="flex items-center gap-2 cursor-pointer">
+                        <Meh className="w-5 h-5 text-muted-foreground" />
+                        Neutro
+                      </Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="triste" id="triste" />
+                      <Label htmlFor="triste" className="flex items-center gap-2 cursor-pointer">
+                        <Frown className="w-5 h-5 text-destructive" />
+                        Triste
+                      </Label>
+                    </div>
+                  </div>
+                </RadioGroup>
+              </div>
+
+              {/* Reflexões */}
+              <div className="space-y-2">
+                <Label htmlFor="reflexoes">Reflexões do Dia</Label>
+                <Textarea
+                  id="reflexoes"
+                  placeholder="O que você aprendeu ou percebeu hoje?"
+                  value={entrada.reflexoes}
+                  onChange={(e) => setEntrada({ ...entrada, reflexoes: e.target.value })}
+                  rows={4}
+                  spellCheck="true"
+                />
+              </div>
+
+              {/* Avanços */}
+              <div className="space-y-2">
+                <Label htmlFor="avancos">Avanços e Conquistas</Label>
+                <Textarea
+                  id="avancos"
+                  placeholder="Quais foram seus avanços em relação ao seu PDI?"
+                  value={entrada.avancos}
+                  onChange={(e) => setEntrada({ ...entrada, avancos: e.target.value })}
+                  rows={3}
+                  spellCheck="true"
+                />
+              </div>
+
+              {/* Hábitos */}
+              <div className="space-y-2">
+                <Label htmlFor="habitos">Hábitos Realizados</Label>
+                <Textarea
+                  id="habitos"
+                  placeholder="Quais hábitos você praticou hoje?"
+                  value={entrada.habitos}
+                  onChange={(e) => setEntrada({ ...entrada, habitos: e.target.value })}
+                  rows={3}
+                  spellCheck="true"
+                />
+              </div>
+
+              {/* Gratidão */}
+              <div className="space-y-2">
+                <Label htmlFor="gratidao">Gratidão</Label>
+                <Textarea
+                  id="gratidao"
+                  placeholder="Pelo que você é grato hoje?"
+                  value={entrada.gratidao}
+                  onChange={(e) => setEntrada({ ...entrada, gratidao: e.target.value })}
+                  rows={3}
+                  spellCheck="true"
+                />
+              </div>
+
+              <Button onClick={handleSave} className="w-full" size="lg" disabled={!isFormComplete}>
+                {entradas.some((e) => e.data === entrada.data) ? "Atualizar reflexões do dia" : "Salvar reflexões do dia"}
+              </Button>
+
+              {/* Dica sobre importância do diário */}
+              <div className="bg-primary/5 border border-primary/20 rounded-lg p-4">
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  💡 <strong>Por que ter um diário?</strong> Manter um registro diário fortalece o autoconhecimento, 
+                  ajuda a identificar padrões emocionais e permite acompanhar seu progresso ao longo do tempo. 
+                  É uma ferramenta poderosa para reflexão e crescimento pessoal.
+                </p>
+              </div>
+            </CardContent>
+          )}
+
+          {/* MODO HISTÓRICO */}
+          {viewMode === "historico" && (
+            <CardContent className="space-y-6 px-3 sm:px-6">
+              {/* Calendário e Detalhes */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {/* Calendário */}
+                <div className="space-y-3">
+                  <Label className="text-base font-semibold">Selecione uma data</Label>
+                  <div className="flex justify-center">
+                    <Calendar
+                      mode="single"
+                      selected={selectedDate}
+                      onSelect={(date) => date && setSelectedDate(date)}
+                      className="rounded-md border pointer-events-auto"
+                      modifiers={{
+                        hasEntry: datesWithEntries,
+                      }}
+                      modifiersStyles={{
+                        hasEntry: {
+                          backgroundColor: "hsl(var(--primary) / 0.15)",
+                          fontWeight: "bold",
+                        },
+                      }}
+                      disabled={(date) => date > new Date()}
+                    />
+                  </div>
+                  <p className="text-xs text-muted-foreground text-center">
+                    📅 Dias com registro estão destacados
+                  </p>
+                </div>
+
+                {/* Detalhes da Data Selecionada */}
+                <div className="space-y-3">
+                  <Label className="text-base font-semibold">
+                    {format(selectedDate, "dd 'de' MMMM 'de' yyyy", { locale: ptBR })}
+                  </Label>
+                  
+                  {selectedHistoryEntry ? (
+                    <Card className="bg-muted/30">
+                      <CardContent className="pt-4 space-y-4">
+                        {/* Humor */}
+                        <div className="flex items-center gap-2">
+                          <span className="text-sm font-medium">Humor:</span>
+                          {selectedHistoryEntry.humor === "feliz" && (
+                            <span className="flex items-center gap-1 text-primary">
+                              <Smile className="w-4 h-4" /> Feliz
+                            </span>
+                          )}
+                          {selectedHistoryEntry.humor === "neutro" && (
+                            <span className="flex items-center gap-1 text-muted-foreground">
+                              <Meh className="w-4 h-4" /> Neutro
+                            </span>
+                          )}
+                          {selectedHistoryEntry.humor === "triste" && (
+                            <span className="flex items-center gap-1 text-destructive">
+                              <Frown className="w-4 h-4" /> Triste
+                            </span>
+                          )}
+                        </div>
+
+                        <ScrollArea className="h-[250px] pr-4">
+                          <div className="space-y-4">
+                            {selectedHistoryEntry.reflexoes && (
+                              <div>
+                                <p className="font-semibold text-sm text-primary mb-1">Reflexões:</p>
+                                <p className="text-sm text-muted-foreground">{selectedHistoryEntry.reflexoes}</p>
+                              </div>
+                            )}
+                            {selectedHistoryEntry.avancos && (
+                              <div>
+                                <p className="font-semibold text-sm text-primary mb-1">Avanços e Conquistas:</p>
+                                <p className="text-sm text-muted-foreground">{selectedHistoryEntry.avancos}</p>
+                              </div>
+                            )}
+                            {selectedHistoryEntry.habitos && (
+                              <div>
+                                <p className="font-semibold text-sm text-primary mb-1">Hábitos Realizados:</p>
+                                <p className="text-sm text-muted-foreground">{selectedHistoryEntry.habitos}</p>
+                              </div>
+                            )}
+                            {selectedHistoryEntry.gratidao && (
+                              <div>
+                                <p className="font-semibold text-sm text-primary mb-1">Gratidão:</p>
+                                <p className="text-sm text-muted-foreground">{selectedHistoryEntry.gratidao}</p>
+                              </div>
+                            )}
+                          </div>
+                        </ScrollArea>
+                      </CardContent>
+                    </Card>
+                  ) : (
+                    <div className="flex flex-col items-center justify-center h-[300px] bg-muted/30 rounded-lg border border-dashed">
+                      <Book className="w-12 h-12 text-muted-foreground/50 mb-3" />
+                      <p className="text-muted-foreground text-center">
+                        Nenhum registro encontrado para esta data.
+                      </p>
+                      {isToday && (
+                        <Button 
+                          variant="link" 
+                          className="mt-2"
+                          onClick={() => setViewMode("registro")}
+                        >
+                          Criar registro de hoje
+                        </Button>
+                      )}
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Gráfico de Histórico de Humor */}
+              <div className="space-y-4 pt-4 border-t">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                  <h3 className="text-base sm:text-lg font-semibold">Histórico de Humor</h3>
+                  <div className="flex flex-col sm:flex-row gap-2">
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      onClick={generateMockData}
+                      className="text-xs sm:text-sm"
+                    >
+                      Gerar Dados Teste
+                    </Button>
+                    <Select value={selectedPeriod} onValueChange={setSelectedPeriod}>
+                      <SelectTrigger className="w-full sm:w-[180px]">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {periodOptions.map((option) => (
+                          <SelectItem key={option.value} value={option.value}>
+                            {option.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+                
+                <div className="h-[250px] sm:h-[300px] w-full overflow-x-auto">
+                  <ResponsiveContainer width="100%" height="100%" minWidth={300}>
+                    {selectedPeriod === "30dias" ? (
+                      <LineChart data={chartData}>
+                        <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
+                        <XAxis 
+                          dataKey="dia" 
+                          label={{ value: "Dia", position: "insideBottom", offset: -5 }}
+                          className="text-xs"
+                        />
+                        <YAxis 
+                          domain={[0, 4]}
+                          ticks={[1, 2, 3]}
+                          tickFormatter={(value) => {
+                            if (value === 1) return "Triste";
+                            if (value === 2) return "Neutro";
+                            if (value === 3) return "Feliz";
+                            return "";
+                          }}
+                          className="text-xs"
+                        />
+                        <Tooltip content={<CustomTooltip />} />
+                        <Line 
+                          type="monotone" 
+                          dataKey="humor" 
+                          stroke="hsl(var(--primary))" 
+                          strokeWidth={2}
+                          dot={{ fill: "hsl(var(--primary))", r: 4 }}
+                          connectNulls={false}
+                        />
+                      </LineChart>
+                    ) : (
+                      <LineChart data={chartData}>
+                        <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
+                        <XAxis 
+                          dataKey="semana" 
+                          className="text-xs"
+                        />
+                        <YAxis 
+                          domain={[0, 100]}
+                          label={{ value: "%", position: "insideLeft" }}
+                          className="text-xs"
+                        />
+                        <Tooltip content={<CustomTooltip />} />
+                        <Line 
+                          type="monotone" 
+                          dataKey="feliz" 
+                          stroke="hsl(var(--primary))" 
+                          strokeWidth={2}
+                          dot={{ fill: "hsl(var(--primary))", r: 4 }}
+                          name="Feliz"
+                          connectNulls={false}
+                        />
+                        <Line 
+                          type="monotone" 
+                          dataKey="neutro" 
+                          stroke="hsl(var(--muted-foreground))" 
+                          strokeWidth={2}
+                          dot={{ fill: "hsl(var(--muted-foreground))", r: 4 }}
+                          name="Neutro"
+                          connectNulls={false}
+                        />
+                        <Line 
+                          type="monotone" 
+                          dataKey="triste" 
+                          stroke="hsl(var(--destructive))" 
+                          strokeWidth={2}
+                          dot={{ fill: "hsl(var(--destructive))", r: 4 }}
+                          name="Triste"
+                          connectNulls={false}
+                        />
+                      </LineChart>
+                    )}
+                  </ResponsiveContainer>
+                </div>
+
+                {/* Legenda do gráfico */}
+                <div className="flex items-center justify-center gap-6 mt-4">
+                  <div className="flex items-center gap-2">
+                    <div className="w-4 h-1 rounded" style={{ backgroundColor: 'hsl(var(--primary))' }} />
+                    <span className="text-sm text-muted-foreground">😊 Feliz</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="w-4 h-1 rounded" style={{ backgroundColor: 'hsl(var(--muted-foreground))' }} />
+                    <span className="text-sm text-muted-foreground">😐 Neutro</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="w-4 h-1 rounded" style={{ backgroundColor: 'hsl(var(--destructive))' }} />
+                    <span className="text-sm text-muted-foreground">😔 Triste</span>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          )}
         </CollapsibleContent>
       </Card>
     </Collapsible>
