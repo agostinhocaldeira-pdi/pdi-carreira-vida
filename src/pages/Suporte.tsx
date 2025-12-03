@@ -122,19 +122,19 @@ const Suporte = () => {
     setUserId(session.user.email || "");
 
     // Verificar se é funcionário de alguma empresa no Supabase
-    const { data: employeeData } = await supabase
+    const { data: employeeData, error } = await supabase
       .from("company_employees")
-      .select("*, company_managers!company_employees_manager_id_fkey(id, name, user_id)")
+      .select("id, company_id, name, email, manager_id, is_active")
       .eq("user_id", session.user.id)
       .eq("is_active", true)
-      .single();
+      .maybeSingle();
+
+    console.log("Employee check:", { employeeData, error, userId: session.user.id });
 
     if (employeeData) {
       setIsEmployee(true);
-      setEmployeeData({
-        ...employeeData,
-        manager_id: employeeData.manager_id
-      });
+      setEmployeeData(employeeData);
+      console.log("Employee detected, showing toggle");
     }
   };
 
