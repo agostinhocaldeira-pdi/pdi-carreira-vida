@@ -264,11 +264,9 @@ Analise as correlações entre estes elementos e forneça um insight sobre a ess
                               key={obj.id || idx}
                               className="p-3 bg-background rounded-lg border border-border hover:border-primary/50 transition-colors cursor-pointer group"
                               onClick={() => {
-                                const tabButtons = document.querySelectorAll('[role="tab"]');
-                                const paraOndeVouTab = Array.from(tabButtons).find(
-                                  btn => btn.textContent?.includes('Para onde vou')
-                                ) as HTMLElement;
-                                if (paraOndeVouTab) paraOndeVouTab.click();
+                                window.dispatchEvent(new CustomEvent("navigateToPlanoDeVida", { 
+                                  detail: { tab: "para-onde" } 
+                                }));
                               }}
                             >
                               <div className="flex items-start justify-between gap-2">
@@ -309,11 +307,9 @@ Analise as correlações entre estes elementos e forneça um insight sobre a ess
                               key={meta.id || idx}
                               className="p-3 bg-background rounded-lg border border-border hover:border-primary/50 transition-colors cursor-pointer group"
                               onClick={() => {
-                                const tabButtons = document.querySelectorAll('[role="tab"]');
-                                const comoChegar = Array.from(tabButtons).find(
-                                  btn => btn.textContent?.includes('Como vou chegar lá')
-                                ) as HTMLElement;
-                                if (comoChegar) comoChegar.click();
+                                window.dispatchEvent(new CustomEvent("navigateToPlanoDeVida", { 
+                                  detail: { tab: "como-chegar" } 
+                                }));
                               }}
                             >
                               <div className="flex items-start justify-between gap-2">
@@ -353,11 +349,9 @@ Analise as correlações entre estes elementos e forneça um insight sobre a ess
                               key={acao.id || idx}
                               className="p-3 bg-background rounded-lg border border-border hover:border-primary/50 transition-colors cursor-pointer group"
                               onClick={() => {
-                                const tabButtons = document.querySelectorAll('[role="tab"]');
-                                const comoChegar = Array.from(tabButtons).find(
-                                  btn => btn.textContent?.includes('Como vou chegar lá')
-                                ) as HTMLElement;
-                                if (comoChegar) comoChegar.click();
+                                window.dispatchEvent(new CustomEvent("navigateToPlanoDeVida", { 
+                                  detail: { tab: "como-chegar" } 
+                                }));
                               }}
                             >
                               <div className="flex items-start justify-between gap-2">
