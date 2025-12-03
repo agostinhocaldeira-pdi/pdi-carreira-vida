@@ -50,10 +50,10 @@ export function ExportPDFButton({ variant = "outline", size = "sm" }: ExportPDFB
       const valores = JSON.parse(localStorage.getItem("meus_valores") || "[]");
       const areasVida = JSON.parse(localStorage.getItem("areas_vida") || "[]");
       
-      // 4. Para onde vou
+      // 4. Para onde vou - Objetivos
       const objetivos = JSON.parse(localStorage.getItem("meus_objetivos") || "[]");
       
-      // 5. Como chegar lá
+      // 5. Como chegar lá - Metas com ações e passos
       const metas = JSON.parse(localStorage.getItem("metas") || "[]");
       const competencias = JSON.parse(localStorage.getItem("competencias") || "[]");
       const pontosFortes = JSON.parse(localStorage.getItem("pontos_fortes") || "[]");
@@ -62,9 +62,33 @@ export function ExportPDFButton({ variant = "outline", size = "sm" }: ExportPDFB
       // 6. Ferramentas
       const swot = JSON.parse(localStorage.getItem("analise_swot") || "{}");
       const crencas = JSON.parse(localStorage.getItem("crencas_transformadas") || "[]");
+      const eisenhower = JSON.parse(localStorage.getItem("eisenhower_tasks") || "{}");
       
-      // 7. Gamificação
+      // 7. Insight gerado
+      const insight = localStorage.getItem("userInsight") || "";
+      const insightDate = localStorage.getItem("lastInsightDate") || "";
+      
+      // 8. Histórico de Humor e Diário
+      const diaryEntries = JSON.parse(localStorage.getItem("diary_entries") || "[]");
+      const moodHistory = diaryEntries.map((entry: any) => ({
+        date: entry.date || entry.data,
+        mood: entry.mood || entry.humor,
+        reflexao: entry.reflexao || entry.reflexoes,
+        gratidao: entry.gratidao,
+        conquistas: entry.conquistas
+      })).sort((a: any, b: any) => new Date(b.date).getTime() - new Date(a.date).getTime());
+      
+      // Calcular estatísticas de humor
+      const diaryStats = {
+        total: diaryEntries.length,
+        feliz: diaryEntries.filter((e: any) => (e.mood || e.humor) === 'feliz').length,
+        neutro: diaryEntries.filter((e: any) => (e.mood || e.humor) === 'neutro').length,
+        triste: diaryEntries.filter((e: any) => (e.mood || e.humor) === 'triste').length,
+      };
+      
+      // 9. Gamificação
       const streak = JSON.parse(localStorage.getItem("user_streak") || "{}");
+      const achievements = JSON.parse(localStorage.getItem("user_achievements") || "[]");
 
       exportPDIToPDF({
         // Dados Pessoais
@@ -84,10 +108,20 @@ export function ExportPDFButton({ variant = "outline", size = "sm" }: ExportPDFB
         areasVida,
         
         // Para onde vou
-        objetivos,
+        objetivos: objetivos.map((obj: any) => ({
+          ...obj,
+          id: obj.id || `obj_${Math.random().toString(36).substr(2, 9)}`,
+        })),
         
         // Como chegar lá
-        metas,
+        metas: metas.map((meta: any) => ({
+          ...meta,
+          id: meta.id || `meta_${Math.random().toString(36).substr(2, 9)}`,
+          acoes: (meta.acoes || []).map((acao: any) => ({
+            ...acao,
+            passos: acao.passos || [],
+          })),
+        })),
         competencias,
         pontosFortes,
         pontosAMelhorar,
@@ -95,11 +129,25 @@ export function ExportPDFButton({ variant = "outline", size = "sm" }: ExportPDFB
         // Ferramentas
         swot: swot.forcas || swot.fraquezas ? swot : undefined,
         crencas: crencas.length > 0 ? crencas : undefined,
+        eisenhower: eisenhower.urgente_importante ? eisenhower : undefined,
+        
+        // Insight
+        insight,
+        insightDate,
+        
+        // Humor
+        moodHistory,
+        diaryStats,
         
         // Gamificação
         streak: streak.current_streak || 0,
+        longestStreak: streak.longest_streak || 0,
         level: streak.level || 1,
         totalPoints: streak.total_points || 0,
+        achievements: achievements.map((a: any) => ({
+          name: a.name || a.achievement_name,
+          unlockedAt: a.unlocked_at
+        })),
       });
 
       toast.success("PDI completo exportado com sucesso!");
@@ -119,6 +167,7 @@ export function ExportPDFButton({ variant = "outline", size = "sm" }: ExportPDFB
       const metas = JSON.parse(localStorage.getItem("metas") || "[]");
       const diarioEntries = JSON.parse(localStorage.getItem("diary_entries") || "[]");
       const streak = JSON.parse(localStorage.getItem("user_streak") || "{}");
+      const insight = localStorage.getItem("userInsight") || "";
 
       const objetivosConcluidos = objetivos.filter((o: any) => o.status === "concluido").length;
       const metasConcluidas = metas.filter((m: any) => m.concluida).length;
@@ -130,6 +179,24 @@ export function ExportPDFButton({ variant = "outline", size = "sm" }: ExportPDFB
         acoesTotal += acoes.length;
         acoesConcluidas += acoes.filter((a: any) => a.status === "concluido").length;
       });
+
+      // Mood stats
+      const moodStats = {
+        total: diarioEntries.length,
+        feliz: diarioEntries.filter((e: any) => (e.mood || e.humor) === 'feliz').length,
+        neutro: diarioEntries.filter((e: any) => (e.mood || e.humor) === 'neutro').length,
+        triste: diarioEntries.filter((e: any) => (e.mood || e.humor) === 'triste').length,
+      };
+
+      // Recent moods
+      const recentMoods = diarioEntries
+        .map((entry: any) => ({
+          date: entry.date || entry.data,
+          mood: entry.mood || entry.humor,
+          reflexao: entry.reflexao || entry.reflexoes,
+        }))
+        .sort((a: any, b: any) => new Date(b.date).getTime() - new Date(a.date).getTime())
+        .slice(0, 14);
 
       exportProgressReportToPDF(
         user.name || "Usuário",
@@ -143,7 +210,13 @@ export function ExportPDFButton({ variant = "outline", size = "sm" }: ExportPDFB
           acoesConcluidas,
           diasDiario: diarioEntries.length,
           streak: streak.current_streak || 0,
-        }
+          longestStreak: streak.longest_streak || 0,
+          level: streak.level || 1,
+          totalPoints: streak.total_points || 0,
+        },
+        moodStats,
+        recentMoods,
+        insight
       );
 
       toast.success("Relatório de progresso exportado!");
@@ -170,7 +243,7 @@ export function ExportPDFButton({ variant = "outline", size = "sm" }: ExportPDFB
       <DropdownMenuContent align="end">
         <DropdownMenuItem onClick={handleExportPDI}>
           <FileText className="w-4 h-4 mr-2" />
-          Exportar PDI Completo
+          PDI Completo
         </DropdownMenuItem>
         <DropdownMenuItem onClick={handleExportProgress}>
           <BarChart3 className="w-4 h-4 mr-2" />
