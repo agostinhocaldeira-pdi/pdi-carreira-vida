@@ -385,15 +385,15 @@ export function OKRsTab({ companyId, employees }: OKRsTabProps) {
                         </span>
                         <Popover>
                           <PopoverTrigger asChild>
-                            <button className="flex items-center gap-1 hover:text-primary transition-colors">
-                              <Users className="w-3 h-3" />
-                              {okr.linked_employee_ids.length} funcionários vinculados
-                              <UserPlus className="w-3 h-3 ml-1" />
-                            </button>
+                            <Button variant="outline" size="sm" className="h-7 gap-1.5 text-xs">
+                              <Users className="w-3.5 h-3.5" />
+                              <span>{okr.linked_employee_ids.length}</span>
+                              <UserPlus className="w-3.5 h-3.5 text-primary" />
+                            </Button>
                           </PopoverTrigger>
                           <PopoverContent className="w-72 p-3" align="start">
                             <div className="space-y-3">
-                              <h4 className="font-medium text-sm">Funcionários vinculados</h4>
+                              <h4 className="font-medium text-sm">Vincular Funcionários ao OKR</h4>
                               {employees.length === 0 ? (
                                 <p className="text-sm text-muted-foreground">Nenhum funcionário cadastrado</p>
                               ) : (
