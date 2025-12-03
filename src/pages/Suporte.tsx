@@ -70,7 +70,7 @@ interface ManagerMessage {
 }
 
 const Suporte = () => {
-  useRoleProtection({ allowedRoles: ["user", "gestor", "admin"] });
+  const { isLoading: roleLoading, userRole, isAdmin } = useRoleProtection({ allowedRoles: ["user", "gestor", "admin"] });
   const { toast } = useToast();
   const location = useLocation();
   const [category, setCategory] = useState<string>("");
@@ -78,9 +78,8 @@ const Suporte = () => {
   const [adminResponse, setAdminResponse] = useState<string>("");
   const [tickets, setTickets] = useState<SupportTicket[]>([]);
   const [messages, setMessages] = useState<Record<string, SupportMessage[]>>({});
-  const [isAdmin, setIsAdmin] = useState<boolean>(false);
   const [userId, setUserId] = useState<string>("");
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoadingData, setIsLoadingData] = useState(false);
   const [isEmployee, setIsEmployee] = useState(false);
   const [employeeData, setEmployeeData] = useState<any>(null);
   const [activeTab, setActiveTab] = useState("atendimento");
@@ -123,15 +122,7 @@ const Suporte = () => {
     const userData = JSON.parse(user);
     setUserId(userData.email);
 
-    // Verificar se é admin
-    const administrators = JSON.parse(localStorage.getItem("administrators") || "[]");
-    const userIsAdmin = administrators.some((admin: any) => 
-      admin.email?.toLowerCase() === userData.email?.toLowerCase()
-    );
-    
-    if (userIsAdmin) {
-      setIsAdmin(true);
-    }
+    // isAdmin já vem do useRoleProtection
 
     // Verificar se é funcionário de alguma empresa
     const employees = JSON.parse(localStorage.getItem("mockEmployees") || "[]");
@@ -283,7 +274,7 @@ const Suporte = () => {
       return;
     }
 
-    setIsLoading(true);
+    setIsLoadingData(true);
     
     const user = JSON.parse(localStorage.getItem("user") || "{}");
     const ticketId = `ticket-${Date.now()}`;
@@ -321,7 +312,7 @@ const Suporte = () => {
     setCategory("");
     setQuestion("");
     loadTickets();
-    setIsLoading(false);
+    setIsLoadingData(false);
   };
 
   const handleSubmitAdminResponse = (ticketId: string) => {
@@ -334,7 +325,7 @@ const Suporte = () => {
       return;
     }
 
-    setIsLoading(true);
+    setIsLoadingData(true);
 
     const newMessage: SupportMessage = {
       id: `msg-${Date.now()}`,
@@ -356,7 +347,7 @@ const Suporte = () => {
     
     setAdminResponse("");
     loadTickets();
-    setIsLoading(false);
+    setIsLoadingData(false);
   };
 
   const handleAdminSubmitResponse = (ticketId: string) => {
@@ -370,7 +361,7 @@ const Suporte = () => {
       return;
     }
 
-    setIsLoading(true);
+    setIsLoadingData(true);
 
     const newMessage: SupportMessage = {
       id: `msg-${Date.now()}`,
@@ -392,7 +383,7 @@ const Suporte = () => {
     
     setAdminResponseTexts(prev => ({ ...prev, [ticketId]: "" }));
     loadTickets();
-    setIsLoading(false);
+    setIsLoadingData(false);
   };
 
   const handleSubmitManagerMessage = () => {
@@ -414,7 +405,7 @@ const Suporte = () => {
       return;
     }
 
-    setIsLoading(true);
+    setIsLoadingData(true);
 
     const user = JSON.parse(localStorage.getItem("user") || "{}");
     const conversationId = `conv-${Date.now()}`;
@@ -457,7 +448,7 @@ const Suporte = () => {
     setManagerSubject("");
     setManagerMessage("");
     loadManagerConversations();
-    setIsLoading(false);
+    setIsLoadingData(false);
   };
 
   const handleReplyToManagerConversation = (conversationId: string, replyText: string) => {
@@ -543,7 +534,7 @@ const Suporte = () => {
 
             <Button 
               onClick={handleSubmitQuestion} 
-              disabled={isLoading}
+              disabled={isLoadingData}
               className="w-full"
             >
               <Send className="w-4 h-4 mr-2" />
@@ -672,7 +663,7 @@ const Suporte = () => {
                           handleSubmitAdminResponse(ticket.id);
                         }
                       }}
-                      disabled={isLoading || (isAdmin ? !(adminResponseTexts[ticket.id]?.trim()) : !adminResponse.trim())}
+                      disabled={isLoadingData || (isAdmin ? !(adminResponseTexts[ticket.id]?.trim()) : !adminResponse.trim())}
                       className="w-full"
                     >
                       <Send className="w-4 h-4 mr-2" />
@@ -736,7 +727,7 @@ const Suporte = () => {
 
                 <Button 
                   onClick={handleSubmitManagerMessage} 
-                  disabled={isLoading || !managerSubject.trim() || !managerMessage.trim()}
+                  disabled={isLoadingData || !managerSubject.trim() || !managerMessage.trim()}
                   className="w-full"
                 >
                   <Send className="w-4 h-4 mr-2" />
@@ -841,7 +832,7 @@ const Suporte = () => {
                               handleReplyToManagerConversation(conv.id, replyTexts[conv.id] || "");
                               setReplyTexts(prev => ({ ...prev, [conv.id]: "" }));
                             }}
-                            disabled={isLoading || !replyTexts[conv.id]?.trim()}
+                            disabled={isLoadingData || !replyTexts[conv.id]?.trim()}
                             className="w-full"
                           >
                             <Send className="w-4 h-4 mr-2" />

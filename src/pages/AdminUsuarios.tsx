@@ -9,6 +9,7 @@ import { Shield, ArrowLeft, Users, Search, UserCheck, UserX } from "lucide-react
 import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
 import LogoutButton from "@/components/LogoutButton";
+import { useRoleProtection } from "@/hooks/useRoleProtection";
 
 interface MockUser {
   id: string;
@@ -131,40 +132,27 @@ const mockUsers: MockUser[] = [
 ];
 
 const AdminUsuarios = () => {
-  const [isAdmin, setIsAdmin] = useState(false);
+  // Proteção de role - apenas admin pode acessar
+  const { isLoading: roleLoading, isAdmin } = useRoleProtection({
+    allowedRoles: ["admin"],
+    redirectTo: "/home"
+  });
+  
   const [searchTerm, setSearchTerm] = useState("");
   const [users] = useState<MockUser[]>(mockUsers);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const user = localStorage.getItem("user");
-    if (!user) {
-      toast.error("Acesso não autorizado");
-      navigate("/home");
-      return;
-    }
-
-    const userData = JSON.parse(user);
-    const savedAdmins = localStorage.getItem("administrators");
-    
-    if (savedAdmins) {
-      const administrators = JSON.parse(savedAdmins);
-      const userIsAdmin = administrators.some(
-        (admin: { email: string }) => admin.email === userData.email
-      );
-      
-      if (!userIsAdmin) {
-        toast.error("Acesso restrito apenas para administradores");
-        navigate("/home");
-        return;
-      }
-      
-      setIsAdmin(true);
-    } else {
-      toast.error("Acesso restrito apenas para administradores");
-      navigate("/home");
-    }
-  }, [navigate]);
+  // Loading state
+  if (roleLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-subtle flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
+          <p className="mt-4 text-muted-foreground">Carregando...</p>
+        </div>
+      </div>
+    );
+  }
 
   const filteredUsers = users.filter(user =>
     user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||

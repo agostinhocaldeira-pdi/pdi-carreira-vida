@@ -12,6 +12,8 @@ import { toast } from "sonner";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, LineChart, Line } from "recharts";
 import LogoutButton from "@/components/LogoutButton";
 import ConfirmDeleteDialog from "@/components/ConfirmDeleteDialog";
+import { useRoleProtection } from "@/hooks/useRoleProtection";
+import { supabase } from "@/integrations/supabase/client";
 
 interface Administrator {
   id: string;
@@ -47,7 +49,12 @@ interface Employee {
 }
 
 const Admin = () => {
-  const [isAdmin, setIsAdmin] = useState(false);
+  // Proteção de role - apenas admin pode acessar
+  const { isLoading: roleLoading, isAdmin } = useRoleProtection({
+    allowedRoles: ["admin"],
+    redirectTo: "/home"
+  });
+  
   const [adminEmail, setAdminEmail] = useState("");
   const [administrators, setAdministrators] = useState<Administrator[]>([]);
   const [companies, setCompanies] = useState<Company[]>([]);
@@ -62,81 +69,93 @@ const Admin = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Verifica se o usuário logado é admin
-    const user = localStorage.getItem("user");
-    if (!user) {
-      toast.error("Acesso não autorizado");
-      navigate("/home");
-      return;
-    }
-
-    const userData = JSON.parse(user);
-    
-    // Carregar administradores salvos
-    const savedAdmins = localStorage.getItem("administrators");
-    if (savedAdmins) {
-      const administrators = JSON.parse(savedAdmins);
-      setAdministrators(administrators);
+    const loadData = async () => {
+      if (roleLoading || !isAdmin) return;
       
-      // Verifica se o usuário está na lista de administradores
-      const userIsAdmin = administrators.some(
-        (admin: { email: string }) => admin.email === userData.email
-      );
-      
-      if (!userIsAdmin) {
-        toast.error("Acesso restrito apenas para administradores");
-        navigate("/home");
-        return;
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session?.user) {
+        setAdminEmail(session.user.email || "");
       }
       
-      setIsAdmin(true);
-      setAdminEmail(userData.email);
-    } else {
-      // Inicializar com o admin principal se não existir
-      if (userData.email === "agostinhocmcaldeira@gmail.com") {
-        const initialAdmin: Administrator = {
-          id: "1",
-          name: "Agostinho Caldeira",
-          email: "agostinhocmcaldeira@gmail.com",
-          phone: "(00) 00000-0000",
-          createdAt: new Date().toISOString()
-        };
-        setAdministrators([initialAdmin]);
-        localStorage.setItem("administrators", JSON.stringify([initialAdmin]));
-        setIsAdmin(true);
-        setAdminEmail(userData.email);
-      } else {
-        toast.error("Acesso restrito apenas para administradores");
-        navigate("/home");
+      // Carregar administradores (users com role admin)
+      const { data: adminRoles } = await supabase
+        .from('user_roles')
+        .select('user_id')
+        .eq('role', 'admin');
+      
+      // Por enquanto, manter localStorage para lista de admins legacy
+      const savedAdmins = localStorage.getItem("administrators");
+      if (savedAdmins) {
+        setAdministrators(JSON.parse(savedAdmins));
       }
-    }
 
-    // Carregar empresas cadastradas
-    const savedCompanies = localStorage.getItem("companies");
-    if (savedCompanies) {
-      const companiesData: Company[] = JSON.parse(savedCompanies);
-      setCompanies(companiesData);
-      
-      // Carregar gestores e funcionários de cada empresa
-      const managersData: Record<string, Manager[]> = {};
-      const employeesData: Record<string, Employee[]> = {};
-      
-      companiesData.forEach(company => {
-        const managers = localStorage.getItem(`managers_${company.id}`);
-        if (managers) {
-          managersData[company.id] = JSON.parse(managers);
+      // Carregar empresas do Supabase
+      const { data: companiesData } = await supabase.from('companies').select('*');
+      if (companiesData) {
+        const formattedCompanies: Company[] = companiesData.map((c: any) => ({
+          id: c.id,
+          razaoSocial: c.razao_social,
+          cnpj: c.cnpj,
+          email: c.email,
+          telefone: c.telefone
+        }));
+        setCompanies(formattedCompanies);
+        
+        // Carregar gestores e funcionários de cada empresa do Supabase
+        const managersMap: Record<string, Manager[]> = {};
+        const employeesMap: Record<string, Employee[]> = {};
+        
+        for (const company of formattedCompanies) {
+          const { data: managers } = await supabase
+            .from('company_managers')
+            .select('*')
+            .eq('company_id', company.id);
+          
+          if (managers) {
+            managersMap[company.id] = managers.map((m: any) => ({
+              id: m.id,
+              name: m.name,
+              email: m.email,
+              phone: m.phone,
+              acceptedAt: m.accepted_at
+            }));
+          }
+          
+          const { data: employees } = await supabase
+            .from('company_employees')
+            .select('*')
+            .eq('company_id', company.id);
+          
+          if (employees) {
+            employeesMap[company.id] = employees.map((e: any) => ({
+              id: e.id,
+              name: e.name,
+              email: e.email,
+              phone: e.phone,
+              acceptedAt: e.accepted_at
+            }));
+          }
         }
         
-        const employees = localStorage.getItem(`employees_${company.id}`);
-        if (employees) {
-          employeesData[company.id] = JSON.parse(employees);
-        }
-      });
-      
-      setCompanyManagers(managersData);
-      setCompanyEmployees(employeesData);
-    }
-  }, [navigate]);
+        setCompanyManagers(managersMap);
+        setCompanyEmployees(employeesMap);
+      }
+    };
+    
+    loadData();
+  }, [roleLoading, isAdmin]);
+
+  // Loading state
+  if (roleLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-subtle flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
+          <p className="mt-4 text-muted-foreground">Carregando...</p>
+        </div>
+      </div>
+    );
+  }
 
   const handleAddAdmin = () => {
     if (!newAdmin.name.trim() || !newAdmin.email.trim() || !newAdmin.phone.trim()) {
