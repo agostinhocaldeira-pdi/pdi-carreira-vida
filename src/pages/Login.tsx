@@ -12,8 +12,9 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { toast } from "sonner";
-import { LogIn, KeyRound, UserPlus } from "lucide-react";
+import { LogIn, KeyRound, UserPlus, Database } from "lucide-react";
 import ManagerRoleModal from "@/components/ManagerRoleModal";
+import { createMockCompanyData } from "@/utils/mockCompanyData";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -396,6 +397,23 @@ const Login = () => {
                   Cadastre-se
                 </Link>
               </p>
+            </div>
+
+            {/* Botão de teste - remover em produção */}
+            <div className="mt-4 pt-4 border-t border-border">
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                className="w-full text-xs"
+                onClick={() => {
+                  createMockCompanyData();
+                  toast.success("Dados de teste criados! Veja as credenciais no console (F12)");
+                }}
+              >
+                <Database className="w-3 h-3 mr-2" />
+                Criar dados de teste (empresa, gestores, funcionários)
+              </Button>
             </div>
           </CardContent>
         </Card>
