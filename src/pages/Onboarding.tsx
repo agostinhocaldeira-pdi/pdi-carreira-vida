@@ -9,6 +9,7 @@ import { Progress } from "@/components/ui/progress";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { CheckCircle2, ArrowLeft, ArrowRight, Heart, Target, MapPin, ClipboardList, Loader2 } from "lucide-react";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
 
 interface AddressData {
   cep: string;
@@ -35,7 +36,9 @@ const Onboarding = () => {
   const navigate = useNavigate();
   const [step, setStep] = useState(1);
   const [isLoadingCep, setIsLoadingCep] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
   const [userRole, setUserRole] = useState<string>("");
+  const [userId, setUserId] = useState<string | null>(null);
   
   const [onboardingData, setOnboardingData] = useState({
     currentPhase: "",
@@ -63,13 +66,22 @@ const Onboarding = () => {
     motivationSource: "",
   });
 
-  // Verificar o tipo de usuário
+  // Verificar o tipo de usuário e obter ID do Supabase
   useEffect(() => {
     const user = localStorage.getItem("user");
     if (user) {
       const userData = JSON.parse(user);
       setUserRole(userData.role || "user");
     }
+    
+    // Obter usuário autenticado do Supabase
+    const getUser = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        setUserId(user.id);
+      }
+    };
+    getUser();
   }, []);
 
   // Verificar se deve mostrar a pesquisa (exceto admin e empresa)
@@ -160,19 +172,86 @@ const Onboarding = () => {
     }
   };
 
-  const handleFinish = () => {
+  const handleFinish = async () => {
     if (!canAdvance()) {
       toast.error("Por favor, preencha os campos obrigatórios");
       return;
     }
     
-    localStorage.setItem("onboarding", JSON.stringify(onboardingData));
-    localStorage.setItem("userAddress", JSON.stringify(addressData));
-    if (showSurvey) {
-      localStorage.setItem("userSurvey", JSON.stringify(surveyData));
+    setIsSaving(true);
+    
+    try {
+      // Salvar localmente primeiro (fallback)
+      localStorage.setItem("onboarding", JSON.stringify(onboardingData));
+      localStorage.setItem("userAddress", JSON.stringify(addressData));
+      if (showSurvey) {
+        localStorage.setItem("userSurvey", JSON.stringify(surveyData));
+      }
+      localStorage.setItem("onboardingComplete", "true");
+      
+      // Se tiver usuário autenticado, salvar no banco
+      if (userId) {
+        // Salvar dados do onboarding
+        const { error: onboardingError } = await supabase
+          .from("user_onboarding")
+          .upsert({
+            user_id: userId,
+            current_phase: onboardingData.currentPhase,
+            expectations: onboardingData.expectations,
+          }, { onConflict: "user_id" });
+        
+        if (onboardingError) {
+          console.error("Erro ao salvar onboarding:", onboardingError);
+        }
+        
+        // Salvar endereço
+        const { error: addressError } = await supabase
+          .from("user_addresses")
+          .upsert({
+            user_id: userId,
+            cep: addressData.cep.replace(/\D/g, ""),
+            logradouro: addressData.logradouro,
+            numero: addressData.numero,
+            complemento: addressData.complemento,
+            bairro: addressData.bairro,
+            cidade: addressData.cidade,
+            estado: addressData.estado,
+          }, { onConflict: "user_id" });
+        
+        if (addressError) {
+          console.error("Erro ao salvar endereço:", addressError);
+        }
+        
+        // Salvar pesquisa (se aplicável)
+        if (showSurvey) {
+          const { error: surveyError } = await supabase
+            .from("user_surveys")
+            .upsert({
+              user_id: userId,
+              wake_up_time: surveyData.wakeUpTime,
+              sleep_time: surveyData.sleepTime,
+              exercise_frequency: surveyData.exerciseFrequency,
+              reading_habit: surveyData.readingHabit,
+              main_goal: surveyData.mainGoal,
+              biggest_challenge: surveyData.biggestChallenge,
+              learning_style: surveyData.learningStyle,
+              motivation_source: surveyData.motivationSource,
+            }, { onConflict: "user_id" });
+          
+          if (surveyError) {
+            console.error("Erro ao salvar pesquisa:", surveyError);
+          }
+        }
+      }
+      
+      navigate("/home");
+    } catch (error) {
+      console.error("Erro ao salvar dados:", error);
+      toast.error("Erro ao salvar dados, mas você pode continuar");
+      navigate("/home");
+    } finally {
+      setIsSaving(false);
     }
-    localStorage.setItem("onboardingComplete", "true");
-    navigate("/home");
   };
 
   const isLastStep = step === totalSteps;
@@ -464,10 +543,19 @@ const Onboarding = () => {
                     <ArrowRight className="w-4 h-4 ml-2" />
                   </Button>
                 ) : (
-                  <Button onClick={handleFinish} size="lg" className="flex-1" disabled={!canAdvance()}>
-                    <span className="hidden sm:inline">Ir para Home</span>
-                    <span className="sm:hidden">Começar</span>
-                    <ArrowRight className="w-4 h-4 ml-2" />
+                  <Button onClick={handleFinish} size="lg" className="flex-1" disabled={!canAdvance() || isSaving}>
+                    {isSaving ? (
+                      <>
+                        <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                        Salvando...
+                      </>
+                    ) : (
+                      <>
+                        <span className="hidden sm:inline">Ir para Home</span>
+                        <span className="sm:hidden">Começar</span>
+                        <ArrowRight className="w-4 h-4 ml-2" />
+                      </>
+                    )}
                   </Button>
                 )}
               </div>
@@ -641,10 +729,19 @@ const Onboarding = () => {
                   <ArrowLeft className="w-4 h-4 mr-2" />
                   Voltar
                 </Button>
-                <Button onClick={handleFinish} size="lg" className="w-full sm:flex-1" disabled={!canAdvance()}>
-                  <span className="hidden sm:inline">Ir para Home</span>
-                  <span className="sm:hidden">Começar</span>
-                  <ArrowRight className="w-4 h-4 ml-2" />
+                <Button onClick={handleFinish} size="lg" className="w-full sm:flex-1" disabled={!canAdvance() || isSaving}>
+                  {isSaving ? (
+                    <>
+                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                      Salvando...
+                    </>
+                  ) : (
+                    <>
+                      <span className="hidden sm:inline">Ir para Home</span>
+                      <span className="sm:hidden">Começar</span>
+                      <ArrowRight className="w-4 h-4 ml-2" />
+                    </>
+                  )}
                 </Button>
               </div>
             </div>
