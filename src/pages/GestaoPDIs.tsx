@@ -144,7 +144,8 @@ const GestaoPDIs = () => {
         const managerData = managerResult.data;
         
         if (managerData) {
-          setCurrentManagerId(managerData.id);
+          // Usar user_id para filtrar conversas (é o que é armazenado no manager_id das conversas)
+          setCurrentManagerId(managerData.user_id);
           setCurrentManagerName(managerData.name);
           
           const { data: employeesData } = await supabase
