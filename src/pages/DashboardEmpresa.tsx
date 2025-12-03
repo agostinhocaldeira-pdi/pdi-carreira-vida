@@ -31,8 +31,10 @@ import {
   Pencil,
   Mail,
   Phone,
-  Calendar
+  Calendar,
+  UserPlus
 } from "lucide-react";
+import { Checkbox } from "@/components/ui/checkbox";
 import { generateProvisionalPassword } from "@/types/company";
 
 interface Manager {
@@ -53,6 +55,7 @@ interface Employee {
   provisionalPassword: string;
   acceptedAt: string | null;
   managerId?: string;
+  managerName?: string;
   createdAt: string;
 }
 
@@ -68,7 +71,9 @@ const DashboardEmpresa = () => {
   
   const [showAddManagerModal, setShowAddManagerModal] = useState(false);
   const [showAddEmployeeModal, setShowAddEmployeeModal] = useState(false);
+  const [showAssignManagerModal, setShowAssignManagerModal] = useState(false);
   const [newPerson, setNewPerson] = useState({ name: "", email: "", phone: "" });
+  const [selectedEmployees, setSelectedEmployees] = useState<string[]>([]);
 
   // Verificar se é admin
   const checkIsAdmin = (email: string): boolean => {
@@ -206,6 +211,40 @@ const DashboardEmpresa = () => {
     toast.success("Funcionário removido");
   };
 
+  const handleSelectEmployee = (employeeId: string, checked: boolean) => {
+    if (checked) {
+      setSelectedEmployees(prev => [...prev, employeeId]);
+    } else {
+      setSelectedEmployees(prev => prev.filter(id => id !== employeeId));
+    }
+  };
+
+  const handleSelectAllEmployees = (checked: boolean) => {
+    if (checked) {
+      setSelectedEmployees(employees.map(e => e.id));
+    } else {
+      setSelectedEmployees([]);
+    }
+  };
+
+  const handleAssignManager = (managerId: string) => {
+    if (!selectedCompanyId || selectedEmployees.length === 0) return;
+    
+    const manager = managers.find(m => m.id === managerId);
+    const updatedEmployees = employees.map(emp => {
+      if (selectedEmployees.includes(emp.id)) {
+        return { ...emp, managerId, managerName: manager?.name };
+      }
+      return emp;
+    });
+    
+    setEmployees(updatedEmployees);
+    localStorage.setItem(`employees_${selectedCompanyId}`, JSON.stringify(updatedEmployees));
+    setSelectedEmployees([]);
+    setShowAssignManagerModal(false);
+    toast.success(`Gestor ${manager?.name} associado a ${selectedEmployees.length} funcionário(s)`);
+  };
+
   const handleLogout = () => {
     localStorage.removeItem("user");
     navigate("/");
@@ -338,57 +377,129 @@ const DashboardEmpresa = () => {
                 }
               </CardDescription>
             </div>
-            <Button onClick={() => activeTab === "managers" ? setShowAddManagerModal(true) : setShowAddEmployeeModal(true)}>
-              <Plus className="w-4 h-4 mr-2" />
-              Adicionar
-            </Button>
+            <div className="flex gap-2">
+              {activeTab === "employees" && selectedEmployees.length > 0 && (
+                <Button variant="outline" onClick={() => setShowAssignManagerModal(true)}>
+                  <UserPlus className="w-4 h-4 mr-2" />
+                  Associar Gestor ({selectedEmployees.length})
+                </Button>
+              )}
+              <Button onClick={() => activeTab === "managers" ? setShowAddManagerModal(true) : setShowAddEmployeeModal(true)}>
+                <Plus className="w-4 h-4 mr-2" />
+                Adicionar
+              </Button>
+            </div>
           </CardHeader>
           <CardContent>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Nome</TableHead>
-                  <TableHead>E-mail</TableHead>
-                  <TableHead>Telefone</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead className="text-right">Ações</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {(activeTab === "managers" ? managers : employees).map((person) => (
-                  <TableRow key={person.id}>
-                    <TableCell className="font-medium">{person.name}</TableCell>
-                    <TableCell>{person.email}</TableCell>
-                    <TableCell>{person.phone || "-"}</TableCell>
-                    <TableCell>
-                      <Badge variant={person.acceptedAt ? "default" : "secondary"}>
-                        {person.acceptedAt ? "Ativo" : "Pendente"}
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="text-right">
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => activeTab === "managers" 
-                          ? handleRemoveManager(person.id) 
-                          : handleRemoveEmployee(person.id)
-                        }
-                        className="text-destructive hover:text-destructive"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                ))}
-                {(activeTab === "managers" ? managers : employees).length === 0 && (
+            {activeTab === "managers" ? (
+              <Table>
+                <TableHeader>
                   <TableRow>
-                    <TableCell colSpan={5} className="text-center text-muted-foreground py-8">
-                      Nenhum {activeTab === "managers" ? "gestor" : "funcionário"} cadastrado
-                    </TableCell>
+                    <TableHead>Nome</TableHead>
+                    <TableHead>E-mail</TableHead>
+                    <TableHead>Telefone</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead className="text-right">Ações</TableHead>
                   </TableRow>
-                )}
-              </TableBody>
-            </Table>
+                </TableHeader>
+                <TableBody>
+                  {managers.map((person) => (
+                    <TableRow key={person.id}>
+                      <TableCell className="font-medium">{person.name}</TableCell>
+                      <TableCell>{person.email}</TableCell>
+                      <TableCell>{person.phone || "-"}</TableCell>
+                      <TableCell>
+                        <Badge variant={person.acceptedAt ? "default" : "secondary"}>
+                          {person.acceptedAt ? "Ativo" : "Pendente"}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => handleRemoveManager(person.id)}
+                          className="text-destructive hover:text-destructive"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                  {managers.length === 0 && (
+                    <TableRow>
+                      <TableCell colSpan={5} className="text-center text-muted-foreground py-8">
+                        Nenhum gestor cadastrado
+                      </TableCell>
+                    </TableRow>
+                  )}
+                </TableBody>
+              </Table>
+            ) : (
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead className="w-12">
+                      <Checkbox
+                        checked={employees.length > 0 && selectedEmployees.length === employees.length}
+                        onCheckedChange={handleSelectAllEmployees}
+                      />
+                    </TableHead>
+                    <TableHead>Nome</TableHead>
+                    <TableHead>E-mail</TableHead>
+                    <TableHead>Telefone</TableHead>
+                    <TableHead>Gestor</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead className="text-right">Ações</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {employees.map((person) => (
+                    <TableRow key={person.id}>
+                      <TableCell>
+                        <Checkbox
+                          checked={selectedEmployees.includes(person.id)}
+                          onCheckedChange={(checked) => handleSelectEmployee(person.id, checked as boolean)}
+                        />
+                      </TableCell>
+                      <TableCell className="font-medium">{person.name}</TableCell>
+                      <TableCell>{person.email}</TableCell>
+                      <TableCell>{person.phone || "-"}</TableCell>
+                      <TableCell>
+                        {person.managerName ? (
+                          <Badge variant="outline" className="bg-primary/10">
+                            {person.managerName}
+                          </Badge>
+                        ) : (
+                          <span className="text-muted-foreground text-sm">-</span>
+                        )}
+                      </TableCell>
+                      <TableCell>
+                        <Badge variant={person.acceptedAt ? "default" : "secondary"}>
+                          {person.acceptedAt ? "Ativo" : "Pendente"}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => handleRemoveEmployee(person.id)}
+                          className="text-destructive hover:text-destructive"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                  {employees.length === 0 && (
+                    <TableRow>
+                      <TableCell colSpan={7} className="text-center text-muted-foreground py-8">
+                        Nenhum funcionário cadastrado
+                      </TableCell>
+                    </TableRow>
+                  )}
+                </TableBody>
+              </Table>
+            )}
           </CardContent>
         </Card>
       </main>
@@ -488,6 +599,58 @@ const DashboardEmpresa = () => {
               </Button>
             </div>
           </form>
+        </DialogContent>
+      </Dialog>
+
+      {/* Assign Manager Modal */}
+      <Dialog open={showAssignManagerModal} onOpenChange={setShowAssignManagerModal}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Associar Gestor</DialogTitle>
+            <DialogDescription>
+              Selecione um gestor para associar aos {selectedEmployees.length} funcionário(s) selecionado(s).
+            </DialogDescription>
+          </DialogHeader>
+          {managers.length === 0 ? (
+            <div className="py-8 text-center">
+              <UserCog className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
+              <p className="text-muted-foreground">Nenhum gestor cadastrado.</p>
+              <p className="text-sm text-muted-foreground mt-2">Cadastre um gestor primeiro na aba "Gestores".</p>
+              <Button 
+                variant="outline" 
+                className="mt-4"
+                onClick={() => {
+                  setShowAssignManagerModal(false);
+                  setActiveTab("managers");
+                  setShowAddManagerModal(true);
+                }}
+              >
+                <Plus className="w-4 h-4 mr-2" />
+                Adicionar Gestor
+              </Button>
+            </div>
+          ) : (
+            <div className="space-y-2">
+              {managers.map((manager) => (
+                <Button
+                  key={manager.id}
+                  variant="outline"
+                  className="w-full justify-start h-auto py-3"
+                  onClick={() => handleAssignManager(manager.id)}
+                >
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 rounded-full bg-primary/10">
+                      <UserCog className="w-4 h-4 text-primary" />
+                    </div>
+                    <div className="text-left">
+                      <p className="font-medium">{manager.name}</p>
+                      <p className="text-xs text-muted-foreground">{manager.email}</p>
+                    </div>
+                  </div>
+                </Button>
+              ))}
+            </div>
+          )}
         </DialogContent>
       </Dialog>
     </div>
