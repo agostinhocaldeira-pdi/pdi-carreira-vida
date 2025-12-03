@@ -39,7 +39,7 @@ const Login = () => {
     const existingUser = localStorage.getItem("user");
     if (existingUser) {
       const userData = JSON.parse(existingUser);
-      if (userData.email === loginData.email && userData.password === loginData.password) {
+      if (userData.email.toLowerCase() === loginData.email.toLowerCase() && userData.password === loginData.password) {
         toast.success("Login realizado com sucesso!");
         navigate("/home");
       } else {
@@ -77,13 +77,13 @@ const Login = () => {
     const existingUser = localStorage.getItem("user");
     if (existingUser) {
       const userData = JSON.parse(existingUser);
-      if (userData.email === forgotPasswordData.email) {
+      if (userData.email.toLowerCase() === forgotPasswordData.email.toLowerCase()) {
         // Atualizar senha no localStorage
         userData.password = forgotPasswordData.newPassword;
         localStorage.setItem("user", JSON.stringify(userData));
         toast.success("Senha alterada com sucesso!");
         setShowForgotPasswordModal(false);
-        setLoginData({ email: forgotPasswordData.email, password: "" });
+        setLoginData({ email: userData.email, password: "" });
         return;
       }
     }
