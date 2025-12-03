@@ -12,6 +12,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
 import ConfirmDeleteDialog from "@/components/ConfirmDeleteDialog";
+import { supabase } from "@/integrations/supabase/client";
 
 interface KeyResult {
   id: string;
@@ -57,48 +58,60 @@ export function OKRsTab({ companyId, employees }: OKRsTabProps) {
     loadOKRs();
   }, [companyId]);
 
-  const loadOKRs = () => {
-    const stored = localStorage.getItem(`okrs_${companyId}`);
-    if (stored) {
-      // Normalize old data that might have linked_employees instead of linked_employee_ids
-      const parsed = JSON.parse(stored).map((okr: any) => ({
-        ...okr,
-        linked_employee_ids: okr.linked_employee_ids || [],
-      }));
-      setOkrs(parsed);
-    } else {
-      // Dados de exemplo
-      const sampleOKRs: OKR[] = [
-        {
-          id: "1",
-          title: "Aumentar produtividade da equipe",
-          description: "Melhorar a eficiência operacional através de processos otimizados",
-          period_start: "2024-01-01",
-          period_end: "2024-03-31",
-          status: "active",
-          key_results: [
-            { id: "kr1", title: "Reduzir tempo médio de tarefas", target_value: 30, current_value: 18, unit: "%" },
-            { id: "kr2", title: "Aumentar entregas no prazo", target_value: 90, current_value: 75, unit: "%" },
-            { id: "kr3", title: "Implementar automações", target_value: 5, current_value: 3, unit: "processos" },
-          ],
-          linked_employee_ids: [],
-        },
-        {
-          id: "2",
-          title: "Desenvolver competências técnicas",
-          description: "Capacitar a equipe em novas tecnologias e metodologias",
-          period_start: "2024-01-01",
-          period_end: "2024-06-30",
-          status: "active",
-          key_results: [
-            { id: "kr4", title: "Certificações obtidas", target_value: 15, current_value: 7, unit: "certificações" },
-            { id: "kr5", title: "Horas de treinamento", target_value: 200, current_value: 120, unit: "horas" },
-          ],
-          linked_employee_ids: [],
-        },
-      ];
-      setOkrs(sampleOKRs);
-      localStorage.setItem(`okrs_${companyId}`, JSON.stringify(sampleOKRs));
+  const loadOKRs = async () => {
+    try {
+      // Tentar carregar do Supabase primeiro
+      const { data: okrsData, error } = await supabase
+        .from('company_okrs')
+        .select(`
+          id, title, description, period_start, period_end, status,
+          okr_key_results (id, title, target_value, current_value, unit)
+        `)
+        .eq('company_id', companyId);
+
+      if (!error && okrsData && okrsData.length > 0) {
+        // Carregar linked_employee_ids do localStorage (ainda não está no Supabase)
+        const localData = localStorage.getItem(`okrs_${companyId}`);
+        const linkedMap: Record<string, string[]> = {};
+        if (localData) {
+          const parsed = JSON.parse(localData);
+          parsed.forEach((okr: any) => {
+            linkedMap[okr.id] = okr.linked_employee_ids || [];
+          });
+        }
+
+        const mappedOkrs = okrsData.map(okr => ({
+          id: okr.id,
+          title: okr.title,
+          description: okr.description || '',
+          period_start: okr.period_start,
+          period_end: okr.period_end,
+          status: okr.status as "active" | "completed" | "archived",
+          key_results: okr.okr_key_results || [],
+          linked_employee_ids: linkedMap[okr.id] || []
+        }));
+
+        setOkrs(mappedOkrs);
+        // Atualizar localStorage para manter sync
+        localStorage.setItem(`okrs_${companyId}`, JSON.stringify(mappedOkrs));
+      } else {
+        // Fallback para localStorage
+        const stored = localStorage.getItem(`okrs_${companyId}`);
+        if (stored) {
+          const parsed = JSON.parse(stored).map((okr: any) => ({
+            ...okr,
+            linked_employee_ids: okr.linked_employee_ids || [],
+          }));
+          setOkrs(parsed);
+        }
+      }
+    } catch (error) {
+      console.error('Error loading OKRs:', error);
+      // Fallback para localStorage em caso de erro
+      const stored = localStorage.getItem(`okrs_${companyId}`);
+      if (stored) {
+        setOkrs(JSON.parse(stored));
+      }
     }
   };
 
@@ -107,7 +120,7 @@ export function OKRsTab({ companyId, employees }: OKRsTabProps) {
     localStorage.setItem(`okrs_${companyId}`, JSON.stringify(newOKRs));
   };
 
-  const handleAddOKR = () => {
+  const handleAddOKR = async () => {
     if (!newOKR.title || !newOKR.period_start || !newOKR.period_end) {
       toast.error("Preencha os campos obrigatórios");
       return;
@@ -119,27 +132,83 @@ export function OKRsTab({ companyId, employees }: OKRsTabProps) {
       return;
     }
 
-    const okr: OKR = {
-      id: crypto.randomUUID(),
-      ...newOKR,
-      status: "active",
-      key_results: validKeyResults.map((kr) => ({ ...kr, id: crypto.randomUUID() })),
-      linked_employee_ids: selectedEmployeeIds,
-    };
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        toast.error("Usuário não autenticado");
+        return;
+      }
 
-    saveOKRs([...okrs, okr]);
-    setShowAddModal(false);
-    setNewOKR({ title: "", description: "", period_start: "", period_end: "" });
-    setNewKeyResults([{ title: "", target_value: 100, current_value: 0, unit: "%" }]);
-    setSelectedEmployeeIds([]);
-    toast.success("OKR criado com sucesso!");
+      // Criar OKR no Supabase
+      const { data: okrData, error: okrError } = await supabase
+        .from('company_okrs')
+        .insert({
+          company_id: companyId,
+          title: newOKR.title,
+          description: newOKR.description,
+          period_start: newOKR.period_start,
+          period_end: newOKR.period_end,
+          status: 'active',
+          created_by: user.id
+        })
+        .select()
+        .single();
+
+      if (okrError) throw okrError;
+
+      // Criar Key Results
+      const keyResultsToInsert = validKeyResults.map(kr => ({
+        okr_id: okrData.id,
+        title: kr.title,
+        target_value: kr.target_value,
+        current_value: kr.current_value,
+        unit: kr.unit
+      }));
+
+      const { data: krData, error: krError } = await supabase
+        .from('okr_key_results')
+        .insert(keyResultsToInsert)
+        .select();
+
+      if (krError) throw krError;
+
+      const newOkr: OKR = {
+        id: okrData.id,
+        title: okrData.title,
+        description: okrData.description || '',
+        period_start: okrData.period_start,
+        period_end: okrData.period_end,
+        status: 'active',
+        key_results: krData || [],
+        linked_employee_ids: selectedEmployeeIds,
+      };
+
+      saveOKRs([...okrs, newOkr]);
+      setShowAddModal(false);
+      setNewOKR({ title: "", description: "", period_start: "", period_end: "" });
+      setNewKeyResults([{ title: "", target_value: 100, current_value: 0, unit: "%" }]);
+      setSelectedEmployeeIds([]);
+      toast.success("OKR criado com sucesso!");
+    } catch (error) {
+      console.error('Error creating OKR:', error);
+      toast.error("Erro ao criar OKR");
+    }
   };
 
-  const handleDeleteOKR = () => {
+  const handleDeleteOKR = async () => {
     if (deleteOKRId) {
-      saveOKRs(okrs.filter((o) => o.id !== deleteOKRId));
-      toast.success("OKR removido");
-      setDeleteOKRId(null);
+      try {
+        // Deletar do Supabase
+        await supabase.from('okr_key_results').delete().eq('okr_id', deleteOKRId);
+        await supabase.from('company_okrs').delete().eq('id', deleteOKRId);
+        
+        saveOKRs(okrs.filter((o) => o.id !== deleteOKRId));
+        toast.success("OKR removido");
+        setDeleteOKRId(null);
+      } catch (error) {
+        console.error('Error deleting OKR:', error);
+        toast.error("Erro ao remover OKR");
+      }
     }
   };
 
