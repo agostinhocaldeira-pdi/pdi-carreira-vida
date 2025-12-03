@@ -8,16 +8,20 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Rocket, Plus, Trash2, Pencil, Check, X, ChevronDown, Lightbulb } from "lucide-react";
+import { Rocket, Plus, Trash2, Pencil, Check, X, ChevronDown, Lightbulb, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import ConfirmDeleteDialog from "@/components/ConfirmDeleteDialog";
+import { usePDIStorage } from "@/hooks/usePDIStorage";
 
 const MaoNaMassa = () => {
+  const storage = usePDIStorage();
   const formRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [showSuggestionModal, setShowSuggestionModal] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isSaving, setIsSaving] = useState(false);
   const [objetivoSelecionado, setObjetivoSelecionado] = useState("");
   const [objetivosDisponiveis, setObjetivosDisponiveis] = useState<Array<{
     id: number;
@@ -70,97 +74,56 @@ const MaoNaMassa = () => {
   const [deletePassoId, setDeletePassoId] = useState<number | null>(null);
   const [deleteMetaId, setDeleteMetaId] = useState<number | null>(null);
 
+  // Carregar dados
   useEffect(() => {
-    try {
-      let objetivosSalvos = JSON.parse(localStorage.getItem("objetivos") || "[]");
-      
-      // Adicionar objetivos mockados se não existirem
-      if (objetivosSalvos.length === 0) {
-        objetivosSalvos = [
-          { id: 1, texto: "Crescimento Profissional", status: "em-andamento" },
-          { id: 2, texto: "Saúde e Bem-estar", status: "a-fazer" },
-          { id: 3, texto: "Desenvolvimento Pessoal", status: "em-andamento" }
-        ];
-        localStorage.setItem("objetivos", JSON.stringify(objetivosSalvos));
-      }
-      setObjetivosDisponiveis(objetivosSalvos);
-      
-      let metasSalvas = JSON.parse(localStorage.getItem("metas") || "[]");
-    
-    // Adicionar metas mockadas se não existirem
-    if (metasSalvas.length === 0) {
-      metasSalvas = [
-        {
-          id: 1001,
-          objetivoId: "1",
-          texto: "Conquistar promoção para cargo de liderança",
-          dataAlvo: "2025-12-31",
-          medicao: "Receber feedback positivo do gestor e assumir projeto importante",
-          inicio: "2025-01-15",
-          periodicidade: "mensalmente",
-          concluida: false,
-          acoes: [
-            { id: 101, acao: "Participar de curso de liderança", periodicidade: "semanalmente", status: "em-andamento" },
-            { id: 102, acao: "Solicitar reunião 1:1 com gestor", periodicidade: "mensalmente", status: "a-fazer" },
-            { id: 103, acao: "Mentorar membros júnior da equipe", periodicidade: "semanalmente", status: "em-andamento" }
-          ],
-          passos: [
-            { id: 201, passo: "Identificar competências necessárias para cargo de liderança" },
-            { id: 202, passo: "Criar plano de desenvolvimento individual com gestor" },
-            { id: 203, passo: "Buscar oportunidades de liderar projetos pequenos" },
-            { id: 204, passo: "Demonstrar resultados consistentes na função atual" }
-          ]
-        },
-        {
-          id: 1002,
-          objetivoId: "2",
-          texto: "Perder 10kg e melhorar condicionamento físico",
-          dataAlvo: "2025-08-30",
-          medicao: "Atingir 75kg na balança e completar 5km de corrida",
-          inicio: "2025-02-01",
-          periodicidade: "semanalmente",
-          concluida: false,
-          acoes: [
-            { id: 104, acao: "Treinar na academia", periodicidade: "diariamente", status: "em-andamento" },
-            { id: 105, acao: "Seguir plano alimentar", periodicidade: "diariamente", status: "em-andamento" },
-            { id: 106, acao: "Praticar corrida ao ar livre", periodicidade: "semanalmente", status: "a-fazer" }
-          ],
-          passos: [
-            { id: 205, passo: "Contratar nutricionista e personal trainer" },
-            { id: 206, passo: "Estabelecer rotina de treinos 5x por semana" },
-            { id: 207, passo: "Acompanhar peso e medidas semanalmente" }
-          ]
-        },
-        {
-          id: 1003,
-          objetivoId: "3",
-          texto: "Ler 24 livros no ano sobre desenvolvimento pessoal",
-          dataAlvo: "2025-12-31",
-          medicao: "Completar leitura de 2 livros por mês e fazer resumos",
-          inicio: "2025-01-01",
-          periodicidade: "mensalmente",
-          concluida: false,
-          acoes: [
-            { id: 107, acao: "Ler 30 minutos por dia", periodicidade: "diariamente", status: "em-andamento" },
-            { id: 108, acao: "Fazer anotações e resumos", periodicidade: "semanalmente", status: "pendente" }
-          ],
-          passos: [
-            { id: 208, passo: "Criar lista de 24 livros recomendados" },
-            { id: 209, passo: "Reservar 30 minutos diários para leitura" },
-            { id: 210, passo: "Criar sistema de anotações e aprendizados" },
-            { id: 211, passo: "Compartilhar resumos com grupo de estudos" }
-          ]
+    const loadData = async () => {
+      setIsLoading(true);
+      try {
+        // Objetivos
+        const savedObjetivos = await storage.getObjetivos();
+        if (savedObjetivos && savedObjetivos.length > 0) {
+          setObjetivosDisponiveis(savedObjetivos.map((obj: any) => ({
+            id: obj.id,
+            texto: obj.texto,
+          })));
+        } else {
+          const localObjetivos = JSON.parse(localStorage.getItem("objetivos") || "[]");
+          setObjetivosDisponiveis(localObjetivos);
         }
-      ];
-      localStorage.setItem("metas", JSON.stringify(metasSalvas));
-    }
-    setMetasCadastradas(metasSalvas);
-    } catch (error) {
-      console.error("Erro ao carregar dados do localStorage:", error);
-      setObjetivosDisponiveis([]);
-      setMetasCadastradas([]);
-    }
-  }, []);
+
+        // Metas
+        const savedMetas = await storage.getMetas();
+        if (savedMetas && savedMetas.length > 0) {
+          setMetasCadastradas(savedMetas.map((meta: any) => ({
+            id: meta.id,
+            objetivoId: meta.objetivo_id || meta.objetivoId,
+            texto: meta.texto,
+            dataAlvo: meta.data_alvo || meta.dataAlvo,
+            medicao: meta.medicao,
+            inicio: meta.inicio,
+            concluida: meta.concluida,
+            acoes: meta.acoes || [],
+            passos: meta.passos || [],
+            from_smart: meta.from_smart,
+          })));
+        } else {
+          const localMetas = JSON.parse(localStorage.getItem("metas") || "[]");
+          setMetasCadastradas(localMetas);
+        }
+      } catch (error) {
+        console.error("Error loading data:", error);
+        // Fallback to localStorage
+        const localObjetivos = JSON.parse(localStorage.getItem("objetivos") || "[]");
+        setObjetivosDisponiveis(localObjetivos);
+        const localMetas = JSON.parse(localStorage.getItem("metas") || "[]");
+        setMetasCadastradas(localMetas);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadData();
+  }, [storage.isAuthenticated]);
 
   // Escutar evento para abrir formulário de meta com objetivo pré-selecionado
   useEffect(() => {
@@ -283,7 +246,7 @@ const MaoNaMassa = () => {
     toast.success("Passo atualizado!");
   };
 
-  const handleSaveMeta = () => {
+  const handleSaveMeta = async () => {
     if (!objetivoSelecionado) {
       toast.error("Selecione um objetivo primeiro");
       return;
@@ -294,33 +257,40 @@ const MaoNaMassa = () => {
       return;
     }
 
-    const metas = JSON.parse(localStorage.getItem("metas") || "[]");
-    
-    if (editandoMetaId) {
-      // Atualizar meta existente
-      const metasAtualizadas = metas.map((m: any) => 
-        m.id === editandoMetaId 
-          ? { ...meta, objetivoId: objetivoSelecionado, acoes, passos, id: editandoMetaId, concluida: false }
-          : m
-      );
-      localStorage.setItem("metas", JSON.stringify(metasAtualizadas));
-      setMetasCadastradas(metasAtualizadas);
-      toast.success("Meta atualizada com sucesso!");
-      setEditandoMetaId(null);
-      setIsFormOpen(false);
-    } else {
-      // Adicionar nova meta
-      const novaMeta = { ...meta, objetivoId: objetivoSelecionado, acoes, passos, id: Date.now(), concluida: false };
-      metas.push(novaMeta);
-      localStorage.setItem("metas", JSON.stringify(metas));
-      setMetasCadastradas(metas);
-      setShowSuggestionModal(true);
-      setIsFormOpen(false);
+    setIsSaving(true);
+    try {
+      const metas = [...metasCadastradas];
       
-      // Disparar pesquisa de satisfação para novas metas
-      if (typeof window !== 'undefined' && (window as any).markSectionCompleted) {
-        (window as any).markSectionCompleted("Mão na Massa (Metas)");
+      if (editandoMetaId) {
+        const metasAtualizadas = metas.map((m: any) => 
+          m.id === editandoMetaId 
+            ? { ...meta, objetivoId: objetivoSelecionado, acoes, passos, id: editandoMetaId, concluida: false }
+            : m
+        );
+        await storage.saveMetas(metasAtualizadas);
+        localStorage.setItem("metas", JSON.stringify(metasAtualizadas));
+        setMetasCadastradas(metasAtualizadas);
+        toast.success("Meta atualizada com sucesso!");
+        setEditandoMetaId(null);
+        setIsFormOpen(false);
+      } else {
+        const novaMeta = { ...meta, objetivoId: objetivoSelecionado, acoes, passos, id: Date.now(), concluida: false };
+        metas.push(novaMeta);
+        await storage.saveMetas(metas);
+        localStorage.setItem("metas", JSON.stringify(metas));
+        setMetasCadastradas(metas);
+        setShowSuggestionModal(true);
+        setIsFormOpen(false);
+        
+        if (typeof window !== 'undefined' && (window as any).markSectionCompleted) {
+          (window as any).markSectionCompleted("Mão na Massa (Metas)");
+        }
       }
+    } catch (error) {
+      console.error("Error saving meta:", error);
+      toast.error("Erro ao salvar meta");
+    } finally {
+      setIsSaving(false);
     }
     
     // Reset form

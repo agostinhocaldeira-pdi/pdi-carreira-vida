@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -8,19 +8,23 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Calendar } from "@/components/ui/calendar";
-import { Book, Smile, Frown, Meh, ChevronDown, PenLine, History } from "lucide-react";
+import { Book, Smile, Frown, Meh, ChevronDown, PenLine, History, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { cn } from "@/lib/utils";
+import { usePDIStorage } from "@/hooks/usePDIStorage";
 
 type ViewMode = "registro" | "historico";
 
 const DiarioSection = () => {
+  const { getDiario, getDiarioByDate, saveDiarioEntry, isAuthenticated } = usePDIStorage();
   const [isOpen, setIsOpen] = useState(false);
   const [viewMode, setViewMode] = useState<ViewMode>("registro");
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+  const [isLoading, setIsLoading] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
   const [entrada, setEntrada] = useState({
     humor: "",
     reflexoes: "",
@@ -54,37 +58,64 @@ const DiarioSection = () => {
     );
   }, [entrada]);
 
+  // Carregar entradas do diário
+  const loadEntradas = useCallback(async () => {
+    setIsLoading(true);
+    try {
+      const data = await getDiario();
+      // Normalizar dados para formato esperado
+      const normalized = data.map((entry: any) => ({
+        id: entry.id,
+        data: entry.data,
+        humor: entry.humor,
+        reflexoes: entry.reflexao || entry.reflexoes || '',
+        avancos: entry.conquistas || entry.avancos || '',
+        habitos: Array.isArray(entry.habitos) ? entry.habitos.join(', ') : entry.habitos || '',
+        gratidao: entry.gratidao || '',
+      }));
+      setEntradas(normalized);
+    } catch (error) {
+      console.error('Error loading diary entries:', error);
+      // Fallback to localStorage
+      const stored = JSON.parse(localStorage.getItem("diario") || "[]");
+      setEntradas(stored);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [getDiario]);
+
   useEffect(() => {
-    const stored = JSON.parse(localStorage.getItem("diario") || "[]");
-    setEntradas(stored);
-  }, []);
+    loadEntradas();
+  }, [loadEntradas]);
 
   // Carregar entrada da data selecionada
   useEffect(() => {
-    const dateStr = selectedDate.toISOString().split("T")[0];
-    const stored = JSON.parse(localStorage.getItem("diario") || "[]");
-    const existingEntry = stored.find((e: any) => e.data === dateStr);
-    
-    if (existingEntry) {
-      setEntrada({
-        humor: existingEntry.humor || "",
-        reflexoes: existingEntry.reflexoes || "",
-        avancos: existingEntry.avancos || "",
-        habitos: existingEntry.habitos || "",
-        gratidao: existingEntry.gratidao || "",
-        data: dateStr,
-      });
-    } else {
-      setEntrada({
-        humor: "",
-        reflexoes: "",
-        avancos: "",
-        habitos: "",
-        gratidao: "",
-        data: dateStr,
-      });
-    }
-  }, [selectedDate]);
+    const loadEntryForDate = async () => {
+      const dateStr = selectedDate.toISOString().split("T")[0];
+      const existingEntry = entradas.find((e) => e.data === dateStr);
+      
+      if (existingEntry) {
+        setEntrada({
+          humor: existingEntry.humor || "",
+          reflexoes: existingEntry.reflexoes || "",
+          avancos: existingEntry.avancos || "",
+          habitos: existingEntry.habitos || "",
+          gratidao: existingEntry.gratidao || "",
+          data: dateStr,
+        });
+      } else {
+        setEntrada({
+          humor: "",
+          reflexoes: "",
+          avancos: "",
+          habitos: "",
+          gratidao: "",
+          data: dateStr,
+        });
+      }
+    };
+    loadEntryForDate();
+  }, [selectedDate, entradas]);
 
   // Reset para hoje ao mudar para modo registro
   useEffect(() => {
@@ -154,27 +185,47 @@ const DiarioSection = () => {
     toast.success("Dados mockados gerados com sucesso! (365 dias)");
   };
 
-  const handleSave = () => {
-    const stored = JSON.parse(localStorage.getItem("diario") || "[]");
-    const existingIndex = stored.findIndex((e: any) => e.data === entrada.data);
-    
-    if (existingIndex >= 0) {
-      // Atualizar entrada existente
-      stored[existingIndex] = { ...stored[existingIndex], ...entrada };
-      toast.success("Entrada do diário atualizada!");
-    } else {
-      // Criar nova entrada
-      stored.push({ ...entrada, id: Date.now() });
-      toast.success("Entrada do diário salva!");
+  const handleSave = async () => {
+    setIsSaving(true);
+    try {
+      const entryToSave = {
+        id: entrada.data,
+        data: entrada.data,
+        humor: entrada.humor,
+        reflexao: entrada.reflexoes,
+        conquistas: entrada.avancos,
+        habitos: entrada.habitos.split(',').map(h => h.trim()).filter(Boolean),
+        gratidao: entrada.gratidao,
+      };
       
-      // Disparar pesquisa de satisfação apenas para novas entradas
-      if (typeof window !== 'undefined' && (window as any).markSectionCompleted) {
-        (window as any).markSectionCompleted("Diário");
+      await saveDiarioEntry(entryToSave as any);
+      
+      // Atualizar lista local
+      const existingIndex = entradas.findIndex((e) => e.data === entrada.data);
+      const updatedEntradas = [...entradas];
+      
+      if (existingIndex >= 0) {
+        updatedEntradas[existingIndex] = { ...updatedEntradas[existingIndex], ...entrada };
+        toast.success("Entrada do diário atualizada!");
+      } else {
+        updatedEntradas.push({ ...entrada, id: Date.now() });
+        toast.success("Entrada do diário salva!");
+        
+        if (typeof window !== 'undefined' && (window as any).markSectionCompleted) {
+          (window as any).markSectionCompleted("Diário");
+        }
       }
+      
+      setEntradas(updatedEntradas);
+      
+      // Também salvar em localStorage como backup
+      localStorage.setItem("diario", JSON.stringify(updatedEntradas));
+    } catch (error) {
+      console.error('Error saving diary entry:', error);
+      toast.error("Erro ao salvar entrada");
+    } finally {
+      setIsSaving(false);
     }
-    
-    localStorage.setItem("diario", JSON.stringify(stored));
-    setEntradas(stored);
   };
 
   const periodOptions = [

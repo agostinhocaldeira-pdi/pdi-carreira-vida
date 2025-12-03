@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -16,6 +16,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import ConfirmDeleteDialog from "@/components/ConfirmDeleteDialog";
 import { OKRLinkSection, CompanyOKRsOverview } from "@/components/home/OKRLinkSection";
+import { usePDIStorage } from "@/hooks/usePDIStorage";
 
 interface PlanoDeVidaProps {
   onTabChange?: (tab: string) => void;
@@ -25,6 +26,7 @@ interface PlanoDeVidaProps {
 }
 
 const PlanoDeVida = ({ onTabChange, onOpenChange, forcedTab, forcedOpen }: PlanoDeVidaProps) => {
+  const storage = usePDIStorage();
   const [isOpen, setIsOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("quem-sou");
   const [vvd, setVvd] = useState("");
@@ -42,6 +44,7 @@ const PlanoDeVida = ({ onTabChange, onOpenChange, forcedTab, forcedOpen }: Plano
   const [lastInsightDate, setLastInsightDate] = useState<string | null>(null);
   const [canGenerateInsight, setCanGenerateInsight] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [objetivo, setObjetivo] = useState({
     texto: "",
     dataAlvo: "",
@@ -171,149 +174,132 @@ const PlanoDeVida = ({ onTabChange, onOpenChange, forcedTab, forcedOpen }: Plano
     };
   }, []);
 
-  // Carregar dados salvos do localStorage
+  // Carregar dados salvos
   useEffect(() => {
-    const savedVvd = localStorage.getItem("vvd");
-    if (savedVvd) {
-      setVvd(savedVvd);
-      setIsEditingVvd(false);
-    } else {
-      // Dados mockados para VVD
-      const mockVvd = "Quero construir uma carreira sólida no desenvolvimento de software, com equilíbrio entre vida pessoal e profissional. Desejo ter tempo para cuidar da minha saúde física e mental, manter relacionamentos significativos com família e amigos, e ter estabilidade financeira que me permita realizar sonhos como viajar pelo mundo e ter minha própria casa. Busco ser uma pessoa íntegra, que contribui positivamente para a sociedade e inspira outros ao meu redor.";
-      setVvd(mockVvd);
-      localStorage.setItem("vvd", mockVvd);
-      setIsEditingVvd(false);
-    }
-
-    const savedValores = localStorage.getItem("valores");
-    if (savedValores) {
-      setValores(JSON.parse(savedValores));
-      setIsEditingValores(false);
-    } else {
-      // Dados mockados para Valores
-      const mockValores = [
-        "Integridade",
-        "Respeito",
-        "Crescimento",
-        "Família",
-        "Saúde",
-        "Equilíbrio",
-        "Criatividade",
-        "Liberdade",
-        "Excelência",
-        "Empatia",
-        "Gratidão",
-        "Resiliência"
-      ];
-      setValores(mockValores);
-      localStorage.setItem("valores", JSON.stringify(mockValores));
-      setIsEditingValores(false);
-    }
-
-    const savedAreas = localStorage.getItem("areasVida");
-    if (savedAreas) {
-      const loadedAreas = JSON.parse(savedAreas);
-      // Converter números para strings se necessário
-      const normalizedAreas = loadedAreas.map((area: any) => ({
-        ...area,
-        notaAtual: String(area.notaAtual || ""),
-        notaDesejada: String(area.notaDesejada || "")
-      }));
-      setAreasVida(normalizedAreas);
-      setIsEditingAreas(false);
-    } else {
-      // Dados mockados para Áreas da Vida (10 áreas)
-      const mockAreas = [
-        { area: "Saúde e Bem-estar", notaAtual: "5", notaDesejada: "9" },
-        { area: "Carreira e Profissão", notaAtual: "6", notaDesejada: "9" },
-        { area: "Finanças", notaAtual: "5", notaDesejada: "8" },
-        { area: "Relacionamentos", notaAtual: "7", notaDesejada: "9" },
-        { area: "Família", notaAtual: "8", notaDesejada: "10" },
-        { area: "Desenvolvimento Pessoal", notaAtual: "6", notaDesejada: "9" },
-        { area: "Lazer e Diversão", notaAtual: "4", notaDesejada: "8" },
-        { area: "Espiritualidade", notaAtual: "5", notaDesejada: "8" },
-        { area: "Ambiente Físico", notaAtual: "6", notaDesejada: "9" },
-        { area: "Contribuição Social", notaAtual: "4", notaDesejada: "7" },
-      ];
-      setAreasVida(mockAreas);
-      localStorage.setItem("areasVida", JSON.stringify(mockAreas));
-      setIsEditingAreas(false);
-    }
-
-    const savedObjetivos = localStorage.getItem("objetivos");
-    if (savedObjetivos) {
-      setObjetivos(JSON.parse(savedObjetivos));
-    } else {
-      // Dados mockados para Objetivos
-      const mockObjetivos = [
-        {
-          id: 1,
-          texto: "Concluir certificação em Cloud Computing",
-          dataAlvo: "2025-06-30",
-          conexaoVvd: "Crescimento profissional e desenvolvimento de habilidades técnicas",
-          status: "em-andamento"
-        },
-        {
-          id: 2,
-          texto: "Praticar exercícios físicos 3x por semana",
-          dataAlvo: "2025-12-31",
-          conexaoVvd: "Cuidar da saúde física e ter mais energia no dia a dia",
-          status: "em-andamento"
-        },
-        {
-          id: 3,
-          texto: "Economizar 20% da renda mensal",
-          dataAlvo: "2025-12-31",
-          conexaoVvd: "Alcançar estabilidade financeira e realizar sonhos",
-          status: "a-fazer"
+    const loadData = async () => {
+      setIsLoading(true);
+      try {
+        // VVD
+        const savedVvd = await storage.getVvd();
+        if (savedVvd) {
+          setVvd(savedVvd);
+          setIsEditingVvd(false);
+        } else {
+          const localVvd = localStorage.getItem("vvd");
+          if (localVvd) {
+            setVvd(localVvd);
+            setIsEditingVvd(false);
+          }
         }
-      ];
-      setObjetivos(mockObjetivos);
-      localStorage.setItem("objetivos", JSON.stringify(mockObjetivos));
-    }
 
-    // Verificar se o usuário é administrador
-    const user = localStorage.getItem("user");
-    if (user) {
-      const userData = JSON.parse(user);
-      const savedAdmins = localStorage.getItem("administrators");
-      if (savedAdmins) {
-        const administrators = JSON.parse(savedAdmins);
-        const userIsAdmin = administrators.some(
-          (admin: { email: string }) => admin.email === userData.email
-        );
-        setIsAdmin(userIsAdmin);
-        
-        // Administradores não têm limite
-        if (userIsAdmin) {
-          setCanGenerateInsight(true);
-          return;
+        // Valores
+        const savedValores = await storage.getValores();
+        if (savedValores && savedValores.length > 0) {
+          const valoresCompletos = [...savedValores, ...Array(12 - savedValores.length).fill("")];
+          setValores(valoresCompletos);
+          setIsEditingValores(false);
+        } else {
+          const localValores = localStorage.getItem("valores");
+          if (localValores) {
+            setValores(JSON.parse(localValores));
+            setIsEditingValores(false);
+          }
         }
+
+        // Áreas da Vida
+        const savedAreas = await storage.getAreasVida();
+        if (savedAreas && savedAreas.length > 0) {
+          const normalizedAreas = savedAreas.map((area: any) => ({
+            area: area.area,
+            notaAtual: String(area.nota_atual || area.notaAtual || ""),
+            notaDesejada: String(area.nota_desejada || area.notaDesejada || "")
+          }));
+          setAreasVida(normalizedAreas);
+          setIsEditingAreas(false);
+        } else {
+          const localAreas = localStorage.getItem("areasVida");
+          if (localAreas) {
+            const loadedAreas = JSON.parse(localAreas);
+            const normalizedAreas = loadedAreas.map((area: any) => ({
+              ...area,
+              notaAtual: String(area.notaAtual || ""),
+              notaDesejada: String(area.notaDesejada || "")
+            }));
+            setAreasVida(normalizedAreas);
+            setIsEditingAreas(false);
+          }
+        }
+
+        // Objetivos
+        const savedObjetivos = await storage.getObjetivos();
+        if (savedObjetivos && savedObjetivos.length > 0) {
+          setObjetivos(savedObjetivos.map((obj: any) => ({
+            id: obj.id,
+            texto: obj.texto,
+            dataAlvo: obj.data_alvo || obj.dataAlvo || "",
+            conexaoVvd: obj.conexao_vvd || obj.conexaoVvd || "",
+            status: obj.status || "em-andamento",
+          })));
+        } else {
+          const localObjetivos = localStorage.getItem("objetivos");
+          if (localObjetivos) {
+            setObjetivos(JSON.parse(localObjetivos));
+          }
+        }
+
+        // Insights
+        const savedInsight = await storage.getUserInsight();
+        if (savedInsight) {
+          setInsight(savedInsight.insight);
+          setLastInsightDate(savedInsight.date);
+          if (savedInsight.date) {
+            const lastDate = new Date(savedInsight.date);
+            const today = new Date();
+            const diffDays = Math.ceil(Math.abs(today.getTime() - lastDate.getTime()) / (1000 * 60 * 60 * 24));
+            setCanGenerateInsight(diffDays >= 30);
+          }
+        } else {
+          const localInsight = localStorage.getItem("userInsight");
+          if (localInsight) setInsight(localInsight);
+        }
+
+        // Verificar admin
+        const user = localStorage.getItem("user");
+        if (user) {
+          const userData = JSON.parse(user);
+          const savedAdmins = localStorage.getItem("administrators");
+          if (savedAdmins) {
+            const administrators = JSON.parse(savedAdmins);
+            const userIsAdmin = administrators.some(
+              (admin: { email: string }) => admin.email === userData.email
+            );
+            setIsAdmin(userIsAdmin);
+            if (userIsAdmin) setCanGenerateInsight(true);
+          }
+        }
+      } catch (error) {
+        console.error("Error loading data:", error);
+      } finally {
+        setIsLoading(false);
       }
-    }
+    };
 
-    // Verificar última geração de insight para usuários não-admin
-    const savedLastInsightDate = localStorage.getItem("lastInsightDate");
-    if (savedLastInsightDate) {
-      setLastInsightDate(savedLastInsightDate);
-      const lastDate = new Date(savedLastInsightDate);
-      const today = new Date();
-      const diffTime = Math.abs(today.getTime() - lastDate.getTime());
-      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    loadData();
+  }, [storage.isAuthenticated]);
+
+  const handleSaveVvd = async () => {
+    try {
+      await storage.saveVvd(vvd);
+      localStorage.setItem("vvd", vvd); // Backup
+      setIsEditingVvd(false);
+      toast.success("Visão de Vida Desejada salva!");
       
-      // Permite gerar novamente após 30 dias
-      setCanGenerateInsight(diffDays >= 30);
-    }
-  }, []);
-
-  const handleSaveVvd = () => {
-    localStorage.setItem("vvd", vvd);
-    setIsEditingVvd(false);
-    toast.success("Visão de Vida Desejada salva!");
-    
-    // Disparar pesquisa de satisfação
-    if (typeof window !== 'undefined' && (window as any).markSectionCompleted) {
-      (window as any).markSectionCompleted("Visão de Vida Desejada (VVD)");
+      if (typeof window !== 'undefined' && (window as any).markSectionCompleted) {
+        (window as any).markSectionCompleted("Visão de Vida Desejada (VVD)");
+      }
+    } catch (error) {
+      console.error("Error saving VVD:", error);
+      toast.error("Erro ao salvar VVD");
     }
   };
 
@@ -321,14 +307,20 @@ const PlanoDeVida = ({ onTabChange, onOpenChange, forcedTab, forcedOpen }: Plano
     setIsEditingVvd(true);
   };
 
-  const handleSaveValores = () => {
-    localStorage.setItem("valores", JSON.stringify(valores));
-    setIsEditingValores(false);
-    toast.success("Valores salvos!");
-    
-    // Disparar pesquisa de satisfação
-    if (typeof window !== 'undefined' && (window as any).markSectionCompleted) {
-      (window as any).markSectionCompleted("Meus Valores");
+  const handleSaveValores = async () => {
+    try {
+      const filteredValores = valores.filter(v => v.trim() !== "");
+      await storage.saveValores(filteredValores);
+      localStorage.setItem("valores", JSON.stringify(valores)); // Backup
+      setIsEditingValores(false);
+      toast.success("Valores salvos!");
+      
+      if (typeof window !== 'undefined' && (window as any).markSectionCompleted) {
+        (window as any).markSectionCompleted("Meus Valores");
+      }
+    } catch (error) {
+      console.error("Error saving valores:", error);
+      toast.error("Erro ao salvar valores");
     }
   };
 
@@ -344,14 +336,25 @@ const PlanoDeVida = ({ onTabChange, onOpenChange, forcedTab, forcedOpen }: Plano
 
   const isValoresComplete = valores.some((valor) => valor.trim() !== "");
 
-  const handleSaveAreas = () => {
-    localStorage.setItem("areasVida", JSON.stringify(areasVida));
-    setIsEditingAreas(false);
-    toast.success("Áreas da Vida salvas!");
-    
-    // Disparar pesquisa de satisfação
-    if (typeof window !== 'undefined' && (window as any).markSectionCompleted) {
-      (window as any).markSectionCompleted("Áreas da Vida");
+  const handleSaveAreas = async () => {
+    try {
+      const areasToSave = areasVida.map((area, index) => ({
+        id: index + 1,
+        area: area.area,
+        nota_atual: parseInt(String(area.notaAtual)) || 0,
+        nota_desejada: parseInt(String(area.notaDesejada)) || 0,
+      }));
+      await storage.saveAreasVida(areasToSave);
+      localStorage.setItem("areasVida", JSON.stringify(areasVida)); // Backup
+      setIsEditingAreas(false);
+      toast.success("Áreas da Vida salvas!");
+      
+      if (typeof window !== 'undefined' && (window as any).markSectionCompleted) {
+        (window as any).markSectionCompleted("Áreas da Vida");
+      }
+    } catch (error) {
+      console.error("Error saving areas:", error);
+      toast.error("Erro ao salvar áreas");
     }
   };
 
@@ -430,7 +433,7 @@ const PlanoDeVida = ({ onTabChange, onOpenChange, forcedTab, forcedOpen }: Plano
     return nextDate.toLocaleDateString('pt-BR');
   };
 
-  const handleSaveObjetivo = () => {
+  const handleSaveObjetivo = async () => {
     if (!objetivo.texto || !objetivo.dataAlvo) {
       toast.error("Preencha pelo menos o objetivo e a data alvo");
       return;
@@ -439,6 +442,20 @@ const PlanoDeVida = ({ onTabChange, onOpenChange, forcedTab, forcedOpen }: Plano
     const novoObjetivo = { ...objetivo, id: Date.now() };
     const novosObjetivos = [...objetivos, novoObjetivo];
     setObjetivos(novosObjetivos);
+    
+    // Salvar em Supabase e localStorage
+    try {
+      const objetivosToSave = novosObjetivos.map(obj => ({
+        id: obj.id,
+        texto: obj.texto,
+        data_alvo: obj.dataAlvo,
+        conexao_vvd: obj.conexaoVvd,
+        status: obj.status?.replace('-', ' ') || 'a fazer',
+      }));
+      await storage.saveObjetivos(objetivosToSave as any);
+    } catch (error) {
+      console.error("Error saving objetivos:", error);
+    }
     localStorage.setItem("objetivos", JSON.stringify(novosObjetivos));
     toast.success("Objetivo cadastrado!");
     setObjetivo({ texto: "", dataAlvo: "", conexaoVvd: "", status: "em-andamento" });
@@ -485,10 +502,23 @@ const PlanoDeVida = ({ onTabChange, onOpenChange, forcedTab, forcedOpen }: Plano
     setDeleteObjetivoId(id);
   };
 
-  const confirmRemoveObjetivo = () => {
+  const confirmRemoveObjetivo = async () => {
     if (deleteObjetivoId) {
       const novosObjetivos = objetivos.filter((obj) => obj.id !== deleteObjetivoId);
       setObjetivos(novosObjetivos);
+      
+      try {
+        const objetivosToSave = novosObjetivos.map(obj => ({
+          id: obj.id,
+          texto: obj.texto,
+          data_alvo: obj.dataAlvo,
+          conexao_vvd: obj.conexaoVvd,
+          status: obj.status?.replace('-', ' ') || 'a fazer',
+        }));
+        await storage.saveObjetivos(objetivosToSave as any);
+      } catch (error) {
+        console.error("Error saving objetivos:", error);
+      }
       localStorage.setItem("objetivos", JSON.stringify(novosObjetivos));
       toast.success("Objetivo removido!");
       setDeleteObjetivoId(null);
