@@ -350,7 +350,7 @@ const MaoNaMassa = () => {
                   <TableBody>
                     {metasCadastradas.map((metaCadastrada) => {
                       const objetivo = objetivosDisponiveis.find(
-                        (obj) => obj.id.toString() === metaCadastrada.objetivoId
+                        (obj) => obj.id?.toString() === metaCadastrada.objetivoId
                       );
                       
                       return (
@@ -424,7 +424,7 @@ const MaoNaMassa = () => {
               <div className="md:hidden space-y-4">
                 {metasCadastradas.map((metaCadastrada) => {
                   const objetivo = objetivosDisponiveis.find(
-                    (obj) => obj.id.toString() === metaCadastrada.objetivoId
+                    (obj) => obj.id?.toString() === metaCadastrada.objetivoId
                   );
                   
                   return (
@@ -548,8 +548,8 @@ const MaoNaMassa = () => {
                   {objetivosDisponiveis.length === 0 ? (
                     <SelectItem value="none" disabled>Nenhum objetivo cadastrado</SelectItem>
                   ) : (
-                    objetivosDisponiveis.map((obj) => (
-                      <SelectItem key={obj.id} value={obj.id.toString()}>
+                    objetivosDisponiveis.filter(obj => obj.id != null).map((obj) => (
+                      <SelectItem key={obj.id} value={obj.id!.toString()}>
                         {obj.texto}
                       </SelectItem>
                     ))
