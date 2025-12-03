@@ -58,14 +58,7 @@ const Signup = () => {
       }
 
       if (data.user) {
-        // Criar role padrão 'user' para o novo usuário
-        const { error: roleError } = await supabase
-          .from('user_roles')
-          .insert({ user_id: data.user.id, role: 'user' });
-
-        if (roleError) {
-          console.error("Erro ao criar role:", roleError);
-        }
+        // Trigger automático cria role 'user' no banco
 
         // Manter localStorage para compatibilidade com código existente
         localStorage.setItem("user", JSON.stringify({
