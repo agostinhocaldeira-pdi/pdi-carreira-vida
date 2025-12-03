@@ -30,7 +30,6 @@ const MaoNaMassa = () => {
     dataAlvo: "",
     medicao: "",
     inicio: "",
-    periodicidade: "",
     passos: "",
   });
 
@@ -332,7 +331,6 @@ const MaoNaMassa = () => {
       dataAlvo: "",
       medicao: "",
       inicio: "",
-      periodicidade: "",
       passos: "",
     });
     setAcoes([]);
@@ -351,7 +349,6 @@ const MaoNaMassa = () => {
       dataAlvo: metaParaEditar.dataAlvo,
       medicao: metaParaEditar.medicao || "",
       inicio: metaParaEditar.inicio || "",
-      periodicidade: metaParaEditar.periodicidade || "",
       passos: metaParaEditar.passos || "",
     });
     setAcoes(metaParaEditar.acoes || []);
@@ -667,26 +664,6 @@ const MaoNaMassa = () => {
               />
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="periodicidade">Periodicidade</Label>
-              <Select
-                value={meta.periodicidade}
-                onValueChange={(value) => setMeta({ ...meta, periodicidade: value })}
-                disabled={!objetivoSelecionado}
-              >
-                <SelectTrigger id="periodicidade">
-                  <SelectValue placeholder="Selecione a frequência" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="diariamente">Diariamente</SelectItem>
-                  <SelectItem value="semanalmente">Semanalmente</SelectItem>
-                  <SelectItem value="mensalmente">Mensalmente</SelectItem>
-                  <SelectItem value="trimestral">Trimestral</SelectItem>
-                  <SelectItem value="semestral">Semestral</SelectItem>
-                  <SelectItem value="anual">Anual</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
 
             <div className="space-y-3">
               <Label>Ações</Label>
