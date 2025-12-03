@@ -1,5 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { MessagesSquare, Send, Compass, Home, Users, Headphones } from "lucide-react";
+import { MessagesSquare, Send, Compass, Home, Users, Headphones, Wrench } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
@@ -13,7 +13,7 @@ import { ptBR } from "date-fns/locale";
 import LogoutButton from "@/components/LogoutButton";
 import { useRoleProtection } from "@/hooks/useRoleProtection";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-
+import { supabase } from "@/integrations/supabase/client";
 const CATEGORIES = [
   { value: "analise_swot", label: "Análise SWOT" },
   { value: "autoavaliacao_360", label: "Autoavaliação + 360º" },
@@ -115,24 +115,26 @@ const Suporte = () => {
     }
   }, [location.state, tickets]);
 
-  const checkUserRole = () => {
-    const user = localStorage.getItem("user");
-    if (!user) return;
+  const checkUserRole = async () => {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session?.user) return;
 
-    const userData = JSON.parse(user);
-    setUserId(userData.email);
+    setUserId(session.user.email || "");
 
-    // isAdmin já vem do useRoleProtection
+    // Verificar se é funcionário de alguma empresa no Supabase
+    const { data: employeeData } = await supabase
+      .from("company_employees")
+      .select("*, company_managers!company_employees_manager_id_fkey(id, name, user_id)")
+      .eq("user_id", session.user.id)
+      .eq("is_active", true)
+      .single();
 
-    // Verificar se é funcionário de alguma empresa
-    const employees = JSON.parse(localStorage.getItem("mockEmployees") || "[]");
-    const employee = employees.find((emp: any) => 
-      emp.email?.toLowerCase() === userData.email?.toLowerCase() && emp.is_active
-    );
-
-    if (employee) {
+    if (employeeData) {
       setIsEmployee(true);
-      setEmployeeData(employee);
+      setEmployeeData({
+        ...employeeData,
+        manager_id: employeeData.manager_id
+      });
     }
   };
 
@@ -914,6 +916,12 @@ const Suporte = () => {
                 <Button variant="outline" className="w-full sm:w-auto gap-2">
                   <Home className="w-4 h-4" />
                   Voltar ao Dashboard
+                </Button>
+              </Link>
+              <Link to="/ferramentas">
+                <Button variant="outline" className="w-full sm:w-auto gap-2">
+                  <Wrench className="w-4 h-4" />
+                  Ferramentas
                 </Button>
               </Link>
               <Link to="/construcao-guiada">
