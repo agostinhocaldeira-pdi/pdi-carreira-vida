@@ -6,9 +6,322 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
-import { ArrowLeft, User, Building2, Eye, EyeOff, Save, Crown, Sparkles, Star } from "lucide-react";
+import { ArrowLeft, User, Building2, Eye, EyeOff, Save, Crown, Sparkles, Star, Database } from "lucide-react";
 import { NotificationPreferences } from "@/components/notifications/NotificationPreferences";
 import { ExportPDFButton } from "@/components/reports/ExportPDFButton";
+
+const generateMockData = (userName: string) => {
+  // Onboarding
+  localStorage.setItem("onboarding_data", JSON.stringify({
+    currentPhase: "Transição de Carreira",
+    expectations: "Busco clareza sobre meus próximos passos profissionais, desenvolver habilidades de liderança e encontrar equilíbrio entre vida pessoal e profissional. Quero me tornar uma profissional mais completa e realizada."
+  }));
+
+  // VVD
+  localStorage.setItem("visao_vida_desejada", "Em 5 anos, me vejo como uma líder reconhecida em minha área, trabalhando com propósito e impacto positivo na sociedade. Terei equilíbrio entre trabalho e família, saúde física e mental em dia, e liberdade financeira para realizar meus sonhos. Serei uma pessoa mais presente, consciente e grata por cada conquista.");
+
+  // Valores
+  localStorage.setItem("meus_valores", JSON.stringify([
+    "Integridade", "Família", "Crescimento", "Liberdade", "Empatia", "Excelência",
+    "Autenticidade", "Equilíbrio", "Gratidão", "Resiliência", "Colaboração", "Inovação"
+  ]));
+
+  // Áreas da Vida
+  localStorage.setItem("areas_vida", JSON.stringify([
+    { area: "Saúde Física", nota_atual: 6, nota_desejada: 9 },
+    { area: "Saúde Mental", nota_atual: 7, nota_desejada: 9 },
+    { area: "Carreira", nota_atual: 5, nota_desejada: 9 },
+    { area: "Finanças", nota_atual: 6, nota_desejada: 8 },
+    { area: "Relacionamentos", nota_atual: 8, nota_desejada: 9 },
+    { area: "Família", nota_atual: 7, nota_desejada: 9 },
+    { area: "Lazer", nota_atual: 4, nota_desejada: 8 },
+    { area: "Espiritualidade", nota_atual: 5, nota_desejada: 8 },
+    { area: "Desenvolvimento Pessoal", nota_atual: 6, nota_desejada: 9 },
+    { area: "Contribuição Social", nota_atual: 4, nota_desejada: 7 }
+  ]));
+
+  // Objetivos
+  const objetivos = [
+    {
+      id: "obj_1",
+      texto: "Assumir uma posição de liderança na empresa",
+      objetivo: "Assumir uma posição de liderança na empresa",
+      status: "em_andamento",
+      data_alvo: "2025-06-30",
+      conexao_vvd: "Ser reconhecida como líder na minha área"
+    },
+    {
+      id: "obj_2",
+      texto: "Conquistar independência financeira",
+      objetivo: "Conquistar independência financeira",
+      status: "em_andamento",
+      data_alvo: "2026-12-31",
+      conexao_vvd: "Ter liberdade financeira para realizar sonhos"
+    },
+    {
+      id: "obj_3",
+      texto: "Melhorar qualidade de vida e saúde",
+      objetivo: "Melhorar qualidade de vida e saúde",
+      status: "a_fazer",
+      data_alvo: "2025-12-31",
+      conexao_vvd: "Saúde física e mental em dia"
+    }
+  ];
+  localStorage.setItem("meus_objetivos", JSON.stringify(objetivos));
+
+  // Metas com ações e passos
+  const metas = [
+    {
+      id: "meta_1",
+      texto: "Concluir curso de Gestão de Pessoas",
+      meta: "Concluir curso de Gestão de Pessoas",
+      objetivo_id: "obj_1",
+      concluida: false,
+      status: "em_andamento",
+      data_alvo: "2025-03-31",
+      acoes: [
+        {
+          id: "acao_1",
+          texto: "Assistir 2 aulas por semana",
+          acao: "Assistir 2 aulas por semana",
+          status: "em_andamento",
+          periodicidade: "Semanal",
+          passos: [
+            { texto: "Reservar horário na agenda", concluido: true },
+            { texto: "Fazer anotações das aulas", concluido: true },
+            { texto: "Revisar conteúdo no fim de semana", concluido: false }
+          ]
+        },
+        {
+          id: "acao_2",
+          texto: "Realizar exercícios práticos",
+          acao: "Realizar exercícios práticos",
+          status: "a_fazer",
+          periodicidade: "Semanal",
+          passos: []
+        }
+      ]
+    },
+    {
+      id: "meta_2",
+      texto: "Desenvolver habilidades de comunicação",
+      meta: "Desenvolver habilidades de comunicação",
+      objetivo_id: "obj_1",
+      concluida: true,
+      status: "concluido",
+      data_alvo: "2024-12-15",
+      acoes: [
+        {
+          id: "acao_3",
+          texto: "Participar de 1 workshop por mês",
+          acao: "Participar de 1 workshop por mês",
+          status: "concluido",
+          periodicidade: "Mensal",
+          passos: []
+        }
+      ]
+    },
+    {
+      id: "meta_3",
+      texto: "Poupar 20% do salário mensalmente",
+      meta: "Poupar 20% do salário mensalmente",
+      objetivo_id: "obj_2",
+      concluida: false,
+      status: "em_andamento",
+      data_alvo: "2025-12-31",
+      acoes: [
+        {
+          id: "acao_4",
+          texto: "Revisar gastos semanalmente",
+          acao: "Revisar gastos semanalmente",
+          status: "em_andamento",
+          periodicidade: "Semanal",
+          passos: [
+            { texto: "Anotar todos os gastos", concluido: true },
+            { texto: "Categorizar despesas", concluido: true },
+            { texto: "Identificar gastos desnecessários", concluido: false }
+          ]
+        },
+        {
+          id: "acao_5",
+          texto: "Transferir poupança no dia do pagamento",
+          acao: "Transferir poupança no dia do pagamento",
+          status: "concluido",
+          periodicidade: "Mensal",
+          passos: []
+        }
+      ]
+    },
+    {
+      id: "meta_4",
+      texto: "Praticar exercícios 4x por semana",
+      meta: "Praticar exercícios 4x por semana",
+      objetivo_id: "obj_3",
+      concluida: false,
+      status: "em_andamento",
+      data_alvo: "2025-06-30",
+      acoes: [
+        {
+          id: "acao_6",
+          texto: "Academia segunda, quarta e sexta",
+          acao: "Academia segunda, quarta e sexta",
+          status: "em_andamento",
+          periodicidade: "Semanal",
+          passos: []
+        },
+        {
+          id: "acao_7",
+          texto: "Caminhada aos sábados",
+          acao: "Caminhada aos sábados",
+          status: "em_andamento",
+          periodicidade: "Semanal",
+          passos: []
+        }
+      ]
+    }
+  ];
+  localStorage.setItem("metas", JSON.stringify(metas));
+
+  // Competências
+  localStorage.setItem("competencias", JSON.stringify([
+    "Liderança situacional",
+    "Comunicação assertiva",
+    "Gestão de conflitos",
+    "Inteligência emocional",
+    "Planejamento estratégico"
+  ]));
+
+  // Pontos Fortes e a Melhorar
+  localStorage.setItem("pontos_fortes", JSON.stringify([
+    "Organização e planejamento",
+    "Empatia e escuta ativa",
+    "Resiliência em momentos difíceis",
+    "Criatividade na resolução de problemas"
+  ]));
+
+  localStorage.setItem("pontos_a_melhorar", JSON.stringify([
+    "Delegação de tarefas",
+    "Dizer não quando necessário",
+    "Gestão do tempo",
+    "Paciência com processos lentos"
+  ]));
+
+  // SWOT
+  localStorage.setItem("analise_swot", JSON.stringify({
+    forcas: [
+      "Boa capacidade analítica",
+      "Experiência em gestão de projetos",
+      "Network profissional sólido",
+      "Formação acadêmica relevante"
+    ],
+    fraquezas: [
+      "Dificuldade em delegar",
+      "Perfeccionismo excessivo",
+      "Pouca experiência em gestão de pessoas",
+      "Inglês intermediário"
+    ],
+    oportunidades: [
+      "Mercado aquecido na área",
+      "Empresa em expansão",
+      "Possibilidade de promoção interna",
+      "Cursos online acessíveis"
+    ],
+    ameacas: [
+      "Concorrência por vagas de liderança",
+      "Instabilidade econômica",
+      "Mudanças tecnológicas rápidas",
+      "Pressão por resultados imediatos"
+    ]
+  }));
+
+  // Crenças Transformadas
+  localStorage.setItem("crencas_transformadas", JSON.stringify([
+    {
+      crencaLimitante: "Não sou boa o suficiente para liderar uma equipe",
+      crencaFortalecedora: "Tenho todas as habilidades necessárias e estou em constante evolução para ser uma excelente líder",
+      transformedAt: "2024-11-15"
+    },
+    {
+      crencaLimitante: "Dinheiro é difícil de conseguir",
+      crencaFortalecedora: "Sou capaz de gerar abundância através do meu trabalho e escolhas inteligentes",
+      transformedAt: "2024-10-20"
+    },
+    {
+      crencaLimitante: "Não tenho tempo para cuidar da minha saúde",
+      crencaFortalecedora: "Priorizo minha saúde porque sei que ela é a base para todas as minhas conquistas",
+      transformedAt: "2024-12-01"
+    }
+  ]));
+
+  // Diário com histórico de humor
+  const today = new Date();
+  const diaryEntries = [];
+  for (let i = 0; i < 30; i++) {
+    const date = new Date(today);
+    date.setDate(date.getDate() - i);
+    const moods = ['feliz', 'feliz', 'feliz', 'neutro', 'neutro', 'triste'];
+    const randomMood = moods[Math.floor(Math.random() * moods.length)];
+    
+    diaryEntries.push({
+      date: date.toISOString().split('T')[0],
+      data: date.toISOString().split('T')[0],
+      mood: randomMood,
+      humor: randomMood,
+      reflexao: [
+        "Hoje foi um dia produtivo, consegui avançar em várias tarefas importantes.",
+        "Me senti um pouco sobrecarregada, mas consegui manter o foco.",
+        "Tive uma conversa inspiradora com meu mentor.",
+        "Dia tranquilo, aproveitei para refletir sobre meus objetivos.",
+        "Enfrentei alguns desafios, mas aprendi muito com eles."
+      ][Math.floor(Math.random() * 5)],
+      gratidao: [
+        "Gratidão pela saúde e pela família",
+        "Agradeço pelas oportunidades de aprendizado",
+        "Sou grata pelo apoio dos colegas",
+        "Gratidão por mais um dia de vida"
+      ][Math.floor(Math.random() * 4)],
+      conquistas: [
+        "Finalizei uma apresentação importante",
+        "Consegui fazer exercício",
+        "Li 30 páginas do livro",
+        "Tive uma reunião produtiva"
+      ][Math.floor(Math.random() * 4)]
+    });
+  }
+  localStorage.setItem("diary_entries", JSON.stringify(diaryEntries));
+
+  // Streak e Gamificação
+  localStorage.setItem("user_streak", JSON.stringify({
+    current_streak: 12,
+    longest_streak: 25,
+    level: 5,
+    total_points: 1250,
+    last_activity_date: today.toISOString().split('T')[0]
+  }));
+
+  // Conquistas
+  localStorage.setItem("user_achievements", JSON.stringify([
+    { name: "Primeiro Passo", achievement_name: "Primeiro Passo", unlocked_at: "2024-10-01" },
+    { name: "Semana Consistente", achievement_name: "Semana Consistente", unlocked_at: "2024-10-08" },
+    { name: "Objetivo Definido", achievement_name: "Objetivo Definido", unlocked_at: "2024-10-15" },
+    { name: "Meta Concluída", achievement_name: "Meta Concluída", unlocked_at: "2024-11-20" },
+    { name: "Reflexão Profunda", achievement_name: "Reflexão Profunda", unlocked_at: "2024-11-25" },
+    { name: "Streak de 10 dias", achievement_name: "Streak de 10 dias", unlocked_at: "2024-12-01" }
+  ]));
+
+  // Insight
+  localStorage.setItem("userInsight", "Com base na sua jornada, você demonstra forte compromisso com seu desenvolvimento. Sua VVD está bem alinhada com seus objetivos de liderança e equilíbrio. As áreas que mais precisam de atenção são Lazer e Contribuição Social - considere integrar atividades que combinem ambas. Seu progresso nas metas financeiras é consistente, e a transformação de crenças limitantes mostra maturidade emocional. Recomendação: foque em delegar mais para ter tempo para as áreas deficitárias da Roda da Vida.");
+  localStorage.setItem("lastInsightDate", new Date().toISOString());
+
+  // Eisenhower
+  localStorage.setItem("eisenhower_tasks", JSON.stringify({
+    urgente_importante: ["Finalizar relatório trimestral", "Reunião com diretoria"],
+    nao_urgente_importante: ["Curso de liderança", "Planejamento anual", "Networking"],
+    urgente_nao_importante: ["Responder e-mails", "Ligação com fornecedor"],
+    nao_urgente_nao_importante: ["Organizar desktop", "Atualizar redes sociais"]
+  }));
+};
+
 
 interface UserData {
   name: string;
@@ -130,7 +443,21 @@ const Perfil = () => {
               <p className="text-muted-foreground text-sm">Gerencie suas informações pessoais</p>
             </div>
           </div>
-          <ExportPDFButton />
+          <div className="flex items-center gap-2">
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={() => {
+                generateMockData(userData?.name || "Usuário");
+                toast.success("Dados de teste gerados com sucesso!");
+              }}
+              className="text-xs"
+            >
+              <Database className="w-4 h-4 mr-1" />
+              Gerar Dados Teste
+            </Button>
+            <ExportPDFButton />
+          </div>
         </div>
 
         {/* Dados do Usuário */}
