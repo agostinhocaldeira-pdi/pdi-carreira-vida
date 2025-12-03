@@ -89,6 +89,7 @@ const Suporte = () => {
   const [managerMessage, setManagerMessage] = useState("");
   const [managerConversations, setManagerConversations] = useState<ManagerConversation[]>([]);
   const [managerMessages, setManagerMessages] = useState<Record<string, ManagerMessage[]>>({});
+  const [replyTexts, setReplyTexts] = useState<Record<string, string>>({});
   
   // Contadores de não lidas
   const [unreadSupportCount, setUnreadSupportCount] = useState(0);
@@ -587,10 +588,7 @@ const Suporte = () => {
     </>
   );
 
-  const ManagerConversationSection = () => {
-    const [replyTexts, setReplyTexts] = useState<Record<string, string>>({});
-
-    return (
+  const renderManagerConversationSection = () => (
       <>
         {/* Verificar se tem gestor associado */}
         {!employeeData?.manager_id ? (
@@ -760,7 +758,6 @@ const Suporte = () => {
         )}
       </>
     );
-  };
 
   return (
     <div className="min-h-screen bg-gradient-subtle">
@@ -809,7 +806,7 @@ const Suporte = () => {
 
         {/* Conteúdo baseado na aba selecionada */}
         {isEmployee && activeTab === "gestor" ? (
-          <ManagerConversationSection />
+          renderManagerConversationSection()
         ) : (
           renderSupportForm()
         )}
