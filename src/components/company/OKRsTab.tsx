@@ -60,7 +60,7 @@ export function OKRsTab({ companyId, employees }: OKRsTabProps) {
 
   const loadOKRs = async () => {
     try {
-      // Tentar carregar do Supabase primeiro
+      // Carregar OKRs do Supabase
       const { data: okrsData, error } = await supabase
         .from('company_okrs')
         .select(`
@@ -70,15 +70,17 @@ export function OKRsTab({ companyId, employees }: OKRsTabProps) {
         .eq('company_id', companyId);
 
       if (!error && okrsData && okrsData.length > 0) {
-        // Carregar linked_employee_ids do localStorage (ainda não está no Supabase)
-        const localData = localStorage.getItem(`okrs_${companyId}`);
+        // Carregar linked_employee_ids do Supabase
+        const { data: linksData } = await supabase
+          .from('company_okr_employee_links')
+          .select('okr_id, employee_id')
+          .in('okr_id', okrsData.map(o => o.id));
+
         const linkedMap: Record<string, string[]> = {};
-        if (localData) {
-          const parsed = JSON.parse(localData);
-          parsed.forEach((okr: any) => {
-            linkedMap[okr.id] = okr.linked_employee_ids || [];
-          });
-        }
+        (linksData || []).forEach((link: any) => {
+          if (!linkedMap[link.okr_id]) linkedMap[link.okr_id] = [];
+          linkedMap[link.okr_id].push(link.employee_id);
+        });
 
         const mappedOkrs = okrsData.map(okr => ({
           id: okr.id,
@@ -92,7 +94,6 @@ export function OKRsTab({ companyId, employees }: OKRsTabProps) {
         }));
 
         setOkrs(mappedOkrs);
-        // Atualizar localStorage para manter sync
         localStorage.setItem(`okrs_${companyId}`, JSON.stringify(mappedOkrs));
       } else {
         // Fallback para localStorage
@@ -107,7 +108,6 @@ export function OKRsTab({ companyId, employees }: OKRsTabProps) {
       }
     } catch (error) {
       console.error('Error loading OKRs:', error);
-      // Fallback para localStorage em caso de erro
       const stored = localStorage.getItem(`okrs_${companyId}`);
       if (stored) {
         setOkrs(JSON.parse(stored));
@@ -246,20 +246,44 @@ export function OKRsTab({ companyId, employees }: OKRsTabProps) {
     setNewKeyResults(updated);
   };
 
-  const toggleEmployeeForOKR = (okrId: string, employeeId: string) => {
-    const updated = okrs.map((okr) => {
-      if (okr.id === okrId) {
-        const isLinked = okr.linked_employee_ids.includes(employeeId);
-        return {
-          ...okr,
-          linked_employee_ids: isLinked
-            ? okr.linked_employee_ids.filter((id) => id !== employeeId)
-            : [...okr.linked_employee_ids, employeeId],
-        };
+  const toggleEmployeeForOKR = async (okrId: string, employeeId: string) => {
+    const okr = okrs.find(o => o.id === okrId);
+    if (!okr) return;
+
+    const isLinked = okr.linked_employee_ids.includes(employeeId);
+
+    try {
+      if (isLinked) {
+        // Remover vínculo
+        await supabase
+          .from('company_okr_employee_links')
+          .delete()
+          .eq('okr_id', okrId)
+          .eq('employee_id', employeeId);
+      } else {
+        // Adicionar vínculo
+        await supabase
+          .from('company_okr_employee_links')
+          .insert({ okr_id: okrId, employee_id: employeeId });
       }
-      return okr;
-    });
-    saveOKRs(updated);
+
+      // Atualizar estado local
+      const updated = okrs.map((o) => {
+        if (o.id === okrId) {
+          return {
+            ...o,
+            linked_employee_ids: isLinked
+              ? o.linked_employee_ids.filter((id) => id !== employeeId)
+              : [...o.linked_employee_ids, employeeId],
+          };
+        }
+        return o;
+      });
+      saveOKRs(updated);
+    } catch (error) {
+      console.error('Error toggling employee link:', error);
+      toast.error("Erro ao vincular funcionário");
+    }
   };
 
   const getEmployeeName = (employeeId: string) => {

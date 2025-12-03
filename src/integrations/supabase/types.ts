@@ -201,6 +201,42 @@ export type Database = {
           },
         ]
       }
+      company_okr_employee_links: {
+        Row: {
+          created_at: string
+          employee_id: string
+          id: string
+          okr_id: string
+        }
+        Insert: {
+          created_at?: string
+          employee_id: string
+          id?: string
+          okr_id: string
+        }
+        Update: {
+          created_at?: string
+          employee_id?: string
+          id?: string
+          okr_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "company_okr_employee_links_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "company_employees"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "company_okr_employee_links_okr_id_fkey"
+            columns: ["okr_id"]
+            isOneToOne: false
+            referencedRelation: "company_okrs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       company_okrs: {
         Row: {
           company_id: string
