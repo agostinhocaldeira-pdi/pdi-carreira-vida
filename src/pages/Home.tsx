@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Link, useNavigate } from "react-router-dom";
-import { Target, TrendingUp, BookOpen, MessagesSquare, Book, Sparkles, User, Zap, Star, Shield, Lock, ChevronDown, AlertCircle, Link2, Users } from "lucide-react";
+import { Target, TrendingUp, BookOpen, MessagesSquare, Book, Sparkles, User, Zap, Star, Shield, Lock, ChevronDown, AlertCircle, Link2, Users, Bell, MessageCircle } from "lucide-react";
 import ProgressSection from "@/components/home/ProgressSection";
 import DiarioSection from "@/components/home/DiarioSection";
 import PlanoDeVida from "@/components/home/PlanoDeVida";
@@ -24,8 +24,14 @@ const Home = () => {
   const [motivationalQuote, setMotivationalQuote] = useState("");
   const [isAdmin, setIsAdmin] = useState(false);
   const [isGestor, setIsGestor] = useState(false);
+  const [isEmployee, setIsEmployee] = useState(false);
   const [recursosOpen, setRecursosOpen] = useState(false);
   const [showDiaryWarningModal, setShowDiaryWarningModal] = useState(false);
+  
+  // Estados para notificações
+  const [unreadSupportMessages, setUnreadSupportMessages] = useState(0);
+  const [unreadManagerMessages, setUnreadManagerMessages] = useState(0);
+  const [unreadEmployeeMessages, setUnreadEmployeeMessages] = useState(0);
   
   const { showSurvey, setShowSurvey, completedSection, markSectionCompleted } = useSatisfactionSurvey();
 
@@ -71,6 +77,18 @@ const Home = () => {
         );
         setIsAdmin(userIsAdmin);
       }
+      
+      // Verificar se é funcionário
+      const employees = JSON.parse(localStorage.getItem("mockEmployees") || "[]");
+      const employee = employees.find((emp: any) => 
+        emp.email?.toLowerCase() === userData.email?.toLowerCase() && emp.is_active
+      );
+      if (employee) {
+        setIsEmployee(true);
+      }
+      
+      // Carregar notificações
+      loadUnreadMessages(userData, employee);
     }
 
     // Seleciona uma frase motivacional baseada no dia
@@ -98,6 +116,72 @@ const Home = () => {
       window.removeEventListener("navigateToPlanoDeVida", handleNavigateToPlanoDeVida as EventListener);
     };
   }, []);
+  
+  const loadUnreadMessages = (userData: any, employeeData: any) => {
+    // 1. Mensagens do suporte (admin para usuário)
+    const supportTickets = JSON.parse(localStorage.getItem("supportTickets") || "[]");
+    const supportMessages = JSON.parse(localStorage.getItem("supportMessages") || "[]");
+    
+    let supportUnread = 0;
+    const userTickets = supportTickets.filter((t: any) => 
+      t.user_email?.toLowerCase() === userData.email?.toLowerCase()
+    );
+    userTickets.forEach((ticket: any) => {
+      supportMessages.forEach((msg: any) => {
+        if (msg.ticket_id === ticket.id && msg.is_admin_response && !msg.read_by_user) {
+          supportUnread++;
+        }
+      });
+    });
+    setUnreadSupportMessages(supportUnread);
+    
+    // 2. Mensagens do gestor (para funcionários)
+    if (employeeData) {
+      const managerConversations = JSON.parse(localStorage.getItem("managerConversations") || "[]");
+      const managerMessages = JSON.parse(localStorage.getItem("managerMessages") || "[]");
+      
+      let managerUnread = 0;
+      const employeeConversations = managerConversations.filter((c: any) => 
+        c.employee_email?.toLowerCase() === userData.email?.toLowerCase()
+      );
+      employeeConversations.forEach((conv: any) => {
+        managerMessages.forEach((msg: any) => {
+          if (msg.conversation_id === conv.id && msg.is_manager_response && !msg.read_by_employee) {
+            managerUnread++;
+          }
+        });
+      });
+      setUnreadManagerMessages(managerUnread);
+    }
+    
+    // 3. Mensagens dos funcionários (para gestores)
+    if (userData.role === "gestor") {
+      const mockManagers = JSON.parse(localStorage.getItem("mockManagers") || "[]");
+      const currentManager = mockManagers.find((m: any) => 
+        m.email?.toLowerCase() === userData.email?.toLowerCase()
+      );
+      
+      if (currentManager) {
+        const managerConversations = JSON.parse(localStorage.getItem("managerConversations") || "[]");
+        const managerMessages = JSON.parse(localStorage.getItem("managerMessages") || "[]");
+        
+        let employeeUnread = 0;
+        const gestorConversations = managerConversations.filter((c: any) => 
+          c.manager_id === currentManager.id
+        );
+        gestorConversations.forEach((conv: any) => {
+          managerMessages.forEach((msg: any) => {
+            if (msg.conversation_id === conv.id && !msg.is_manager_response && !msg.read_by_manager) {
+              employeeUnread++;
+            }
+          });
+        });
+        setUnreadEmployeeMessages(employeeUnread);
+      }
+    }
+  };
+  
+  const totalUnread = unreadSupportMessages + unreadManagerMessages + unreadEmployeeMessages;
 
   return (
     <div className="min-h-screen bg-gradient-subtle">
@@ -202,6 +286,74 @@ const Home = () => {
 
       {/* Main Content */}
       <main className="container mx-auto px-3 sm:px-4 py-4 sm:py-8 space-y-4 sm:space-y-8">
+        {/* Card de Notificações Pendentes */}
+        {totalUnread > 0 && (
+          <section className="animate-slide-up">
+            <Card className="border-primary/30 bg-gradient-to-r from-primary/5 via-primary/10 to-primary/5 shadow-medium">
+              <CardContent className="py-4">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                  <div className="flex items-center gap-3">
+                    <div className="relative">
+                      <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
+                        <Bell className="w-5 h-5 text-primary" />
+                      </div>
+                      <Badge variant="destructive" className="absolute -top-1 -right-1 h-5 min-w-[20px] p-0 flex items-center justify-center text-xs">
+                        {totalUnread}
+                      </Badge>
+                    </div>
+                    <div>
+                      <h3 className="font-semibold text-sm sm:text-base">Você tem mensagens não lidas</h3>
+                      <div className="flex flex-wrap gap-2 mt-1">
+                        {unreadSupportMessages > 0 && (
+                          <span className="text-xs text-muted-foreground flex items-center gap-1">
+                            <MessageCircle className="w-3 h-3" />
+                            {unreadSupportMessages} do Suporte
+                          </span>
+                        )}
+                        {unreadManagerMessages > 0 && (
+                          <span className="text-xs text-muted-foreground flex items-center gap-1">
+                            <Users className="w-3 h-3" />
+                            {unreadManagerMessages} do Gestor
+                          </span>
+                        )}
+                        {unreadEmployeeMessages > 0 && (
+                          <span className="text-xs text-muted-foreground flex items-center gap-1">
+                            <Users className="w-3 h-3" />
+                            {unreadEmployeeMessages} de Funcionários
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex gap-2 w-full sm:w-auto">
+                    {(unreadSupportMessages > 0 || unreadManagerMessages > 0) && (
+                      <Button 
+                        size="sm" 
+                        onClick={() => navigate("/suporte")}
+                        className="flex-1 sm:flex-none"
+                      >
+                        <MessagesSquare className="w-4 h-4 mr-2" />
+                        Ver Mensagens
+                      </Button>
+                    )}
+                    {unreadEmployeeMessages > 0 && (
+                      <Button 
+                        size="sm" 
+                        variant="outline"
+                        onClick={() => navigate("/gestao-pdis")}
+                        className="flex-1 sm:flex-none"
+                      >
+                        <Users className="w-4 h-4 mr-2" />
+                        Gestão PDI
+                      </Button>
+                    )}
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </section>
+        )}
+
         {/* Progresso Section */}
         <section className="animate-slide-up">
           <ProgressSection />
