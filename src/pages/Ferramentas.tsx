@@ -15,8 +15,10 @@ import {
   Wrench
 } from "lucide-react";
 import LogoutButton from "@/components/LogoutButton";
+import { useRoleProtection } from "@/hooks/useRoleProtection";
 
 const Ferramentas = () => {
+  useRoleProtection({ allowedRoles: ["user", "gestor"] });
   const ferramentas = [
     {
       nome: "Roda da Vida",

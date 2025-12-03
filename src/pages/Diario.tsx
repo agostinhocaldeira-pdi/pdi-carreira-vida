@@ -7,8 +7,10 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Book, Smile, Frown, Meh } from "lucide-react";
 import { toast } from "sonner";
 import LogoutButton from "@/components/LogoutButton";
+import { useRoleProtection } from "@/hooks/useRoleProtection";
 
 const Diario = () => {
+  useRoleProtection({ allowedRoles: ["user", "gestor"] });
   const [entrada, setEntrada] = useState({
     humor: "",
     reflexoes: "",

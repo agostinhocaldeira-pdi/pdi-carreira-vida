@@ -33,10 +33,12 @@ import {
   Phone,
   Calendar,
   UserPlus,
-  Power
+  Power,
+  Eye
 } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { generateProvisionalPassword } from "@/types/company";
+import EmployeeProgressModal from "@/components/EmployeeProgressModal";
 
 interface Manager {
   id: string;
@@ -60,6 +62,13 @@ interface Employee {
   createdAt: string;
 }
 
+interface PersonProgress {
+  id: string;
+  name: string;
+  email: string;
+  type: "manager" | "employee";
+}
+
 const DashboardEmpresa = () => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<"managers" | "employees">("managers");
@@ -73,6 +82,8 @@ const DashboardEmpresa = () => {
   const [showAddManagerModal, setShowAddManagerModal] = useState(false);
   const [showAddEmployeeModal, setShowAddEmployeeModal] = useState(false);
   const [showAssignManagerModal, setShowAssignManagerModal] = useState(false);
+  const [showProgressModal, setShowProgressModal] = useState(false);
+  const [selectedPerson, setSelectedPerson] = useState<PersonProgress | null>(null);
   const [newPerson, setNewPerson] = useState({ name: "", email: "", phone: "" });
   const [selectedEmployees, setSelectedEmployees] = useState<string[]>([]);
 
@@ -442,7 +453,17 @@ const DashboardEmpresa = () => {
                 <TableBody>
                   {managers.map((person) => (
                     <TableRow key={person.id}>
-                      <TableCell className="font-medium">{person.name}</TableCell>
+                      <TableCell className="font-medium">
+                        <button
+                          onClick={() => {
+                            setSelectedPerson({ id: person.id, name: person.name, email: person.email, type: "manager" });
+                            setShowProgressModal(true);
+                          }}
+                          className="hover:text-primary hover:underline text-left"
+                        >
+                          {person.name}
+                        </button>
+                      </TableCell>
                       <TableCell>{person.email}</TableCell>
                       <TableCell>{person.phone || "-"}</TableCell>
                       <TableCell>
@@ -451,6 +472,18 @@ const DashboardEmpresa = () => {
                         </Badge>
                       </TableCell>
                       <TableCell className="text-right flex items-center justify-end gap-1">
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => {
+                            setSelectedPerson({ id: person.id, name: person.name, email: person.email, type: "manager" });
+                            setShowProgressModal(true);
+                          }}
+                          className="text-primary hover:text-primary/80"
+                          title="Ver Progresso"
+                        >
+                          <Eye className="w-4 h-4" />
+                        </Button>
                         <Button
                           variant="ghost"
                           size="icon"
@@ -507,7 +540,17 @@ const DashboardEmpresa = () => {
                           onCheckedChange={(checked) => handleSelectEmployee(person.id, checked as boolean)}
                         />
                       </TableCell>
-                      <TableCell className="font-medium">{person.name}</TableCell>
+                      <TableCell className="font-medium">
+                        <button
+                          onClick={() => {
+                            setSelectedPerson({ id: person.id, name: person.name, email: person.email, type: "employee" });
+                            setShowProgressModal(true);
+                          }}
+                          className="hover:text-primary hover:underline text-left"
+                        >
+                          {person.name}
+                        </button>
+                      </TableCell>
                       <TableCell>{person.email}</TableCell>
                       <TableCell>{person.phone || "-"}</TableCell>
                       <TableCell>
@@ -525,6 +568,18 @@ const DashboardEmpresa = () => {
                         </Badge>
                       </TableCell>
                       <TableCell className="text-right flex items-center justify-end gap-1">
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => {
+                            setSelectedPerson({ id: person.id, name: person.name, email: person.email, type: "employee" });
+                            setShowProgressModal(true);
+                          }}
+                          className="text-primary hover:text-primary/80"
+                          title="Ver Progresso"
+                        >
+                          <Eye className="w-4 h-4" />
+                        </Button>
                         <Button
                           variant="ghost"
                           size="icon"
@@ -708,6 +763,19 @@ const DashboardEmpresa = () => {
           )}
         </DialogContent>
       </Dialog>
+
+      {/* Progress Modal */}
+      {selectedPerson && (
+        <EmployeeProgressModal
+          open={showProgressModal}
+          onOpenChange={setShowProgressModal}
+          employee={{
+            id: selectedPerson.id,
+            name: selectedPerson.name,
+            email: selectedPerson.email,
+          }}
+        />
+      )}
     </div>
   );
 };
