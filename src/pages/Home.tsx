@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Link, useNavigate } from "react-router-dom";
-import { Target, TrendingUp, BookOpen, MessagesSquare, Book, Sparkles, User, Zap, Star, Shield, Lock, ChevronDown, AlertCircle, Link2 } from "lucide-react";
+import { Target, TrendingUp, BookOpen, MessagesSquare, Book, Sparkles, User, Zap, Star, Shield, Lock, ChevronDown, AlertCircle, Link2, Users } from "lucide-react";
 import ProgressSection from "@/components/home/ProgressSection";
 import DiarioSection from "@/components/home/DiarioSection";
 import PlanoDeVida from "@/components/home/PlanoDeVida";
@@ -23,6 +23,7 @@ const Home = () => {
   const [planoDeVidaOpen, setPlanoDeVidaOpen] = useState(false);
   const [motivationalQuote, setMotivationalQuote] = useState("");
   const [isAdmin, setIsAdmin] = useState(false);
+  const [isGestor, setIsGestor] = useState(false);
   const [recursosOpen, setRecursosOpen] = useState(false);
   const [showDiaryWarningModal, setShowDiaryWarningModal] = useState(false);
   
@@ -55,6 +56,11 @@ const Home = () => {
       }
       
       setUserName(userData.name);
+      
+      // Verifica se o usuário é gestor
+      if (userData.role === "gestor") {
+        setIsGestor(true);
+      }
       
       // Verifica se o usuário está cadastrado como administrador
       const savedAdmins = localStorage.getItem("administrators");
@@ -308,6 +314,23 @@ const Home = () => {
                         </CardContent>
                       </Card>
                     </Link>
+
+                    {/* Card de Gestão de PDIs - apenas para gestores */}
+                    {isGestor && (
+                      <Link to="/gestao-pdis">
+                        <Card className="hover:shadow-medium transition-all cursor-pointer h-full border-2 hover:border-green-500 bg-gradient-to-br from-card to-green-500/5">
+                          <CardContent className="pt-6 text-center space-y-3">
+                            <div className="w-12 h-12 mx-auto bg-green-500/10 rounded-full flex items-center justify-center">
+                              <Users className="w-6 h-6 text-green-500" />
+                            </div>
+                            <h3 className="font-semibold">Gestão de PDI's</h3>
+                            <p className="text-sm text-muted-foreground">
+                              Acompanhe o desenvolvimento da sua equipe
+                            </p>
+                          </CardContent>
+                        </Card>
+                      </Link>
+                    )}
                   </div>
                 </CardContent>
               </CollapsibleContent>
