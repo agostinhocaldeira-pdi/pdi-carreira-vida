@@ -3,6 +3,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import { Button } from "@/components/ui/button";
 import { BookOpen, Home, PlayCircle, FileText } from "lucide-react";
 import { Link } from "react-router-dom";
+import LogoutButton from "@/components/LogoutButton";
 
 const ConstrucaoGuiada = () => {
   const modulos = [
@@ -42,9 +43,12 @@ const ConstrucaoGuiada = () => {
     <div className="min-h-screen bg-gradient-subtle">
       <header className="bg-card border-b shadow-soft sticky top-0 z-10">
         <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center gap-2 sm:gap-3">
-            <BookOpen className="w-5 h-5 sm:w-6 sm:h-6 text-primary flex-shrink-0" />
-            <h1 className="text-lg sm:text-2xl font-bold truncate">Construção Guiada do PDI</h1>
+          <div className="flex items-center justify-between gap-2 sm:gap-3">
+            <div className="flex items-center gap-2 sm:gap-3">
+              <BookOpen className="w-5 h-5 sm:w-6 sm:h-6 text-primary flex-shrink-0" />
+              <h1 className="text-lg sm:text-2xl font-bold truncate">Construção Guiada do PDI</h1>
+            </div>
+            <LogoutButton />
           </div>
         </div>
       </header>

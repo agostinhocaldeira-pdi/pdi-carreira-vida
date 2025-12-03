@@ -27,6 +27,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import LogoutButton from "@/components/LogoutButton";
 
 interface CrencaData {
   crencaLimitante: string;
@@ -565,12 +566,15 @@ const Crencas = () => {
               </div>
               <h1 className="text-lg sm:text-2xl font-bold truncate">Transformação de Crenças</h1>
             </div>
-            <Link to="/ferramentas" className="flex-shrink-0">
-              <Button variant="ghost" size="sm" className="gap-2">
-                <ArrowLeft className="w-4 h-4" />
-                <span className="hidden sm:inline">Voltar</span>
-              </Button>
-            </Link>
+            <div className="flex items-center gap-2 flex-shrink-0">
+              <Link to="/ferramentas">
+                <Button variant="ghost" size="sm" className="gap-2">
+                  <ArrowLeft className="w-4 h-4" />
+                  <span className="hidden sm:inline">Voltar</span>
+                </Button>
+              </Link>
+              <LogoutButton />
+            </div>
           </div>
         </div>
       </header>

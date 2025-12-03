@@ -14,6 +14,7 @@ import {
   Brain,
   Wrench
 } from "lucide-react";
+import LogoutButton from "@/components/LogoutButton";
 
 const Ferramentas = () => {
   const ferramentas = [
@@ -84,12 +85,15 @@ const Ferramentas = () => {
               <Wrench className="w-5 h-5 sm:w-6 sm:h-6 text-primary flex-shrink-0" />
               <h1 className="text-lg sm:text-2xl font-bold truncate">Ferramentas de Desenvolvimento</h1>
             </div>
-            <Link to="/home" className="flex-shrink-0">
-              <Button variant="ghost" size="sm" className="gap-2">
-                <ArrowLeft className="w-4 h-4" />
-                <span className="hidden sm:inline">Voltar</span>
-              </Button>
-            </Link>
+            <div className="flex items-center gap-2 flex-shrink-0">
+              <Link to="/home">
+                <Button variant="ghost" size="sm" className="gap-2">
+                  <ArrowLeft className="w-4 h-4" />
+                  <span className="hidden sm:inline">Voltar</span>
+                </Button>
+              </Link>
+              <LogoutButton />
+            </div>
           </div>
         </div>
       </header>

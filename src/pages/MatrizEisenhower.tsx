@@ -35,6 +35,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import LogoutButton from "@/components/LogoutButton";
 
 type Quadrante = "urgente-importante" | "importante" | "urgente" | "eliminar";
 
@@ -267,12 +268,15 @@ const MatrizEisenhower = () => {
               </div>
               <h1 className="text-lg sm:text-2xl font-bold truncate">Matriz de Eisenhower</h1>
             </div>
-            <Link to="/ferramentas" className="flex-shrink-0">
-              <Button variant="ghost" size="sm" className="gap-2">
-                <ArrowLeft className="w-4 h-4" />
-                <span className="hidden sm:inline">Voltar</span>
-              </Button>
-            </Link>
+            <div className="flex items-center gap-2 flex-shrink-0">
+              <Link to="/ferramentas">
+                <Button variant="ghost" size="sm" className="gap-2">
+                  <ArrowLeft className="w-4 h-4" />
+                  <span className="hidden sm:inline">Voltar</span>
+                </Button>
+              </Link>
+              <LogoutButton />
+            </div>
           </div>
         </div>
       </header>

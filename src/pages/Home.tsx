@@ -6,12 +6,13 @@ import { Badge } from "@/components/ui/badge";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Link } from "react-router-dom";
-import { Target, TrendingUp, BookOpen, MessagesSquare, Book, Sparkles, LogIn, User, Zap, Star, Shield, Lock, ChevronDown, AlertCircle } from "lucide-react";
+import { Target, TrendingUp, BookOpen, MessagesSquare, Book, Sparkles, User, Zap, Star, Shield, Lock, ChevronDown, AlertCircle } from "lucide-react";
 import ProgressSection from "@/components/home/ProgressSection";
 import DiarioSection from "@/components/home/DiarioSection";
 import PlanoDeVida from "@/components/home/PlanoDeVida";
 import MaoNaMassa from "@/components/home/MaoNaMassa";
 import LanguageSelector from "@/components/LanguageSelector";
+import LogoutButton from "@/components/LogoutButton";
 import { SatisfactionSurveyModal } from "@/components/SatisfactionSurveyModal";
 import { useSatisfactionSurvey } from "@/hooks/useSatisfactionSurvey";
 
@@ -185,6 +186,7 @@ const Home = () => {
                 <User className="w-4 h-4" />
                 <span className="hidden sm:inline">Perfil</span>
               </Button>
+              <LogoutButton />
             </div>
           </div>
 

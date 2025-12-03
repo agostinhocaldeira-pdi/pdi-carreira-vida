@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
+import LogoutButton from "@/components/LogoutButton";
 
 const CATEGORIES = [
   { value: "analise_swot", label: "Análise SWOT" },
@@ -185,9 +186,12 @@ const Suporte = () => {
     <div className="min-h-screen bg-gradient-subtle">
       <header className="bg-card border-b shadow-soft">
         <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center gap-2">
-            <MessagesSquare className="w-6 h-6 text-primary" />
-            <h1 className="text-2xl font-bold">Suporte</h1>
+          <div className="flex items-center justify-between gap-2">
+            <div className="flex items-center gap-2">
+              <MessagesSquare className="w-6 h-6 text-primary" />
+              <h1 className="text-2xl font-bold">Suporte</h1>
+            </div>
+            <LogoutButton />
           </div>
         </div>
       </header>
