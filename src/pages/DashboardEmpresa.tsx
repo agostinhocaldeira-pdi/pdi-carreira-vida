@@ -324,6 +324,12 @@ const DashboardEmpresa = () => {
     return emp?.managerId;
   });
 
+  // Verifica se algum funcionário selecionado NÃO tem gestor associado
+  const hasSelectedWithoutManager = selectedEmployees.some(id => {
+    const emp = employees.find(e => e.id === id);
+    return !emp?.managerId;
+  });
+
   const handleLogout = () => {
     localStorage.removeItem("user");
     navigate("/");
@@ -459,10 +465,12 @@ const DashboardEmpresa = () => {
             <div className="flex gap-2 flex-wrap">
               {activeTab === "employees" && selectedEmployees.length > 0 && (
                 <>
-                  <Button variant="outline" onClick={() => setShowAssignManagerModal(true)}>
-                    <UserPlus className="w-4 h-4 mr-2" />
-                    Associar Gestor ({selectedEmployees.length})
-                  </Button>
+                  {hasSelectedWithoutManager && (
+                    <Button variant="outline" onClick={() => setShowAssignManagerModal(true)}>
+                      <UserPlus className="w-4 h-4 mr-2" />
+                      Associar Gestor ({selectedEmployees.length})
+                    </Button>
+                  )}
                   {hasSelectedWithManager && (
                     <Button variant="outline" onClick={handleUnassignManager} className="text-destructive border-destructive/50 hover:bg-destructive/10">
                       <UserPlus className="w-4 h-4 mr-2 rotate-45" />
