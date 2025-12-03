@@ -140,7 +140,7 @@ export const LGPDConsentModal = ({ open, onAccept, onDecline }: LGPDConsentModal
           </div>
         </ScrollArea>
 
-        <DialogFooter className="flex-row gap-3 sm:gap-3 pt-2">
+        <div className="flex flex-col sm:flex-row gap-3 pt-4 border-t">
           {onDecline && (
             <Button 
               variant="outline" 
@@ -157,7 +157,7 @@ export const LGPDConsentModal = ({ open, onAccept, onDecline }: LGPDConsentModal
           >
             {isLoading ? "Processando..." : "Aceito"}
           </Button>
-        </DialogFooter>
+        </div>
       </DialogContent>
     </Dialog>
   );
