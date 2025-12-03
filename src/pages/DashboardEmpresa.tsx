@@ -32,7 +32,8 @@ import {
   Mail,
   Phone,
   Calendar,
-  UserPlus
+  UserPlus,
+  Power
 } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { generateProvisionalPassword } from "@/types/company";
@@ -203,12 +204,48 @@ const DashboardEmpresa = () => {
     toast.success("Gestor removido");
   };
 
+  const handleToggleManagerStatus = (id: string) => {
+    if (!selectedCompanyId) return;
+    const updatedManagers = managers.map(m => {
+      if (m.id === id) {
+        return { 
+          ...m, 
+          acceptedAt: m.acceptedAt ? null : new Date().toISOString(),
+          password: m.acceptedAt ? null : m.provisionalPassword // Reset password if deactivating
+        };
+      }
+      return m;
+    });
+    setManagers(updatedManagers);
+    localStorage.setItem(`managers_${selectedCompanyId}`, JSON.stringify(updatedManagers));
+    const manager = updatedManagers.find(m => m.id === id);
+    toast.success(manager?.acceptedAt ? "Gestor ativado" : "Gestor desativado");
+  };
+
   const handleRemoveEmployee = (id: string) => {
     if (!selectedCompanyId) return;
     const updatedEmployees = employees.filter(e => e.id !== id);
     setEmployees(updatedEmployees);
     localStorage.setItem(`employees_${selectedCompanyId}`, JSON.stringify(updatedEmployees));
     toast.success("Funcionário removido");
+  };
+
+  const handleToggleEmployeeStatus = (id: string) => {
+    if (!selectedCompanyId) return;
+    const updatedEmployees = employees.map(e => {
+      if (e.id === id) {
+        return { 
+          ...e, 
+          acceptedAt: e.acceptedAt ? null : new Date().toISOString(),
+          password: e.acceptedAt ? null : e.provisionalPassword
+        };
+      }
+      return e;
+    });
+    setEmployees(updatedEmployees);
+    localStorage.setItem(`employees_${selectedCompanyId}`, JSON.stringify(updatedEmployees));
+    const employee = updatedEmployees.find(e => e.id === id);
+    toast.success(employee?.acceptedAt ? "Funcionário ativado" : "Funcionário desativado");
   };
 
   const handleSelectEmployee = (employeeId: string, checked: boolean) => {
@@ -413,7 +450,16 @@ const DashboardEmpresa = () => {
                           {person.acceptedAt ? "Ativo" : "Pendente"}
                         </Badge>
                       </TableCell>
-                      <TableCell className="text-right">
+                      <TableCell className="text-right flex items-center justify-end gap-1">
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => handleToggleManagerStatus(person.id)}
+                          className={person.acceptedAt ? "text-green-600 hover:text-green-700" : "text-muted-foreground hover:text-foreground"}
+                          title={person.acceptedAt ? "Desativar" : "Ativar"}
+                        >
+                          <Power className="w-4 h-4" />
+                        </Button>
                         <Button
                           variant="ghost"
                           size="icon"
@@ -478,7 +524,16 @@ const DashboardEmpresa = () => {
                           {person.acceptedAt ? "Ativo" : "Pendente"}
                         </Badge>
                       </TableCell>
-                      <TableCell className="text-right">
+                      <TableCell className="text-right flex items-center justify-end gap-1">
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => handleToggleEmployeeStatus(person.id)}
+                          className={person.acceptedAt ? "text-green-600 hover:text-green-700" : "text-muted-foreground hover:text-foreground"}
+                          title={person.acceptedAt ? "Desativar" : "Ativar"}
+                        >
+                          <Power className="w-4 h-4" />
+                        </Button>
                         <Button
                           variant="ghost"
                           size="icon"
