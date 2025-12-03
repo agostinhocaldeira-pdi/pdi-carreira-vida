@@ -31,6 +31,7 @@ import CadastrarEmpresa from "./pages/CadastrarEmpresa";
 import DashboardEmpresa from "./pages/DashboardEmpresa";
 import GestaoPDIs from "./pages/GestaoPDIs";
 import Perfil from "./pages/Perfil";
+import FAQ from "./pages/FAQ";
 
 const queryClient = new QueryClient();
 
@@ -68,6 +69,7 @@ const App = () => (
             <Route path="/dashboard-empresa" element={<DashboardEmpresa />} />
             <Route path="/gestao-pdis" element={<GestaoPDIs />} />
             <Route path="/perfil" element={<Perfil />} />
+            <Route path="/faq" element={<FAQ />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
