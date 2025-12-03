@@ -5,7 +5,7 @@ import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Target, TrendingUp, BookOpen, MessagesSquare, Book, Sparkles, User, Zap, Star, Shield, Lock, ChevronDown, AlertCircle, Link2 } from "lucide-react";
 import ProgressSection from "@/components/home/ProgressSection";
 import DiarioSection from "@/components/home/DiarioSection";
@@ -17,6 +17,7 @@ import { SatisfactionSurveyModal } from "@/components/SatisfactionSurveyModal";
 import { useSatisfactionSurvey } from "@/hooks/useSatisfactionSurvey";
 
 const Home = () => {
+  const navigate = useNavigate();
   const [userName, setUserName] = useState("");
   const [activeTab, setActiveTab] = useState("quem-sou");
   const [planoDeVidaOpen, setPlanoDeVidaOpen] = useState(false);
@@ -46,6 +47,13 @@ const Home = () => {
     const user = localStorage.getItem("user");
     if (user) {
       const userData = JSON.parse(user);
+      
+      // Redirecionar perfil empresa para dashboard-empresa
+      if (userData.role === "empresa") {
+        navigate("/dashboard-empresa");
+        return;
+      }
+      
       setUserName(userData.name);
       
       // Verifica se o usuário está cadastrado como administrador

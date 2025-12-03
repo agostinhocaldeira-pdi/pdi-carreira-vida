@@ -6,8 +6,10 @@ import { useToast } from "@/hooks/use-toast";
 import { useIntegrations } from "@/hooks/useIntegrations";
 import { IntegrationType } from "@/types/integrations";
 import { ArrowLeft, Link2, Link2Off, RefreshCw, Clock, AlertCircle } from "lucide-react";
+import { useRoleProtection } from "@/hooks/useRoleProtection";
 
 const Integracoes = () => {
+  useRoleProtection({ allowedRoles: ["user", "gestor"] });
   const navigate = useNavigate();
   const { toast } = useToast();
   const { integrations, isLoading, connectIntegration, disconnectIntegration } = useIntegrations();

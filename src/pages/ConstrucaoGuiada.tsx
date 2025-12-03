@@ -4,8 +4,10 @@ import { Button } from "@/components/ui/button";
 import { BookOpen, Home, PlayCircle, FileText } from "lucide-react";
 import { Link } from "react-router-dom";
 import LogoutButton from "@/components/LogoutButton";
+import { useRoleProtection } from "@/hooks/useRoleProtection";
 
 const ConstrucaoGuiada = () => {
+  useRoleProtection({ allowedRoles: ["user", "gestor"] });
   const modulos = [
     {
       id: "modulo-1",

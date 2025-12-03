@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer, Legend } from "recharts";
 import { toast } from "sonner";
 import LogoutButton from "@/components/LogoutButton";
+import { useRoleProtection } from "@/hooks/useRoleProtection";
 
 interface LifeArea {
   area: string;
@@ -28,6 +29,7 @@ const defaultAreas: LifeArea[] = [
 ];
 
 export default function RodaDaVida() {
+  useRoleProtection({ allowedRoles: ["user", "gestor"] });
   const navigate = useNavigate();
   const [areas, setAreas] = useState<LifeArea[]>(defaultAreas);
   const [editingIndex, setEditingIndex] = useState<number | null>(null);

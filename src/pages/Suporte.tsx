@@ -10,6 +10,7 @@ import { useToast } from "@/hooks/use-toast";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import LogoutButton from "@/components/LogoutButton";
+import { useRoleProtection } from "@/hooks/useRoleProtection";
 
 const CATEGORIES = [
   { value: "analise_swot", label: "Análise SWOT" },
@@ -44,6 +45,7 @@ interface SupportMessage {
 }
 
 const Suporte = () => {
+  useRoleProtection({ allowedRoles: ["user", "gestor"] });
   const { toast } = useToast();
   const [category, setCategory] = useState<string>("");
   const [question, setQuestion] = useState<string>("");
