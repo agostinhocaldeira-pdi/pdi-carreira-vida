@@ -210,7 +210,10 @@ const Admin = () => {
 
         {/* Admin Dashboard Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          <Card className="hover:shadow-medium transition-all">
+          <Card 
+            className="hover:shadow-medium transition-all cursor-pointer hover:border-primary/50"
+            onClick={() => navigate("/admin/usuarios")}
+          >
             <CardContent className="pt-6">
               <div className="flex items-center justify-between mb-4">
                 <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
