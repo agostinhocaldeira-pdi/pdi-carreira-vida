@@ -170,8 +170,14 @@ const MaoNaMassa = () => {
       const objetivosSalvos = JSON.parse(localStorage.getItem("objetivos") || "[]");
       setObjetivosDisponiveis(objetivosSalvos);
       
-      // Selecionar o objetivo e abrir o formulário
-      setObjetivoSelecionado(event.detail.objetivoId);
+      const objetivoId = event.detail.objetivoId;
+      
+      // Selecionar o objetivo e preencher o formulário
+      setObjetivoSelecionado(objetivoId);
+      setMeta(prev => ({
+        ...prev,
+        objetivoId: objetivoId,
+      }));
       setIsFormOpen(true);
       
       // Rolar para o formulário
