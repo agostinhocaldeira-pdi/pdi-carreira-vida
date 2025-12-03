@@ -178,10 +178,10 @@ class PDFHelper {
 
   addStatusBadge(status: string, x: number, y: number): string {
     const statusMap: Record<string, { text: string; color: number[] }> = {
-      'concluido': { text: '✓ Concluído', color: [34, 197, 94] },
-      'em_andamento': { text: '→ Em Andamento', color: [59, 130, 246] },
-      'pendente': { text: '○ Pendente', color: [239, 68, 68] },
-      'a_fazer': { text: '○ A Fazer', color: [249, 115, 22] },
+      'concluido': { text: '[OK] Concluido', color: [34, 197, 94] },
+      'em_andamento': { text: '[->] Em Andamento', color: [59, 130, 246] },
+      'pendente': { text: '[  ] Pendente', color: [239, 68, 68] },
+      'a_fazer': { text: '[  ] A Fazer', color: [249, 115, 22] },
     };
     return statusMap[status]?.text || status;
   }
@@ -407,13 +407,13 @@ export function exportPDIToPDF(data: PDIData): void {
 
   // VVD
   if (data.vvd) {
-    pdf.addSubSection('📍 Visão de Vida Desejada (VVD)', [16, 185, 129]);
+    pdf.addSubSection('Visao de Vida Desejada (VVD)', [16, 185, 129]);
     pdf.addText(data.vvd, 9, 5);
   }
 
   // Valores
   if (data.valores && data.valores.filter(v => v).length > 0) {
-    pdf.addSubSection('💎 Meus Valores Fundamentais', [16, 185, 129]);
+    pdf.addSubSection('Meus Valores Fundamentais', [16, 185, 129]);
     const valoresAtivos = data.valores.filter(v => v);
     valoresAtivos.forEach((valor, idx) => {
       pdf.addListItem(valor, `${idx + 1}.`);
@@ -428,16 +428,16 @@ export function exportPDIToPDF(data: PDIData): void {
         value: area.nota_atual,
         maxValue: 10
       })),
-      '🎯 Roda da Vida - Estado Atual'
+      'Roda da Vida - Estado Atual'
     );
     
     // Gap analysis
-    pdf.addSubSection('📊 Análise de Gaps (Atual → Desejado)', [107, 114, 128]);
+    pdf.addSubSection('Analise de Gaps (Atual > Desejado)', [107, 114, 128]);
     const sortedByGap = [...data.areasVida].sort((a, b) => (b.nota_desejada - b.nota_atual) - (a.nota_desejada - a.nota_atual));
     sortedByGap.slice(0, 5).forEach(area => {
       const gap = area.nota_desejada - area.nota_atual;
       if (gap > 0) {
-        pdf.addListItem(`${area.area}: ${area.nota_atual} → ${area.nota_desejada} (gap: ${gap})`, '↑', [249, 115, 22]);
+        pdf.addListItem(`${area.area}: ${area.nota_atual} > ${area.nota_desejada} (gap: ${gap})`, '*', [249, 115, 22]);
       }
     });
   }
@@ -448,11 +448,11 @@ export function exportPDIToPDF(data: PDIData): void {
     pdf.addSWOTGrid(data.swot);
   }
 
-  // ==================== 5. JORNADA: VVD → OBJETIVO → META → AÇÃO ====================
+  // ==================== 5. JORNADA DE DESENVOLVIMENTO ====================
   pdf.addSection('5. JORNADA DE DESENVOLVIMENTO', [249, 115, 22]);
   
   if (data.vvd) {
-    pdf.addSubSection('🎯 VVD (Ponto de Chegada)', [249, 115, 22]);
+    pdf.addSubSection('VVD (Ponto de Chegada)', [249, 115, 22]);
     const vvdTruncated = data.vvd.length > 200 ? data.vvd.substring(0, 197) + '...' : data.vvd;
     pdf.addText(`"${vvdTruncated}"`, 9, 5);
     pdf.yPos += 3;
@@ -462,14 +462,13 @@ export function exportPDIToPDF(data: PDIData): void {
   if (data.objetivos && data.objetivos.length > 0) {
     data.objetivos.forEach((objetivo, objIdx) => {
       const objTexto = objetivo.texto || objetivo.objetivo || '';
-      const objStatus = objetivo.status === 'concluido' ? '✓' : objetivo.status === 'em_andamento' ? '→' : '○';
       const prazo = objetivo.data_alvo ? new Date(objetivo.data_alvo).toLocaleDateString('pt-BR') : '';
       
       pdf.checkPageBreak(30);
-      pdf.addSubSection(`📌 Objetivo ${objIdx + 1}: ${objTexto}`, [249, 115, 22]);
+      pdf.addSubSection(`Objetivo ${objIdx + 1}: ${objTexto}`, [249, 115, 22]);
       pdf.addText(`Status: ${pdf.addStatusBadge(objetivo.status, 0, 0)} ${prazo ? `| Prazo: ${prazo}` : ''}`, 8, 5);
       if (objetivo.conexao_vvd) {
-        pdf.addText(`Conexão VVD: ${objetivo.conexao_vvd}`, 8, 5);
+        pdf.addText(`Conexao VVD: ${objetivo.conexao_vvd}`, 8, 5);
       }
       
       // Metas vinculadas a este objetivo
@@ -478,23 +477,23 @@ export function exportPDIToPDF(data: PDIData): void {
       if (metasDoObjetivo.length > 0) {
         metasDoObjetivo.forEach((meta, metaIdx) => {
           const metaTexto = meta.texto || meta.meta || '';
-          const metaStatus = meta.concluida ? '✓' : (meta.status === 'em_andamento' ? '→' : '○');
+          const metaStatusText = meta.concluida ? '[OK]' : '[  ]';
           const metaPrazo = meta.data_alvo ? new Date(meta.data_alvo).toLocaleDateString('pt-BR') : '';
           
           pdf.checkPageBreak(20);
-          pdf.addText(`   └─ Meta ${metaIdx + 1}: ${metaTexto}`, 9, 10, true);
-          pdf.addText(`      Status: ${metaStatus} ${meta.concluida ? 'Concluída' : 'Pendente'} ${metaPrazo ? `| Prazo: ${metaPrazo}` : ''}`, 8, 15);
+          pdf.addText(`  > Meta ${metaIdx + 1}: ${metaTexto}`, 9, 10, true);
+          pdf.addText(`    Status: ${metaStatusText} ${meta.concluida ? 'Concluida' : 'Pendente'} ${metaPrazo ? `| Prazo: ${metaPrazo}` : ''}`, 8, 15);
           
           // Ações da meta
           if (meta.acoes && meta.acoes.length > 0) {
             meta.acoes.forEach((acao, acaoIdx) => {
               const acaoTexto = acao.texto || acao.acao || '';
-              const acaoStatus = acao.status === 'concluido' ? '✓' : '○';
+              const acaoStatus = acao.status === 'concluido' ? '[OK]' : '[  ]';
               const periodicidade = acao.periodicidade || '';
               
               pdf.addListItem(
                 `${acaoTexto} ${periodicidade ? `[${periodicidade}]` : ''}`,
-                `      ${acaoStatus}`,
+                `    ${acaoStatus}`,
                 acao.status === 'concluido' ? [34, 197, 94] : [107, 114, 128],
                 20
               );
@@ -503,8 +502,8 @@ export function exportPDIToPDF(data: PDIData): void {
               if (acao.passos && acao.passos.length > 0) {
                 acao.passos.forEach((passo, passoIdx) => {
                   const passoTexto = passo.texto || '';
-                  const passoStatus = passo.concluido ? '✓' : '○';
-                  pdf.addListItem(passoTexto, `         ${passoStatus}`, [150, 150, 150], 30);
+                  const passoStatus = passo.concluido ? '[OK]' : '[  ]';
+                  pdf.addListItem(passoTexto, `      ${passoStatus}`, [150, 150, 150], 30);
                 });
               }
             });
@@ -520,44 +519,45 @@ export function exportPDIToPDF(data: PDIData): void {
   // Metas sem objetivo vinculado
   const metasSemObjetivo = data.metas?.filter(m => !m.objetivo_id) || [];
   if (metasSemObjetivo.length > 0) {
-    pdf.addSubSection('📋 Metas Avulsas (sem objetivo vinculado)', [107, 114, 128]);
+    pdf.addSubSection('Metas Avulsas (sem objetivo vinculado)', [107, 114, 128]);
     metasSemObjetivo.forEach((meta, idx) => {
       const metaTexto = meta.texto || meta.meta || '';
       pdf.addListItem(`${metaTexto}`, `${idx + 1}.`);
     });
   }
 
-  // ==================== 6. COMPETÊNCIAS E DESENVOLVIMENTO ====================
+  // ==================== 6. COMPETENCIAS E DESENVOLVIMENTO ====================
   if ((data.competencias && data.competencias.filter(c => c).length > 0) ||
       (data.pontosFortes && data.pontosFortes.filter(p => p).length > 0) ||
       (data.pontosAMelhorar && data.pontosAMelhorar.filter(p => p).length > 0)) {
-    pdf.addSection('6. COMPETÊNCIAS E AUTOCONHECIMENTO', [139, 92, 246]);
+    pdf.addSection('6. COMPETENCIAS E AUTOCONHECIMENTO', [139, 92, 246]);
     
     if (data.competencias && data.competencias.filter(c => c).length > 0) {
-      pdf.addSubSection('🎓 Competências a Desenvolver');
-      data.competencias.filter(c => c).forEach(comp => pdf.addListItem(comp, '→'));
+      pdf.addSubSection('Competencias a Desenvolver');
+      data.competencias.filter(c => c).forEach(comp => pdf.addListItem(comp, '>'));
     }
     
     if (data.pontosFortes && data.pontosFortes.filter(p => p).length > 0) {
-      pdf.addSubSection('💪 Pontos Fortes');
+      pdf.addSubSection('Pontos Fortes');
       data.pontosFortes.filter(p => p).forEach(ponto => pdf.addListItem(ponto, '+', [34, 197, 94]));
     }
     
     if (data.pontosAMelhorar && data.pontosAMelhorar.filter(p => p).length > 0) {
-      pdf.addSubSection('🔧 Pontos a Melhorar');
+      pdf.addSubSection('Pontos a Melhorar');
       data.pontosAMelhorar.filter(p => p).forEach(ponto => pdf.addListItem(ponto, '-', [239, 68, 68]));
     }
   }
 
-  // ==================== 7. CRENÇAS TRANSFORMADAS ====================
+  // ==================== 7. CRENCAS TRANSFORMADAS ====================
   if (data.crencas && data.crencas.length > 0) {
-    pdf.addSection('7. CRENÇAS TRANSFORMADAS', [236, 72, 153]);
+    pdf.addSection('7. CRENCAS TRANSFORMADAS', [236, 72, 153]);
     data.crencas.forEach((crenca, idx) => {
       pdf.checkPageBreak(25);
-      pdf.addSubSection(`Transformação ${idx + 1}`);
-      pdf.addText(`❌ Limitante: "${crenca.crencaLimitante}"`, 9, 5);
-      pdf.addText(`↓`, 9, 15);
-      pdf.addText(`✓ Fortalecedora: "${crenca.crencaFortalecedora}"`, 9, 5);
+      pdf.addSubSection(`Transformacao ${idx + 1}`);
+      pdf.addText(`[X] Limitante: "${crenca.crencaLimitante}"`, 9, 5);
+      pdf.addText(`    |`, 9, 10);
+      pdf.addText(`    v`, 9, 10);
+      pdf.addText(`[OK] Fortalecedora: "${crenca.crencaFortalecedora}"`, 9, 5);
       pdf.yPos += 3;
     });
   }
@@ -571,29 +571,29 @@ export function exportPDIToPDF(data: PDIData): void {
     pdf.addText(data.insight, 9, 5);
   }
 
-  // ==================== 9. HISTÓRICO DE HUMOR ====================
+  // ==================== 9. HISTORICO DE HUMOR ====================
   if (data.diaryStats && data.diaryStats.total > 0) {
-    pdf.addSection('9. HISTÓRICO DE HUMOR', [250, 204, 21]);
-    pdf.addText(`Total de registros no diário: ${data.diaryStats.total} dias`, 9);
+    pdf.addSection('9. HISTORICO DE HUMOR', [250, 204, 21]);
+    pdf.addText(`Total de registros no diario: ${data.diaryStats.total} dias`, 9);
     pdf.yPos += 3;
     pdf.addMoodChart(data.diaryStats);
     
     // Últimas reflexões
     if (data.moodHistory && data.moodHistory.length > 0) {
-      pdf.addSubSection('📝 Últimas Reflexões');
+      pdf.addSubSection('Ultimas Reflexoes');
       data.moodHistory.slice(0, 5).forEach(entry => {
-        const moodEmoji = entry.mood === 'feliz' ? '😊' : entry.mood === 'neutro' ? '😐' : '😔';
-        pdf.addListItem(`${new Date(entry.date).toLocaleDateString('pt-BR')} ${moodEmoji}: ${entry.reflexao?.substring(0, 100) || 'Sem reflexão'}...`, '');
+        const moodText = entry.mood === 'feliz' ? '[Feliz]' : entry.mood === 'neutro' ? '[Neutro]' : '[Triste]';
+        pdf.addListItem(`${new Date(entry.date).toLocaleDateString('pt-BR')} ${moodText}: ${entry.reflexao?.substring(0, 80) || 'Sem reflexao'}`, '-');
       });
     }
   }
 
-  // ==================== 10. GAMIFICAÇÃO ====================
+  // ==================== 10. GAMIFICACAO ====================
   if (data.level || data.totalPoints || data.streak) {
     pdf.addSection('10. PROGRESSO E CONQUISTAS', [249, 115, 22]);
     
     const statsLine = [];
-    if (data.level) statsLine.push(`Nível ${data.level}`);
+    if (data.level) statsLine.push(`Nivel ${data.level}`);
     if (data.totalPoints) statsLine.push(`${data.totalPoints} pontos`);
     if (data.streak) statsLine.push(`${data.streak} dias de streak`);
     if (data.longestStreak) statsLine.push(`Maior streak: ${data.longestStreak} dias`);
@@ -601,9 +601,9 @@ export function exportPDIToPDF(data: PDIData): void {
     pdf.addText(statsLine.join(' | '), 10);
     
     if (data.achievements && data.achievements.length > 0) {
-      pdf.addSubSection('🏆 Conquistas Desbloqueadas');
+      pdf.addSubSection('Conquistas Desbloqueadas');
       data.achievements.slice(0, 10).forEach(ach => {
-        pdf.addListItem(ach.name, '🏅');
+        pdf.addListItem(ach.name, '*');
       });
     }
   }
@@ -671,17 +671,17 @@ export function exportProgressReportToPDF(
   if (stats.level) pdf.addKeyValue('Nível', `${stats.level}`);
   if (stats.totalPoints) pdf.addKeyValue('Pontos Totais', `${stats.totalPoints}`);
 
-  // ==================== HISTÓRICO DE HUMOR ====================
+  // ==================== HISTORICO DE HUMOR ====================
   if (moodStats && moodStats.total > 0) {
-    pdf.addSection('HISTÓRICO DE HUMOR', [250, 204, 21]);
+    pdf.addSection('HISTORICO DE HUMOR', [250, 204, 21]);
     pdf.addMoodChart(moodStats);
     
     if (recentMoods && recentMoods.length > 0) {
-      pdf.addSubSection('Últimos Registros');
+      pdf.addSubSection('Ultimos Registros');
       recentMoods.slice(0, 7).forEach(entry => {
-        const moodEmoji = entry.mood === 'feliz' ? '😊' : entry.mood === 'neutro' ? '😐' : '😔';
+        const moodText = entry.mood === 'feliz' ? '[Feliz]' : entry.mood === 'neutro' ? '[Neutro]' : '[Triste]';
         const dateStr = new Date(entry.date).toLocaleDateString('pt-BR', { weekday: 'short', day: '2-digit', month: '2-digit' });
-        pdf.addListItem(`${dateStr} ${moodEmoji}`, '');
+        pdf.addListItem(`${dateStr} ${moodText}`, '-');
       });
     }
   }
@@ -692,28 +692,28 @@ export function exportProgressReportToPDF(
     pdf.addText(insight, 9, 5);
   }
 
-  // ==================== RECOMENDAÇÕES ====================
-  pdf.addSection('RECOMENDAÇÕES', [107, 114, 128]);
+  // ==================== RECOMENDACOES ====================
+  pdf.addSection('RECOMENDACOES', [107, 114, 128]);
   
   const recommendations: string[] = [];
   
   if (taxaObjetivos < 50) {
-    recommendations.push('Revise seus objetivos: considere dividir objetivos grandes em metas menores e mais alcançáveis.');
+    recommendations.push('Revise seus objetivos: considere dividir objetivos grandes em metas menores e mais alcancaveis.');
   }
   if (taxaMetas < 50) {
-    recommendations.push('Foque nas metas: estabeleça prazos realistas e crie ações diárias para cada meta.');
+    recommendations.push('Foque nas metas: estabeleca prazos realistas e crie acoes diarias para cada meta.');
   }
   if (stats.streak < 7) {
-    recommendations.push('Aumente a consistência: tente registrar no diário todos os dias para criar o hábito.');
+    recommendations.push('Aumente a consistencia: tente registrar no diario todos os dias para criar o habito.');
   }
   if (moodStats && moodStats.triste > moodStats.feliz) {
-    recommendations.push('Atenção ao bem-estar: seus registros indicam muitos dias difíceis. Considere revisar sua rotina.');
+    recommendations.push('Atencao ao bem-estar: seus registros indicam muitos dias dificeis. Considere revisar sua rotina.');
   }
   if (recommendations.length === 0) {
-    recommendations.push('Excelente progresso! Continue mantendo a consistência e celebre suas conquistas.');
+    recommendations.push('Excelente progresso! Continue mantendo a consistencia e celebre suas conquistas.');
   }
   
-  recommendations.forEach(rec => pdf.addListItem(rec, '💡'));
+  recommendations.forEach(rec => pdf.addListItem(rec, '*'));
 
   // Footer
   pdf.addFooter(userName);
