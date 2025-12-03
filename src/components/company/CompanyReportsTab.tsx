@@ -3,7 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
-import { BarChart3, Users, Target, TrendingUp, Calendar, FileDown } from "lucide-react";
+import { BarChart3, Users, Target, TrendingUp, Calendar, FileDown, Link2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from "recharts";
 
@@ -15,6 +15,7 @@ interface EmployeeStats {
   metas: number;
   metasConcluidas: number;
   diasDiario: number;
+  objetivosAlinhados: number;
 }
 
 interface CompanyReportsTabProps {
@@ -28,6 +29,7 @@ const COLORS = ['#22c55e', '#3b82f6', '#f59e0b', '#ef4444', '#8b5cf6'];
 export function CompanyReportsTab({ companyId, employees, managers }: CompanyReportsTabProps) {
   const [period, setPeriod] = useState("month");
   const [employeeStats, setEmployeeStats] = useState<EmployeeStats[]>([]);
+  const [okrAlignmentRate, setOkrAlignmentRate] = useState(0);
   const [aggregatedStats, setAggregatedStats] = useState({
     totalObjetivos: 0,
     objetivosConcluidos: 0,
@@ -35,6 +37,7 @@ export function CompanyReportsTab({ companyId, employees, managers }: CompanyRep
     metasConcluidas: 0,
     mediaEngagement: 0,
     funcionariosAtivos: 0,
+    funcionariosAlinhados: 0,
   });
 
   useEffect(() => {
@@ -44,15 +47,20 @@ export function CompanyReportsTab({ companyId, employees, managers }: CompanyRep
   const loadReports = () => {
     // Simular carregamento de dados agregados dos funcionários
     // Em produção, isso viria do Supabase
-    const stats: EmployeeStats[] = employees.map((emp) => ({
-      id: emp.id,
-      name: emp.name,
-      objetivos: Math.floor(Math.random() * 5) + 1,
-      objetivosConcluidos: Math.floor(Math.random() * 3),
-      metas: Math.floor(Math.random() * 10) + 2,
-      metasConcluidas: Math.floor(Math.random() * 8),
-      diasDiario: Math.floor(Math.random() * 30),
-    }));
+    const stats: EmployeeStats[] = employees.map((emp) => {
+      const objetivos = Math.floor(Math.random() * 5) + 1;
+      const objetivosAlinhados = Math.floor(Math.random() * (objetivos + 1));
+      return {
+        id: emp.id,
+        name: emp.name,
+        objetivos,
+        objetivosConcluidos: Math.floor(Math.random() * 3),
+        metas: Math.floor(Math.random() * 10) + 2,
+        metasConcluidas: Math.floor(Math.random() * 8),
+        diasDiario: Math.floor(Math.random() * 30),
+        objetivosAlinhados,
+      };
+    });
 
     setEmployeeStats(stats);
 
@@ -64,17 +72,22 @@ export function CompanyReportsTab({ companyId, employees, managers }: CompanyRep
         totalMetas: acc.totalMetas + emp.metas,
         metasConcluidas: acc.metasConcluidas + emp.metasConcluidas,
         diasDiario: acc.diasDiario + emp.diasDiario,
+        objetivosAlinhados: acc.objetivosAlinhados + emp.objetivosAlinhados,
       }),
-      { totalObjetivos: 0, objetivosConcluidos: 0, totalMetas: 0, metasConcluidas: 0, diasDiario: 0 }
+      { totalObjetivos: 0, objetivosConcluidos: 0, totalMetas: 0, metasConcluidas: 0, diasDiario: 0, objetivosAlinhados: 0 }
     );
 
     const funcionariosAtivos = stats.filter((s) => s.diasDiario > 0).length;
+    const funcionariosAlinhados = stats.filter((s) => s.objetivosAlinhados > 0).length;
     const mediaEngagement = employees.length > 0 ? Math.round((funcionariosAtivos / employees.length) * 100) : 0;
+    const alignmentRate = employees.length > 0 ? Math.round((funcionariosAlinhados / employees.length) * 100) : 0;
 
+    setOkrAlignmentRate(alignmentRate);
     setAggregatedStats({
       ...totals,
       mediaEngagement,
       funcionariosAtivos,
+      funcionariosAlinhados,
     });
   };
 
@@ -129,7 +142,7 @@ export function CompanyReportsTab({ companyId, employees, managers }: CompanyRep
       </div>
 
       {/* KPIs Cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
         <Card>
           <CardContent className="p-4">
             <div className="flex items-center gap-3">
@@ -152,6 +165,19 @@ export function CompanyReportsTab({ companyId, employees, managers }: CompanyRep
               <div>
                 <p className="text-2xl font-bold">{taxaConclusaoMetas}%</p>
                 <p className="text-xs text-muted-foreground">Taxa Metas</p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+        <Card className="border-primary/30 bg-primary/5">
+          <CardContent className="p-4">
+            <div className="flex items-center gap-3">
+              <div className="p-2 rounded-full bg-primary/10">
+                <Link2 className="w-5 h-5 text-primary" />
+              </div>
+              <div>
+                <p className="text-2xl font-bold">{okrAlignmentRate}%</p>
+                <p className="text-xs text-muted-foreground">Alinhados OKRs</p>
               </div>
             </div>
           </CardContent>
