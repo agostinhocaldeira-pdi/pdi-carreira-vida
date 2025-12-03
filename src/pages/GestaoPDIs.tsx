@@ -53,6 +53,8 @@ interface ManagerMessage {
   is_manager_response: boolean;
   sender_name: string;
   created_at: string;
+  read_by_employee?: boolean;
+  read_by_manager?: boolean;
 }
 
 const GestaoPDIs = () => {
@@ -74,6 +76,7 @@ const GestaoPDIs = () => {
   const [conversations, setConversations] = useState<ManagerConversation[]>([]);
   const [messages, setMessages] = useState<Record<string, ManagerMessage[]>>({});
   const [replyTexts, setReplyTexts] = useState<Record<string, string>>({});
+  const [unreadCount, setUnreadCount] = useState(0);
 
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem("user") || "{}");
@@ -143,14 +146,49 @@ const GestaoPDIs = () => {
     setConversations(managerConversations);
 
     const messagesMap: Record<string, ManagerMessage[]> = {};
+    let totalUnread = 0;
+    
     managerConversations.forEach((conv: ManagerConversation) => {
-      messagesMap[conv.id] = allMessages
+      const convMessages = allMessages
         .filter((m: ManagerMessage) => m.conversation_id === conv.id)
         .sort((a: ManagerMessage, b: ManagerMessage) =>
           new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
         );
+      messagesMap[conv.id] = convMessages;
+      
+      // Contar mensagens não lidas (do funcionário para o gestor)
+      convMessages.forEach((msg: ManagerMessage) => {
+        if (!msg.is_manager_response && !msg.read_by_manager) {
+          totalUnread++;
+        }
+      });
     });
+    
     setMessages(messagesMap);
+    setUnreadCount(totalUnread);
+  };
+
+  const markMessagesAsRead = (conversationId: string) => {
+    const allMessages = JSON.parse(localStorage.getItem("managerMessages") || "[]");
+    let updated = false;
+    
+    const updatedMessages = allMessages.map((msg: ManagerMessage) => {
+      if (msg.conversation_id === conversationId && !msg.is_manager_response && !msg.read_by_manager) {
+        updated = true;
+        return { ...msg, read_by_manager: true };
+      }
+      return msg;
+    });
+    
+    if (updated) {
+      localStorage.setItem("managerMessages", JSON.stringify(updatedMessages));
+      loadConversations();
+    }
+  };
+
+  const getUnreadCountForConversation = (conversationId: string) => {
+    const convMessages = messages[conversationId] || [];
+    return convMessages.filter(msg => !msg.is_manager_response && !msg.read_by_manager).length;
   };
 
   useEffect(() => {
@@ -192,6 +230,8 @@ const GestaoPDIs = () => {
       is_manager_response: true,
       sender_name: currentManagerName || "Gestor",
       created_at: new Date().toISOString(),
+      read_by_employee: false,
+      read_by_manager: true,
     };
 
     const allMessages = JSON.parse(localStorage.getItem("managerMessages") || "[]");
@@ -213,8 +253,6 @@ const GestaoPDIs = () => {
     }
     return true;
   });
-
-  const unreadCount = conversations.length;
 
   return (
     <div className="min-h-screen bg-gradient-subtle">
@@ -263,7 +301,7 @@ const GestaoPDIs = () => {
                     <MessageSquare className="w-4 h-4" />
                     Mensagens
                     {unreadCount > 0 && (
-                      <Badge variant="destructive" className="ml-1 h-5 w-5 p-0 flex items-center justify-center text-xs">
+                      <Badge variant="destructive" className="ml-1 h-5 min-w-[20px] p-0 flex items-center justify-center text-xs">
                         {unreadCount}
                       </Badge>
                     )}
@@ -281,6 +319,11 @@ const GestaoPDIs = () => {
               <CardTitle className="flex items-center gap-2">
                 <MessageSquare className="w-5 h-5 text-primary" />
                 Mensagens dos Funcionários
+                {unreadCount > 0 && (
+                  <Badge variant="destructive" className="ml-2">
+                    {unreadCount} nova{unreadCount > 1 ? "s" : ""}
+                  </Badge>
+                )}
               </CardTitle>
               <CardDescription>
                 Responda às mensagens enviadas pelos seus funcionários
@@ -298,78 +341,93 @@ const GestaoPDIs = () => {
                   </p>
                 </div>
               ) : (
-                conversations.map((conv) => (
-                  <div key={conv.id} className="border rounded-lg p-4 space-y-4">
-                    <div className="space-y-2">
-                      <div className="flex items-start justify-between">
-                        <div>
-                          <div className="flex items-center gap-2 mb-1">
-                            <span className="font-semibold">{conv.employee_name}</span>
-                            <span className="text-xs text-muted-foreground">({conv.employee_email})</span>
-                          </div>
-                          <span className="inline-block px-2 py-1 rounded-md bg-green-500/10 text-green-600 text-xs font-medium">
-                            {conv.subject}
-                          </span>
-                          <p className="text-sm text-muted-foreground mt-1">
-                            {format(new Date(conv.created_at), "dd/MM/yyyy 'às' HH:mm", {
-                              locale: ptBR,
-                            })}
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-
-                    {messages[conv.id] && messages[conv.id].length > 0 && (
+                conversations.map((conv) => {
+                  const convUnread = getUnreadCountForConversation(conv.id);
+                  return (
+                    <div 
+                      key={conv.id} 
+                      className={`border rounded-lg p-4 space-y-4 ${convUnread > 0 ? 'border-primary/50 bg-primary/5' : ''}`}
+                      onClick={() => markMessagesAsRead(conv.id)}
+                    >
                       <div className="space-y-2">
-                        <Label>Conversa</Label>
-                        <div className="space-y-3 pl-4 border-l-2 border-green-500/30">
-                          {messages[conv.id].map((msg) => (
-                            <div
-                              key={msg.id}
-                              className={`p-3 rounded-lg ${
-                                msg.is_manager_response
-                                  ? "bg-primary/5 border border-primary/20"
-                                  : "bg-muted"
-                              }`}
-                            >
-                              <div className="flex items-center gap-2 mb-1">
-                                <span className="text-xs font-semibold">
-                                  {msg.is_manager_response ? "Você" : msg.sender_name}
-                                </span>
-                                <span className="text-xs text-muted-foreground">
-                                  {format(new Date(msg.created_at), "dd/MM/yyyy 'às' HH:mm", {
-                                    locale: ptBR,
-                                  })}
-                                </span>
-                              </div>
-                              <p className="text-sm">{msg.message}</p>
+                        <div className="flex items-start justify-between">
+                          <div>
+                            <div className="flex items-center gap-2 mb-1">
+                              <span className="font-semibold">{conv.employee_name}</span>
+                              <span className="text-xs text-muted-foreground">({conv.employee_email})</span>
+                              {convUnread > 0 && (
+                                <Badge variant="destructive" className="text-xs">
+                                  {convUnread} nova{convUnread > 1 ? "s" : ""}
+                                </Badge>
+                              )}
                             </div>
-                          ))}
+                            <span className="inline-block px-2 py-1 rounded-md bg-green-500/10 text-green-600 text-xs font-medium">
+                              {conv.subject}
+                            </span>
+                            <p className="text-sm text-muted-foreground mt-1">
+                              {format(new Date(conv.created_at), "dd/MM/yyyy 'às' HH:mm", {
+                                locale: ptBR,
+                              })}
+                            </p>
+                          </div>
                         </div>
                       </div>
-                    )}
 
-                    {/* Campo de resposta */}
-                    <div className="space-y-2 pt-4 border-t">
-                      <Label htmlFor={`reply-${conv.id}`}>Responder</Label>
-                      <Textarea
-                        id={`reply-${conv.id}`}
-                        placeholder="Escreva sua resposta para o funcionário..."
-                        value={replyTexts[conv.id] || ""}
-                        onChange={(e) => setReplyTexts(prev => ({ ...prev, [conv.id]: e.target.value }))}
-                        className="min-h-[100px]"
-                      />
-                      <Button
-                        onClick={() => handleSendReply(conv.id)}
-                        disabled={!replyTexts[conv.id]?.trim()}
-                        className="w-full"
-                      >
-                        <Send className="w-4 h-4 mr-2" />
-                        Enviar Resposta
-                      </Button>
+                      {messages[conv.id] && messages[conv.id].length > 0 && (
+                        <div className="space-y-2">
+                          <Label>Conversa</Label>
+                          <div className="space-y-3 pl-4 border-l-2 border-green-500/30">
+                            {messages[conv.id].map((msg) => (
+                              <div
+                                key={msg.id}
+                                className={`p-3 rounded-lg ${
+                                  msg.is_manager_response
+                                    ? "bg-primary/5 border border-primary/20"
+                                    : `bg-muted ${!msg.read_by_manager ? 'ring-2 ring-primary/30' : ''}`
+                                }`}
+                              >
+                                <div className="flex items-center gap-2 mb-1">
+                                  <span className="text-xs font-semibold">
+                                    {msg.is_manager_response ? "Você" : msg.sender_name}
+                                  </span>
+                                  {!msg.is_manager_response && !msg.read_by_manager && (
+                                    <Badge variant="secondary" className="text-xs">Nova</Badge>
+                                  )}
+                                  <span className="text-xs text-muted-foreground">
+                                    {format(new Date(msg.created_at), "dd/MM/yyyy 'às' HH:mm", {
+                                      locale: ptBR,
+                                    })}
+                                  </span>
+                                </div>
+                                <p className="text-sm">{msg.message}</p>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Campo de resposta */}
+                      <div className="space-y-2 pt-4 border-t">
+                        <Label htmlFor={`reply-${conv.id}`}>Responder</Label>
+                        <Textarea
+                          id={`reply-${conv.id}`}
+                          placeholder="Escreva sua resposta para o funcionário..."
+                          value={replyTexts[conv.id] || ""}
+                          onChange={(e) => setReplyTexts(prev => ({ ...prev, [conv.id]: e.target.value }))}
+                          className="min-h-[100px]"
+                        />
+                        <Button
+                          onClick={() => handleSendReply(conv.id)}
+                          disabled={!replyTexts[conv.id]?.trim()}
+                          className="w-full"
+                        >
+                          <Send className="w-4 h-4 mr-2" />
+                          Enviar Resposta
+                        </Button>
+                      </div>
                     </div>
-                  </div>
-                ))
+                  );
+                })
               )}
             </CardContent>
           </Card>
