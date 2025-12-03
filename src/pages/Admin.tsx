@@ -209,7 +209,7 @@ const Admin = () => {
         </Card>
 
         {/* Admin Dashboard Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <Card 
             className="hover:shadow-medium transition-all cursor-pointer hover:border-primary/50"
             onClick={() => navigate("/admin/usuarios")}
@@ -223,6 +223,19 @@ const Admin = () => {
               </div>
               <h3 className="text-2xl font-bold mb-1">127</h3>
               <p className="text-sm text-muted-foreground">Usuários Cadastrados</p>
+              <div className="mt-3 pt-3 border-t border-border/50 space-y-2">
+                <div className="flex justify-between text-sm">
+                  <span className="text-muted-foreground">Usuários Ativos:</span>
+                  <span className="font-medium text-green-600">124</span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span className="text-muted-foreground">Taxa de Engajamento:</span>
+                  <span className="font-bold text-primary">98%</span>
+                </div>
+                <p className="text-xs text-muted-foreground italic pt-1">
+                  Fórmula: (usuários ativos nos últimos 30 dias / total) × 100
+                </p>
+              </div>
             </CardContent>
           </Card>
 
@@ -250,22 +263,6 @@ const Admin = () => {
                   <span className="font-medium">2.156</span>
                 </div>
               </div>
-            </CardContent>
-          </Card>
-
-          <Card className="hover:shadow-medium transition-all">
-            <CardContent className="pt-6">
-              <div className="flex items-center justify-between mb-4">
-                <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
-                  <Settings className="w-6 h-6 text-primary" />
-                </div>
-                <Badge variant="secondary">Mockado</Badge>
-              </div>
-              <h3 className="text-2xl font-bold mb-1">98%</h3>
-              <p className="text-sm text-muted-foreground">Taxa de Engajamento</p>
-              <p className="text-xs text-muted-foreground mt-2 italic">
-                Fórmula: (usuários ativos nos últimos 30 dias / total de usuários) × 100
-              </p>
             </CardContent>
           </Card>
         </div>
