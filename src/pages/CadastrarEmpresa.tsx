@@ -7,6 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { toast } from "sonner";
 import { Building2, ArrowLeft, Plus, Trash2, UserPlus, Eye, EyeOff, MapPin, Loader2 } from "lucide-react";
 import { formatCNPJ, validateCNPJ } from "@/types/company";
+import { supabase } from "@/integrations/supabase/client";
 
 interface Representative {
   name: string;
@@ -29,6 +30,7 @@ const CadastrarEmpresa = () => {
   const navigate = useNavigate();
   const [step, setStep] = useState(1);
   const [isLoadingCep, setIsLoadingCep] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [companyData, setCompanyData] = useState({
     razaoSocial: "",
     cnpj: "",
@@ -58,7 +60,6 @@ const CadastrarEmpresa = () => {
     setCompanyData({ ...companyData, cnpj: formatted });
   };
 
-  // Buscar CEP
   const fetchCep = async (cep: string) => {
     const cleanCep = cep.replace(/\D/g, "");
     if (cleanCep.length !== 8) return;
@@ -153,7 +154,7 @@ const CadastrarEmpresa = () => {
     setStep(3);
   };
 
-  const handleStep3Submit = (e: React.FormEvent) => {
+  const handleStep3Submit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     const primaryRep = representatives.find(r => r.isPrimary);
@@ -162,36 +163,104 @@ const CadastrarEmpresa = () => {
       return;
     }
 
-    // Salvar empresa no localStorage (simulação)
-    const company = {
-      id: crypto.randomUUID(),
-      ...companyData,
-      cnpj: companyData.cnpj.replace(/\D/g, ""),
-      address: {
-        ...addressData,
-        cep: addressData.cep.replace(/\D/g, ""),
-      },
-      representatives,
-      role: "empresa",
-      createdAt: new Date().toISOString(),
-    };
+    setIsSubmitting(true);
 
-    // Salvar como usuário logado
-    localStorage.setItem("user", JSON.stringify({
-      name: companyData.razaoSocial,
-      email: companyData.email,
-      password: companyData.password,
-      role: "empresa",
-      companyId: company.id,
-    }));
+    try {
+      // 1. Criar usuário no Supabase Auth
+      const { data: authData, error: authError } = await supabase.auth.signUp({
+        email: companyData.email,
+        password: companyData.password,
+        options: {
+          emailRedirectTo: `${window.location.origin}/`,
+          data: {
+            name: companyData.razaoSocial,
+            phone: companyData.telefone,
+          }
+        }
+      });
 
-    // Salvar dados da empresa
-    const companies = JSON.parse(localStorage.getItem("companies") || "[]");
-    companies.push(company);
-    localStorage.setItem("companies", JSON.stringify(companies));
+      if (authError) {
+        if (authError.message.includes("already registered")) {
+          toast.error("Este e-mail já está cadastrado.");
+        } else {
+          toast.error(authError.message);
+        }
+        return;
+      }
 
-    toast.success("Empresa cadastrada com sucesso!");
-    navigate("/dashboard-empresa");
+      if (!authData.user) {
+        toast.error("Erro ao criar usuário");
+        return;
+      }
+
+      const userId = authData.user.id;
+
+      // 2. Atribuir role 'empresa'
+      const { error: roleError } = await supabase
+        .from('user_roles')
+        .upsert({ user_id: userId, role: 'empresa' }, { onConflict: 'user_id,role' });
+
+      if (roleError) {
+        console.error("Erro ao criar role:", roleError);
+      }
+
+      // 3. Criar registro da empresa
+      const { data: companyRecord, error: companyError } = await supabase
+        .from('companies')
+        .insert({
+          razao_social: companyData.razaoSocial,
+          cnpj: companyData.cnpj.replace(/\D/g, ""),
+          email: companyData.email,
+          telefone: companyData.telefone || null,
+          owner_user_id: userId,
+        })
+        .select()
+        .single();
+
+      if (companyError) {
+        console.error("Erro ao criar empresa:", companyError);
+        toast.error("Erro ao criar empresa: " + companyError.message);
+        return;
+      }
+
+      // 4. Criar representantes
+      for (const rep of representatives) {
+        if (rep.name && rep.email) {
+          const { error: repError } = await supabase
+            .from('company_representatives')
+            .insert({
+              company_id: companyRecord.id,
+              name: rep.name,
+              email: rep.email,
+              phone: rep.phone || null,
+              is_primary: rep.isPrimary,
+              user_id: rep.isPrimary ? userId : null,
+            });
+
+          if (repError) {
+            console.error("Erro ao criar representante:", repError);
+          }
+        }
+      }
+
+      // 5. Salvar em localStorage para compatibilidade
+      localStorage.setItem("user", JSON.stringify({
+        id: userId,
+        name: companyData.razaoSocial,
+        email: companyData.email,
+        role: "empresa",
+        companyId: companyRecord.id,
+      }));
+
+      toast.success("Empresa cadastrada com sucesso!");
+      navigate("/dashboard-empresa");
+
+    } catch (error: any) {
+      console.error("Erro no cadastro:", error);
+      toast.error("Erro ao cadastrar empresa. Tente novamente.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -476,20 +545,19 @@ const CadastrarEmpresa = () => {
                       onChange={(e) => updateRepresentative(index, "name", e.target.value)}
                       required={rep.isPrimary}
                     />
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                      <Input
-                        type="email"
-                        placeholder="E-mail *"
-                        value={rep.email}
-                        onChange={(e) => updateRepresentative(index, "email", e.target.value)}
-                        required={rep.isPrimary}
-                      />
-                      <Input
-                        placeholder="Telefone"
-                        value={rep.phone}
-                        onChange={(e) => updateRepresentative(index, "phone", e.target.value)}
-                      />
-                    </div>
+                    <Input
+                      type="email"
+                      placeholder="E-mail *"
+                      value={rep.email}
+                      onChange={(e) => updateRepresentative(index, "email", e.target.value)}
+                      required={rep.isPrimary}
+                    />
+                    <Input
+                      type="tel"
+                      placeholder="Telefone"
+                      value={rep.phone}
+                      onChange={(e) => updateRepresentative(index, "phone", e.target.value)}
+                    />
                   </div>
                 </Card>
               ))}
@@ -512,13 +580,23 @@ const CadastrarEmpresa = () => {
                   variant="outline"
                   onClick={() => setStep(2)}
                   className="flex-1"
+                  disabled={isSubmitting}
                 >
                   <ArrowLeft className="w-4 h-4 mr-2" />
                   Voltar
                 </Button>
-                <Button type="submit" className="flex-1">
-                  <UserPlus className="w-4 h-4 mr-2" />
-                  Finalizar Cadastro
+                <Button type="submit" className="flex-1" disabled={isSubmitting}>
+                  {isSubmitting ? (
+                    <>
+                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                      Cadastrando...
+                    </>
+                  ) : (
+                    <>
+                      <UserPlus className="w-4 h-4 mr-2" />
+                      Cadastrar Empresa
+                    </>
+                  )}
                 </Button>
               </div>
             </form>

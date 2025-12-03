@@ -37,7 +37,8 @@ import {
   KeyRound,
   Receipt,
   CreditCard,
-  Info
+  Info,
+  Loader2
 } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { generateProvisionalPassword } from "@/types/company";
@@ -46,9 +47,11 @@ import ConfirmDeleteDialog from "@/components/ConfirmDeleteDialog";
 import { CompanyReportsTab } from "@/components/company/CompanyReportsTab";
 import { OKRsTab } from "@/components/company/OKRsTab";
 import { BarChart3, Target } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 
 interface Manager {
   id: string;
+  user_id?: string;
   name: string;
   email: string;
   phone: string;
@@ -59,6 +62,7 @@ interface Manager {
 
 interface Employee {
   id: string;
+  user_id?: string;
   name: string;
   email: string;
   phone: string;
@@ -95,6 +99,7 @@ const DashboardEmpresa = () => {
   const [selectedEmployees, setSelectedEmployees] = useState<string[]>([]);
   const [deleteManagerId, setDeleteManagerId] = useState<string | null>(null);
   const [deleteEmployeeId, setDeleteEmployeeId] = useState<string | null>(null);
+  const [isAddingPerson, setIsAddingPerson] = useState(false);
 
   // Verificar se é admin
   const checkIsAdmin = (email: string): boolean => {
@@ -103,48 +108,92 @@ const DashboardEmpresa = () => {
   };
 
   useEffect(() => {
-    const user = JSON.parse(localStorage.getItem("user") || "{}");
-    const userIsAdmin = checkIsAdmin(user.email || "");
-    setIsAdmin(userIsAdmin);
+    const loadData = async () => {
+      const user = JSON.parse(localStorage.getItem("user") || "{}");
+      const userIsAdmin = checkIsAdmin(user.email || "");
+      setIsAdmin(userIsAdmin);
 
-    // Admin tem acesso total
-    if (!userIsAdmin && user.role !== "empresa") {
-      navigate("/login");
-      return;
-    }
-
-    const companies = JSON.parse(localStorage.getItem("companies") || "[]");
-    setAllCompanies(companies);
-
-    if (userIsAdmin) {
-      // Admin: mostrar primeira empresa ou permitir seleção
-      if (companies.length > 0) {
-        const companyId = selectedCompanyId || companies[0].id;
-        setSelectedCompanyId(companyId);
-        setCompany(companies.find((c: any) => c.id === companyId));
-        const storedManagers = JSON.parse(localStorage.getItem(`managers_${companyId}`) || "[]");
-        const storedEmployees = JSON.parse(localStorage.getItem(`employees_${companyId}`) || "[]");
-        setManagers(storedManagers);
-        setEmployees(storedEmployees);
+      // Admin tem acesso total
+      if (!userIsAdmin && user.role !== "empresa") {
+        navigate("/login");
+        return;
       }
-    } else {
-      // Empresa normal
-      const userCompany = companies.find((c: any) => c.id === user.companyId);
-      setCompany(userCompany);
-      setSelectedCompanyId(user.companyId);
 
-      const storedManagers = JSON.parse(localStorage.getItem(`managers_${user.companyId}`) || "[]");
-      const storedEmployees = JSON.parse(localStorage.getItem(`employees_${user.companyId}`) || "[]");
-      setManagers(storedManagers);
-      setEmployees(storedEmployees);
-    }
+      // Buscar empresas do Supabase
+      const { data: companiesData } = await supabase
+        .from('companies')
+        .select('*');
+
+      const companies = companiesData || [];
+      setAllCompanies(companies);
+
+      let companyId: string | null = null;
+
+      if (userIsAdmin) {
+        if (companies.length > 0) {
+          companyId = selectedCompanyId || companies[0].id;
+          setSelectedCompanyId(companyId);
+          setCompany(companies.find((c: any) => c.id === companyId));
+        }
+      } else {
+        const userCompany = companies.find((c: any) => c.id === user.companyId);
+        setCompany(userCompany);
+        companyId = user.companyId;
+        setSelectedCompanyId(companyId);
+      }
+
+      if (companyId) {
+        // Buscar gestores do Supabase
+        const { data: managersData } = await supabase
+          .from('company_managers')
+          .select('*')
+          .eq('company_id', companyId);
+
+        const formattedManagers: Manager[] = (managersData || []).map((m: any) => ({
+          id: m.id,
+          user_id: m.user_id,
+          name: m.name,
+          email: m.email,
+          phone: m.phone || "",
+          provisionalPassword: m.provisional_password || "",
+          acceptedAt: m.accepted_at,
+          createdAt: m.created_at,
+        }));
+        setManagers(formattedManagers);
+
+        // Buscar funcionários do Supabase
+        const { data: employeesData } = await supabase
+          .from('company_employees')
+          .select('*')
+          .eq('company_id', companyId);
+
+        const formattedEmployees: Employee[] = (employeesData || []).map((e: any) => {
+          const manager = formattedManagers.find(m => m.user_id === e.manager_id);
+          return {
+            id: e.id,
+            user_id: e.user_id,
+            name: e.name,
+            email: e.email,
+            phone: e.phone || "",
+            provisionalPassword: e.provisional_password || "",
+            acceptedAt: e.accepted_at,
+            managerId: e.manager_id,
+            managerName: manager?.name,
+            createdAt: e.created_at,
+          };
+        });
+        setEmployees(formattedEmployees);
+      }
+    };
+
+    loadData();
   }, [navigate, selectedCompanyId]);
 
   const handleCompanyChange = (companyId: string) => {
     setSelectedCompanyId(companyId);
   };
 
-  const handleAddManager = (e: React.FormEvent) => {
+  const handleAddManager = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newPerson.name || !newPerson.email) {
       toast.error("Nome e e-mail são obrigatórios");
@@ -157,30 +206,59 @@ const DashboardEmpresa = () => {
       return;
     }
 
+    setIsAddingPerson(true);
     const provisionalPassword = generateProvisionalPassword();
-    
-    const newManager: Manager = {
-      id: crypto.randomUUID(),
-      ...newPerson,
-      provisionalPassword,
-      acceptedAt: null,
-      createdAt: new Date().toISOString(),
-    };
 
-    const updatedManagers = [...managers, newManager];
-    setManagers(updatedManagers);
-    localStorage.setItem(`managers_${companyId}`, JSON.stringify(updatedManagers));
+    try {
+      const { data, error } = await supabase.functions.invoke('create-company-user', {
+        body: {
+          email: newPerson.email,
+          password: provisionalPassword,
+          name: newPerson.name,
+          phone: newPerson.phone,
+          userType: 'manager',
+          companyId,
+        }
+      });
 
-    toast.success("Gestor adicionado!", {
-      description: `Senha provisória: ${provisionalPassword}`,
-      duration: 10000,
-    });
+      if (error || data?.error) {
+        toast.error(data?.error || error?.message || "Erro ao criar gestor");
+        return;
+      }
 
-    setNewPerson({ name: "", email: "", phone: "" });
-    setShowAddManagerModal(false);
+      // Recarregar gestores
+      const { data: managersData } = await supabase
+        .from('company_managers')
+        .select('*')
+        .eq('company_id', companyId);
+
+      const formattedManagers: Manager[] = (managersData || []).map((m: any) => ({
+        id: m.id,
+        user_id: m.user_id,
+        name: m.name,
+        email: m.email,
+        phone: m.phone || "",
+        provisionalPassword: m.provisional_password || "",
+        acceptedAt: m.accepted_at,
+        createdAt: m.created_at,
+      }));
+      setManagers(formattedManagers);
+
+      toast.success("Gestor adicionado!", {
+        description: `Senha provisória: ${provisionalPassword}`,
+        duration: 10000,
+      });
+
+      setNewPerson({ name: "", email: "", phone: "" });
+      setShowAddManagerModal(false);
+    } catch (error: any) {
+      toast.error("Erro ao criar gestor: " + error.message);
+    } finally {
+      setIsAddingPerson(false);
+    }
   };
 
-  const handleAddEmployee = (e: React.FormEvent) => {
+  const handleAddEmployee = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newPerson.name || !newPerson.email) {
       toast.error("Nome e e-mail são obrigatórios");
@@ -193,27 +271,61 @@ const DashboardEmpresa = () => {
       return;
     }
 
+    setIsAddingPerson(true);
     const provisionalPassword = generateProvisionalPassword();
-    
-    const newEmployee: Employee = {
-      id: crypto.randomUUID(),
-      ...newPerson,
-      provisionalPassword,
-      acceptedAt: null,
-      createdAt: new Date().toISOString(),
-    };
 
-    const updatedEmployees = [...employees, newEmployee];
-    setEmployees(updatedEmployees);
-    localStorage.setItem(`employees_${companyId}`, JSON.stringify(updatedEmployees));
+    try {
+      const { data, error } = await supabase.functions.invoke('create-company-user', {
+        body: {
+          email: newPerson.email,
+          password: provisionalPassword,
+          name: newPerson.name,
+          phone: newPerson.phone,
+          userType: 'employee',
+          companyId,
+        }
+      });
 
-    toast.success("Funcionário adicionado!", {
-      description: `Senha provisória: ${provisionalPassword}`,
-      duration: 10000,
-    });
+      if (error || data?.error) {
+        toast.error(data?.error || error?.message || "Erro ao criar funcionário");
+        return;
+      }
 
-    setNewPerson({ name: "", email: "", phone: "" });
-    setShowAddEmployeeModal(false);
+      // Recarregar funcionários
+      const { data: employeesData } = await supabase
+        .from('company_employees')
+        .select('*')
+        .eq('company_id', companyId);
+
+      const formattedEmployees: Employee[] = (employeesData || []).map((e: any) => {
+        const manager = managers.find(m => m.user_id === e.manager_id);
+        return {
+          id: e.id,
+          user_id: e.user_id,
+          name: e.name,
+          email: e.email,
+          phone: e.phone || "",
+          provisionalPassword: e.provisional_password || "",
+          acceptedAt: e.accepted_at,
+          managerId: e.manager_id,
+          managerName: manager?.name,
+          createdAt: e.created_at,
+        };
+      });
+      setEmployees(formattedEmployees);
+
+      toast.success("Funcionário adicionado!", {
+        description: `Senha provisória: ${provisionalPassword}`,
+        duration: 10000,
+      });
+
+      setNewPerson({ name: "", email: "", phone: "" });
+      setShowAddEmployeeModal(false);
+    } catch (error: any) {
+      toast.error("Erro ao criar funcionário: " + error.message);
+    } finally {
+      setIsAddingPerson(false);
+    }
   };
 
   const handleRemoveManager = (id: string) => {
@@ -221,32 +333,51 @@ const DashboardEmpresa = () => {
     setDeleteManagerId(id);
   };
 
-  const confirmRemoveManager = () => {
+  const confirmRemoveManager = async () => {
     if (deleteManagerId && selectedCompanyId) {
+      await supabase
+        .from('company_managers')
+        .delete()
+        .eq('id', deleteManagerId);
+
       const updatedManagers = managers.filter(m => m.id !== deleteManagerId);
       setManagers(updatedManagers);
-      localStorage.setItem(`managers_${selectedCompanyId}`, JSON.stringify(updatedManagers));
       toast.success("Gestor removido");
       setDeleteManagerId(null);
     }
   };
 
-  const handleResetManagerPassword = (id: string) => {
+  const handleResetManagerPassword = async (id: string) => {
     if (!selectedCompanyId) return;
+    const manager = managers.find(m => m.id === id);
+    if (!manager?.user_id) {
+      toast.error("Usuário não encontrado");
+      return;
+    }
+
     const newPassword = generateProvisionalPassword();
+
+    const { error } = await supabase.functions.invoke('reset-user-password', {
+      body: {
+        userId: manager.user_id,
+        newPassword,
+        userType: 'manager',
+        companyId: selectedCompanyId,
+      }
+    });
+
+    if (error) {
+      toast.error("Erro ao gerar nova senha");
+      return;
+    }
+
     const updatedManagers = managers.map(m => {
       if (m.id === id) {
-        return { 
-          ...m, 
-          provisionalPassword: newPassword,
-          password: null,
-          acceptedAt: null
-        };
+        return { ...m, provisionalPassword: newPassword, acceptedAt: null };
       }
       return m;
     });
     setManagers(updatedManagers);
-    localStorage.setItem(`managers_${selectedCompanyId}`, JSON.stringify(updatedManagers));
     toast.success("Nova senha provisória gerada!", {
       description: `Senha: ${newPassword}`,
       duration: 10000,
@@ -258,32 +389,51 @@ const DashboardEmpresa = () => {
     setDeleteEmployeeId(id);
   };
 
-  const confirmRemoveEmployee = () => {
+  const confirmRemoveEmployee = async () => {
     if (deleteEmployeeId && selectedCompanyId) {
+      await supabase
+        .from('company_employees')
+        .delete()
+        .eq('id', deleteEmployeeId);
+
       const updatedEmployees = employees.filter(e => e.id !== deleteEmployeeId);
       setEmployees(updatedEmployees);
-      localStorage.setItem(`employees_${selectedCompanyId}`, JSON.stringify(updatedEmployees));
       toast.success("Funcionário removido");
       setDeleteEmployeeId(null);
     }
   };
 
-  const handleResetEmployeePassword = (id: string) => {
+  const handleResetEmployeePassword = async (id: string) => {
     if (!selectedCompanyId) return;
+    const employee = employees.find(e => e.id === id);
+    if (!employee?.user_id) {
+      toast.error("Usuário não encontrado");
+      return;
+    }
+
     const newPassword = generateProvisionalPassword();
+
+    const { error } = await supabase.functions.invoke('reset-user-password', {
+      body: {
+        userId: employee.user_id,
+        newPassword,
+        userType: 'employee',
+        companyId: selectedCompanyId,
+      }
+    });
+
+    if (error) {
+      toast.error("Erro ao gerar nova senha");
+      return;
+    }
+
     const updatedEmployees = employees.map(e => {
       if (e.id === id) {
-        return { 
-          ...e, 
-          provisionalPassword: newPassword,
-          password: null,
-          acceptedAt: null
-        };
+        return { ...e, provisionalPassword: newPassword, acceptedAt: null };
       }
       return e;
     });
     setEmployees(updatedEmployees);
-    localStorage.setItem(`employees_${selectedCompanyId}`, JSON.stringify(updatedEmployees));
     toast.success("Nova senha provisória gerada!", {
       description: `Senha: ${newPassword}`,
       duration: 10000,

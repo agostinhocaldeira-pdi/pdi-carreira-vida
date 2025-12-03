@@ -25,11 +25,25 @@ const Login = () => {
   const [showForgotPasswordModal, setShowForgotPasswordModal] = useState(false);
   const [forgotPasswordEmail, setForgotPasswordEmail] = useState("");
   const [showManagerModal, setShowManagerModal] = useState(false);
+  const [showNewPasswordModal, setShowNewPasswordModal] = useState(false);
+  const [newPasswordData, setNewPasswordData] = useState({
+    newPassword: "",
+    confirmPassword: "",
+  });
+  const [pendingLogin, setPendingLogin] = useState<{
+    userId: string;
+    userType: "manager" | "employee";
+    companyId: string;
+    name: string;
+    email: string;
+  } | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isResetting, setIsResetting] = useState(false);
+  const [isChangingPassword, setIsChangingPassword] = useState(false);
 
-  // Password visibility states
   const [showPassword, setShowPassword] = useState(false);
+  const [showNewPw, setShowNewPw] = useState(false);
+  const [showConfirmPw, setShowConfirmPw] = useState(false);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -57,60 +71,225 @@ const Login = () => {
       }
 
       if (data.user) {
-        // Buscar role do usuário
-        const { data: roleData } = await supabase
-          .from('user_roles')
-          .select('role')
-          .eq('user_id', data.user.id)
-          .single();
-
-        const userRole = roleData?.role || 'user';
-        const userName = data.user.user_metadata?.name || data.user.email?.split('@')[0] || 'Usuário';
-        const userPhone = data.user.user_metadata?.phone || '';
-
-        // Salvar em localStorage para compatibilidade
-        localStorage.setItem("user", JSON.stringify({
-          id: data.user.id,
-          name: userName,
-          email: data.user.email,
-          phone: userPhone,
-          role: userRole,
-        }));
-
-        // Verificar se é admin
-        const { data: adminCheck } = await supabase
-          .from('user_roles')
-          .select('role')
-          .eq('user_id', data.user.id)
-          .eq('role', 'admin')
-          .single();
-
-        if (adminCheck) {
-          const admins = JSON.parse(localStorage.getItem("administrators") || "[]");
-          if (!admins.some((a: any) => a.email?.toLowerCase() === data.user.email?.toLowerCase())) {
-            admins.push({ name: userName, email: data.user.email, phone: userPhone });
-            localStorage.setItem("administrators", JSON.stringify(admins));
-          }
-        }
-
-        toast.success("Login realizado com sucesso!");
-
-        // Redirecionar baseado no role
-        if (userRole === "empresa") {
-          navigate("/dashboard-empresa");
-        } else if (userRole === "gestor") {
-          setShowManagerModal(true);
-        } else if (userRole === "admin") {
-          navigate("/admin");
-        } else {
-          navigate("/home");
-        }
+        await handleSuccessfulLogin(data.user);
       }
     } catch (error: any) {
       console.error("Erro no login:", error);
       toast.error("Erro ao fazer login. Tente novamente.");
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleSuccessfulLogin = async (user: any) => {
+    const userId = user.id;
+    const userEmail = user.email || "";
+    const userName = user.user_metadata?.name || userEmail.split('@')[0] || 'Usuário';
+    const userPhone = user.user_metadata?.phone || '';
+
+    // 1. Buscar role do usuário
+    const { data: roleData } = await supabase
+      .from('user_roles')
+      .select('role')
+      .eq('user_id', userId)
+      .single();
+
+    const userRole = roleData?.role || 'user';
+
+    // 2. Verificar se é empresa
+    if (userRole === 'empresa') {
+      const { data: companyData } = await supabase
+        .from('companies')
+        .select('id, razao_social')
+        .eq('owner_user_id', userId)
+        .single();
+
+      localStorage.setItem("user", JSON.stringify({
+        id: userId,
+        name: companyData?.razao_social || userName,
+        email: userEmail,
+        phone: userPhone,
+        role: "empresa",
+        companyId: companyData?.id,
+      }));
+
+      toast.success("Login realizado com sucesso!");
+      navigate("/dashboard-empresa");
+      return;
+    }
+
+    // 3. Verificar se é gestor
+    if (userRole === 'gestor') {
+      const { data: managerData } = await supabase
+        .from('company_managers')
+        .select('id, company_id, name, accepted_at, provisional_password')
+        .eq('user_id', userId)
+        .single();
+
+      if (managerData) {
+        // Verificar se é primeiro acesso
+        if (!managerData.accepted_at && managerData.provisional_password) {
+          setPendingLogin({
+            userId,
+            userType: "manager",
+            companyId: managerData.company_id,
+            name: managerData.name,
+            email: userEmail,
+          });
+          setShowNewPasswordModal(true);
+          return;
+        }
+
+        localStorage.setItem("user", JSON.stringify({
+          id: userId,
+          name: managerData.name || userName,
+          email: userEmail,
+          phone: userPhone,
+          role: "gestor",
+          companyId: managerData.company_id,
+          managerId: managerData.id,
+        }));
+
+        toast.success("Login realizado com sucesso!");
+        setShowManagerModal(true);
+        return;
+      }
+    }
+
+    // 4. Verificar se é funcionário
+    const { data: employeeData } = await supabase
+      .from('company_employees')
+      .select('id, company_id, name, accepted_at, provisional_password')
+      .eq('user_id', userId)
+      .maybeSingle();
+
+    if (employeeData) {
+      // Verificar se é primeiro acesso
+      if (!employeeData.accepted_at && employeeData.provisional_password) {
+        setPendingLogin({
+          userId,
+          userType: "employee",
+          companyId: employeeData.company_id,
+          name: employeeData.name,
+          email: userEmail,
+        });
+        setShowNewPasswordModal(true);
+        return;
+      }
+
+      localStorage.setItem("user", JSON.stringify({
+        id: userId,
+        name: employeeData.name || userName,
+        email: userEmail,
+        phone: userPhone,
+        role: "user",
+        companyId: employeeData.company_id,
+        employeeId: employeeData.id,
+      }));
+
+      toast.success("Login realizado com sucesso!");
+      navigate("/home");
+      return;
+    }
+
+    // 5. Verificar se é admin
+    if (userRole === 'admin') {
+      const admins = JSON.parse(localStorage.getItem("administrators") || "[]");
+      if (!admins.some((a: any) => a.email?.toLowerCase() === userEmail.toLowerCase())) {
+        admins.push({ name: userName, email: userEmail, phone: userPhone });
+        localStorage.setItem("administrators", JSON.stringify(admins));
+      }
+
+      localStorage.setItem("user", JSON.stringify({
+        id: userId,
+        name: userName,
+        email: userEmail,
+        phone: userPhone,
+        role: "admin",
+      }));
+
+      toast.success("Login realizado com sucesso!");
+      navigate("/admin");
+      return;
+    }
+
+    // 6. Usuário comum
+    localStorage.setItem("user", JSON.stringify({
+      id: userId,
+      name: userName,
+      email: userEmail,
+      phone: userPhone,
+      role: userRole,
+    }));
+
+    toast.success("Login realizado com sucesso!");
+    navigate("/home");
+  };
+
+  const handleNewPasswordSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (newPasswordData.newPassword.length < 6) {
+      toast.error("A senha deve ter pelo menos 6 caracteres");
+      return;
+    }
+
+    if (newPasswordData.newPassword !== newPasswordData.confirmPassword) {
+      toast.error("As senhas não coincidem");
+      return;
+    }
+
+    if (!pendingLogin) return;
+
+    setIsChangingPassword(true);
+
+    try {
+      // Atualizar senha no Supabase Auth
+      const { error: updateError } = await supabase.auth.updateUser({
+        password: newPasswordData.newPassword
+      });
+
+      if (updateError) {
+        toast.error("Erro ao atualizar senha: " + updateError.message);
+        return;
+      }
+
+      // Atualizar accepted_at no banco
+      const tableName = pendingLogin.userType === "manager" ? "company_managers" : "company_employees";
+      await supabase
+        .from(tableName)
+        .update({ 
+          accepted_at: new Date().toISOString(),
+          provisional_password: null 
+        })
+        .eq("user_id", pendingLogin.userId)
+        .eq("company_id", pendingLogin.companyId);
+
+      // Criar sessão
+      localStorage.setItem("user", JSON.stringify({
+        id: pendingLogin.userId,
+        name: pendingLogin.name,
+        email: pendingLogin.email,
+        role: pendingLogin.userType === "manager" ? "gestor" : "user",
+        companyId: pendingLogin.companyId,
+        isFirstAccess: true,
+      }));
+
+      toast.success("Senha atualizada com sucesso!");
+      setShowNewPasswordModal(false);
+      setNewPasswordData({ newPassword: "", confirmPassword: "" });
+
+      if (pendingLogin.userType === "manager") {
+        setShowManagerModal(true);
+      } else {
+        navigate("/onboarding");
+      }
+
+      setPendingLogin(null);
+    } catch (error) {
+      toast.error("Erro ao atualizar senha");
+    } finally {
+      setIsChangingPassword(false);
     }
   };
 
@@ -160,6 +339,63 @@ const Login = () => {
 
   return (
     <>
+      {/* Modal de troca de senha (primeiro acesso) */}
+      <Dialog open={showNewPasswordModal} onOpenChange={setShowNewPasswordModal}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <KeyRound className="w-5 h-5 text-primary" />
+              Crie sua nova senha
+            </DialogTitle>
+            <DialogDescription>
+              Este é seu primeiro acesso. Por favor, crie uma nova senha para sua conta.
+            </DialogDescription>
+          </DialogHeader>
+          <form onSubmit={handleNewPasswordSubmit} className="space-y-4 mt-4">
+            <div className="space-y-2">
+              <Label htmlFor="new-pw">Nova senha</Label>
+              <div className="relative">
+                <Input
+                  id="new-pw"
+                  type={showNewPw ? "text" : "password"}
+                  placeholder="Mínimo 6 caracteres"
+                  value={newPasswordData.newPassword}
+                  onChange={(e) => setNewPasswordData({ ...newPasswordData, newPassword: e.target.value })}
+                  required
+                  className="pr-10"
+                  disabled={isChangingPassword}
+                />
+                <PasswordToggle show={showNewPw} onToggle={() => setShowNewPw(!showNewPw)} />
+              </div>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="confirm-pw">Confirmar nova senha</Label>
+              <div className="relative">
+                <Input
+                  id="confirm-pw"
+                  type={showConfirmPw ? "text" : "password"}
+                  placeholder="Confirme sua nova senha"
+                  value={newPasswordData.confirmPassword}
+                  onChange={(e) => setNewPasswordData({ ...newPasswordData, confirmPassword: e.target.value })}
+                  required
+                  className="pr-10"
+                  disabled={isChangingPassword}
+                />
+                <PasswordToggle show={showConfirmPw} onToggle={() => setShowConfirmPw(!showConfirmPw)} />
+              </div>
+            </div>
+            <Button type="submit" className="w-full" disabled={isChangingPassword}>
+              {isChangingPassword ? (
+                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+              ) : (
+                <KeyRound className="w-4 h-4 mr-2" />
+              )}
+              {isChangingPassword ? "Atualizando..." : "Confirmar"}
+            </Button>
+          </form>
+        </DialogContent>
+      </Dialog>
+
       {/* Modal de seleção para gestor */}
       <ManagerRoleModal open={showManagerModal} onOpenChange={setShowManagerModal} />
 
