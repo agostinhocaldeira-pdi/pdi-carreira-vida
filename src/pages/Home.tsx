@@ -181,17 +181,10 @@ const Home = () => {
             
             <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0">
               <LanguageSelector />
-              {!userName ? (
-                <Button variant="ghost" size="sm" className="gap-1 sm:gap-2 px-2 sm:px-3">
-                  <LogIn className="w-4 h-4" />
-                  <span className="hidden sm:inline">Login</span>
-                </Button>
-              ) : (
-                <Button variant="outline" size="sm" className="gap-1 sm:gap-2 px-2 sm:px-3">
-                  <User className="w-4 h-4" />
-                  <span className="hidden sm:inline">Perfil</span>
-                </Button>
-              )}
+              <Button variant="outline" size="sm" className="gap-1 sm:gap-2 px-2 sm:px-3">
+                <User className="w-4 h-4" />
+                <span className="hidden sm:inline">Perfil</span>
+              </Button>
             </div>
           </div>
 
