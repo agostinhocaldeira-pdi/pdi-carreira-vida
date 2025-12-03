@@ -34,7 +34,10 @@ import {
   Calendar,
   UserPlus,
   Eye,
-  KeyRound
+  KeyRound,
+  Receipt,
+  CreditCard,
+  Info
 } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { generateProvisionalPassword } from "@/types/company";
@@ -71,7 +74,7 @@ interface PersonProgress {
 
 const DashboardEmpresa = () => {
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState<"managers" | "employees">("managers");
+  const [activeTab, setActiveTab] = useState<"managers" | "employees" | "billing">("managers");
   const [managers, setManagers] = useState<Manager[]>([]);
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [company, setCompany] = useState<any>(null);
@@ -433,7 +436,7 @@ const DashboardEmpresa = () => {
         </div>
 
         {/* Tabs */}
-        <div className="flex gap-2 mb-6">
+        <div className="flex gap-2 mb-6 flex-wrap">
           <Button
             variant={activeTab === "managers" ? "default" : "outline"}
             onClick={() => setActiveTab("managers")}
@@ -448,44 +451,52 @@ const DashboardEmpresa = () => {
             <Users className="w-4 h-4 mr-2" />
             Funcionários
           </Button>
+          <Button
+            variant={activeTab === "billing" ? "default" : "outline"}
+            onClick={() => setActiveTab("billing")}
+          >
+            <Receipt className="w-4 h-4 mr-2" />
+            Faturamento
+          </Button>
         </div>
 
         {/* Content */}
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between">
-            <div>
-              <CardTitle>{activeTab === "managers" ? "Gestores" : "Funcionários"}</CardTitle>
-              <CardDescription>
-                {activeTab === "managers" 
-                  ? "Gerencie os gestores que terão acesso aos PDIs dos funcionários"
-                  : "Gerencie os funcionários da empresa"
-                }
-              </CardDescription>
-            </div>
-            <div className="flex gap-2 flex-wrap">
-              {activeTab === "employees" && selectedEmployees.length > 0 && (
-                <>
-                  {hasSelectedWithoutManager && (
-                    <Button variant="outline" onClick={() => setShowAssignManagerModal(true)}>
-                      <UserPlus className="w-4 h-4 mr-2" />
-                      Associar Gestor ({selectedEmployees.length})
-                    </Button>
-                  )}
-                  {hasSelectedWithManager && (
-                    <Button variant="outline" onClick={handleUnassignManager} className="text-destructive border-destructive/50 hover:bg-destructive/10">
-                      <UserPlus className="w-4 h-4 mr-2 rotate-45" />
-                      Desassociar Gestor
-                    </Button>
-                  )}
-                </>
-              )}
-              <Button onClick={() => activeTab === "managers" ? setShowAddManagerModal(true) : setShowAddEmployeeModal(true)}>
-                <Plus className="w-4 h-4 mr-2" />
-                Adicionar
-              </Button>
-            </div>
-          </CardHeader>
-          <CardContent>
+        {activeTab !== "billing" ? (
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between">
+              <div>
+                <CardTitle>{activeTab === "managers" ? "Gestores" : "Funcionários"}</CardTitle>
+                <CardDescription>
+                  {activeTab === "managers" 
+                    ? "Gerencie os gestores que terão acesso aos PDIs dos funcionários"
+                    : "Gerencie os funcionários da empresa"
+                  }
+                </CardDescription>
+              </div>
+              <div className="flex gap-2 flex-wrap">
+                {activeTab === "employees" && selectedEmployees.length > 0 && (
+                  <>
+                    {hasSelectedWithoutManager && (
+                      <Button variant="outline" onClick={() => setShowAssignManagerModal(true)}>
+                        <UserPlus className="w-4 h-4 mr-2" />
+                        Associar Gestor ({selectedEmployees.length})
+                      </Button>
+                    )}
+                    {hasSelectedWithManager && (
+                      <Button variant="outline" onClick={handleUnassignManager} className="text-destructive border-destructive/50 hover:bg-destructive/10">
+                        <UserPlus className="w-4 h-4 mr-2 rotate-45" />
+                        Desassociar Gestor
+                      </Button>
+                    )}
+                  </>
+                )}
+                <Button onClick={() => activeTab === "managers" ? setShowAddManagerModal(true) : setShowAddEmployeeModal(true)}>
+                  <Plus className="w-4 h-4 mr-2" />
+                  Adicionar
+                </Button>
+              </div>
+            </CardHeader>
+            <CardContent>
             {activeTab === "managers" ? (
               <Table>
                 <TableHeader>
@@ -659,6 +670,121 @@ const DashboardEmpresa = () => {
             )}
           </CardContent>
         </Card>
+        ) : (
+          /* Billing Tab Content */
+          <div className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Receipt className="w-5 h-5 text-primary" />
+                  Faturamento
+                </CardTitle>
+                <CardDescription>
+                  Acompanhe o valor da assinatura baseado na quantidade de funcionários
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                {/* Resumo do Plano */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <Card className="bg-gradient-to-br from-primary/5 to-primary/10 border-primary/20">
+                    <CardContent className="p-6 text-center">
+                      <Users className="w-8 h-8 text-primary mx-auto mb-2" />
+                      <p className="text-3xl font-bold text-primary">{employees.length}</p>
+                      <p className="text-sm text-muted-foreground">Funcionários Ativos</p>
+                    </CardContent>
+                  </Card>
+                  <Card className="bg-gradient-to-br from-green-500/5 to-green-500/10 border-green-500/20">
+                    <CardContent className="p-6 text-center">
+                      <CreditCard className="w-8 h-8 text-green-600 mx-auto mb-2" />
+                      <p className="text-3xl font-bold text-green-600">
+                        R$ {employees.length <= 10 ? "50,00" : employees.length <= 20 ? "90,00" : "150,00"}
+                      </p>
+                      <p className="text-sm text-muted-foreground">Valor Mensal</p>
+                    </CardContent>
+                  </Card>
+                  <Card className="bg-gradient-to-br from-amber-500/5 to-amber-500/10 border-amber-500/20">
+                    <CardContent className="p-6 text-center">
+                      <Calendar className="w-8 h-8 text-amber-600 mx-auto mb-2" />
+                      <p className="text-lg font-bold text-amber-600">
+                        {employees.length <= 10 ? "1 a 10" : employees.length <= 20 ? "11 a 20" : "21+"}
+                      </p>
+                      <p className="text-sm text-muted-foreground">Faixa Atual</p>
+                    </CardContent>
+                  </Card>
+                </div>
+
+                {/* Tabela de Planos */}
+                <Card>
+                  <CardHeader className="pb-3">
+                    <CardTitle className="text-base">Planos por Quantidade de Funcionários</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>Faixa de Funcionários</TableHead>
+                          <TableHead>Valor Mensal</TableHead>
+                          <TableHead>Status</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        <TableRow className={employees.length >= 1 && employees.length <= 10 ? "bg-primary/5" : ""}>
+                          <TableCell className="font-medium">1 a 10 funcionários</TableCell>
+                          <TableCell>R$ 50,00</TableCell>
+                          <TableCell>
+                            {employees.length >= 1 && employees.length <= 10 ? (
+                              <Badge>Plano Atual</Badge>
+                            ) : (
+                              <span className="text-muted-foreground">-</span>
+                            )}
+                          </TableCell>
+                        </TableRow>
+                        <TableRow className={employees.length >= 11 && employees.length <= 20 ? "bg-primary/5" : ""}>
+                          <TableCell className="font-medium">11 a 20 funcionários</TableCell>
+                          <TableCell>R$ 90,00</TableCell>
+                          <TableCell>
+                            {employees.length >= 11 && employees.length <= 20 ? (
+                              <Badge>Plano Atual</Badge>
+                            ) : (
+                              <span className="text-muted-foreground">-</span>
+                            )}
+                          </TableCell>
+                        </TableRow>
+                        <TableRow className={employees.length > 20 ? "bg-primary/5" : ""}>
+                          <TableCell className="font-medium">21+ funcionários</TableCell>
+                          <TableCell>R$ 150,00</TableCell>
+                          <TableCell>
+                            {employees.length > 20 ? (
+                              <Badge>Plano Atual</Badge>
+                            ) : (
+                              <span className="text-muted-foreground">-</span>
+                            )}
+                          </TableCell>
+                        </TableRow>
+                      </TableBody>
+                    </Table>
+                  </CardContent>
+                </Card>
+
+                {/* Aviso */}
+                <Card className="border-amber-500/30 bg-amber-500/5">
+                  <CardContent className="p-4">
+                    <div className="flex items-start gap-3">
+                      <Info className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
+                      <div>
+                        <p className="font-medium text-amber-700">Em breve</p>
+                        <p className="text-sm text-muted-foreground">
+                          Novas opções de planos e pagamento online estarão disponíveis em breve. 
+                          Entre em contato com nosso suporte para mais informações.
+                        </p>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </CardContent>
+            </Card>
+          </div>
+        )}
       </main>
 
       {/* Add Manager Modal */}
