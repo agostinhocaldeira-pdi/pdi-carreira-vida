@@ -46,7 +46,10 @@ const Login = () => {
         toast.error("E-mail ou senha incorretos");
       }
     } else {
-      toast.error("Usuário não encontrado. Cadastre-se primeiro.");
+      toast.error("Nenhum usuário cadastrado neste navegador. Cadastre-se primeiro.", {
+        description: "Os dados de cadastro são salvos localmente e não são compartilhados entre abas diferentes.",
+        duration: 5000
+      });
     }
   };
 
@@ -88,7 +91,10 @@ const Login = () => {
       }
     }
 
-    toast.error("E-mail não encontrado");
+    toast.error("Nenhum usuário cadastrado neste navegador com este e-mail.", {
+      description: "Os dados são salvos localmente. Se abriu em nova aba, cadastre-se novamente.",
+      duration: 5000
+    });
   };
 
   return (
