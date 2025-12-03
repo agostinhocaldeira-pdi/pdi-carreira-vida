@@ -14,6 +14,8 @@ import { useToast } from "@/hooks/use-toast";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import EmployeeProgressModal from "@/components/EmployeeProgressModal";
+import { useRoleProtection } from "@/hooks/useRoleProtection";
+import { supabase } from "@/integrations/supabase/client";
 
 interface Employee {
   id: string;
@@ -62,7 +64,13 @@ const GestaoPDIs = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { toast } = useToast();
-  const [isAdmin, setIsAdmin] = useState(false);
+  
+  // Proteção de role - apenas gestor e admin podem acessar
+  const { isLoading: roleLoading, userRole, isAdmin } = useRoleProtection({
+    allowedRoles: ["gestor", "admin"],
+    redirectTo: "/home"
+  });
+  
   const [isGestor, setIsGestor] = useState(false);
   const [currentManagerId, setCurrentManagerId] = useState<string | null>(null);
   const [currentManagerName, setCurrentManagerName] = useState<string>("");
@@ -89,56 +97,85 @@ const GestaoPDIs = () => {
   }, [location.state]);
 
   useEffect(() => {
-    const user = JSON.parse(localStorage.getItem("user") || "{}");
-    const administrators = JSON.parse(localStorage.getItem("administrators") || "[]");
-    const userIsAdmin = administrators.some((admin: any) => 
-      admin.email?.toLowerCase() === (user.email || "").toLowerCase()
-    );
-    setIsAdmin(userIsAdmin);
-    setIsGestor(user.role === "gestor");
+    const loadData = async () => {
+      if (roleLoading) return;
+      
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session?.user) return;
 
-    if (!userIsAdmin && user.role !== "gestor") {
-      navigate("/login");
-      return;
-    }
+      setIsGestor(userRole === "gestor");
 
-    loadData(userIsAdmin, user);
-  }, [navigate]);
+      // Buscar dados do Supabase
+      const { data: companiesData } = await supabase.from('companies').select('*');
+      const { data: managersData } = await supabase.from('company_managers').select('*');
+      
+      setCompanies((companiesData || []).map((c: any) => ({
+        id: c.id,
+        razao_social: c.razao_social
+      })));
+      
+      setManagers((managersData || []).map((m: any) => ({
+        id: m.id,
+        name: m.name,
+        email: m.email,
+        company_id: m.company_id
+      })));
+
+      if (isAdmin) {
+        // Admin vê todos os funcionários
+        const { data: employeesData } = await supabase.from('company_employees').select('*') as { data: any[] | null };
+        setEmployees((employeesData || []).map((e: any) => ({
+          id: e.id,
+          name: e.name,
+          email: e.email,
+          phone: e.phone,
+          is_active: e.is_active,
+          manager_id: e.manager_id,
+          company_id: e.company_id
+        })));
+      } else if (userRole === "gestor") {
+        // Gestor vê apenas seus funcionários
+        const managerResult = await supabase
+          .from('company_managers')
+          .select('*')
+          .eq('user_id', session.user.id)
+          .single();
+        
+        const managerData = managerResult.data;
+        
+        if (managerData) {
+          setCurrentManagerId(managerData.id);
+          setCurrentManagerName(managerData.name);
+          
+          const { data: employeesData } = await supabase
+            .from('company_employees')
+            .select('*');
+          
+          const filteredEmployees = (employeesData || []).filter(
+            (e: any) => e.manager_id === managerData.user_id
+          );
+          
+          setEmployees(filteredEmployees.map((e: any) => ({
+            id: e.id,
+            name: e.name,
+            email: e.email,
+            phone: e.phone,
+            is_active: e.is_active,
+            manager_id: e.manager_id,
+            company_id: e.company_id
+          })));
+        }
+      }
+    };
+
+    loadData();
+  }, [roleLoading, userRole, isAdmin]);
 
   useEffect(() => {
     if (currentManagerId || isAdmin) {
       loadConversations();
     }
   }, [currentManagerId, isAdmin]);
-
-  const loadData = (userIsAdmin: boolean, user: any) => {
-    const mockCompanies = JSON.parse(localStorage.getItem("mockCompanies") || "[]");
-    const mockManagers = JSON.parse(localStorage.getItem("mockManagers") || "[]");
-    const mockEmployees = JSON.parse(localStorage.getItem("mockEmployees") || "[]");
-
-    setCompanies(mockCompanies);
-    setManagers(mockManagers);
-
-    if (userIsAdmin) {
-      setEmployees(mockEmployees);
-      if (mockCompanies.length > 0) {
-        setSelectedCompany(mockCompanies[0].id);
-      }
-    } else if (user.role === "gestor") {
-      const currentManager = mockManagers.find((m: Manager) => 
-        m.email?.toLowerCase() === user.email?.toLowerCase()
-      );
-      
-      if (currentManager) {
-        setCurrentManagerId(currentManager.id);
-        setCurrentManagerName(currentManager.name);
-        const managerEmployees = mockEmployees.filter((emp: Employee) => 
-          emp.manager_id === currentManager.id
-        );
-        setEmployees(managerEmployees);
-      }
-    }
-  };
 
   const loadConversations = () => {
     const allConversations = JSON.parse(localStorage.getItem("managerConversations") || "[]");

@@ -19,14 +19,22 @@ import { GamificationCard } from "@/components/gamification/GamificationCard";
 import { AchievementNotification } from "@/components/gamification/AchievementNotification";
 import { useGamification } from "@/hooks/useGamification";
 import { ExportPDFButton } from "@/components/reports/ExportPDFButton";
+import { useRoleProtection } from "@/hooks/useRoleProtection";
+import { supabase } from "@/integrations/supabase/client";
 
 const Home = () => {
   const navigate = useNavigate();
+  
+  // Proteção de role - apenas user, gestor e admin podem acessar
+  const { isLoading: roleLoading, userRole, isAdmin } = useRoleProtection({
+    allowedRoles: ["user", "gestor", "admin"],
+    redirectTo: "/dashboard-empresa"
+  });
+  
   const [userName, setUserName] = useState("");
   const [activeTab, setActiveTab] = useState("quem-sou");
   const [planoDeVidaOpen, setPlanoDeVidaOpen] = useState(false);
   const [motivationalQuote, setMotivationalQuote] = useState("");
-  const [isAdmin, setIsAdmin] = useState(false);
   const [isGestor, setIsGestor] = useState(false);
   const [isEmployee, setIsEmployee] = useState(false);
   const [recursosOpen, setRecursosOpen] = useState(false);
@@ -60,48 +68,46 @@ const Home = () => {
     "Transforme seus sonhos em objetivos e seus objetivos em realidade. 🌈",
   ];
 
+  // Carregar dados do usuário autenticado
   useEffect(() => {
-    const user = localStorage.getItem("user");
-    if (user) {
-      const userData = JSON.parse(user);
-      
-      // Redirecionar perfil empresa para dashboard-empresa
-      if (userData.role === "empresa") {
-        navigate("/dashboard-empresa");
-        return;
+    const loadUserData = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session?.user) {
+        const metadata = session.user.user_metadata;
+        setUserName(metadata?.name || session.user.email?.split("@")[0] || "");
+        
+        // Atualizar localStorage para compatibilidade
+        localStorage.setItem("user", JSON.stringify({
+          id: session.user.id,
+          email: session.user.email,
+          name: metadata?.name || "",
+          role: userRole
+        }));
+        
+        // Verificar se é funcionário
+        const { data: employeeData } = await supabase
+          .from("company_employees")
+          .select("*")
+          .eq("user_id", session.user.id)
+          .eq("is_active", true)
+          .single();
+        
+        if (employeeData) {
+          setIsEmployee(true);
+        }
+        
+        // Carregar notificações
+        loadUnreadMessages({ email: session.user.email }, employeeData);
       }
-      
-      setUserName(userData.name);
-      
-      // Verifica se o usuário é gestor
-      if (userData.role === "gestor") {
-        setIsGestor(true);
-      }
-      
-      // Verifica se o usuário está cadastrado como administrador
-      const savedAdmins = localStorage.getItem("administrators");
-      if (savedAdmins) {
-        const administrators = JSON.parse(savedAdmins);
-        const userIsAdmin = administrators.some(
-          (admin: { email: string }) => admin.email === userData.email
-        );
-        setIsAdmin(userIsAdmin);
-      }
-      
-      // Verificar se é funcionário
-      const employees = JSON.parse(localStorage.getItem("mockEmployees") || "[]");
-      const employee = employees.find((emp: any) => 
-        emp.email?.toLowerCase() === userData.email?.toLowerCase() && emp.is_active
-      );
-      if (employee) {
-        setIsEmployee(true);
-      }
-      
-      // Carregar notificações
-      loadUnreadMessages(userData, employee);
+    };
+    
+    if (!roleLoading && userRole) {
+      loadUserData();
     }
+  }, [roleLoading, userRole]);
 
-    // Seleciona uma frase motivacional baseada no dia
+  // Seleciona uma frase motivacional baseada no dia
+  useEffect(() => {
     const today = new Date().getDate();
     setMotivationalQuote(quotes[today % quotes.length]);
 
@@ -192,6 +198,18 @@ const Home = () => {
   };
   
   const totalUnread = unreadSupportMessages + unreadManagerMessages + unreadEmployeeMessages;
+
+  // Mostrar loading enquanto verifica role
+  if (roleLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-subtle flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
+          <p className="mt-4 text-muted-foreground">Carregando...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-subtle">

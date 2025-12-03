@@ -48,6 +48,7 @@ import { CompanyReportsTab } from "@/components/company/CompanyReportsTab";
 import { OKRsTab } from "@/components/company/OKRsTab";
 import { BarChart3, Target } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { useRoleProtection } from "@/hooks/useRoleProtection";
 
 interface Manager {
   id: string;
@@ -82,11 +83,17 @@ interface PersonProgress {
 
 const DashboardEmpresa = () => {
   const navigate = useNavigate();
+  
+  // Proteção de role - apenas empresa e admin podem acessar
+  const { isLoading: roleLoading, userRole, isAdmin } = useRoleProtection({
+    allowedRoles: ["empresa", "admin"],
+    redirectTo: "/home"
+  });
+  
   const [activeTab, setActiveTab] = useState<"managers" | "employees" | "billing" | "reports" | "okrs">("managers");
   const [managers, setManagers] = useState<Manager[]>([]);
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [company, setCompany] = useState<any>(null);
-  const [isAdmin, setIsAdmin] = useState(false);
   const [selectedCompanyId, setSelectedCompanyId] = useState<string | null>(null);
   const [allCompanies, setAllCompanies] = useState<any[]>([]);
   
@@ -101,23 +108,12 @@ const DashboardEmpresa = () => {
   const [deleteEmployeeId, setDeleteEmployeeId] = useState<string | null>(null);
   const [isAddingPerson, setIsAddingPerson] = useState(false);
 
-  // Verificar se é admin
-  const checkIsAdmin = (email: string): boolean => {
-    const administrators = JSON.parse(localStorage.getItem("administrators") || "[]");
-    return administrators.some((admin: any) => admin.email.toLowerCase() === email.toLowerCase());
-  };
-
   useEffect(() => {
     const loadData = async () => {
-      const user = JSON.parse(localStorage.getItem("user") || "{}");
-      const userIsAdmin = checkIsAdmin(user.email || "");
-      setIsAdmin(userIsAdmin);
-
-      // Admin tem acesso total
-      if (!userIsAdmin && user.role !== "empresa") {
-        navigate("/login");
-        return;
-      }
+      if (roleLoading) return;
+      
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session?.user) return;
 
       // Buscar empresas do Supabase
       const { data: companiesData } = await supabase
@@ -129,16 +125,17 @@ const DashboardEmpresa = () => {
 
       let companyId: string | null = null;
 
-      if (userIsAdmin) {
+      if (isAdmin) {
         if (companies.length > 0) {
           companyId = selectedCompanyId || companies[0].id;
           setSelectedCompanyId(companyId);
           setCompany(companies.find((c: any) => c.id === companyId));
         }
       } else {
-        const userCompany = companies.find((c: any) => c.id === user.companyId);
+        // Para usuário empresa, buscar sua empresa
+        const userCompany = companies.find((c: any) => c.owner_user_id === session.user.id);
         setCompany(userCompany);
-        companyId = user.companyId;
+        companyId = userCompany?.id || null;
         setSelectedCompanyId(companyId);
       }
 
@@ -187,7 +184,7 @@ const DashboardEmpresa = () => {
     };
 
     loadData();
-  }, [navigate, selectedCompanyId]);
+  }, [roleLoading, isAdmin, selectedCompanyId]);
 
   const handleCompanyChange = (companyId: string) => {
     setSelectedCompanyId(companyId);
