@@ -16,25 +16,93 @@ export function ExportPDFButton({ variant = "outline", size = "sm" }: ExportPDFB
   const handleExportPDI = async () => {
     setIsExporting(true);
     try {
+      // 1. Dados Pessoais
       const user = JSON.parse(localStorage.getItem("user") || "{}");
+      
+      // Verificar empresa associada
+      let companyName = "";
+      const employees = JSON.parse(localStorage.getItem("company_employees") || "[]");
+      const employee = employees.find((emp: any) => 
+        emp.email?.toLowerCase() === user.email?.toLowerCase() && emp.is_active
+      );
+      if (employee) {
+        const companies = JSON.parse(localStorage.getItem("companies") || "[]");
+        const company = companies.find((c: any) => c.id === employee.company_id);
+        if (company) companyName = company.razao_social;
+      }
+      if (!companyName) {
+        const managers = JSON.parse(localStorage.getItem("company_managers") || "[]");
+        const manager = managers.find((mgr: any) => 
+          mgr.email?.toLowerCase() === user.email?.toLowerCase() && mgr.is_active
+        );
+        if (manager) {
+          const companies = JSON.parse(localStorage.getItem("companies") || "[]");
+          const company = companies.find((c: any) => c.id === manager.company_id);
+          if (company) companyName = company.razao_social;
+        }
+      }
+
+      // 2. Onboarding
+      const onboarding = JSON.parse(localStorage.getItem("onboarding_data") || "{}");
+      
+      // 3. Quem sou eu
       const vvd = localStorage.getItem("visao_vida_desejada") || "";
       const valores = JSON.parse(localStorage.getItem("meus_valores") || "[]");
       const areasVida = JSON.parse(localStorage.getItem("areas_vida") || "[]");
+      
+      // 4. Para onde vou
       const objetivos = JSON.parse(localStorage.getItem("meus_objetivos") || "[]");
+      
+      // 5. Como chegar lá
       const metas = JSON.parse(localStorage.getItem("metas") || "[]");
+      const competencias = JSON.parse(localStorage.getItem("competencias") || "[]");
+      const pontosFortes = JSON.parse(localStorage.getItem("pontos_fortes") || "[]");
+      const pontosAMelhorar = JSON.parse(localStorage.getItem("pontos_a_melhorar") || "[]");
+      
+      // 6. Ferramentas
       const swot = JSON.parse(localStorage.getItem("analise_swot") || "{}");
+      const crencas = JSON.parse(localStorage.getItem("crencas_transformadas") || "[]");
+      
+      // 7. Gamificação
+      const streak = JSON.parse(localStorage.getItem("user_streak") || "{}");
 
       exportPDIToPDF({
+        // Dados Pessoais
         userName: user.name || "Usuário",
+        userEmail: user.email || "",
+        userPhone: user.phone || "",
+        userRole: user.role || "user",
+        companyName,
+        
+        // Onboarding
+        currentPhase: onboarding.currentPhase || onboarding.fase_atual || "",
+        expectations: onboarding.expectations || onboarding.expectativas || "",
+        
+        // Quem sou eu
         vvd,
         valores,
         areasVida,
+        
+        // Para onde vou
         objetivos,
+        
+        // Como chegar lá
         metas,
+        competencias,
+        pontosFortes,
+        pontosAMelhorar,
+        
+        // Ferramentas
         swot: swot.forcas || swot.fraquezas ? swot : undefined,
+        crencas: crencas.length > 0 ? crencas : undefined,
+        
+        // Gamificação
+        streak: streak.current_streak || 0,
+        level: streak.level || 1,
+        totalPoints: streak.total_points || 0,
       });
 
-      toast.success("PDI exportado com sucesso!");
+      toast.success("PDI completo exportado com sucesso!");
     } catch (error) {
       console.error("Error exporting PDF:", error);
       toast.error("Erro ao exportar PDF");
