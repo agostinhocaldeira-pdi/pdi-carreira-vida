@@ -13,7 +13,8 @@ import {
   ArrowRight,
   Users,
   Heart,
-  Lightbulb
+  Lightbulb,
+  Building2
 } from "lucide-react";
 
 const Index = () => {
@@ -78,7 +79,16 @@ const Index = () => {
             <Sparkles className="h-6 w-6 text-primary" />
             <span className="font-bold text-xl">PDI - Carreira & Vida</span>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3">
+            <Button 
+              variant="outline" 
+              onClick={() => navigate("/cadastrar-empresa")}
+              className="gap-1.5 text-xs sm:text-sm"
+            >
+              <Building2 className="h-4 w-4" />
+              <span className="hidden sm:inline">Cadastrar minha empresa</span>
+              <span className="sm:hidden">Empresa</span>
+            </Button>
             <Button 
               variant="ghost" 
               onClick={() => navigate("/login")}
