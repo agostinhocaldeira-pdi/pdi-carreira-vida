@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -60,6 +60,7 @@ interface ManagerMessage {
 
 const GestaoPDIs = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { toast } = useToast();
   const [isAdmin, setIsAdmin] = useState(false);
   const [isGestor, setIsGestor] = useState(false);
@@ -79,6 +80,14 @@ const GestaoPDIs = () => {
   const [replyTexts, setReplyTexts] = useState<Record<string, string>>({});
   const [unreadCount, setUnreadCount] = useState(0);
 
+  // Handle navigation state to auto-switch to messages tab
+  useEffect(() => {
+    const state = location.state as { showMessages?: boolean } | null;
+    if (state?.showMessages) {
+      setActiveTab("mensagens");
+    }
+  }, [location.state]);
+
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem("user") || "{}");
     const administrators = JSON.parse(localStorage.getItem("administrators") || "[]");
@@ -97,10 +106,10 @@ const GestaoPDIs = () => {
   }, [navigate]);
 
   useEffect(() => {
-    if (currentManagerId) {
+    if (currentManagerId || isAdmin) {
       loadConversations();
     }
-  }, [currentManagerId]);
+  }, [currentManagerId, isAdmin]);
 
   const loadData = (userIsAdmin: boolean, user: any) => {
     const mockCompanies = JSON.parse(localStorage.getItem("mockCompanies") || "[]");
@@ -132,24 +141,26 @@ const GestaoPDIs = () => {
   };
 
   const loadConversations = () => {
-    if (!currentManagerId) return;
-
     const allConversations = JSON.parse(localStorage.getItem("managerConversations") || "[]");
     const allMessages = JSON.parse(localStorage.getItem("managerMessages") || "[]");
 
-    // Filtrar conversas do gestor atual
-    const managerConversations = allConversations.filter((conv: ManagerConversation) =>
-      conv.manager_id === currentManagerId
-    ).sort((a: ManagerConversation, b: ManagerConversation) =>
-      new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-    );
+    // Admin vê todas as conversas, gestor vê apenas as suas
+    const filteredConversations = isAdmin 
+      ? allConversations.sort((a: ManagerConversation, b: ManagerConversation) =>
+          new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+        )
+      : allConversations.filter((conv: ManagerConversation) =>
+          conv.manager_id === currentManagerId
+        ).sort((a: ManagerConversation, b: ManagerConversation) =>
+          new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+        );
 
-    setConversations(managerConversations);
+    setConversations(filteredConversations);
 
     const messagesMap: Record<string, ManagerMessage[]> = {};
     let totalUnread = 0;
     
-    managerConversations.forEach((conv: ManagerConversation) => {
+    filteredConversations.forEach((conv: ManagerConversation) => {
       const convMessages = allMessages
         .filter((m: ManagerMessage) => m.conversation_id === conv.id)
         .sort((a: ManagerMessage, b: ManagerMessage) =>
@@ -289,8 +300,8 @@ const GestaoPDIs = () => {
       </header>
 
       <main className="container mx-auto px-4 py-8">
-        {/* Tabs para gestores */}
-        {isGestor && !isAdmin && (
+        {/* Tabs para gestores e admin */}
+        {(isGestor || isAdmin) && (
           <Card className="mb-6">
             <CardContent className="pt-6">
               <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
@@ -315,12 +326,12 @@ const GestaoPDIs = () => {
         )}
 
         {/* Conteúdo baseado na aba */}
-        {activeTab === "mensagens" && isGestor && !isAdmin ? (
+        {activeTab === "mensagens" && (isGestor || isAdmin) ? (
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <MessageSquare className="w-5 h-5 text-primary" />
-                Mensagens dos Funcionários
+                {isAdmin ? "Todas as Mensagens" : "Mensagens dos Funcionários"}
                 {unreadCount > 0 && (
                   <Badge variant="destructive" className="ml-2">
                     {unreadCount} nova{unreadCount > 1 ? "s" : ""}
@@ -328,7 +339,7 @@ const GestaoPDIs = () => {
                 )}
               </CardTitle>
               <CardDescription>
-                Responda às mensagens enviadas pelos seus funcionários
+                {isAdmin ? "Visualize todas as conversas entre gestores e funcionários" : "Responda às mensagens enviadas pelos seus funcionários"}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
@@ -390,7 +401,9 @@ const GestaoPDIs = () => {
                               >
                                 <div className="flex items-center gap-2 mb-1">
                                   <span className="text-xs font-semibold">
-                                    {msg.is_manager_response ? "Você" : msg.sender_name}
+                                    {msg.is_manager_response 
+                                      ? (isAdmin ? "Gestor" : "Você") 
+                                      : msg.sender_name}
                                   </span>
                                   {!msg.is_manager_response && !msg.read_by_manager && (
                                     <Badge variant="secondary" className="text-xs">Nova</Badge>
@@ -408,25 +421,27 @@ const GestaoPDIs = () => {
                         </div>
                       )}
 
-                      {/* Campo de resposta */}
-                      <div className="space-y-2 pt-4 border-t">
-                        <Label htmlFor={`reply-${conv.id}`}>Responder</Label>
-                        <Textarea
-                          id={`reply-${conv.id}`}
-                          placeholder="Escreva sua resposta para o funcionário..."
-                          value={replyTexts[conv.id] || ""}
-                          onChange={(e) => setReplyTexts(prev => ({ ...prev, [conv.id]: e.target.value }))}
-                          className="min-h-[100px]"
-                        />
-                        <Button
-                          onClick={() => handleSendReply(conv.id)}
-                          disabled={!replyTexts[conv.id]?.trim()}
-                          className="w-full"
-                        >
-                          <Send className="w-4 h-4 mr-2" />
-                          Enviar Resposta
-                        </Button>
-                      </div>
+                      {/* Campo de resposta - apenas para gestores */}
+                      {!isAdmin && (
+                        <div className="space-y-2 pt-4 border-t">
+                          <Label htmlFor={`reply-${conv.id}`}>Responder</Label>
+                          <Textarea
+                            id={`reply-${conv.id}`}
+                            placeholder="Escreva sua resposta para o funcionário..."
+                            value={replyTexts[conv.id] || ""}
+                            onChange={(e) => setReplyTexts(prev => ({ ...prev, [conv.id]: e.target.value }))}
+                            className="min-h-[100px]"
+                          />
+                          <Button
+                            onClick={() => handleSendReply(conv.id)}
+                            disabled={!replyTexts[conv.id]?.trim()}
+                            className="w-full"
+                          >
+                            <Send className="w-4 h-4 mr-2" />
+                            Enviar Resposta
+                          </Button>
+                        </div>
+                      )}
                     </div>
                   );
                 })
