@@ -2,6 +2,28 @@
 export const createMockCompanyData = () => {
   const companyId = "mock-company-001";
 
+  // Criar usuário admin principal
+  const adminUser = {
+    name: "Agostinho Caldeira",
+    email: "agostinhocmcaldeira@gmail.com",
+    phone: "(00) 00000-0000",
+    password: "123456",
+    role: "user",
+  };
+  localStorage.setItem("user", JSON.stringify(adminUser));
+
+  // Criar lista de administradores
+  const administrators = [
+    {
+      id: "1",
+      name: "Agostinho Caldeira",
+      email: "agostinhocmcaldeira@gmail.com",
+      phone: "(00) 00000-0000",
+      createdAt: new Date().toISOString(),
+    }
+  ];
+  localStorage.setItem("administrators", JSON.stringify(administrators));
+
   // Empresa
   const company = {
     id: companyId,
@@ -72,6 +94,9 @@ export const createMockCompanyData = () => {
 
   console.log("✅ Dados mockados criados com sucesso!");
   console.log("\n📋 CREDENCIAIS DE TESTE:\n");
+  console.log("👑 ADMINISTRADOR:");
+  console.log("   Email: agostinhocmcaldeira@gmail.com");
+  console.log("   Senha: 123456\n");
   console.log("🏢 EMPRESA:");
   console.log("   Email: contato@techsolutions.com.br");
   console.log("   Senha: 123456\n");
@@ -82,7 +107,7 @@ export const createMockCompanyData = () => {
   console.log("   Email: maria@techsolutions.com.br | Senha: func123");
   console.log("   Email: joao@techsolutions.com.br | Senha: func456");
 
-  return { company, managers, employees };
+  return { company, managers, employees, adminUser };
 };
 
 // Auto-executar se chamado diretamente
