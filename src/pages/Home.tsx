@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Link } from "react-router-dom";
-import { Target, TrendingUp, BookOpen, MessagesSquare, Book, Sparkles, User, Zap, Star, Shield, Lock, ChevronDown, AlertCircle } from "lucide-react";
+import { Target, TrendingUp, BookOpen, MessagesSquare, Book, Sparkles, User, Zap, Star, Shield, Lock, ChevronDown, AlertCircle, Link2 } from "lucide-react";
 import ProgressSection from "@/components/home/ProgressSection";
 import DiarioSection from "@/components/home/DiarioSection";
 import PlanoDeVida from "@/components/home/PlanoDeVida";
@@ -244,7 +244,7 @@ const Home = () => {
               </CardHeader>
               <CollapsibleContent>
                 <CardContent>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                     <Link to="/construcao-guiada">
                       <Card className="hover:shadow-medium transition-all cursor-pointer h-full border-2 hover:border-primary">
                         <CardContent className="pt-6 text-center space-y-3">
@@ -282,6 +282,20 @@ const Home = () => {
                           <h3 className="font-semibold">Suporte</h3>
                           <p className="text-sm text-muted-foreground">
                             Chat de ajuda e orientação
+                          </p>
+                        </CardContent>
+                      </Card>
+                    </Link>
+
+                    <Link to="/integracoes">
+                      <Card className="hover:shadow-medium transition-all cursor-pointer h-full border-2 hover:border-primary">
+                        <CardContent className="pt-6 text-center space-y-3">
+                          <div className="w-12 h-12 mx-auto bg-primary/10 rounded-full flex items-center justify-center">
+                            <Link2 className="w-6 h-6 text-primary" />
+                          </div>
+                          <h3 className="font-semibold">Integrações</h3>
+                          <p className="text-sm text-muted-foreground">
+                            Conecte com Google Calendar, Notion e mais
                           </p>
                         </CardContent>
                       </Card>
