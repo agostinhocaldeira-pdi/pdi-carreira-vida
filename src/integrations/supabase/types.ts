@@ -268,6 +268,75 @@ export type Database = {
         }
         Relationships: []
       }
+      user_addresses: {
+        Row: {
+          bairro: string | null
+          cep: string
+          cidade: string
+          complemento: string | null
+          created_at: string
+          estado: string
+          id: string
+          logradouro: string | null
+          numero: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          bairro?: string | null
+          cep: string
+          cidade: string
+          complemento?: string | null
+          created_at?: string
+          estado: string
+          id?: string
+          logradouro?: string | null
+          numero?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          bairro?: string | null
+          cep?: string
+          cidade?: string
+          complemento?: string | null
+          created_at?: string
+          estado?: string
+          id?: string
+          logradouro?: string | null
+          numero?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_onboarding: {
+        Row: {
+          created_at: string
+          current_phase: string | null
+          expectations: string | null
+          id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          current_phase?: string | null
+          expectations?: string | null
+          id?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          current_phase?: string | null
+          expectations?: string | null
+          id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string | null
@@ -286,6 +355,51 @@ export type Database = {
           id?: string
           role?: Database["public"]["Enums"]["app_role"]
           user_id?: string
+        }
+        Relationships: []
+      }
+      user_surveys: {
+        Row: {
+          biggest_challenge: string | null
+          created_at: string
+          exercise_frequency: string | null
+          id: string
+          learning_style: string | null
+          main_goal: string | null
+          motivation_source: string | null
+          reading_habit: string | null
+          sleep_time: string | null
+          updated_at: string
+          user_id: string
+          wake_up_time: string | null
+        }
+        Insert: {
+          biggest_challenge?: string | null
+          created_at?: string
+          exercise_frequency?: string | null
+          id?: string
+          learning_style?: string | null
+          main_goal?: string | null
+          motivation_source?: string | null
+          reading_habit?: string | null
+          sleep_time?: string | null
+          updated_at?: string
+          user_id: string
+          wake_up_time?: string | null
+        }
+        Update: {
+          biggest_challenge?: string | null
+          created_at?: string
+          exercise_frequency?: string | null
+          id?: string
+          learning_style?: string | null
+          main_goal?: string | null
+          motivation_source?: string | null
+          reading_habit?: string | null
+          sleep_time?: string | null
+          updated_at?: string
+          user_id?: string
+          wake_up_time?: string | null
         }
         Relationships: []
       }
