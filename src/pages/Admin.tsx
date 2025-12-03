@@ -263,6 +263,50 @@ const Admin = () => {
           </CardContent>
         </Card>
 
+        {/* Quick Access - Admin pode acessar todas as páginas */}
+        <Card className="shadow-medium border-primary/20">
+          <CardHeader>
+            <CardTitle className="text-lg flex items-center gap-2">
+              <Zap className="w-5 h-5 text-primary" />
+              Acesso Rápido
+            </CardTitle>
+            <CardDescription>
+              Como administrador, você tem acesso a todas as áreas do sistema
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <Button
+                variant="outline"
+                className="h-auto py-4 flex flex-col items-center gap-2 hover:border-primary/50"
+                onClick={() => navigate("/dashboard-empresa")}
+              >
+                <Building2 className="w-6 h-6 text-primary" />
+                <span className="text-sm font-medium">Dashboard Empresa</span>
+                <span className="text-xs text-muted-foreground">Gerenciar empresas</span>
+              </Button>
+              <Button
+                variant="outline"
+                className="h-auto py-4 flex flex-col items-center gap-2 hover:border-primary/50"
+                onClick={() => navigate("/gestao-pdis")}
+              >
+                <UserCog className="w-6 h-6 text-primary" />
+                <span className="text-sm font-medium">Gestão de PDIs</span>
+                <span className="text-xs text-muted-foreground">Ver PDIs dos funcionários</span>
+              </Button>
+              <Button
+                variant="outline"
+                className="h-auto py-4 flex flex-col items-center gap-2 hover:border-primary/50"
+                onClick={() => navigate("/home")}
+              >
+                <Home className="w-6 h-6 text-primary" />
+                <span className="text-sm font-medium">Meu PDI</span>
+                <span className="text-xs text-muted-foreground">Acessar meu dashboard</span>
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+
         {/* Admin Dashboard Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <Card 

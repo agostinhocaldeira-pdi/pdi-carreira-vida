@@ -62,28 +62,61 @@ const DashboardEmpresa = () => {
   const [managers, setManagers] = useState<Manager[]>([]);
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [company, setCompany] = useState<any>(null);
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [selectedCompanyId, setSelectedCompanyId] = useState<string | null>(null);
+  const [allCompanies, setAllCompanies] = useState<any[]>([]);
   
   const [showAddManagerModal, setShowAddManagerModal] = useState(false);
   const [showAddEmployeeModal, setShowAddEmployeeModal] = useState(false);
   const [newPerson, setNewPerson] = useState({ name: "", email: "", phone: "" });
 
+  // Verificar se é admin
+  const checkIsAdmin = (email: string): boolean => {
+    const administrators = JSON.parse(localStorage.getItem("administrators") || "[]");
+    return administrators.some((admin: any) => admin.email.toLowerCase() === email.toLowerCase());
+  };
+
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem("user") || "{}");
-    if (user.role !== "empresa") {
+    const userIsAdmin = checkIsAdmin(user.email || "");
+    setIsAdmin(userIsAdmin);
+
+    // Admin tem acesso total
+    if (!userIsAdmin && user.role !== "empresa") {
       navigate("/login");
       return;
     }
 
     const companies = JSON.parse(localStorage.getItem("companies") || "[]");
-    const userCompany = companies.find((c: any) => c.id === user.companyId);
-    setCompany(userCompany);
+    setAllCompanies(companies);
 
-    // Carregar gestores e funcionários
-    const storedManagers = JSON.parse(localStorage.getItem(`managers_${user.companyId}`) || "[]");
-    const storedEmployees = JSON.parse(localStorage.getItem(`employees_${user.companyId}`) || "[]");
-    setManagers(storedManagers);
-    setEmployees(storedEmployees);
-  }, [navigate]);
+    if (userIsAdmin) {
+      // Admin: mostrar primeira empresa ou permitir seleção
+      if (companies.length > 0) {
+        const companyId = selectedCompanyId || companies[0].id;
+        setSelectedCompanyId(companyId);
+        setCompany(companies.find((c: any) => c.id === companyId));
+        const storedManagers = JSON.parse(localStorage.getItem(`managers_${companyId}`) || "[]");
+        const storedEmployees = JSON.parse(localStorage.getItem(`employees_${companyId}`) || "[]");
+        setManagers(storedManagers);
+        setEmployees(storedEmployees);
+      }
+    } else {
+      // Empresa normal
+      const userCompany = companies.find((c: any) => c.id === user.companyId);
+      setCompany(userCompany);
+      setSelectedCompanyId(user.companyId);
+
+      const storedManagers = JSON.parse(localStorage.getItem(`managers_${user.companyId}`) || "[]");
+      const storedEmployees = JSON.parse(localStorage.getItem(`employees_${user.companyId}`) || "[]");
+      setManagers(storedManagers);
+      setEmployees(storedEmployees);
+    }
+  }, [navigate, selectedCompanyId]);
+
+  const handleCompanyChange = (companyId: string) => {
+    setSelectedCompanyId(companyId);
+  };
 
   const handleAddManager = (e: React.FormEvent) => {
     e.preventDefault();
@@ -92,7 +125,12 @@ const DashboardEmpresa = () => {
       return;
     }
 
-    const user = JSON.parse(localStorage.getItem("user") || "{}");
+    const companyId = selectedCompanyId;
+    if (!companyId) {
+      toast.error("Nenhuma empresa selecionada");
+      return;
+    }
+
     const provisionalPassword = generateProvisionalPassword();
     
     const newManager: Manager = {
@@ -105,7 +143,7 @@ const DashboardEmpresa = () => {
 
     const updatedManagers = [...managers, newManager];
     setManagers(updatedManagers);
-    localStorage.setItem(`managers_${user.companyId}`, JSON.stringify(updatedManagers));
+    localStorage.setItem(`managers_${companyId}`, JSON.stringify(updatedManagers));
 
     toast.success("Gestor adicionado!", {
       description: `Senha provisória: ${provisionalPassword}`,
@@ -123,7 +161,12 @@ const DashboardEmpresa = () => {
       return;
     }
 
-    const user = JSON.parse(localStorage.getItem("user") || "{}");
+    const companyId = selectedCompanyId;
+    if (!companyId) {
+      toast.error("Nenhuma empresa selecionada");
+      return;
+    }
+
     const provisionalPassword = generateProvisionalPassword();
     
     const newEmployee: Employee = {
@@ -136,7 +179,7 @@ const DashboardEmpresa = () => {
 
     const updatedEmployees = [...employees, newEmployee];
     setEmployees(updatedEmployees);
-    localStorage.setItem(`employees_${user.companyId}`, JSON.stringify(updatedEmployees));
+    localStorage.setItem(`employees_${companyId}`, JSON.stringify(updatedEmployees));
 
     toast.success("Funcionário adicionado!", {
       description: `Senha provisória: ${provisionalPassword}`,
@@ -148,18 +191,18 @@ const DashboardEmpresa = () => {
   };
 
   const handleRemoveManager = (id: string) => {
-    const user = JSON.parse(localStorage.getItem("user") || "{}");
+    if (!selectedCompanyId) return;
     const updatedManagers = managers.filter(m => m.id !== id);
     setManagers(updatedManagers);
-    localStorage.setItem(`managers_${user.companyId}`, JSON.stringify(updatedManagers));
+    localStorage.setItem(`managers_${selectedCompanyId}`, JSON.stringify(updatedManagers));
     toast.success("Gestor removido");
   };
 
   const handleRemoveEmployee = (id: string) => {
-    const user = JSON.parse(localStorage.getItem("user") || "{}");
+    if (!selectedCompanyId) return;
     const updatedEmployees = employees.filter(e => e.id !== id);
     setEmployees(updatedEmployees);
-    localStorage.setItem(`employees_${user.companyId}`, JSON.stringify(updatedEmployees));
+    localStorage.setItem(`employees_${selectedCompanyId}`, JSON.stringify(updatedEmployees));
     toast.success("Funcionário removido");
   };
 
@@ -176,18 +219,50 @@ const DashboardEmpresa = () => {
           <div className="flex items-center gap-3">
             <Building2 className="h-6 w-6 text-primary" />
             <div>
-              <h1 className="font-bold text-lg">{company?.razaoSocial || "Dashboard Empresa"}</h1>
+              <h1 className="font-bold text-lg">
+                {company?.razaoSocial || "Dashboard Empresa"}
+                {isAdmin && <Badge variant="secondary" className="ml-2 text-xs">Admin</Badge>}
+              </h1>
               <p className="text-xs text-muted-foreground">Gestão de PDI Corporativo</p>
             </div>
           </div>
-          <Button variant="ghost" onClick={handleLogout}>
-            <LogOut className="w-4 h-4 mr-2" />
-            Sair
-          </Button>
+          <div className="flex items-center gap-2">
+            {isAdmin && (
+              <Button variant="outline" size="sm" onClick={() => navigate("/admin")}>
+                Painel Admin
+              </Button>
+            )}
+            <Button variant="ghost" onClick={handleLogout}>
+              <LogOut className="w-4 h-4 mr-2" />
+              Sair
+            </Button>
+          </div>
         </div>
       </header>
 
       <main className="container mx-auto px-4 py-8">
+        {/* Seletor de empresa para admin */}
+        {isAdmin && allCompanies.length > 1 && (
+          <Card className="mb-6">
+            <CardContent className="p-4">
+              <div className="flex items-center gap-4">
+                <Label className="font-medium whitespace-nowrap">Empresa:</Label>
+                <select
+                  value={selectedCompanyId || ""}
+                  onChange={(e) => handleCompanyChange(e.target.value)}
+                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                >
+                  {allCompanies.map((c) => (
+                    <option key={c.id} value={c.id}>
+                      {c.razaoSocial}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
         {/* Stats Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
           <Card>
