@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Book, Smile, Frown, Meh } from "lucide-react";
 import { toast } from "sonner";
+import LogoutButton from "@/components/LogoutButton";
 
 const Diario = () => {
   const [entrada, setEntrada] = useState({
@@ -38,9 +39,12 @@ const Diario = () => {
     <div className="min-h-screen bg-gradient-subtle">
       <header className="bg-card border-b shadow-soft">
         <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center gap-2">
-            <Book className="w-6 h-6 text-primary" />
-            <h1 className="text-2xl font-bold">Meu Diário</h1>
+          <div className="flex items-center justify-between gap-2">
+            <div className="flex items-center gap-2">
+              <Book className="w-6 h-6 text-primary" />
+              <h1 className="text-2xl font-bold">Meu Diário</h1>
+            </div>
+            <LogoutButton />
           </div>
         </div>
       </header>

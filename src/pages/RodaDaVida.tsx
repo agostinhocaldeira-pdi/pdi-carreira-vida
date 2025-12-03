@@ -6,6 +6,7 @@ import { ArrowLeft, Edit2, Save, X, Check } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer, Legend } from "recharts";
 import { toast } from "sonner";
+import LogoutButton from "@/components/LogoutButton";
 
 interface LifeArea {
   area: string;
@@ -79,7 +80,7 @@ export default function RodaDaVida() {
   return (
     <div className="min-h-screen bg-background p-4 md:p-8">
       <div className="max-w-7xl mx-auto space-y-6">
-        <div className="flex items-center justify-start mb-4">
+        <div className="flex items-center justify-between mb-4">
           <Button
             variant="ghost"
             onClick={() => navigate("/ferramentas")}
@@ -87,6 +88,7 @@ export default function RodaDaVida() {
             <ArrowLeft className="mr-2 h-4 w-4" />
             Voltar para Ferramentas
           </Button>
+          <LogoutButton />
         </div>
 
         <Card>

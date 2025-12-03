@@ -9,6 +9,7 @@ import { useNavigate } from "react-router-dom";
 import { Shield, Home, Users, Settings, Activity, AlertCircle, Trash2, UserPlus, Star, Zap, TrendingUp } from "lucide-react";
 import { toast } from "sonner";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, LineChart, Line } from "recharts";
+import LogoutButton from "@/components/LogoutButton";
 
 interface Administrator {
   id: string;
@@ -153,15 +154,18 @@ const Admin = () => {
                 </p>
               </div>
             </div>
-            <Button 
-              variant="outline" 
-              size="sm"
-              onClick={() => navigate("/home")}
-              className="gap-2"
-            >
-              <Home className="w-4 h-4" />
-              <span className="hidden sm:inline">Voltar</span>
-            </Button>
+            <div className="flex items-center gap-2">
+              <Button 
+                variant="outline" 
+                size="sm"
+                onClick={() => navigate("/home")}
+                className="gap-2"
+              >
+                <Home className="w-4 h-4" />
+                <span className="hidden sm:inline">Voltar</span>
+              </Button>
+              <LogoutButton />
+            </div>
           </div>
         </div>
       </header>

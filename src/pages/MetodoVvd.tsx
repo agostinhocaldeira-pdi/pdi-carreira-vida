@@ -6,6 +6,7 @@ import { ArrowLeft, Sparkles, Heart, Star, Loader2, Edit, Check, ExternalLink } 
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import LogoutButton from "@/components/LogoutButton";
 
 const MetodoVvd = () => {
   const navigate = useNavigate();

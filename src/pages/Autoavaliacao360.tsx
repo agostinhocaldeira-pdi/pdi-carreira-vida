@@ -6,6 +6,7 @@ import { Link } from "react-router-dom";
 import { ArrowLeft, ArrowRight, Copy, CheckCircle, Clock, Sparkles, History, Save } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/contexts/LanguageContext";
+import LogoutButton from "@/components/LogoutButton";
 
 interface HistoryEntry {
   id: string;
@@ -315,12 +316,15 @@ Agora, com base em todas essas respostas acima, faça a análise profunda solici
                 <Sparkles className="w-6 h-6 text-primary" />
                 <h1 className="text-2xl font-bold">Autoavaliação + 360º</h1>
               </div>
-              <Link to="/ferramentas">
-                <Button variant="ghost" size="sm" className="gap-2">
-                  <ArrowLeft className="w-4 h-4" />
-                  Voltar
-                </Button>
-              </Link>
+              <div className="flex items-center gap-2">
+                <Link to="/ferramentas">
+                  <Button variant="ghost" size="sm" className="gap-2">
+                    <ArrowLeft className="w-4 h-4" />
+                    Voltar
+                  </Button>
+                </Link>
+                <LogoutButton />
+              </div>
             </div>
           </div>
         </header>
@@ -371,12 +375,15 @@ Agora, com base em todas essas respostas acima, faça a análise profunda solici
               <Sparkles className="w-6 h-6 text-primary" />
               <h1 className="text-2xl font-bold">Autoavaliação + 360º</h1>
             </div>
-            <Link to="/ferramentas">
-              <Button variant="ghost" size="sm" className="gap-2">
-                <ArrowLeft className="w-4 h-4" />
-                Voltar
-              </Button>
-            </Link>
+            <div className="flex items-center gap-2">
+              <Link to="/ferramentas">
+                <Button variant="ghost" size="sm" className="gap-2">
+                  <ArrowLeft className="w-4 h-4" />
+                  Voltar
+                </Button>
+              </Link>
+              <LogoutButton />
+            </div>
           </div>
         </div>
       </header>

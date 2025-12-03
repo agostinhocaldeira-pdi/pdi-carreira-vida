@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Link } from "react-router-dom";
 import { ArrowLeft, Home, TrendingUp, AlertTriangle, Target, Shield, Plus, Trash2, CheckCircle2, Lightbulb } from "lucide-react";
 import { toast } from "sonner";
+import LogoutButton from "@/components/LogoutButton";
 
 interface SwotItem {
   id: number;
