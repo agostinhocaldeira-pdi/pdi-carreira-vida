@@ -75,18 +75,32 @@ const Login = () => {
       }
     }
 
-    // Verificar se é gestor ou funcionário de alguma empresa
+    // Verificar se é uma empresa
     const companies = JSON.parse(localStorage.getItem("companies") || "[]");
+    const company = companies.find((c: any) => c.email.toLowerCase() === loginData.email.toLowerCase());
     
-    for (const company of companies) {
+    if (company && company.password === loginData.password) {
+      localStorage.setItem("user", JSON.stringify({
+        name: company.razao_social || company.razaoSocial,
+        email: company.email,
+        role: "empresa",
+        companyId: company.id,
+      }));
+      toast.success("Login realizado com sucesso!");
+      navigate("/dashboard-empresa");
+      return;
+    }
+    
+    // Verificar se é gestor ou funcionário de alguma empresa
+    for (const comp of companies) {
       // Verificar gestores
-      const managers = JSON.parse(localStorage.getItem(`managers_${company.id}`) || "[]");
+      const managers = JSON.parse(localStorage.getItem(`managers_${comp.id}`) || "[]");
       const manager = managers.find((m: any) => m.email.toLowerCase() === loginData.email.toLowerCase());
       
       if (manager) {
         if (manager.provisionalPassword === loginData.password && !manager.acceptedAt) {
           // Primeiro login do gestor - precisa trocar senha
-          setPendingLogin({ type: "manager", companyId: company.id, personId: manager.id, email: manager.email });
+          setPendingLogin({ type: "manager", companyId: comp.id, personId: manager.id, email: manager.email });
           setShowNewPasswordModal(true);
           return;
         } else if (manager.password === loginData.password) {
@@ -95,7 +109,7 @@ const Login = () => {
             name: manager.name,
             email: manager.email,
             role: "gestor",
-            companyId: company.id,
+            companyId: comp.id,
             managerId: manager.id,
           }));
           toast.success("Login realizado com sucesso!");
@@ -105,13 +119,13 @@ const Login = () => {
       }
 
       // Verificar funcionários
-      const employees = JSON.parse(localStorage.getItem(`employees_${company.id}`) || "[]");
+      const employees = JSON.parse(localStorage.getItem(`employees_${comp.id}`) || "[]");
       const employee = employees.find((emp: any) => emp.email.toLowerCase() === loginData.email.toLowerCase());
       
       if (employee) {
         if (employee.provisionalPassword === loginData.password && !employee.acceptedAt) {
           // Primeiro login do funcionário - precisa trocar senha
-          setPendingLogin({ type: "employee", companyId: company.id, personId: employee.id, email: employee.email });
+          setPendingLogin({ type: "employee", companyId: comp.id, personId: employee.id, email: employee.email });
           setShowNewPasswordModal(true);
           return;
         } else if (employee.password === loginData.password) {
@@ -120,7 +134,7 @@ const Login = () => {
             name: employee.name,
             email: employee.email,
             role: "user",
-            companyId: company.id,
+            companyId: comp.id,
             employeeId: employee.id,
           }));
           toast.success("Login realizado com sucesso!");
