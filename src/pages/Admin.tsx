@@ -265,35 +265,35 @@ const Admin = () => {
 
         {/* Notificações Pendentes - Admin */}
         {(() => {
-          // Contar mensagens de suporte não lidas
-          const supportTickets = JSON.parse(localStorage.getItem("support_tickets") || "[]");
-          const supportMessages = JSON.parse(localStorage.getItem("support_messages") || "[]");
+          // Contar mensagens de suporte não lidas (usando chaves corretas do localStorage)
+          const supportTickets = JSON.parse(localStorage.getItem("supportTickets") || "[]");
+          const supportMessages = JSON.parse(localStorage.getItem("supportMessages") || "[]");
           
           // Mensagens de usuários aguardando resposta do admin
           const pendingSupportMessages = supportTickets.filter((ticket: any) => {
-            const ticketMessages = supportMessages.filter((msg: any) => msg.ticketId === ticket.id);
+            const ticketMessages = supportMessages.filter((msg: any) => msg.ticket_id === ticket.id);
             if (ticketMessages.length === 0) return true;
             const lastMessage = ticketMessages[ticketMessages.length - 1];
-            return !lastMessage.isAdminResponse;
+            return !lastMessage.is_admin_response;
           }).length;
 
           // Contar conversas de gestores aguardando resposta
-          const allUsers = JSON.parse(localStorage.getItem("users") || "[]");
+          const managerConversations = JSON.parse(localStorage.getItem("managerConversations") || "[]");
+          const managerMessages = JSON.parse(localStorage.getItem("managerMessages") || "[]");
           let pendingManagerConversations = 0;
           let pendingEmployeeConversations = 0;
 
-          allUsers.forEach((user: any) => {
-            const conversations = JSON.parse(localStorage.getItem(`manager_conversations_${user.id}`) || "[]");
-            conversations.forEach((conv: any) => {
-              if (conv.messages && conv.messages.length > 0) {
-                const lastMsg = conv.messages[conv.messages.length - 1];
-                if (lastMsg.from === "employee") {
-                  pendingManagerConversations++;
-                } else if (lastMsg.from === "manager") {
-                  pendingEmployeeConversations++;
-                }
+          managerConversations.forEach((conv: any) => {
+            const convMessages = managerMessages.filter((msg: any) => msg.conversation_id === conv.id);
+            if (convMessages.length > 0) {
+              const lastMsg = convMessages[convMessages.length - 1];
+              if (!lastMsg.is_manager_response && !lastMsg.read_by_manager) {
+                pendingManagerConversations++;
               }
-            });
+              if (lastMsg.is_manager_response && !lastMsg.read_by_employee) {
+                pendingEmployeeConversations++;
+              }
+            }
           });
 
           const totalNotifications = pendingSupportMessages + pendingManagerConversations + pendingEmployeeConversations;
