@@ -27,4 +27,13 @@
  *   }
  */
 
+/**
+ * Storage Services
+ * 
+ * Export both localStorage-based and Supabase-based storage services.
+ * Use storageService for localStorage (legacy/offline)
+ * Use supabaseStorageService for Supabase (authenticated users)
+ */
+
 export { storageService, STORAGE_KEYS } from './StorageService';
+export { supabaseStorageService } from './SupabaseStorageService';

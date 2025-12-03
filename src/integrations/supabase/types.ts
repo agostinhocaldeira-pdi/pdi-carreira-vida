@@ -289,6 +289,48 @@ export type Database = {
           },
         ]
       }
+      diary_entries: {
+        Row: {
+          conquests: string | null
+          created_at: string | null
+          daily_progress: string | null
+          entry_date: string
+          gratitude: string | null
+          habits: string[] | null
+          id: string
+          mood: string | null
+          reflections: string | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          conquests?: string | null
+          created_at?: string | null
+          daily_progress?: string | null
+          entry_date: string
+          gratitude?: string | null
+          habits?: string[] | null
+          id?: string
+          mood?: string | null
+          reflections?: string | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          conquests?: string | null
+          created_at?: string | null
+          daily_progress?: string | null
+          entry_date?: string
+          gratitude?: string | null
+          habits?: string[] | null
+          id?: string
+          mood?: string | null
+          reflections?: string | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       okr_key_results: {
         Row: {
           created_at: string
@@ -424,6 +466,47 @@ export type Database = {
           },
         ]
       }
+      user_actions: {
+        Row: {
+          created_at: string | null
+          goal_id: string | null
+          id: string
+          periodicidade: string | null
+          status: string | null
+          texto: string
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          goal_id?: string | null
+          id?: string
+          periodicidade?: string | null
+          status?: string | null
+          texto: string
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          goal_id?: string | null
+          id?: string
+          periodicidade?: string | null
+          status?: string | null
+          texto?: string
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_actions_goal_id_fkey"
+            columns: ["goal_id"]
+            isOneToOne: false
+            referencedRelation: "user_goals"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_addresses: {
         Row: {
           bairro: string | null
@@ -462,6 +545,134 @@ export type Database = {
           logradouro?: string | null
           numero?: string | null
           updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_beliefs: {
+        Row: {
+          created_at: string | null
+          id: string
+          limiting_belief: string
+          new_belief: string | null
+          transformation_answers: Json | null
+          type: string | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          limiting_belief: string
+          new_belief?: string | null
+          transformation_answers?: Json | null
+          type?: string | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          limiting_belief?: string
+          new_belief?: string | null
+          transformation_answers?: Json | null
+          type?: string | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_eisenhower_tasks: {
+        Row: {
+          created_at: string | null
+          id: string
+          quadrant: string
+          task_text: string
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          quadrant: string
+          task_text: string
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          quadrant?: string
+          task_text?: string
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_goals: {
+        Row: {
+          created_at: string | null
+          data_alvo: string | null
+          from_smart: boolean | null
+          id: string
+          objective_id: string | null
+          status: string | null
+          texto: string
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          data_alvo?: string | null
+          from_smart?: boolean | null
+          id?: string
+          objective_id?: string | null
+          status?: string | null
+          texto: string
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          data_alvo?: string | null
+          from_smart?: boolean | null
+          id?: string
+          objective_id?: string | null
+          status?: string | null
+          texto?: string
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_goals_objective_id_fkey"
+            columns: ["objective_id"]
+            isOneToOne: false
+            referencedRelation: "user_objectives"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_insights: {
+        Row: {
+          created_at: string | null
+          generated_at: string | null
+          id: string
+          insight_text: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          generated_at?: string | null
+          id?: string
+          insight_text?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          generated_at?: string | null
+          id?: string
+          insight_text?: string | null
           user_id?: string
         }
         Relationships: []
@@ -511,6 +722,39 @@ export type Database = {
         }
         Relationships: []
       }
+      user_life_areas: {
+        Row: {
+          area_name: string
+          created_at: string | null
+          current_score: number | null
+          desired_score: number | null
+          id: string
+          position: number | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          area_name: string
+          created_at?: string | null
+          current_score?: number | null
+          desired_score?: number | null
+          id?: string
+          position?: number | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          area_name?: string
+          created_at?: string | null
+          current_score?: number | null
+          desired_score?: number | null
+          id?: string
+          position?: number | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_notification_preferences: {
         Row: {
           created_at: string
@@ -553,6 +797,39 @@ export type Database = {
           weekly_summary_day?: number
           weekly_summary_enabled?: boolean
           whatsapp_enabled?: boolean
+        }
+        Relationships: []
+      }
+      user_objectives: {
+        Row: {
+          conexao_vvd: string | null
+          created_at: string | null
+          data_alvo: string | null
+          id: string
+          status: string | null
+          texto: string
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          conexao_vvd?: string | null
+          created_at?: string | null
+          data_alvo?: string | null
+          id?: string
+          status?: string | null
+          texto: string
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          conexao_vvd?: string | null
+          created_at?: string | null
+          data_alvo?: string | null
+          id?: string
+          status?: string | null
+          texto?: string
+          updated_at?: string | null
+          user_id?: string
         }
         Relationships: []
       }
@@ -639,6 +916,104 @@ export type Database = {
         }
         Relationships: []
       }
+      user_self_assessment: {
+        Row: {
+          ai_analysis: string | null
+          created_at: string | null
+          feedback_360: string | null
+          id: string
+          last_completed_at: string | null
+          self_answers: Json | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          ai_analysis?: string | null
+          created_at?: string | null
+          feedback_360?: string | null
+          id?: string
+          last_completed_at?: string | null
+          self_answers?: Json | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          ai_analysis?: string | null
+          created_at?: string | null
+          feedback_360?: string | null
+          id?: string
+          last_completed_at?: string | null
+          self_answers?: Json | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_skills: {
+        Row: {
+          category: string | null
+          created_at: string | null
+          id: string
+          skill_name: string
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          category?: string | null
+          created_at?: string | null
+          id?: string
+          skill_name: string
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          category?: string | null
+          created_at?: string | null
+          id?: string
+          skill_name?: string
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_steps: {
+        Row: {
+          action_id: string | null
+          concluido: boolean | null
+          created_at: string | null
+          id: string
+          texto: string
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          action_id?: string | null
+          concluido?: boolean | null
+          created_at?: string | null
+          id?: string
+          texto: string
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          action_id?: string | null
+          concluido?: boolean | null
+          created_at?: string | null
+          id?: string
+          texto?: string
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_steps_action_id_fkey"
+            columns: ["action_id"]
+            isOneToOne: false
+            referencedRelation: "user_actions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_streaks: {
         Row: {
           current_streak: number
@@ -668,6 +1043,33 @@ export type Database = {
           longest_streak?: number
           total_points?: number
           updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      user_strengths_weaknesses: {
+        Row: {
+          created_at: string | null
+          id: string
+          texto: string
+          type: string
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          texto: string
+          type: string
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          texto?: string
+          type?: string
+          updated_at?: string | null
           user_id?: string
         }
         Relationships: []
@@ -714,6 +1116,93 @@ export type Database = {
           updated_at?: string
           user_id?: string
           wake_up_time?: string | null
+        }
+        Relationships: []
+      }
+      user_swot: {
+        Row: {
+          created_at: string | null
+          id: string
+          opportunities: string[] | null
+          strengths: string[] | null
+          threats: string[] | null
+          updated_at: string | null
+          user_id: string
+          weaknesses: string[] | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          opportunities?: string[] | null
+          strengths?: string[] | null
+          threats?: string[] | null
+          updated_at?: string | null
+          user_id: string
+          weaknesses?: string[] | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          opportunities?: string[] | null
+          strengths?: string[] | null
+          threats?: string[] | null
+          updated_at?: string | null
+          user_id?: string
+          weaknesses?: string[] | null
+        }
+        Relationships: []
+      }
+      user_valores: {
+        Row: {
+          created_at: string | null
+          id: string
+          updated_at: string | null
+          user_id: string
+          valores: string[] | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          updated_at?: string | null
+          user_id: string
+          valores?: string[] | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          updated_at?: string | null
+          user_id?: string
+          valores?: string[] | null
+        }
+        Relationships: []
+      }
+      user_vvd: {
+        Row: {
+          created_at: string | null
+          id: string
+          updated_at: string | null
+          user_id: string
+          vvd_paragraph: string | null
+          vvd_sentence: string | null
+          vvd_text: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          updated_at?: string | null
+          user_id: string
+          vvd_paragraph?: string | null
+          vvd_sentence?: string | null
+          vvd_text?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          updated_at?: string | null
+          user_id?: string
+          vvd_paragraph?: string | null
+          vvd_sentence?: string | null
+          vvd_text?: string | null
         }
         Relationships: []
       }
