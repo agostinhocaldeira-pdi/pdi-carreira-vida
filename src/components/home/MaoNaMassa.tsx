@@ -157,6 +157,29 @@ const MaoNaMassa = () => {
     }
   }, []);
 
+  // Escutar evento para abrir formulário de meta com objetivo pré-selecionado
+  useEffect(() => {
+    const handleOpenMetaForm = (event: CustomEvent<{ objetivoId: string }>) => {
+      // Recarregar objetivos para incluir o recém criado
+      const objetivosSalvos = JSON.parse(localStorage.getItem("objetivos") || "[]");
+      setObjetivosDisponiveis(objetivosSalvos);
+      
+      // Selecionar o objetivo e abrir o formulário
+      setObjetivoSelecionado(event.detail.objetivoId);
+      setIsFormOpen(true);
+      
+      // Rolar para o formulário
+      setTimeout(() => {
+        formRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 100);
+    };
+
+    window.addEventListener('openMetaForm', handleOpenMetaForm as EventListener);
+    return () => {
+      window.removeEventListener('openMetaForm', handleOpenMetaForm as EventListener);
+    };
+  }, []);
+
   const handleAddAcao = () => {
     if (!novaAcao.acao) {
       toast.error("Preencha a ação");
