@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
+import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
@@ -35,6 +36,7 @@ interface SupportTicket {
   category: string;
   question: string;
   created_at: string;
+  user_email: string;
 }
 
 interface SupportMessage {
@@ -43,6 +45,7 @@ interface SupportMessage {
   message: string;
   is_admin_response: boolean;
   created_at: string;
+  read_by_user?: boolean;
 }
 
 interface ManagerConversation {
@@ -62,6 +65,8 @@ interface ManagerMessage {
   is_manager_response: boolean;
   sender_name: string;
   created_at: string;
+  read_by_employee?: boolean;
+  read_by_manager?: boolean;
 }
 
 const Suporte = () => {
@@ -84,6 +89,10 @@ const Suporte = () => {
   const [managerMessage, setManagerMessage] = useState("");
   const [managerConversations, setManagerConversations] = useState<ManagerConversation[]>([]);
   const [managerMessages, setManagerMessages] = useState<Record<string, ManagerMessage[]>>({});
+  
+  // Contadores de não lidas
+  const [unreadSupportCount, setUnreadSupportCount] = useState(0);
+  const [unreadManagerCount, setUnreadManagerCount] = useState(0);
 
   useEffect(() => {
     checkUserRole();
@@ -117,24 +126,43 @@ const Suporte = () => {
   };
 
   const loadTickets = () => {
+    const user = localStorage.getItem("user");
+    if (!user) return;
+    
+    const userData = JSON.parse(user);
     const allTickets = JSON.parse(localStorage.getItem("supportTickets") || "[]");
     const allMessages = JSON.parse(localStorage.getItem("supportMessages") || "[]");
 
-    const sortedTickets = allTickets.sort((a: SupportTicket, b: SupportTicket) =>
+    // Filtrar tickets do usuário atual
+    const userTickets = allTickets.filter((t: SupportTicket) => 
+      t.user_email?.toLowerCase() === userData.email?.toLowerCase()
+    ).sort((a: SupportTicket, b: SupportTicket) =>
       new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
     );
 
-    setTickets(sortedTickets);
+    setTickets(userTickets);
 
     const messagesMap: Record<string, SupportMessage[]> = {};
-    sortedTickets.forEach((ticket: SupportTicket) => {
-      messagesMap[ticket.id] = allMessages
+    let unreadCount = 0;
+    
+    userTickets.forEach((ticket: SupportTicket) => {
+      const ticketMessages = allMessages
         .filter((m: SupportMessage) => m.ticket_id === ticket.id)
         .sort((a: SupportMessage, b: SupportMessage) =>
           new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
         );
+      messagesMap[ticket.id] = ticketMessages;
+      
+      // Contar mensagens não lidas do admin
+      ticketMessages.forEach((msg: SupportMessage) => {
+        if (msg.is_admin_response && !msg.read_by_user) {
+          unreadCount++;
+        }
+      });
     });
+    
     setMessages(messagesMap);
+    setUnreadSupportCount(unreadCount);
   };
 
   const loadManagerConversations = () => {
@@ -155,14 +183,62 @@ const Suporte = () => {
     setManagerConversations(userConversations);
 
     const messagesMap: Record<string, ManagerMessage[]> = {};
+    let unreadCount = 0;
+    
     userConversations.forEach((conv: ManagerConversation) => {
-      messagesMap[conv.id] = allMessages
+      const convMessages = allMessages
         .filter((m: ManagerMessage) => m.conversation_id === conv.id)
         .sort((a: ManagerMessage, b: ManagerMessage) =>
           new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
         );
+      messagesMap[conv.id] = convMessages;
+      
+      // Contar mensagens não lidas do gestor
+      convMessages.forEach((msg: ManagerMessage) => {
+        if (msg.is_manager_response && !msg.read_by_employee) {
+          unreadCount++;
+        }
+      });
     });
+    
     setManagerMessages(messagesMap);
+    setUnreadManagerCount(unreadCount);
+  };
+
+  const markSupportMessagesAsRead = (ticketId: string) => {
+    const allMessages = JSON.parse(localStorage.getItem("supportMessages") || "[]");
+    let updated = false;
+    
+    const updatedMessages = allMessages.map((msg: SupportMessage) => {
+      if (msg.ticket_id === ticketId && msg.is_admin_response && !msg.read_by_user) {
+        updated = true;
+        return { ...msg, read_by_user: true };
+      }
+      return msg;
+    });
+    
+    if (updated) {
+      localStorage.setItem("supportMessages", JSON.stringify(updatedMessages));
+      loadTickets();
+    }
+  };
+
+  const markManagerMessagesAsRead = (conversationId: string) => {
+    const allMessages = JSON.parse(localStorage.getItem("managerMessages") || "[]");
+    let updated = false;
+    
+    const updatedMessages = allMessages.map((msg: ManagerMessage) => {
+      if (msg.conversation_id === conversationId && msg.is_manager_response && !msg.read_by_employee) {
+        updated = true;
+        return { ...msg, read_by_employee: true };
+      }
+      return msg;
+    });
+    
+    if (updated) {
+      localStorage.setItem("managerMessages", JSON.stringify(updatedMessages));
+      loadManagerConversations();
+    }
   };
 
   const handleSubmitQuestion = () => {
@@ -176,13 +252,15 @@ const Suporte = () => {
     }
 
     setIsLoading(true);
-
+    
+    const user = JSON.parse(localStorage.getItem("user") || "{}");
     const ticketId = `ticket-${Date.now()}`;
     const newTicket: SupportTicket = {
       id: ticketId,
       category: category,
       question: question.trim(),
       created_at: new Date().toISOString(),
+      user_email: user.email,
     };
 
     const newMessage: SupportMessage = {
@@ -191,6 +269,7 @@ const Suporte = () => {
       message: question.trim(),
       is_admin_response: false,
       created_at: new Date().toISOString(),
+      read_by_user: true,
     };
 
     const allTickets = JSON.parse(localStorage.getItem("supportTickets") || "[]");
@@ -231,6 +310,7 @@ const Suporte = () => {
       message: adminResponse.trim(),
       is_admin_response: true,
       created_at: new Date().toISOString(),
+      read_by_user: false,
     };
 
     const allMessages = JSON.parse(localStorage.getItem("supportMessages") || "[]");
@@ -288,6 +368,8 @@ const Suporte = () => {
       is_manager_response: false,
       sender_name: user.name || employeeData.name,
       created_at: new Date().toISOString(),
+      read_by_employee: true,
+      read_by_manager: false,
     };
 
     const allConversations = JSON.parse(localStorage.getItem("managerConversations") || "[]");
@@ -322,6 +404,8 @@ const Suporte = () => {
       is_manager_response: false,
       sender_name: user.name || employeeData?.name || "Funcionário",
       created_at: new Date().toISOString(),
+      read_by_employee: true,
+      read_by_manager: false,
     };
 
     const allMessages = JSON.parse(localStorage.getItem("managerMessages") || "[]");
@@ -334,6 +418,16 @@ const Suporte = () => {
     });
 
     loadManagerConversations();
+  };
+
+  const getUnreadCountForTicket = (ticketId: string) => {
+    const ticketMessages = messages[ticketId] || [];
+    return ticketMessages.filter(msg => msg.is_admin_response && !msg.read_by_user).length;
+  };
+
+  const getUnreadCountForConversation = (conversationId: string) => {
+    const convMessages = managerMessages[conversationId] || [];
+    return convMessages.filter(msg => msg.is_manager_response && !msg.read_by_employee).length;
   };
 
   const renderSupportForm = () => (
@@ -385,7 +479,14 @@ const Suporte = () => {
       {/* Histórico de Conversas */}
       <Card className="max-w-4xl mx-auto shadow-large">
         <CardHeader>
-          <CardTitle>Histórico de Conversas</CardTitle>
+          <CardTitle className="flex items-center gap-2">
+            Histórico de Conversas
+            {unreadSupportCount > 0 && (
+              <Badge variant="destructive" className="ml-2">
+                {unreadSupportCount} nova{unreadSupportCount > 1 ? "s" : ""}
+              </Badge>
+            )}
+          </CardTitle>
         </CardHeader>
         <CardContent className="space-y-6">
           {tickets.length === 0 ? (
@@ -393,83 +494,100 @@ const Suporte = () => {
               Nenhuma conversa ainda
             </p>
           ) : (
-            tickets.map((ticket) => (
-              <div key={ticket.id} className="border rounded-lg p-4 space-y-4">
-                <div className="space-y-2">
-                  <div className="flex items-start justify-between">
-                    <div>
-                      <span className="inline-block px-2 py-1 rounded-md bg-primary/10 text-primary text-xs font-medium mb-2">
-                        {CATEGORIES.find((c) => c.value === ticket.category)?.label}
-                      </span>
-                      <p className="text-sm text-muted-foreground">
-                        {format(new Date(ticket.created_at), "dd/MM/yyyy 'às' HH:mm", {
-                          locale: ptBR,
-                        })}
-                      </p>
-                    </div>
-                  </div>
-                  <p className="font-medium">{ticket.question}</p>
-                </div>
-
-                {messages[ticket.id] && messages[ticket.id].length > 0 && (
+            tickets.map((ticket) => {
+              const ticketUnread = getUnreadCountForTicket(ticket.id);
+              return (
+                <div 
+                  key={ticket.id} 
+                  className={`border rounded-lg p-4 space-y-4 ${ticketUnread > 0 ? 'border-primary/50 bg-primary/5' : ''}`}
+                  onClick={() => markSupportMessagesAsRead(ticket.id)}
+                >
                   <div className="space-y-2">
-                    <Label>Histórico de Conversas</Label>
-                    <div className="space-y-3 pl-4 border-l-2 border-border">
-                      {messages[ticket.id].map((msg) => (
-                        <div
-                          key={msg.id}
-                          className={`p-3 rounded-lg ${
-                            msg.is_admin_response
-                              ? "bg-primary/5 border border-primary/20"
-                              : "bg-muted"
-                          }`}
-                        >
-                          <div className="flex items-center gap-2 mb-1">
-                            <span className="text-xs font-semibold">
-                              {msg.is_admin_response ? "Suporte" : "Você"}
-                            </span>
-                            <span className="text-xs text-muted-foreground">
-                              {format(new Date(msg.created_at), "dd/MM/yyyy 'às' HH:mm", {
-                                locale: ptBR,
-                              })}
-                            </span>
-                          </div>
-                          <p className="text-sm">{msg.message}</p>
+                    <div className="flex items-start justify-between">
+                      <div>
+                        <div className="flex items-center gap-2 mb-2">
+                          <span className="inline-block px-2 py-1 rounded-md bg-primary/10 text-primary text-xs font-medium">
+                            {CATEGORIES.find((c) => c.value === ticket.category)?.label}
+                          </span>
+                          {ticketUnread > 0 && (
+                            <Badge variant="destructive" className="text-xs">
+                              {ticketUnread} nova{ticketUnread > 1 ? "s" : ""}
+                            </Badge>
+                          )}
                         </div>
-                      ))}
+                        <p className="text-sm text-muted-foreground">
+                          {format(new Date(ticket.created_at), "dd/MM/yyyy 'às' HH:mm", {
+                            locale: ptBR,
+                          })}
+                        </p>
+                      </div>
                     </div>
+                    <p className="font-medium">{ticket.question}</p>
                   </div>
-                )}
 
-                <div className="space-y-2 pt-4 border-t">
-                  <Label htmlFor={`admin-response-${ticket.id}`}>
-                    Resposta do Suporte
-                  </Label>
-                  <Textarea
-                    id={`admin-response-${ticket.id}`}
-                    placeholder="Escreva sua resposta..."
-                    value={adminResponse}
-                    onChange={(e) => setAdminResponse(e.target.value)}
-                    className="min-h-[100px]"
-                  />
-                  <Button
-                    onClick={() => handleSubmitAdminResponse(ticket.id)}
-                    disabled={isLoading || !adminResponse.trim()}
-                    className="w-full"
-                  >
-                    <Send className="w-4 h-4 mr-2" />
-                    Salvar
-                  </Button>
+                  {messages[ticket.id] && messages[ticket.id].length > 0 && (
+                    <div className="space-y-2">
+                      <Label>Histórico de Conversas</Label>
+                      <div className="space-y-3 pl-4 border-l-2 border-border">
+                        {messages[ticket.id].map((msg) => (
+                          <div
+                            key={msg.id}
+                            className={`p-3 rounded-lg ${
+                              msg.is_admin_response
+                                ? `bg-primary/5 border border-primary/20 ${!msg.read_by_user ? 'ring-2 ring-primary/30' : ''}`
+                                : "bg-muted"
+                            }`}
+                          >
+                            <div className="flex items-center gap-2 mb-1">
+                              <span className="text-xs font-semibold">
+                                {msg.is_admin_response ? "Suporte" : "Você"}
+                              </span>
+                              {msg.is_admin_response && !msg.read_by_user && (
+                                <Badge variant="secondary" className="text-xs">Nova</Badge>
+                              )}
+                              <span className="text-xs text-muted-foreground">
+                                {format(new Date(msg.created_at), "dd/MM/yyyy 'às' HH:mm", {
+                                  locale: ptBR,
+                                })}
+                              </span>
+                            </div>
+                            <p className="text-sm">{msg.message}</p>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="space-y-2 pt-4 border-t">
+                    <Label htmlFor={`admin-response-${ticket.id}`}>
+                      Enviar nova mensagem
+                    </Label>
+                    <Textarea
+                      id={`admin-response-${ticket.id}`}
+                      placeholder="Escreva sua mensagem..."
+                      value={adminResponse}
+                      onChange={(e) => setAdminResponse(e.target.value)}
+                      className="min-h-[100px]"
+                    />
+                    <Button
+                      onClick={() => handleSubmitAdminResponse(ticket.id)}
+                      disabled={isLoading || !adminResponse.trim()}
+                      className="w-full"
+                    >
+                      <Send className="w-4 h-4 mr-2" />
+                      Enviar
+                    </Button>
+                  </div>
                 </div>
-              </div>
-            ))
+              );
+            })
           )}
         </CardContent>
       </Card>
     </>
   );
 
-  const renderManagerConversation = () => {
+  const ManagerConversationSection = () => {
     const [replyTexts, setReplyTexts] = useState<Record<string, string>>({});
 
     return (
@@ -532,7 +650,14 @@ const Suporte = () => {
             {/* Histórico de Conversas com Gestor */}
             <Card className="max-w-4xl mx-auto shadow-large">
               <CardHeader>
-                <CardTitle>Conversas com o Gestor</CardTitle>
+                <CardTitle className="flex items-center gap-2">
+                  Conversas com o Gestor
+                  {unreadManagerCount > 0 && (
+                    <Badge variant="destructive" className="ml-2">
+                      {unreadManagerCount} nova{unreadManagerCount > 1 ? "s" : ""}
+                    </Badge>
+                  )}
+                </CardTitle>
               </CardHeader>
               <CardContent className="space-y-6">
                 {managerConversations.length === 0 ? (
@@ -540,77 +665,94 @@ const Suporte = () => {
                     Nenhuma conversa com o gestor ainda
                   </p>
                 ) : (
-                  managerConversations.map((conv) => (
-                    <div key={conv.id} className="border rounded-lg p-4 space-y-4">
-                      <div className="space-y-2">
-                        <div className="flex items-start justify-between">
-                          <div>
-                            <span className="inline-block px-2 py-1 rounded-md bg-green-500/10 text-green-600 text-xs font-medium mb-2">
-                              {conv.subject}
-                            </span>
-                            <p className="text-sm text-muted-foreground">
-                              {format(new Date(conv.created_at), "dd/MM/yyyy 'às' HH:mm", {
-                                locale: ptBR,
-                              })}
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-
-                      {managerMessages[conv.id] && managerMessages[conv.id].length > 0 && (
+                  managerConversations.map((conv) => {
+                    const convUnread = getUnreadCountForConversation(conv.id);
+                    return (
+                      <div 
+                        key={conv.id} 
+                        className={`border rounded-lg p-4 space-y-4 ${convUnread > 0 ? 'border-green-500/50 bg-green-500/5' : ''}`}
+                        onClick={() => markManagerMessagesAsRead(conv.id)}
+                      >
                         <div className="space-y-2">
-                          <Label>Mensagens</Label>
-                          <div className="space-y-3 pl-4 border-l-2 border-green-500/30">
-                            {managerMessages[conv.id].map((msg) => (
-                              <div
-                                key={msg.id}
-                                className={`p-3 rounded-lg ${
-                                  msg.is_manager_response
-                                    ? "bg-green-500/5 border border-green-500/20"
-                                    : "bg-muted"
-                                }`}
-                              >
-                                <div className="flex items-center gap-2 mb-1">
-                                  <span className="text-xs font-semibold">
-                                    {msg.is_manager_response ? "Gestor" : "Você"}
-                                  </span>
-                                  <span className="text-xs text-muted-foreground">
-                                    {format(new Date(msg.created_at), "dd/MM/yyyy 'às' HH:mm", {
-                                      locale: ptBR,
-                                    })}
-                                  </span>
-                                </div>
-                                <p className="text-sm">{msg.message}</p>
+                          <div className="flex items-start justify-between">
+                            <div>
+                              <div className="flex items-center gap-2 mb-2">
+                                <span className="inline-block px-2 py-1 rounded-md bg-green-500/10 text-green-600 text-xs font-medium">
+                                  {conv.subject}
+                                </span>
+                                {convUnread > 0 && (
+                                  <Badge variant="destructive" className="text-xs">
+                                    {convUnread} nova{convUnread > 1 ? "s" : ""}
+                                  </Badge>
+                                )}
                               </div>
-                            ))}
+                              <p className="text-sm text-muted-foreground">
+                                {format(new Date(conv.created_at), "dd/MM/yyyy 'às' HH:mm", {
+                                  locale: ptBR,
+                                })}
+                              </p>
+                            </div>
                           </div>
                         </div>
-                      )}
 
-                      {/* Campo de resposta */}
-                      <div className="space-y-2 pt-4 border-t">
-                        <Label htmlFor={`reply-${conv.id}`}>Responder</Label>
-                        <Textarea
-                          id={`reply-${conv.id}`}
-                          placeholder="Escreva sua resposta..."
-                          value={replyTexts[conv.id] || ""}
-                          onChange={(e) => setReplyTexts(prev => ({ ...prev, [conv.id]: e.target.value }))}
-                          className="min-h-[80px]"
-                        />
-                        <Button
-                          onClick={() => {
-                            handleReplyToManagerConversation(conv.id, replyTexts[conv.id] || "");
-                            setReplyTexts(prev => ({ ...prev, [conv.id]: "" }));
-                          }}
-                          disabled={isLoading || !replyTexts[conv.id]?.trim()}
-                          className="w-full"
-                        >
-                          <Send className="w-4 h-4 mr-2" />
-                          Enviar Resposta
-                        </Button>
+                        {managerMessages[conv.id] && managerMessages[conv.id].length > 0 && (
+                          <div className="space-y-2">
+                            <Label>Mensagens</Label>
+                            <div className="space-y-3 pl-4 border-l-2 border-green-500/30">
+                              {managerMessages[conv.id].map((msg) => (
+                                <div
+                                  key={msg.id}
+                                  className={`p-3 rounded-lg ${
+                                    msg.is_manager_response
+                                      ? `bg-green-500/5 border border-green-500/20 ${!msg.read_by_employee ? 'ring-2 ring-green-500/30' : ''}`
+                                      : "bg-muted"
+                                  }`}
+                                >
+                                  <div className="flex items-center gap-2 mb-1">
+                                    <span className="text-xs font-semibold">
+                                      {msg.is_manager_response ? "Gestor" : "Você"}
+                                    </span>
+                                    {msg.is_manager_response && !msg.read_by_employee && (
+                                      <Badge variant="secondary" className="text-xs">Nova</Badge>
+                                    )}
+                                    <span className="text-xs text-muted-foreground">
+                                      {format(new Date(msg.created_at), "dd/MM/yyyy 'às' HH:mm", {
+                                        locale: ptBR,
+                                      })}
+                                    </span>
+                                  </div>
+                                  <p className="text-sm">{msg.message}</p>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Campo de resposta */}
+                        <div className="space-y-2 pt-4 border-t">
+                          <Label htmlFor={`reply-${conv.id}`}>Responder</Label>
+                          <Textarea
+                            id={`reply-${conv.id}`}
+                            placeholder="Escreva sua resposta..."
+                            value={replyTexts[conv.id] || ""}
+                            onChange={(e) => setReplyTexts(prev => ({ ...prev, [conv.id]: e.target.value }))}
+                            className="min-h-[80px]"
+                          />
+                          <Button
+                            onClick={() => {
+                              handleReplyToManagerConversation(conv.id, replyTexts[conv.id] || "");
+                              setReplyTexts(prev => ({ ...prev, [conv.id]: "" }));
+                            }}
+                            disabled={isLoading || !replyTexts[conv.id]?.trim()}
+                            className="w-full"
+                          >
+                            <Send className="w-4 h-4 mr-2" />
+                            Enviar Resposta
+                          </Button>
+                        </div>
                       </div>
-                    </div>
-                  ))
+                    );
+                  })
                 )}
               </CardContent>
             </Card>
@@ -641,13 +783,23 @@ const Suporte = () => {
             <CardContent className="pt-6">
               <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
                 <TabsList className="grid w-full grid-cols-2">
-                  <TabsTrigger value="atendimento" className="flex items-center gap-2">
+                  <TabsTrigger value="atendimento" className="flex items-center gap-2 relative">
                     <Headphones className="w-4 h-4" />
                     Atendimento ao Cliente
+                    {unreadSupportCount > 0 && (
+                      <Badge variant="destructive" className="ml-1 h-5 min-w-[20px] p-0 flex items-center justify-center text-xs">
+                        {unreadSupportCount}
+                      </Badge>
+                    )}
                   </TabsTrigger>
-                  <TabsTrigger value="gestor" className="flex items-center gap-2">
+                  <TabsTrigger value="gestor" className="flex items-center gap-2 relative">
                     <Users className="w-4 h-4" />
                     Conversa com o Gestor
+                    {unreadManagerCount > 0 && (
+                      <Badge variant="destructive" className="ml-1 h-5 min-w-[20px] p-0 flex items-center justify-center text-xs">
+                        {unreadManagerCount}
+                      </Badge>
+                    )}
                   </TabsTrigger>
                 </TabsList>
               </Tabs>
@@ -657,7 +809,7 @@ const Suporte = () => {
 
         {/* Conteúdo baseado na aba selecionada */}
         {isEmployee && activeTab === "gestor" ? (
-          renderManagerConversation()
+          <ManagerConversationSection />
         ) : (
           renderSupportForm()
         )}
