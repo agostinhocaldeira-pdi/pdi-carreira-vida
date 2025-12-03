@@ -11,3 +11,9 @@ verify_jwt = false
 
 [functions.create-company-user]
 verify_jwt = false
+
+[functions.invite-company-user]
+verify_jwt = false
+
+[functions.send-password-setup]
+verify_jwt = false
