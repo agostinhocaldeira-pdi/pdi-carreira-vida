@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
-import { Building2, ArrowLeft, Plus, Trash2, UserPlus, Eye, EyeOff } from "lucide-react";
+import { Building2, ArrowLeft, Plus, Trash2, UserPlus, Eye, EyeOff, MapPin, Loader2 } from "lucide-react";
 import { formatCNPJ, validateCNPJ } from "@/types/company";
 
 interface Representative {
@@ -15,9 +15,20 @@ interface Representative {
   isPrimary: boolean;
 }
 
+interface AddressData {
+  cep: string;
+  logradouro: string;
+  complemento: string;
+  numero: string;
+  bairro: string;
+  cidade: string;
+  estado: string;
+}
+
 const CadastrarEmpresa = () => {
   const navigate = useNavigate();
   const [step, setStep] = useState(1);
+  const [isLoadingCep, setIsLoadingCep] = useState(false);
   const [companyData, setCompanyData] = useState({
     razaoSocial: "",
     cnpj: "",
@@ -25,6 +36,16 @@ const CadastrarEmpresa = () => {
     telefone: "",
     password: "",
     confirmPassword: "",
+    inscricaoEstadual: "",
+  });
+  const [addressData, setAddressData] = useState<AddressData>({
+    cep: "",
+    logradouro: "",
+    complemento: "",
+    numero: "",
+    bairro: "",
+    cidade: "",
+    estado: "",
   });
   const [representatives, setRepresentatives] = useState<Representative[]>([
     { name: "", email: "", phone: "", isPrimary: true }
@@ -35,6 +56,45 @@ const CadastrarEmpresa = () => {
   const handleCNPJChange = (value: string) => {
     const formatted = formatCNPJ(value);
     setCompanyData({ ...companyData, cnpj: formatted });
+  };
+
+  // Buscar CEP
+  const fetchCep = async (cep: string) => {
+    const cleanCep = cep.replace(/\D/g, "");
+    if (cleanCep.length !== 8) return;
+
+    setIsLoadingCep(true);
+    try {
+      const response = await fetch(`https://viacep.com.br/ws/${cleanCep}/json/`);
+      const data = await response.json();
+      
+      if (data.erro) {
+        toast.error("CEP não encontrado");
+        return;
+      }
+
+      setAddressData(prev => ({
+        ...prev,
+        logradouro: data.logradouro || "",
+        bairro: data.bairro || "",
+        cidade: data.localidade || "",
+        estado: data.uf || "",
+      }));
+      toast.success("Endereço preenchido automaticamente!");
+    } catch (error) {
+      toast.error("Erro ao buscar CEP");
+    } finally {
+      setIsLoadingCep(false);
+    }
+  };
+
+  const handleCepChange = (value: string) => {
+    const formattedCep = value.replace(/\D/g, "").replace(/(\d{5})(\d)/, "$1-$2").slice(0, 9);
+    setAddressData(prev => ({ ...prev, cep: formattedCep }));
+    
+    if (formattedCep.replace(/\D/g, "").length === 8) {
+      fetchCep(formattedCep);
+    }
   };
 
   const addRepresentative = () => {
@@ -85,6 +145,17 @@ const CadastrarEmpresa = () => {
   const handleStep2Submit = (e: React.FormEvent) => {
     e.preventDefault();
 
+    if (!addressData.cep || !addressData.cidade || !addressData.estado) {
+      toast.error("Preencha os campos obrigatórios do endereço");
+      return;
+    }
+
+    setStep(3);
+  };
+
+  const handleStep3Submit = (e: React.FormEvent) => {
+    e.preventDefault();
+
     const primaryRep = representatives.find(r => r.isPrimary);
     if (!primaryRep?.name || !primaryRep?.email) {
       toast.error("O representante principal é obrigatório");
@@ -96,6 +167,10 @@ const CadastrarEmpresa = () => {
       id: crypto.randomUUID(),
       ...companyData,
       cnpj: companyData.cnpj.replace(/\D/g, ""),
+      address: {
+        ...addressData,
+        cep: addressData.cep.replace(/\D/g, ""),
+      },
       representatives,
       role: "empresa",
       createdAt: new Date().toISOString(),
@@ -124,20 +199,27 @@ const CadastrarEmpresa = () => {
       <Card className="w-full max-w-2xl shadow-large animate-slide-up">
         <CardHeader className="space-y-2 text-center pb-4">
           <div className="flex items-center justify-center gap-2 mb-2">
-            <Building2 className="h-8 w-8 text-primary" />
+            {step === 2 ? (
+              <MapPin className="h-8 w-8 text-primary" />
+            ) : (
+              <Building2 className="h-8 w-8 text-primary" />
+            )}
           </div>
           <CardTitle className="text-2xl sm:text-3xl font-bold">
-            {step === 1 ? "Cadastre sua Empresa" : "Representantes"}
+            {step === 1 ? "Cadastre sua Empresa" : step === 2 ? "Endereço da Empresa" : "Representantes"}
           </CardTitle>
           <CardDescription>
             {step === 1 
               ? "Preencha os dados da empresa para criar sua conta"
+              : step === 2
+              ? "Informe o endereço completo da empresa"
               : "Adicione os representantes da empresa (máximo 3)"
             }
           </CardDescription>
           <div className="flex justify-center gap-2 pt-2">
             <div className={`w-3 h-3 rounded-full ${step >= 1 ? "bg-primary" : "bg-muted"}`} />
             <div className={`w-3 h-3 rounded-full ${step >= 2 ? "bg-primary" : "bg-muted"}`} />
+            <div className={`w-3 h-3 rounded-full ${step >= 3 ? "bg-primary" : "bg-muted"}`} />
           </div>
         </CardHeader>
 
@@ -252,8 +334,123 @@ const CadastrarEmpresa = () => {
                 </Button>
               </div>
             </form>
-          ) : (
+          ) : step === 2 ? (
             <form onSubmit={handleStep2Submit} className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="inscricaoEstadual">Inscrição Estadual</Label>
+                <Input
+                  id="inscricaoEstadual"
+                  placeholder="000.000.000.000"
+                  value={companyData.inscricaoEstadual}
+                  onChange={(e) => setCompanyData({ ...companyData, inscricaoEstadual: e.target.value })}
+                />
+                <p className="text-xs text-muted-foreground">Deixe em branco caso a empresa seja isenta</p>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="cep">CEP *</Label>
+                  <div className="relative">
+                    <Input
+                      id="cep"
+                      placeholder="00000-000"
+                      value={addressData.cep}
+                      onChange={(e) => handleCepChange(e.target.value)}
+                      maxLength={9}
+                      required
+                    />
+                    {isLoadingCep && (
+                      <Loader2 className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 animate-spin text-muted-foreground" />
+                    )}
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="numero">Número *</Label>
+                  <Input
+                    id="numero"
+                    placeholder="123"
+                    value={addressData.numero}
+                    onChange={(e) => setAddressData({ ...addressData, numero: e.target.value })}
+                    required
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="logradouro">Logradouro</Label>
+                <Input
+                  id="logradouro"
+                  placeholder="Rua, Avenida, etc."
+                  value={addressData.logradouro}
+                  onChange={(e) => setAddressData({ ...addressData, logradouro: e.target.value })}
+                />
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="complemento">Complemento</Label>
+                  <Input
+                    id="complemento"
+                    placeholder="Sala, Andar, etc."
+                    value={addressData.complemento}
+                    onChange={(e) => setAddressData({ ...addressData, complemento: e.target.value })}
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="bairro">Bairro</Label>
+                  <Input
+                    id="bairro"
+                    placeholder="Bairro"
+                    value={addressData.bairro}
+                    onChange={(e) => setAddressData({ ...addressData, bairro: e.target.value })}
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="cidade">Cidade *</Label>
+                  <Input
+                    id="cidade"
+                    placeholder="Cidade"
+                    value={addressData.cidade}
+                    onChange={(e) => setAddressData({ ...addressData, cidade: e.target.value })}
+                    required
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="estado">Estado *</Label>
+                  <Input
+                    id="estado"
+                    placeholder="UF"
+                    value={addressData.estado}
+                    onChange={(e) => setAddressData({ ...addressData, estado: e.target.value })}
+                    maxLength={2}
+                    required
+                  />
+                </div>
+              </div>
+
+              <div className="flex gap-3 pt-4">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => setStep(1)}
+                  className="flex-1"
+                >
+                  <ArrowLeft className="w-4 h-4 mr-2" />
+                  Voltar
+                </Button>
+                <Button type="submit" className="flex-1">
+                  Próximo
+                </Button>
+              </div>
+            </form>
+          ) : (
+            <form onSubmit={handleStep3Submit} className="space-y-4">
               {representatives.map((rep, index) => (
                 <Card key={index} className="p-4 bg-muted/30">
                   <div className="flex items-center justify-between mb-3">
@@ -313,7 +510,7 @@ const CadastrarEmpresa = () => {
                 <Button
                   type="button"
                   variant="outline"
-                  onClick={() => setStep(1)}
+                  onClick={() => setStep(2)}
                   className="flex-1"
                 >
                   <ArrowLeft className="w-4 h-4 mr-2" />
