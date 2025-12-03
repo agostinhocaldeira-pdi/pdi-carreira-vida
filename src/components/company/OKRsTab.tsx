@@ -60,7 +60,12 @@ export function OKRsTab({ companyId, employees }: OKRsTabProps) {
   const loadOKRs = () => {
     const stored = localStorage.getItem(`okrs_${companyId}`);
     if (stored) {
-      setOkrs(JSON.parse(stored));
+      // Normalize old data that might have linked_employees instead of linked_employee_ids
+      const parsed = JSON.parse(stored).map((okr: any) => ({
+        ...okr,
+        linked_employee_ids: okr.linked_employee_ids || [],
+      }));
+      setOkrs(parsed);
     } else {
       // Dados de exemplo
       const sampleOKRs: OKR[] = [
