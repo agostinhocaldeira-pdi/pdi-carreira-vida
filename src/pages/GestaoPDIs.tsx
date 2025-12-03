@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { ArrowLeft, Users, Shield, Eye, ChevronRight, AlertCircle, Building2 } from "lucide-react";
+import { ArrowLeft, Users, Shield, Eye, ChevronRight, AlertCircle, Building2, Home } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import EmployeeProgressModal from "@/components/EmployeeProgressModal";
 
@@ -134,12 +134,20 @@ const GestaoPDIs = () => {
               {isGestor && !isAdmin && <Badge variant="outline" className="text-xs">Gestor</Badge>}
             </div>
           </div>
-          {isAdmin && (
-            <Button variant="outline" size="sm" onClick={() => navigate("/admin")}>
-              <Shield className="w-4 h-4 mr-2" />
-              Painel Admin
-            </Button>
-          )}
+          <div className="flex items-center gap-2">
+            {isGestor && (
+              <Button variant="outline" size="sm" onClick={() => navigate("/home")}>
+                <Home className="w-4 h-4 mr-2" />
+                Meu PDI
+              </Button>
+            )}
+            {isAdmin && (
+              <Button variant="outline" size="sm" onClick={() => navigate("/admin")}>
+                <Shield className="w-4 h-4 mr-2" />
+                Painel Admin
+              </Button>
+            )}
+          </div>
         </div>
       </header>
 
