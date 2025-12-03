@@ -99,6 +99,7 @@ export type Database = {
           invited_at: string
           is_active: boolean | null
           is_subscription_exempt: boolean | null
+          manager_id: string | null
           name: string
           phone: string | null
           provisional_password: string | null
@@ -114,6 +115,7 @@ export type Database = {
           invited_at?: string
           is_active?: boolean | null
           is_subscription_exempt?: boolean | null
+          manager_id?: string | null
           name: string
           phone?: string | null
           provisional_password?: string | null
@@ -129,6 +131,7 @@ export type Database = {
           invited_at?: string
           is_active?: boolean | null
           is_subscription_exempt?: boolean | null
+          manager_id?: string | null
           name?: string
           phone?: string | null
           provisional_password?: string | null
