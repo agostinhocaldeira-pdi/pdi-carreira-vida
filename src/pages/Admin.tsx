@@ -6,7 +6,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { useNavigate } from "react-router-dom";
-import { Shield, Home, Users, Settings, Activity, AlertCircle, Trash2, UserPlus, Star, Zap, TrendingUp } from "lucide-react";
+import { Shield, Home, Users, Settings, Activity, AlertCircle, Trash2, UserPlus, Star, Zap, TrendingUp, Building2, UserCog, UserCheck, Mail } from "lucide-react";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { toast } from "sonner";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, LineChart, Line } from "recharts";
 import LogoutButton from "@/components/LogoutButton";
@@ -19,10 +20,38 @@ interface Administrator {
   createdAt: string;
 }
 
+interface Company {
+  id: string;
+  razaoSocial: string;
+  cnpj: string;
+  email: string;
+  telefone?: string;
+  representatives?: { name: string; email: string; phone?: string; isPrimary?: boolean }[];
+}
+
+interface Manager {
+  id: string;
+  name: string;
+  email: string;
+  phone?: string;
+  acceptedAt?: string | null;
+}
+
+interface Employee {
+  id: string;
+  name: string;
+  email: string;
+  phone?: string;
+  acceptedAt?: string | null;
+}
+
 const Admin = () => {
   const [isAdmin, setIsAdmin] = useState(false);
   const [adminEmail, setAdminEmail] = useState("");
   const [administrators, setAdministrators] = useState<Administrator[]>([]);
+  const [companies, setCompanies] = useState<Company[]>([]);
+  const [companyManagers, setCompanyManagers] = useState<Record<string, Manager[]>>({});
+  const [companyEmployees, setCompanyEmployees] = useState<Record<string, Employee[]>>({});
   const [newAdmin, setNewAdmin] = useState({
     name: "",
     email: "",
@@ -78,6 +107,32 @@ const Admin = () => {
         toast.error("Acesso restrito apenas para administradores");
         navigate("/home");
       }
+    }
+
+    // Carregar empresas cadastradas
+    const savedCompanies = localStorage.getItem("companies");
+    if (savedCompanies) {
+      const companiesData: Company[] = JSON.parse(savedCompanies);
+      setCompanies(companiesData);
+      
+      // Carregar gestores e funcionários de cada empresa
+      const managersData: Record<string, Manager[]> = {};
+      const employeesData: Record<string, Employee[]> = {};
+      
+      companiesData.forEach(company => {
+        const managers = localStorage.getItem(`managers_${company.id}`);
+        if (managers) {
+          managersData[company.id] = JSON.parse(managers);
+        }
+        
+        const employees = localStorage.getItem(`employees_${company.id}`);
+        if (employees) {
+          employeesData[company.id] = JSON.parse(employees);
+        }
+      });
+      
+      setCompanyManagers(managersData);
+      setCompanyEmployees(employeesData);
     }
   }, [navigate]);
 
@@ -376,6 +431,151 @@ const Admin = () => {
                 </TableBody>
               </Table>
             </div>
+          </CardContent>
+        </Card>
+
+        {/* Empresas Cadastradas */}
+        <Card className="shadow-medium">
+          <CardHeader>
+            <CardTitle className="text-lg flex items-center gap-2">
+              <Building2 className="w-5 h-5 text-primary" />
+              Empresas Cadastradas
+            </CardTitle>
+            <CardDescription>
+              Total: {companies.length} empresa(s) cadastrada(s)
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            {companies.length === 0 ? (
+              <div className="text-center text-muted-foreground py-8">
+                Nenhuma empresa cadastrada
+              </div>
+            ) : (
+              <Accordion type="multiple" className="w-full space-y-2">
+                {companies.map((company) => (
+                  <AccordionItem key={company.id} value={company.id} className="border rounded-lg px-4">
+                    <AccordionTrigger className="hover:no-underline">
+                      <div className="flex items-center gap-3 text-left">
+                        <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center">
+                          <Building2 className="w-5 h-5 text-primary" />
+                        </div>
+                        <div>
+                          <p className="font-semibold">{company.razaoSocial}</p>
+                          <p className="text-xs text-muted-foreground flex items-center gap-1">
+                            <Mail className="w-3 h-3" />
+                            {company.email}
+                          </p>
+                        </div>
+                      </div>
+                    </AccordionTrigger>
+                    <AccordionContent>
+                      <div className="space-y-4 pt-2">
+                        {/* CNPJ e Telefone */}
+                        <div className="grid grid-cols-2 gap-4 text-sm">
+                          <div>
+                            <span className="text-muted-foreground">CNPJ:</span>
+                            <span className="ml-2 font-medium">{company.cnpj}</span>
+                          </div>
+                          {company.telefone && (
+                            <div>
+                              <span className="text-muted-foreground">Telefone:</span>
+                              <span className="ml-2 font-medium">{company.telefone}</span>
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Representantes */}
+                        {company.representatives && company.representatives.length > 0 && (
+                          <div>
+                            <h5 className="font-semibold text-sm flex items-center gap-2 mb-2">
+                              <UserCheck className="w-4 h-4 text-blue-600" />
+                              Representantes ({company.representatives.length})
+                            </h5>
+                            <div className="space-y-2">
+                              {company.representatives.map((rep, idx) => (
+                                <div key={idx} className="flex items-center justify-between bg-blue-50 dark:bg-blue-950/20 p-2 rounded-md">
+                                  <div>
+                                    <p className="text-sm font-medium">{rep.name}</p>
+                                    <p className="text-xs text-muted-foreground flex items-center gap-1">
+                                      <Mail className="w-3 h-3" />
+                                      {rep.email}
+                                    </p>
+                                  </div>
+                                  {rep.isPrimary && (
+                                    <Badge variant="outline" className="text-xs">Principal</Badge>
+                                  )}
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Gestores */}
+                        {companyManagers[company.id] && companyManagers[company.id].length > 0 && (
+                          <div>
+                            <h5 className="font-semibold text-sm flex items-center gap-2 mb-2">
+                              <UserCog className="w-4 h-4 text-amber-600" />
+                              Gestores ({companyManagers[company.id].length})
+                            </h5>
+                            <div className="space-y-2">
+                              {companyManagers[company.id].map((manager) => (
+                                <div key={manager.id} className="flex items-center justify-between bg-amber-50 dark:bg-amber-950/20 p-2 rounded-md">
+                                  <div>
+                                    <p className="text-sm font-medium">{manager.name}</p>
+                                    <p className="text-xs text-muted-foreground flex items-center gap-1">
+                                      <Mail className="w-3 h-3" />
+                                      {manager.email}
+                                    </p>
+                                  </div>
+                                  <Badge variant={manager.acceptedAt ? "default" : "secondary"} className="text-xs">
+                                    {manager.acceptedAt ? "Ativo" : "Pendente"}
+                                  </Badge>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Funcionários */}
+                        {companyEmployees[company.id] && companyEmployees[company.id].length > 0 && (
+                          <div>
+                            <h5 className="font-semibold text-sm flex items-center gap-2 mb-2">
+                              <Users className="w-4 h-4 text-green-600" />
+                              Funcionários ({companyEmployees[company.id].length})
+                            </h5>
+                            <div className="space-y-2">
+                              {companyEmployees[company.id].map((employee) => (
+                                <div key={employee.id} className="flex items-center justify-between bg-green-50 dark:bg-green-950/20 p-2 rounded-md">
+                                  <div>
+                                    <p className="text-sm font-medium">{employee.name}</p>
+                                    <p className="text-xs text-muted-foreground flex items-center gap-1">
+                                      <Mail className="w-3 h-3" />
+                                      {employee.email}
+                                    </p>
+                                  </div>
+                                  <Badge variant={employee.acceptedAt ? "default" : "secondary"} className="text-xs">
+                                    {employee.acceptedAt ? "Ativo" : "Pendente"}
+                                  </Badge>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Mensagem se não houver pessoas cadastradas */}
+                        {(!company.representatives || company.representatives.length === 0) &&
+                         (!companyManagers[company.id] || companyManagers[company.id].length === 0) &&
+                         (!companyEmployees[company.id] || companyEmployees[company.id].length === 0) && (
+                          <p className="text-sm text-muted-foreground text-center py-2">
+                            Nenhum representante, gestor ou funcionário cadastrado
+                          </p>
+                        )}
+                      </div>
+                    </AccordionContent>
+                  </AccordionItem>
+                ))}
+              </Accordion>
+            )}
           </CardContent>
         </Card>
 
