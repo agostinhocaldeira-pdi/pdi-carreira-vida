@@ -43,6 +43,9 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { generateProvisionalPassword } from "@/types/company";
 import EmployeeProgressModal from "@/components/EmployeeProgressModal";
 import ConfirmDeleteDialog from "@/components/ConfirmDeleteDialog";
+import { CompanyReportsTab } from "@/components/company/CompanyReportsTab";
+import { OKRsTab } from "@/components/company/OKRsTab";
+import { BarChart3, Target } from "lucide-react";
 
 interface Manager {
   id: string;
@@ -75,7 +78,7 @@ interface PersonProgress {
 
 const DashboardEmpresa = () => {
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState<"managers" | "employees" | "billing">("managers");
+  const [activeTab, setActiveTab] = useState<"managers" | "employees" | "billing" | "reports" | "okrs">("managers");
   const [managers, setManagers] = useState<Manager[]>([]);
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [company, setCompany] = useState<any>(null);
@@ -475,7 +478,38 @@ const DashboardEmpresa = () => {
             <Receipt className="w-4 h-4 mr-2" />
             Faturamento
           </Button>
+          <Button
+            variant={activeTab === "reports" ? "default" : "outline"}
+            onClick={() => setActiveTab("reports")}
+          >
+            <BarChart3 className="w-4 h-4 mr-2" />
+            Relatórios
+          </Button>
+          <Button
+            variant={activeTab === "okrs" ? "default" : "outline"}
+            onClick={() => setActiveTab("okrs")}
+          >
+            <Target className="w-4 h-4 mr-2" />
+            OKRs
+          </Button>
         </div>
+
+        {/* Reports Tab */}
+        {activeTab === "reports" && selectedCompanyId && (
+          <CompanyReportsTab
+            companyId={selectedCompanyId}
+            employees={employees.map(e => ({ id: e.id, name: e.name, email: e.email }))}
+            managers={managers.map(m => ({ id: m.id, name: m.name, email: m.email }))}
+          />
+        )}
+
+        {/* OKRs Tab */}
+        {activeTab === "okrs" && selectedCompanyId && (
+          <OKRsTab
+            companyId={selectedCompanyId}
+            employees={employees.map(e => ({ id: e.id, name: e.name }))}
+          />
+        )}
 
         {/* Content */}
         {activeTab !== "billing" ? (

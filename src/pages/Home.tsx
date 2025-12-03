@@ -15,6 +15,10 @@ import LanguageSelector from "@/components/LanguageSelector";
 import LogoutButton from "@/components/LogoutButton";
 import { SatisfactionSurveyModal } from "@/components/SatisfactionSurveyModal";
 import { useSatisfactionSurvey } from "@/hooks/useSatisfactionSurvey";
+import { GamificationCard } from "@/components/gamification/GamificationCard";
+import { AchievementNotification } from "@/components/gamification/AchievementNotification";
+import { useGamification } from "@/hooks/useGamification";
+import { ExportPDFButton } from "@/components/reports/ExportPDFButton";
 
 const Home = () => {
   const navigate = useNavigate();
@@ -34,6 +38,12 @@ const Home = () => {
   const [unreadEmployeeMessages, setUnreadEmployeeMessages] = useState(0);
   
   const { showSurvey, setShowSurvey, completedSection, markSectionCompleted } = useSatisfactionSurvey();
+  const { newAchievement, dismissNewAchievement, checkAndUnlockAchievements } = useGamification();
+
+  // Check achievements on mount
+  useEffect(() => {
+    checkAndUnlockAchievements();
+  }, []);
 
   // Expor função globalmente para ser chamada pelas seções
   useEffect(() => {
@@ -185,8 +195,13 @@ const Home = () => {
 
   return (
     <div className="min-h-screen bg-gradient-subtle">
+      {/* Achievement Notification */}
+      {newAchievement && (
+        <AchievementNotification achievement={newAchievement} onDismiss={dismissNewAchievement} />
+      )}
+
       {/* Modal de Pesquisa de Satisfação */}
-      <SatisfactionSurveyModal 
+      <SatisfactionSurveyModal
         open={showSurvey}
         onOpenChange={setShowSurvey}
         sectionCompleted={completedSection}
@@ -309,8 +324,13 @@ const Home = () => {
 
       {/* Main Content */}
       <main className="container mx-auto px-3 sm:px-4 py-4 sm:py-8 space-y-4 sm:space-y-8">
-        {/* Progresso Section */}
+        {/* Gamification Card */}
         <section className="animate-slide-up">
+          <GamificationCard />
+        </section>
+
+        {/* Progresso Section */}
+        <section className="animate-slide-up" style={{ animationDelay: "0.05s" }}>
           <ProgressSection />
         </section>
 

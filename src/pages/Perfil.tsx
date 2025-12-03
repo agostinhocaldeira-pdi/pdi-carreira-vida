@@ -7,6 +7,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import { ArrowLeft, User, Building2, Eye, EyeOff, Save, Crown, Sparkles, Star } from "lucide-react";
+import { NotificationPreferences } from "@/components/notifications/NotificationPreferences";
+import { ExportPDFButton } from "@/components/reports/ExportPDFButton";
 
 interface UserData {
   name: string;
@@ -118,14 +120,17 @@ const Perfil = () => {
     <div className="min-h-screen bg-gradient-subtle p-4 sm:p-6">
       <div className="max-w-2xl mx-auto space-y-6">
         {/* Header */}
-        <div className="flex items-center gap-4">
-          <Button variant="ghost" size="icon" onClick={() => navigate("/home")}>
-            <ArrowLeft className="h-5 w-5" />
-          </Button>
-          <div>
-            <h1 className="text-2xl sm:text-3xl font-bold">Meu Perfil</h1>
-            <p className="text-muted-foreground text-sm">Gerencie suas informações pessoais</p>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <Button variant="ghost" size="icon" onClick={() => navigate("/home")}>
+              <ArrowLeft className="h-5 w-5" />
+            </Button>
+            <div>
+              <h1 className="text-2xl sm:text-3xl font-bold">Meu Perfil</h1>
+              <p className="text-muted-foreground text-sm">Gerencie suas informações pessoais</p>
+            </div>
           </div>
+          <ExportPDFButton />
         </div>
 
         {/* Dados do Usuário */}
@@ -335,6 +340,9 @@ const Perfil = () => {
             </CardContent>
           </Card>
         )}
+
+        {/* Notificações */}
+        <NotificationPreferences />
       </div>
     </div>
   );
