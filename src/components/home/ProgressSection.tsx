@@ -78,92 +78,44 @@ const ProgressSection = () => {
   }, []);
 
   useEffect(() => {
-    // Mock data - Create sample pending items if none exist
+    // Load data from localStorage
     let objetivos = JSON.parse(localStorage.getItem("objetivos") || "[]");
     let metas = JSON.parse(localStorage.getItem("metas") || "[]");
     
-    if (objetivos.length === 0) {
-      objetivos = [
-        {
-          objetivo: "Melhorar habilidades de liderança",
-          dataAlvo: "2024-11-15",
-          conexaoVVD: "Crescimento profissional",
-          status: "pendente"
-        },
-        {
-          objetivo: "Alcançar equilíbrio vida-trabalho",
-          dataAlvo: "2024-10-30",
-          conexaoVVD: "Bem-estar pessoal",
-          status: "pendente"
-        },
-        {
-          objetivo: "Expandar rede de contatos profissionais",
-          dataAlvo: "2024-12-01",
-          conexaoVVD: "Networking",
-          status: "em andamento"
-        }
-      ];
-      localStorage.setItem("objetivos", JSON.stringify(objetivos));
-    }
-
-    if (metas.length === 0) {
-      metas = [
-        {
-          objetivo: "Melhorar habilidades de liderança",
-          meta: "Concluir curso de gestão de equipes",
-          dataAlvo: "2024-11-20",
-          criterioMedicao: "Certificado de conclusão",
-          dataInicio: "2024-10-01",
-          periodicidade: "Semanal",
-          status: "pendente",
-          acoes: [
-            {
-              acao: "Assistir módulo 1 do curso",
-              periodicidade: "Semanal",
-              status: "pendente"
-            },
-            {
-              acao: "Fazer exercícios práticos",
-              periodicidade: "Semanal",
-              status: "pendente"
-            }
-          ]
-        },
-        {
-          objetivo: "Alcançar equilíbrio vida-trabalho",
-          meta: "Estabelecer rotina de exercícios físicos",
-          dataAlvo: "2024-11-01",
-          criterioMedicao: "3 vezes por semana",
-          dataInicio: "2024-09-15",
-          periodicidade: "Semanal",
-          status: "pendente",
-          acoes: [
-            {
-              acao: "Ir à academia segunda, quarta e sexta",
-              periodicidade: "Semanal",
-              status: "pendente"
-            },
-            {
-              acao: "Fazer caminhada no fim de semana",
-              periodicidade: "Semanal",
-              status: "pendente"
-            }
-          ]
-        }
-      ];
-      localStorage.setItem("metas", JSON.stringify(metas));
-    }
-
-    // Load pending items
-    const pendingObjetivos = objetivos.filter((obj: any) => obj.status === "pendente");
-    const pendingMetas = metas.filter((meta: any) => meta.status === "pendente");
+    // Load pending items - handle both data structures
+    // Check for "pendente" status or items with expired dates
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    
+    const pendingObjetivos = objetivos.filter((obj: any) => {
+      const status = obj.status?.toLowerCase() || "";
+      const dataAlvo = obj.dataAlvo || obj.data_alvo;
+      const isPending = status === "pendente" || status === "a-fazer";
+      const isExpired = dataAlvo && new Date(dataAlvo) < today && status !== "concluido";
+      return isPending || isExpired;
+    });
+    
+    const pendingMetas = metas.filter((meta: any) => {
+      const status = meta.status?.toLowerCase() || "";
+      const dataAlvo = meta.dataAlvo || meta.data_alvo;
+      const isPending = status === "pendente" || status === "a-fazer";
+      const isExpired = dataAlvo && new Date(dataAlvo) < today && status !== "concluido" && !meta.concluida;
+      return isPending || isExpired;
+    });
     
     let pendingActions: any[] = [];
-    metas.forEach((meta: any) => {
+    metas.forEach((meta: any, metaIdx: number) => {
       if (meta.acoes && Array.isArray(meta.acoes)) {
         const metaPendingActions = meta.acoes
-          .filter((acao: any) => acao.status === "pendente")
-          .map((acao: any) => ({ ...acao, metaTitulo: meta.meta }));
+          .filter((acao: any) => {
+            const status = acao.status?.toLowerCase() || "";
+            return status === "pendente" || status === "a-fazer";
+          })
+          .map((acao: any, acaoIdx: number) => ({ 
+            ...acao, 
+            id: acao.id || `${meta.id || metaIdx}-${acaoIdx}`,
+            metaTitulo: meta.meta || meta.texto 
+          }));
         pendingActions = [...pendingActions, ...metaPendingActions];
       }
     });
@@ -302,31 +254,37 @@ Analise as correlações entre estes elementos e forneça um insight sobre a ess
                         </CardTitle>
                       </CardHeader>
                       <CardContent className="space-y-2">
-                        {pendingItems.objectives.map((obj: any, idx: number) => (
-                          <div 
-                            key={idx}
-                            className="p-3 bg-background rounded-lg border border-border hover:border-primary/50 transition-colors cursor-pointer group"
-                            onClick={() => {
-                              const tabButtons = document.querySelectorAll('[role="tab"]');
-                              const paraOndeVouTab = Array.from(tabButtons).find(
-                                btn => btn.textContent?.includes('Para onde vou')
-                              ) as HTMLElement;
-                              if (paraOndeVouTab) paraOndeVouTab.click();
-                            }}
-                          >
-                            <div className="flex items-start justify-between gap-2">
-                              <div className="flex-1 min-w-0">
-                                <p className="text-sm font-medium text-foreground truncate">
-                                  {obj.objetivo}
-                                </p>
-                                <p className="text-xs text-muted-foreground mt-1">
-                                  Prazo: {new Date(obj.dataAlvo).toLocaleDateString('pt-BR')}
-                                </p>
+                        {pendingItems.objectives.map((obj: any, idx: number) => {
+                          const titulo = obj.objetivo || obj.texto || "Objetivo sem título";
+                          const dataAlvo = obj.dataAlvo || obj.data_alvo;
+                          const dataFormatada = dataAlvo ? new Date(dataAlvo).toLocaleDateString('pt-BR') : "Sem prazo";
+                          
+                          return (
+                            <div 
+                              key={obj.id || idx}
+                              className="p-3 bg-background rounded-lg border border-border hover:border-primary/50 transition-colors cursor-pointer group"
+                              onClick={() => {
+                                const tabButtons = document.querySelectorAll('[role="tab"]');
+                                const paraOndeVouTab = Array.from(tabButtons).find(
+                                  btn => btn.textContent?.includes('Para onde vou')
+                                ) as HTMLElement;
+                                if (paraOndeVouTab) paraOndeVouTab.click();
+                              }}
+                            >
+                              <div className="flex items-start justify-between gap-2">
+                                <div className="flex-1 min-w-0">
+                                  <p className="text-sm font-medium text-foreground truncate">
+                                    {titulo}
+                                  </p>
+                                  <p className="text-xs text-muted-foreground mt-1">
+                                    Prazo: {dataFormatada}
+                                  </p>
+                                </div>
+                                <ExternalLink className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors flex-shrink-0" />
                               </div>
-                              <ExternalLink className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors flex-shrink-0" />
                             </div>
-                          </div>
-                        ))}
+                          );
+                        })}
                       </CardContent>
                     </Card>
                   )}
@@ -341,31 +299,37 @@ Analise as correlações entre estes elementos e forneça um insight sobre a ess
                         </CardTitle>
                       </CardHeader>
                       <CardContent className="space-y-2">
-                        {pendingItems.goals.map((meta: any, idx: number) => (
-                          <div 
-                            key={idx}
-                            className="p-3 bg-background rounded-lg border border-border hover:border-primary/50 transition-colors cursor-pointer group"
-                            onClick={() => {
-                              const tabButtons = document.querySelectorAll('[role="tab"]');
-                              const comoChegar = Array.from(tabButtons).find(
-                                btn => btn.textContent?.includes('Como vou chegar lá')
-                              ) as HTMLElement;
-                              if (comoChegar) comoChegar.click();
-                            }}
-                          >
-                            <div className="flex items-start justify-between gap-2">
-                              <div className="flex-1 min-w-0">
-                                <p className="text-sm font-medium text-foreground truncate">
-                                  {meta.meta}
-                                </p>
-                                <p className="text-xs text-muted-foreground mt-1">
-                                  Prazo: {new Date(meta.dataAlvo).toLocaleDateString('pt-BR')}
-                                </p>
+                        {pendingItems.goals.map((meta: any, idx: number) => {
+                          const titulo = meta.meta || meta.texto || "Meta sem título";
+                          const dataAlvo = meta.dataAlvo || meta.data_alvo;
+                          const dataFormatada = dataAlvo ? new Date(dataAlvo).toLocaleDateString('pt-BR') : "Sem prazo";
+                          
+                          return (
+                            <div 
+                              key={meta.id || idx}
+                              className="p-3 bg-background rounded-lg border border-border hover:border-primary/50 transition-colors cursor-pointer group"
+                              onClick={() => {
+                                const tabButtons = document.querySelectorAll('[role="tab"]');
+                                const comoChegar = Array.from(tabButtons).find(
+                                  btn => btn.textContent?.includes('Como vou chegar lá')
+                                ) as HTMLElement;
+                                if (comoChegar) comoChegar.click();
+                              }}
+                            >
+                              <div className="flex items-start justify-between gap-2">
+                                <div className="flex-1 min-w-0">
+                                  <p className="text-sm font-medium text-foreground truncate">
+                                    {titulo}
+                                  </p>
+                                  <p className="text-xs text-muted-foreground mt-1">
+                                    Prazo: {dataFormatada}
+                                  </p>
+                                </div>
+                                <ExternalLink className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors flex-shrink-0" />
                               </div>
-                              <ExternalLink className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors flex-shrink-0" />
                             </div>
-                          </div>
-                        ))}
+                          );
+                        })}
                       </CardContent>
                     </Card>
                   )}
@@ -380,34 +344,43 @@ Analise as correlações entre estes elementos e forneça um insight sobre a ess
                         </CardTitle>
                       </CardHeader>
                       <CardContent className="space-y-2">
-                        {pendingItems.actions.map((acao: any, idx: number) => (
-                          <div 
-                            key={idx}
-                            className="p-3 bg-background rounded-lg border border-border hover:border-primary/50 transition-colors cursor-pointer group"
-                            onClick={() => {
-                              const tabButtons = document.querySelectorAll('[role="tab"]');
-                              const comoChegar = Array.from(tabButtons).find(
-                                btn => btn.textContent?.includes('Como vou chegar lá')
-                              ) as HTMLElement;
-                              if (comoChegar) comoChegar.click();
-                            }}
-                          >
-                            <div className="flex items-start justify-between gap-2">
-                              <div className="flex-1 min-w-0">
-                                <p className="text-sm font-medium text-foreground truncate">
-                                  {acao.acao}
-                                </p>
-                                <p className="text-xs text-muted-foreground mt-1">
-                                  Meta: {acao.metaTitulo}
-                                </p>
-                                <p className="text-xs text-muted-foreground">
-                                  {acao.periodicidade}
-                                </p>
+                        {pendingItems.actions.map((acao: any, idx: number) => {
+                          const titulo = acao.acao || "Ação sem título";
+                          const metaTitulo = acao.metaTitulo || acao.meta || "";
+                          
+                          return (
+                            <div 
+                              key={acao.id || idx}
+                              className="p-3 bg-background rounded-lg border border-border hover:border-primary/50 transition-colors cursor-pointer group"
+                              onClick={() => {
+                                const tabButtons = document.querySelectorAll('[role="tab"]');
+                                const comoChegar = Array.from(tabButtons).find(
+                                  btn => btn.textContent?.includes('Como vou chegar lá')
+                                ) as HTMLElement;
+                                if (comoChegar) comoChegar.click();
+                              }}
+                            >
+                              <div className="flex items-start justify-between gap-2">
+                                <div className="flex-1 min-w-0">
+                                  <p className="text-sm font-medium text-foreground truncate">
+                                    {titulo}
+                                  </p>
+                                  {metaTitulo && (
+                                    <p className="text-xs text-muted-foreground mt-1">
+                                      Meta: {metaTitulo}
+                                    </p>
+                                  )}
+                                  {acao.periodicidade && (
+                                    <p className="text-xs text-muted-foreground">
+                                      {acao.periodicidade}
+                                    </p>
+                                  )}
+                                </div>
+                                <ExternalLink className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors flex-shrink-0" />
                               </div>
-                              <ExternalLink className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors flex-shrink-0" />
                             </div>
-                          </div>
-                        ))}
+                          );
+                        })}
                       </CardContent>
                     </Card>
                   )}
