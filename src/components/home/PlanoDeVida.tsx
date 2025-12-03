@@ -454,13 +454,25 @@ const PlanoDeVida = ({ onTabChange, onOpenChange, forcedTab, forcedOpen }: Plano
 
   const handleMetaModalConfirm = () => {
     setShowMetaModal(false);
-    // Disparar evento para abrir formulário de metas com o objetivo selecionado
-    if (objetivoRecemCriado) {
-      window.dispatchEvent(new CustomEvent('openMetaForm', { 
-        detail: { objetivoId: objetivoRecemCriado.toString() } 
-      }));
+    
+    // Primeiro, mudar para a aba "como-chegar" para que MaoNaMassa seja renderizado
+    setActiveTab("como-chegar");
+    if (onTabChange) {
+      onTabChange("como-chegar");
     }
-    setObjetivoRecemCriado(null);
+    if (onOpenChange) {
+      onOpenChange(true);
+    }
+    
+    // Aguardar o componente MaoNaMassa montar antes de disparar o evento
+    setTimeout(() => {
+      if (objetivoRecemCriado) {
+        window.dispatchEvent(new CustomEvent('openMetaForm', { 
+          detail: { objetivoId: objetivoRecemCriado.toString() } 
+        }));
+      }
+      setObjetivoRecemCriado(null);
+    }, 300);
   };
 
   const handleMetaModalCancel = () => {
