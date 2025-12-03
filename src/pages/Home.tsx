@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Link, useNavigate } from "react-router-dom";
-import { Target, TrendingUp, BookOpen, MessagesSquare, Book, Sparkles, User, Zap, Star, Shield, Lock, ChevronDown, AlertCircle, Link2, Users, Bell, MessageCircle } from "lucide-react";
+import { Target, TrendingUp, BookOpen, MessagesSquare, Book, Sparkles, User, Zap, Star, Shield, Lock, ChevronDown, AlertCircle, Link2, Users, Bell } from "lucide-react";
 import ProgressSection from "@/components/home/ProgressSection";
 import DiarioSection from "@/components/home/DiarioSection";
 import PlanoDeVida from "@/components/home/PlanoDeVida";
@@ -257,6 +257,29 @@ const Home = () => {
             
             <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0">
               <LanguageSelector />
+              {/* Ícone de notificação no header */}
+              {totalUnread > 0 && (
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="relative px-2 sm:px-3"
+                  onClick={() => {
+                    if (unreadEmployeeMessages > 0) {
+                      navigate("/gestao-pdis");
+                    } else {
+                      navigate("/suporte");
+                    }
+                  }}
+                >
+                  <Bell className="w-4 h-4" />
+                  <Badge 
+                    variant="destructive" 
+                    className="absolute -top-1 -right-1 h-4 min-w-[16px] p-0 flex items-center justify-center text-[10px]"
+                  >
+                    {totalUnread}
+                  </Badge>
+                </Button>
+              )}
               <Button variant="outline" size="sm" className="gap-1 sm:gap-2 px-2 sm:px-3" onClick={() => navigate("/perfil")}>
                 <User className="w-4 h-4" />
                 <span className="hidden sm:inline">Perfil</span>
@@ -286,74 +309,6 @@ const Home = () => {
 
       {/* Main Content */}
       <main className="container mx-auto px-3 sm:px-4 py-4 sm:py-8 space-y-4 sm:space-y-8">
-        {/* Card de Notificações Pendentes */}
-        {totalUnread > 0 && (
-          <section className="animate-slide-up">
-            <Card className="border-primary/30 bg-gradient-to-r from-primary/5 via-primary/10 to-primary/5 shadow-medium">
-              <CardContent className="py-4">
-                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                  <div className="flex items-center gap-3">
-                    <div className="relative">
-                      <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
-                        <Bell className="w-5 h-5 text-primary" />
-                      </div>
-                      <Badge variant="destructive" className="absolute -top-1 -right-1 h-5 min-w-[20px] p-0 flex items-center justify-center text-xs">
-                        {totalUnread}
-                      </Badge>
-                    </div>
-                    <div>
-                      <h3 className="font-semibold text-sm sm:text-base">Você tem mensagens não lidas</h3>
-                      <div className="flex flex-wrap gap-2 mt-1">
-                        {unreadSupportMessages > 0 && (
-                          <span className="text-xs text-muted-foreground flex items-center gap-1">
-                            <MessageCircle className="w-3 h-3" />
-                            {unreadSupportMessages} do Suporte
-                          </span>
-                        )}
-                        {unreadManagerMessages > 0 && (
-                          <span className="text-xs text-muted-foreground flex items-center gap-1">
-                            <Users className="w-3 h-3" />
-                            {unreadManagerMessages} do Gestor
-                          </span>
-                        )}
-                        {unreadEmployeeMessages > 0 && (
-                          <span className="text-xs text-muted-foreground flex items-center gap-1">
-                            <Users className="w-3 h-3" />
-                            {unreadEmployeeMessages} de Funcionários
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                  <div className="flex gap-2 w-full sm:w-auto">
-                    {(unreadSupportMessages > 0 || unreadManagerMessages > 0) && (
-                      <Button 
-                        size="sm" 
-                        onClick={() => navigate("/suporte")}
-                        className="flex-1 sm:flex-none"
-                      >
-                        <MessagesSquare className="w-4 h-4 mr-2" />
-                        Ver Mensagens
-                      </Button>
-                    )}
-                    {unreadEmployeeMessages > 0 && (
-                      <Button 
-                        size="sm" 
-                        variant="outline"
-                        onClick={() => navigate("/gestao-pdis")}
-                        className="flex-1 sm:flex-none"
-                      >
-                        <Users className="w-4 h-4 mr-2" />
-                        Gestão PDI
-                      </Button>
-                    )}
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </section>
-        )}
-
         {/* Progresso Section */}
         <section className="animate-slide-up">
           <ProgressSection />
