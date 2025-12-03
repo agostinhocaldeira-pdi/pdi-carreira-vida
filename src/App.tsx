@@ -27,6 +27,9 @@ import MetodoSmart from "./pages/MetodoSmart";
 import MetodoVvd from "./pages/MetodoVvd";
 import Autoavaliacao360 from "./pages/Autoavaliacao360";
 import Integracoes from "./pages/Integracoes";
+import CadastrarEmpresa from "./pages/CadastrarEmpresa";
+import DashboardEmpresa from "./pages/DashboardEmpresa";
+import GestaoPDIs from "./pages/GestaoPDIs";
 
 const queryClient = new QueryClient();
 
@@ -52,14 +55,17 @@ const App = () => (
             <Route path="/admin" element={<Admin />} />
             <Route path="/admin/usuarios" element={<AdminUsuarios />} />
             <Route path="/roda-da-vida" element={<RodaDaVida />} />
-          <Route path="/ferramentas/valores" element={<Valores />} />
-          <Route path="/ferramentas/eisenhower" element={<MatrizEisenhower />} />
-          <Route path="/ferramentas/crencas" element={<Crencas />} />
-          <Route path="/ferramentas/swot" element={<AnaliseSwot />} />
-          <Route path="/ferramentas/smart" element={<MetodoSmart />} />
-          <Route path="/ferramentas/metodo-vvd" element={<MetodoVvd />} />
-          <Route path="/ferramentas/autoavaliacao-360" element={<Autoavaliacao360 />} />
-          <Route path="/integracoes" element={<Integracoes />} />
+            <Route path="/ferramentas/valores" element={<Valores />} />
+            <Route path="/ferramentas/eisenhower" element={<MatrizEisenhower />} />
+            <Route path="/ferramentas/crencas" element={<Crencas />} />
+            <Route path="/ferramentas/swot" element={<AnaliseSwot />} />
+            <Route path="/ferramentas/smart" element={<MetodoSmart />} />
+            <Route path="/ferramentas/metodo-vvd" element={<MetodoVvd />} />
+            <Route path="/ferramentas/autoavaliacao-360" element={<Autoavaliacao360 />} />
+            <Route path="/integracoes" element={<Integracoes />} />
+            <Route path="/cadastrar-empresa" element={<CadastrarEmpresa />} />
+            <Route path="/dashboard-empresa" element={<DashboardEmpresa />} />
+            <Route path="/gestao-pdis" element={<GestaoPDIs />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
