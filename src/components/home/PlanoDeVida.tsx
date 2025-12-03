@@ -1087,7 +1087,7 @@ const PlanoDeVida = ({ onTabChange, onOpenChange, forcedTab, forcedOpen }: Plano
                                 </span>
                               )}
                             </TableCell>
-                            <TableCell className="text-xs sm:text-sm max-w-[200px] truncate">
+                            <TableCell className="text-xs sm:text-sm">
                               {editandoObjetivoId === obj.id ? (
                                 <Textarea
                                   value={objetivoEditado?.conexaoVvd || ""}
@@ -1097,8 +1097,21 @@ const PlanoDeVida = ({ onTabChange, onOpenChange, forcedTab, forcedOpen }: Plano
                                   rows={2}
                                   className="text-xs sm:text-sm"
                                 />
+                              ) : obj.conexaoVvd ? (
+                                <TooltipProvider>
+                                  <Tooltip>
+                                    <TooltipTrigger asChild>
+                                      <span className="line-clamp-2 cursor-help max-w-[180px] block">
+                                        {obj.conexaoVvd}
+                                      </span>
+                                    </TooltipTrigger>
+                                    <TooltipContent side="top" className="max-w-xs">
+                                      <p className="text-sm whitespace-pre-wrap">{obj.conexaoVvd}</p>
+                                    </TooltipContent>
+                                  </Tooltip>
+                                </TooltipProvider>
                               ) : (
-                                obj.conexaoVvd
+                                <span className="text-muted-foreground italic">-</span>
                               )}
                             </TableCell>
                             <TableCell className="text-right">
