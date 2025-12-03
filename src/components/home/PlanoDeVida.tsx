@@ -17,9 +17,11 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 interface PlanoDeVidaProps {
   onTabChange?: (tab: string) => void;
   onOpenChange?: (isOpen: boolean) => void;
+  forcedTab?: string;
+  forcedOpen?: boolean;
 }
 
-const PlanoDeVida = ({ onTabChange, onOpenChange }: PlanoDeVidaProps) => {
+const PlanoDeVida = ({ onTabChange, onOpenChange, forcedTab, forcedOpen }: PlanoDeVidaProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("quem-sou");
   const [vvd, setVvd] = useState("");
@@ -65,6 +67,19 @@ const PlanoDeVida = ({ onTabChange, onOpenChange }: PlanoDeVidaProps) => {
   const [habilidades, setHabilidades] = useState<Array<{ id: number; texto: string }>>([]);
   const [editandoHabilidadeId, setEditandoHabilidadeId] = useState<number | null>(null);
   const [habilidadeEditada, setHabilidadeEditada] = useState("");
+
+  // Sincronizar com props externas (para navegação via eventos)
+  useEffect(() => {
+    if (forcedTab !== undefined && forcedTab !== activeTab) {
+      setActiveTab(forcedTab);
+    }
+  }, [forcedTab]);
+
+  useEffect(() => {
+    if (forcedOpen !== undefined && forcedOpen !== isOpen) {
+      setIsOpen(forcedOpen);
+    }
+  }, [forcedOpen]);
 
   // Sincronizar insight entre seções
   useEffect(() => {

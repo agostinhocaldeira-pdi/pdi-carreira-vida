@@ -63,49 +63,26 @@ const Home = () => {
     const today = new Date().getDate();
     setMotivationalQuote(quotes[today % quotes.length]);
 
-    // Verificar inatividade no diário e mostrar modal de aviso
-    // TODO: Ativar quando as tabelas do Supabase estiverem criadas com dados reais
-    // setShowDiaryWarningModal(true);
-    
-    // Lógica real (comentada para teste):
-    /*
-    const stored = JSON.parse(localStorage.getItem("diario") || "[]");
-    if (stored.length > 0) {
-      const sortedEntries = stored.sort((a: any, b: any) => 
-        new Date(b.data).getTime() - new Date(a.data).getTime()
-      );
-      const lastEntry = sortedEntries[0];
-      const lastEntryDate = new Date(lastEntry.data);
-      const todayDate = new Date();
-      const diffInDays = Math.floor((todayDate.getTime() - lastEntryDate.getTime()) / (1000 * 60 * 60 * 24));
+    // Escutar evento de navegação para Plano de Vida
+    const handleNavigateToPlanoDeVida = (event: CustomEvent) => {
+      const { tab } = event.detail;
+      setPlanoDeVidaOpen(true);
+      setActiveTab(tab);
       
-      if (diffInDays > 3) {
-        setShowDiaryWarningModal(true);
-        
-        // TODO: INTEGRAÇÃO FUTURA - Enviar notificação por email
-        // Quando implementado, chamar edge function que:
-        // 1. Verifica se já enviou email nas últimas 24h (evitar spam)
-        // 2. Envia email ao usuário usando Resend.com
-        // 3. Registra no banco que o email foi enviado
-        // Endpoint sugerido: supabase.functions.invoke('send-diary-reminder-email', { 
-        //   body: { email: userData.email, name: userData.name, daysInactive: diffInDays }
-        // })
-        
-        // TODO: INTEGRAÇÃO FUTURA - Enviar notificação por WhatsApp
-        // Quando implementado, chamar edge function que:
-        // 1. Verifica se usuário habilitou notificações WhatsApp nas preferências
-        // 2. Verifica se já enviou WhatsApp nas últimas 24h (evitar spam)
-        // 3. Envia mensagem via API do WhatsApp Business (ou Twilio/WA Cloud API)
-        // 4. Registra no banco que a mensagem foi enviada
-        // Endpoint sugerido: supabase.functions.invoke('send-diary-reminder-whatsapp', { 
-        //   body: { phone: userData.phone, name: userData.name, daysInactive: diffInDays }
-        // })
-      }
-    } else {
-      // Nenhuma entrada ainda - mostrar modal também
-      setShowDiaryWarningModal(true);
-    }
-    */
+      // Scroll suave até a seção Plano de Vida
+      setTimeout(() => {
+        const planoSection = document.querySelector('[data-section="plano-de-vida"]');
+        if (planoSection) {
+          planoSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }, 100);
+    };
+
+    window.addEventListener("navigateToPlanoDeVida", handleNavigateToPlanoDeVida as EventListener);
+
+    return () => {
+      window.removeEventListener("navigateToPlanoDeVida", handleNavigateToPlanoDeVida as EventListener);
+    };
   }, []);
 
   return (
@@ -222,8 +199,13 @@ const Home = () => {
         </section>
 
         {/* Plano de Vida Section */}
-        <section className="animate-slide-up" style={{ animationDelay: "0.2s" }}>
-          <PlanoDeVida onTabChange={setActiveTab} onOpenChange={setPlanoDeVidaOpen} />
+        <section className="animate-slide-up" style={{ animationDelay: "0.2s" }} data-section="plano-de-vida">
+          <PlanoDeVida 
+            onTabChange={setActiveTab} 
+            onOpenChange={setPlanoDeVidaOpen} 
+            forcedTab={activeTab}
+            forcedOpen={planoDeVidaOpen}
+          />
         </section>
 
         {/* Mão na Massa Section - aparece ao clicar em "Como chegar lá" */}
