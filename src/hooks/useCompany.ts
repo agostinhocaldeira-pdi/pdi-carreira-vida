@@ -7,8 +7,7 @@ import {
   CompanyEmployee,
   CompanyFormData,
   ManagerFormData,
-  EmployeeFormData,
-  generateProvisionalPassword
+  EmployeeFormData
 } from '@/types/company';
 import { toast } from 'sonner';
 
@@ -159,23 +158,25 @@ export const useCompany = () => {
     }
   };
 
-  // Adicionar gestor (com senha provisória e role)
+  // Adicionar gestor (via edge function com fluxo seguro)
   const addManager = async (companyId: string, data: ManagerFormData): Promise<boolean> => {
     try {
-      const provisionalPassword = generateProvisionalPassword();
-      
-      const { error } = await supabase
-        .from('company_managers')
-        .insert({ 
-          company_id: companyId, 
-          ...data,
-          provisional_password: provisionalPassword
-        });
+      const { data: result, error } = await supabase.functions.invoke('create-company-user', {
+        body: {
+          email: data.email,
+          name: data.name,
+          phone: data.phone,
+          userType: 'manager',
+          companyId,
+          redirectUrl: window.location.origin
+        }
+      });
 
       if (error) throw error;
+      if (result?.error) throw new Error(result.error);
       
       await fetchCompanyRelations(companyId);
-      toast.success(`Gestor adicionado! Senha provisória: ${provisionalPassword}`);
+      toast.success('Gestor adicionado! Um email de configuração de senha foi enviado.');
       return true;
     } catch (err: any) {
       toast.error('Erro ao adicionar gestor: ' + err.message);
@@ -221,24 +222,25 @@ export const useCompany = () => {
     }
   };
 
-  // Adicionar funcionário (com senha provisória)
+  // Adicionar funcionário (via edge function com fluxo seguro)
   const addEmployee = async (companyId: string, data: EmployeeFormData): Promise<boolean> => {
     try {
-      const provisionalPassword = generateProvisionalPassword();
-      
-      const { error } = await supabase
-        .from('company_employees')
-        .insert({ 
-          company_id: companyId, 
-          ...data,
-          provisional_password: provisionalPassword,
-          is_subscription_exempt: true
-        });
+      const { data: result, error } = await supabase.functions.invoke('create-company-user', {
+        body: {
+          email: data.email,
+          name: data.name,
+          phone: data.phone,
+          userType: 'employee',
+          companyId,
+          redirectUrl: window.location.origin
+        }
+      });
 
       if (error) throw error;
+      if (result?.error) throw new Error(result.error);
       
       await fetchCompanyRelations(companyId);
-      toast.success(`Funcionário adicionado! Senha provisória: ${provisionalPassword}`);
+      toast.success('Funcionário adicionado! Um email de configuração de senha foi enviado.');
       return true;
     } catch (err: any) {
       toast.error('Erro ao adicionar funcionário: ' + err.message);

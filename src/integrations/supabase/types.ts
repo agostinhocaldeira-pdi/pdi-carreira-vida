@@ -140,8 +140,8 @@ export type Database = {
           is_subscription_exempt: boolean | null
           manager_id: string | null
           name: string
+          password_setup_sent_at: string | null
           phone: string | null
-          provisional_password: string | null
           updated_at: string
           user_id: string | null
         }
@@ -156,8 +156,8 @@ export type Database = {
           is_subscription_exempt?: boolean | null
           manager_id?: string | null
           name: string
+          password_setup_sent_at?: string | null
           phone?: string | null
-          provisional_password?: string | null
           updated_at?: string
           user_id?: string | null
         }
@@ -172,8 +172,8 @@ export type Database = {
           is_subscription_exempt?: boolean | null
           manager_id?: string | null
           name?: string
+          password_setup_sent_at?: string | null
           phone?: string | null
-          provisional_password?: string | null
           updated_at?: string
           user_id?: string | null
         }
@@ -197,8 +197,8 @@ export type Database = {
           invited_at: string
           is_active: boolean | null
           name: string
+          password_setup_sent_at: string | null
           phone: string | null
-          provisional_password: string | null
           updated_at: string
           user_id: string | null
         }
@@ -211,8 +211,8 @@ export type Database = {
           invited_at?: string
           is_active?: boolean | null
           name: string
+          password_setup_sent_at?: string | null
           phone?: string | null
-          provisional_password?: string | null
           updated_at?: string
           user_id?: string | null
         }
@@ -225,8 +225,8 @@ export type Database = {
           invited_at?: string
           is_active?: boolean | null
           name?: string
+          password_setup_sent_at?: string | null
           phone?: string | null
-          provisional_password?: string | null
           updated_at?: string
           user_id?: string | null
         }

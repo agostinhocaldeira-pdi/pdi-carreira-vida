@@ -41,7 +41,6 @@ import {
   Loader2
 } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
-import { generateProvisionalPassword } from "@/types/company"; // Legacy - keep for backwards compatibility
 import EmployeeProgressModal from "@/components/EmployeeProgressModal";
 import ConfirmDeleteDialog from "@/components/ConfirmDeleteDialog";
 import { CompanyReportsTab } from "@/components/company/CompanyReportsTab";
