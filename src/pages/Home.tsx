@@ -21,6 +21,7 @@ import { useGamification } from "@/hooks/useGamification";
 import { ExportPDFButton } from "@/components/reports/ExportPDFButton";
 import { useRoleProtection } from "@/hooks/useRoleProtection";
 import { supabase } from "@/integrations/supabase/client";
+import { TrialStatusBanner } from "@/components/subscription/TrialStatusBanner";
 
 const Home = () => {
   const navigate = useNavigate();
@@ -344,6 +345,9 @@ const Home = () => {
 
       {/* Main Content */}
       <main className="container mx-auto px-3 sm:px-4 py-4 sm:py-8 space-y-4 sm:space-y-8">
+        {/* Trial Status Banner */}
+        <TrialStatusBanner />
+
         {/* Gamification Card */}
         <section className="animate-slide-up">
           <GamificationCard />
