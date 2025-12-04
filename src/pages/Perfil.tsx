@@ -1,15 +1,17 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
-import { ArrowLeft, User, Building2, Eye, EyeOff, Save, Crown, Sparkles, Star, Database, Check } from "lucide-react";
+import { ArrowLeft, User, Building2, Eye, EyeOff, Save, Crown, Sparkles, Star, Database, Check, Loader2 } from "lucide-react";
 import { NotificationPreferences } from "@/components/notifications/NotificationPreferences";
 import { ExportPDFButton } from "@/components/reports/ExportPDFButton";
 import { LGPDDataSection } from "@/components/lgpd/LGPDDataSection";
+import { supabase } from "@/integrations/supabase/client";
+import { useSubscription } from "@/hooks/useSubscription";
 
 const generateMockData = (userName: string) => {
   // Onboarding
@@ -437,16 +439,91 @@ interface CompanyInfo {
 
 const Perfil = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const subscription = useSubscription();
   const [userData, setUserData] = useState<UserData | null>(null);
   const [companyInfo, setCompanyInfo] = useState<CompanyInfo | null>(null);
   const [isEditing, setIsEditing] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [isCheckoutLoading, setIsCheckoutLoading] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     phone: "",
     password: "",
   });
+
+  // Check for successful checkout return
+  useEffect(() => {
+    const checkoutStatus = searchParams.get('checkout');
+    if (checkoutStatus === 'success') {
+      toast.success("Assinatura realizada com sucesso! Bem-vindo ao Plano Básico!");
+      subscription.refreshSubscription?.();
+      // Remove the query param
+      navigate('/perfil', { replace: true });
+    } else if (checkoutStatus === 'canceled') {
+      toast.info("Checkout cancelado. Você pode tentar novamente quando quiser.");
+      navigate('/perfil', { replace: true });
+    }
+  }, [searchParams, navigate, subscription]);
+
+  const handleCheckout = async () => {
+    setIsCheckoutLoading(true);
+    try {
+      const { data: session } = await supabase.auth.getSession();
+      if (!session?.session?.access_token) {
+        toast.error("Você precisa estar logado para assinar");
+        navigate('/login');
+        return;
+      }
+
+      const { data, error } = await supabase.functions.invoke('create-checkout', {
+        headers: {
+          Authorization: `Bearer ${session.session.access_token}`,
+        },
+      });
+
+      if (error) {
+        throw new Error(error.message);
+      }
+
+      if (data?.url) {
+        window.open(data.url, '_blank');
+      } else {
+        throw new Error("Não foi possível criar a sessão de pagamento");
+      }
+    } catch (error: any) {
+      console.error('Checkout error:', error);
+      toast.error(error.message || "Erro ao processar checkout");
+    } finally {
+      setIsCheckoutLoading(false);
+    }
+  };
+
+  const handleManageSubscription = async () => {
+    try {
+      const { data: session } = await supabase.auth.getSession();
+      if (!session?.session?.access_token) {
+        toast.error("Você precisa estar logado");
+        return;
+      }
+
+      const { data, error } = await supabase.functions.invoke('customer-portal', {
+        headers: {
+          Authorization: `Bearer ${session.session.access_token}`,
+        },
+      });
+
+      if (error) throw new Error(error.message);
+
+      if (data?.url) {
+        window.open(data.url, '_blank');
+      }
+    } catch (error: any) {
+      console.error('Portal error:', error);
+      toast.error("Erro ao acessar portal de assinatura");
+    }
+  };
 
   useEffect(() => {
     const user = localStorage.getItem("user");
@@ -739,9 +816,11 @@ const Perfil = () => {
                         <span className="text-xs">1 uso: SWOT, SMART, Autoavaliação 360º, Crenças</span>
                       </div>
                     </div>
-                    <Button variant="outline" className="w-full mt-4" disabled>
-                      Plano Atual
-                    </Button>
+                    {(subscription.plan === 'gratuito' || subscription.status === 'trial') && (
+                      <Button variant="outline" className="w-full mt-4" disabled>
+                        ✓ Plano Atual
+                      </Button>
+                    )}
                   </CardContent>
                 </Card>
 
@@ -790,9 +869,35 @@ const Perfil = () => {
                         <span>Construção Guiada</span>
                       </div>
                     </div>
-                    <Button className="w-full mt-4 bg-green-500 hover:bg-green-600" disabled>
-                      Plano Atual
-                    </Button>
+                    {subscription.plan === 'basico' ? (
+                      <div className="space-y-2 mt-4">
+                        <Button className="w-full bg-green-500 hover:bg-green-600" disabled>
+                          ✓ Plano Atual
+                        </Button>
+                        <Button 
+                          variant="outline" 
+                          className="w-full text-xs"
+                          onClick={handleManageSubscription}
+                        >
+                          Gerenciar Assinatura
+                        </Button>
+                      </div>
+                    ) : (
+                      <Button 
+                        className="w-full mt-4 bg-green-500 hover:bg-green-600" 
+                        onClick={handleCheckout}
+                        disabled={isCheckoutLoading}
+                      >
+                        {isCheckoutLoading ? (
+                          <>
+                            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                            Processando...
+                          </>
+                        ) : (
+                          "Assinar Agora"
+                        )}
+                      </Button>
+                    )}
                   </CardContent>
                 </Card>
 

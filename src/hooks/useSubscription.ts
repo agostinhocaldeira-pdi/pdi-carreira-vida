@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 
 export type SubscriptionStatus = 'loading' | 'active' | 'trial' | 'expired';
@@ -8,9 +8,13 @@ interface SubscriptionState {
   plan: 'gratuito' | 'basico' | 'completo' | null;
   daysRemaining: number | null;
   canEdit: boolean;
+  subscriptionEnd: string | null;
 }
 
 const TRIAL_DAYS = 30;
+
+// Stripe product ID for Plano Básico
+const PLANO_BASICO_PRODUCT_ID = "prod_TXWvEwloGWytPs";
 
 export const useSubscription = () => {
   const [state, setState] = useState<SubscriptionState>({
@@ -18,86 +22,117 @@ export const useSubscription = () => {
     plan: null,
     daysRemaining: null,
     canEdit: true,
+    subscriptionEnd: null,
   });
 
+  const checkSubscription = useCallback(async () => {
+    const { data: { user } } = await supabase.auth.getUser();
+    
+    if (!user) {
+      setState({
+        status: 'active',
+        plan: null,
+        daysRemaining: null,
+        canEdit: true,
+        subscriptionEnd: null,
+      });
+      return;
+    }
+
+    // Check if user has admin role (unlimited access)
+    const { data: roles } = await supabase
+      .from('user_roles')
+      .select('role')
+      .eq('user_id', user.id);
+
+    const isAdmin = roles?.some(r => r.role === 'admin');
+    const isEmpresa = roles?.some(r => r.role === 'empresa');
+    const isGestor = roles?.some(r => r.role === 'gestor');
+
+    // Admins, empresas, and gestores have unlimited access
+    if (isAdmin || isEmpresa || isGestor) {
+      setState({
+        status: 'active',
+        plan: 'completo',
+        daysRemaining: null,
+        canEdit: true,
+        subscriptionEnd: null,
+      });
+      return;
+    }
+
+    // Check if user is a company employee (exempt from subscription)
+    const { data: employeeData } = await supabase
+      .from('company_employees')
+      .select('is_subscription_exempt')
+      .eq('user_id', user.id)
+      .single();
+
+    if (employeeData?.is_subscription_exempt) {
+      setState({
+        status: 'active',
+        plan: 'completo',
+        daysRemaining: null,
+        canEdit: true,
+        subscriptionEnd: null,
+      });
+      return;
+    }
+
+    // Check Stripe subscription status
+    try {
+      const { data: session } = await supabase.auth.getSession();
+      if (session?.session?.access_token) {
+        const { data, error } = await supabase.functions.invoke('check-subscription', {
+          headers: {
+            Authorization: `Bearer ${session.session.access_token}`,
+          },
+        });
+
+        if (!error && data?.subscribed) {
+          // User has active Stripe subscription
+          const plan = data.product_id === PLANO_BASICO_PRODUCT_ID ? 'basico' : 'completo';
+          setState({
+            status: 'active',
+            plan,
+            daysRemaining: null,
+            canEdit: true,
+            subscriptionEnd: data.subscription_end,
+          });
+          return;
+        }
+      }
+    } catch (error) {
+      console.error('Error checking Stripe subscription:', error);
+    }
+
+    // For regular users without subscription, check trial period
+    const createdAt = new Date(user.created_at);
+    const now = new Date();
+    const diffTime = now.getTime() - createdAt.getTime();
+    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+    const daysRemaining = Math.max(0, TRIAL_DAYS - diffDays);
+
+    if (diffDays >= TRIAL_DAYS) {
+      setState({
+        status: 'expired',
+        plan: 'gratuito',
+        daysRemaining: 0,
+        canEdit: false,
+        subscriptionEnd: null,
+      });
+    } else {
+      setState({
+        status: 'trial',
+        plan: 'gratuito',
+        daysRemaining,
+        canEdit: true,
+        subscriptionEnd: null,
+      });
+    }
+  }, []);
+
   useEffect(() => {
-    const checkSubscription = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      
-      if (!user) {
-        setState({
-          status: 'active',
-          plan: null,
-          daysRemaining: null,
-          canEdit: true,
-        });
-        return;
-      }
-
-      // Check if user has admin role (unlimited access)
-      const { data: roles } = await supabase
-        .from('user_roles')
-        .select('role')
-        .eq('user_id', user.id);
-
-      const isAdmin = roles?.some(r => r.role === 'admin');
-      const isEmpresa = roles?.some(r => r.role === 'empresa');
-      const isGestor = roles?.some(r => r.role === 'gestor');
-
-      // Admins, empresas, and gestores have unlimited access
-      if (isAdmin || isEmpresa || isGestor) {
-        setState({
-          status: 'active',
-          plan: 'completo',
-          daysRemaining: null,
-          canEdit: true,
-        });
-        return;
-      }
-
-      // Check if user is a company employee (exempt from subscription)
-      const { data: employeeData } = await supabase
-        .from('company_employees')
-        .select('is_subscription_exempt')
-        .eq('user_id', user.id)
-        .single();
-
-      if (employeeData?.is_subscription_exempt) {
-        setState({
-          status: 'active',
-          plan: 'completo',
-          daysRemaining: null,
-          canEdit: true,
-        });
-        return;
-      }
-
-      // For regular users, check trial period
-      // TODO: When subscription system is implemented, check user_subscriptions table first
-      
-      const createdAt = new Date(user.created_at);
-      const now = new Date();
-      const diffTime = now.getTime() - createdAt.getTime();
-      const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-      const daysRemaining = Math.max(0, TRIAL_DAYS - diffDays);
-
-      if (diffDays >= TRIAL_DAYS) {
-        setState({
-          status: 'expired',
-          plan: 'gratuito',
-          daysRemaining: 0,
-          canEdit: false,
-        });
-      } else {
-        setState({
-          status: 'trial',
-          plan: 'gratuito',
-          daysRemaining,
-          canEdit: true,
-        });
-      }
-    };
-
     checkSubscription();
 
     // Listen for auth changes
@@ -105,8 +140,14 @@ export const useSubscription = () => {
       checkSubscription();
     });
 
-    return () => subscription.unsubscribe();
-  }, []);
+    // Refresh subscription status every minute
+    const interval = setInterval(checkSubscription, 60000);
 
-  return state;
+    return () => {
+      subscription.unsubscribe();
+      clearInterval(interval);
+    };
+  }, [checkSubscription]);
+
+  return { ...state, refreshSubscription: checkSubscription };
 };
