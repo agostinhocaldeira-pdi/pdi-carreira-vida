@@ -237,9 +237,9 @@ const Index = () => {
           <Button 
             size="lg" 
             onClick={() => navigate("/signup")}
-            className="text-lg px-10 py-6 bg-primary hover:bg-primary/90"
+            className="text-base sm:text-lg px-6 sm:px-10 py-5 sm:py-6 bg-primary hover:bg-primary/90 w-full sm:w-auto max-w-xs sm:max-w-none"
           >
-            Criar minha conta grátis
+            Criar meu PDI
             <ArrowRight className="ml-2 h-5 w-5" />
           </Button>
         </div>
