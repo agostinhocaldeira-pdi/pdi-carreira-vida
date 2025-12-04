@@ -883,20 +883,29 @@ const Perfil = () => {
                         </Button>
                       </div>
                     ) : (
-                      <Button 
-                        className="w-full mt-4 bg-green-500 hover:bg-green-600" 
-                        onClick={handleCheckout}
-                        disabled={isCheckoutLoading}
-                      >
-                        {isCheckoutLoading ? (
-                          <>
-                            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                            Processando...
-                          </>
-                        ) : (
-                          "Assinar Agora"
-                        )}
-                      </Button>
+                      <>
+                        <Button 
+                          className="w-full mt-4 bg-green-500 hover:bg-green-600" 
+                          onClick={handleCheckout}
+                          disabled={isCheckoutLoading}
+                        >
+                          {isCheckoutLoading ? (
+                            <>
+                              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                              Processando...
+                            </>
+                          ) : (
+                            "Assinar Agora"
+                          )}
+                        </Button>
+                        <p className="text-xs text-center text-muted-foreground mt-2">
+                          acesso ilimitado* a todas funcionalidades
+                        </p>
+                        <p className="text-[10px] text-center text-muted-foreground">
+                          *exceto insights com limite de 1 por mês
+                        </p>
+                      </>
+                    
                     )}
                   </CardContent>
                 </Card>

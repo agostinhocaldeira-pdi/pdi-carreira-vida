@@ -421,6 +421,12 @@ const Signup = () => {
                     "Assinar agora"
                   )}
                 </Button>
+                <p className="text-xs text-center text-muted-foreground mt-2">
+                  acesso ilimitado* a todas funcionalidades
+                </p>
+                <p className="text-[10px] text-center text-muted-foreground">
+                  *exceto insights com limite de 1 por mês
+                </p>
               </CardContent>
             </Card>
 
