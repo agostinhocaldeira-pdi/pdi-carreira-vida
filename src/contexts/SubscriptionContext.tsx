@@ -7,7 +7,9 @@ interface SubscriptionContextType {
   plan: 'gratuito' | 'basico' | 'completo' | null;
   daysRemaining: number | null;
   canEdit: boolean;
+  subscriptionEnd: string | null;
   showUpgradeModal: () => void;
+  refreshSubscription: () => void;
 }
 
 const SubscriptionContext = createContext<SubscriptionContextType | undefined>(undefined);
@@ -29,6 +31,10 @@ export const SubscriptionProvider = ({ children }: { children: ReactNode }) => {
     setShowModal(true);
   };
 
+  const refreshSubscription = () => {
+    subscription.refreshSubscription?.();
+  };
+
   return (
     <SubscriptionContext.Provider
       value={{
@@ -36,7 +42,9 @@ export const SubscriptionProvider = ({ children }: { children: ReactNode }) => {
         plan: subscription.plan,
         daysRemaining: subscription.daysRemaining,
         canEdit: subscription.canEdit,
+        subscriptionEnd: subscription.subscriptionEnd ?? null,
         showUpgradeModal,
+        refreshSubscription,
       }}
     >
       {children}
