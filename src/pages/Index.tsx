@@ -31,7 +31,13 @@ import {
   FileText,
   Star,
   Zap,
-  Crown
+  Crown,
+  Cpu,
+  Mail,
+  MessageCircle,
+  Download,
+  Shield,
+  Smartphone
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
@@ -339,6 +345,133 @@ const Index = () => {
                 Pequenos passos consistentes constroem resultados extraordinários.
               </p>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Technology Section */}
+      <section className="py-12 sm:py-20 px-4 bg-gradient-to-br from-primary/5 via-purple-500/5 to-pink-500/5">
+        <div className="container mx-auto max-w-6xl">
+          <div className="text-center mb-8 sm:mb-12">
+            <Badge variant="secondary" className="mb-4 text-xs sm:text-sm">
+              Tecnologia de ponta
+            </Badge>
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 sm:mb-4">
+              Uma plataforma moderna, feita para o seu ritmo
+            </h2>
+            <p className="text-muted-foreground max-w-2xl mx-auto text-sm sm:text-base">
+              Não basta ter boas intenções. Você precisa de ferramentas que trabalhem por você — 
+              lembrando, organizando, analisando. É isso que a tecnologia faz aqui.
+            </p>
+          </div>
+
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+            {/* AI Card */}
+            <Card className="group border-border/50 bg-card/50 backdrop-blur-sm hover:shadow-lg transition-all overflow-hidden">
+              <CardContent className="p-5 sm:p-6">
+                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-500 to-indigo-500 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                  <Cpu className="h-6 w-6 text-white" />
+                </div>
+                <h3 className="text-lg sm:text-xl font-semibold mb-2">Inteligência Artificial</h3>
+                <p className="text-muted-foreground text-xs sm:text-sm mb-3">
+                  Insights personalizados sobre sua jornada, gerados por IA que entende seu contexto. 
+                  Como ter um coach particular disponível 24 horas.
+                </p>
+                <p className="text-xs text-primary/80 italic">
+                  A tecnologia lê seus dados e te mostra o que você ainda não viu.
+                </p>
+              </CardContent>
+            </Card>
+
+            {/* Notifications Card */}
+            <Card className="group border-border/50 bg-card/50 backdrop-blur-sm hover:shadow-lg transition-all overflow-hidden">
+              <CardContent className="p-5 sm:p-6">
+                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-green-500 to-emerald-500 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                  <Bell className="h-6 w-6 text-white" />
+                </div>
+                <h3 className="text-lg sm:text-xl font-semibold mb-2">Notificações Inteligentes</h3>
+                <p className="text-muted-foreground text-xs sm:text-sm mb-3">
+                  Lembretes por <strong>e-mail</strong> e <strong>WhatsApp</strong> na hora certa. 
+                  Prazos, diário, metas — você nunca mais esquece o que importa.
+                </p>
+                <div className="flex gap-2 mt-2">
+                  <div className="flex items-center gap-1 text-xs text-muted-foreground bg-muted/50 px-2 py-1 rounded-full">
+                    <Mail className="h-3 w-3" /> E-mail
+                  </div>
+                  <div className="flex items-center gap-1 text-xs text-muted-foreground bg-muted/50 px-2 py-1 rounded-full">
+                    <MessageCircle className="h-3 w-3" /> WhatsApp
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Calendar Integration */}
+            <Card className="group border-border/50 bg-card/50 backdrop-blur-sm hover:shadow-lg transition-all overflow-hidden">
+              <CardContent className="p-5 sm:p-6">
+                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                  <Calendar className="h-6 w-6 text-white" />
+                </div>
+                <h3 className="text-lg sm:text-xl font-semibold mb-2">Google Calendar</h3>
+                <p className="text-muted-foreground text-xs sm:text-sm mb-3">
+                  Suas metas e prazos sincronizados automaticamente na sua agenda. 
+                  Sem copiar, sem esquecer, sem retrabalho.
+                </p>
+                <p className="text-xs text-primary/80 italic">
+                  Seu planejamento de vida integrado à sua rotina real.
+                </p>
+              </CardContent>
+            </Card>
+
+            {/* Reports Card */}
+            <Card className="group border-border/50 bg-card/50 backdrop-blur-sm hover:shadow-lg transition-all overflow-hidden">
+              <CardContent className="p-5 sm:p-6">
+                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-orange-500 to-amber-500 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                  <FileText className="h-6 w-6 text-white" />
+                </div>
+                <h3 className="text-lg sm:text-xl font-semibold mb-2">Relatórios Completos</h3>
+                <p className="text-muted-foreground text-xs sm:text-sm mb-3">
+                  Exporte seu PDI completo e relatórios de progresso em <strong>PDF</strong>. 
+                  Perfeito para compartilhar com seu gestor, coach ou terapeuta.
+                </p>
+                <div className="flex items-center gap-1 text-xs text-muted-foreground bg-muted/50 px-2 py-1 rounded-full w-fit mt-2">
+                  <Download className="h-3 w-3" /> PDF exportável
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Mobile Card */}
+            <Card className="group border-border/50 bg-card/50 backdrop-blur-sm hover:shadow-lg transition-all overflow-hidden">
+              <CardContent className="p-5 sm:p-6">
+                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-pink-500 to-rose-500 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                  <Smartphone className="h-6 w-6 text-white" />
+                </div>
+                <h3 className="text-lg sm:text-xl font-semibold mb-2">100% Responsivo</h3>
+                <p className="text-muted-foreground text-xs sm:text-sm mb-3">
+                  Use no celular, tablet ou computador. A experiência é fluida em qualquer tela — 
+                  porque sua evolução não pode esperar você chegar em casa.
+                </p>
+                <p className="text-xs text-primary/80 italic">
+                  Seu PDI no bolso, disponível a qualquer momento.
+                </p>
+              </CardContent>
+            </Card>
+
+            {/* Security Card */}
+            <Card className="group border-border/50 bg-card/50 backdrop-blur-sm hover:shadow-lg transition-all overflow-hidden">
+              <CardContent className="p-5 sm:p-6">
+                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-slate-500 to-zinc-600 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                  <Shield className="h-6 w-6 text-white" />
+                </div>
+                <h3 className="text-lg sm:text-xl font-semibold mb-2">Segurança & LGPD</h3>
+                <p className="text-muted-foreground text-xs sm:text-sm mb-3">
+                  Seus dados são criptografados e protegidos. Você tem controle total sobre suas informações 
+                  — pode exportar ou excluir quando quiser.
+                </p>
+                <p className="text-xs text-primary/80 italic">
+                  Sua privacidade é levada a sério aqui.
+                </p>
+              </CardContent>
+            </Card>
           </div>
         </div>
       </section>
