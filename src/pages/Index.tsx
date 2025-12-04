@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Dialog,
   DialogContent,
@@ -22,12 +22,16 @@ import {
   Heart,
   Lightbulb,
   User,
-  Building2
+  Building2,
+  Star,
+  Crown,
+  Check
 } from "lucide-react";
 
 const Index = () => {
   const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isPlansModalOpen, setIsPlansModalOpen] = useState(false);
 
   const journeySteps = [
     {
@@ -78,6 +82,16 @@ const Index = () => {
     "Transformação de Crenças",
     "Autoavaliação 360º"
   ];
+
+  const handlePessoaFisicaClick = () => {
+    setIsModalOpen(false);
+    setIsPlansModalOpen(true);
+  };
+
+  const handleSelectFreePlan = () => {
+    setIsPlansModalOpen(false);
+    navigate("/signup");
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/30">
@@ -241,7 +255,7 @@ const Index = () => {
         </div>
       </footer>
 
-      {/* Registration Modal */}
+      {/* Registration Type Modal */}
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
@@ -254,10 +268,7 @@ const Index = () => {
             <Button
               variant="outline"
               className="h-auto py-6 flex flex-col items-center gap-3 hover:border-primary hover:bg-primary/5"
-              onClick={() => {
-                setIsModalOpen(false);
-                navigate("/signup");
-              }}
+              onClick={handlePessoaFisicaClick}
             >
               <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
                 <User className="h-6 w-6 text-primary" />
@@ -284,6 +295,170 @@ const Index = () => {
               </div>
             </Button>
           </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Plans Selection Modal */}
+      <Dialog open={isPlansModalOpen} onOpenChange={setIsPlansModalOpen}>
+        <DialogContent className="sm:max-w-4xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="text-center text-xl">Escolha seu plano</DialogTitle>
+            <DialogDescription className="text-center">
+              Selecione o plano que melhor atende suas necessidades
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-4 sm:grid-cols-3">
+            {/* Plano Gratuito */}
+            <Card 
+              className="border-2 border-primary hover:shadow-lg transition-all cursor-pointer group"
+              onClick={handleSelectFreePlan}
+            >
+              <CardHeader className="pb-3">
+                <div className="flex items-center gap-2">
+                  <Star className="h-5 w-5 text-primary" />
+                  <CardTitle className="text-lg">Gratuito</CardTitle>
+                </div>
+                <div className="text-2xl font-bold">R$ 0<span className="text-sm font-normal text-muted-foreground">/mês</span></div>
+              </CardHeader>
+              <CardContent className="space-y-2 text-sm">
+                <div className="space-y-1.5">
+                  <div className="flex items-start gap-2">
+                    <Check className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
+                    <span>Dashboard "Seu Progresso"</span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <Check className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
+                    <span>Gerar 1 insight</span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <Check className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
+                    <span>Diário completo</span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <Check className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
+                    <span>1 objetivo, 1 meta, 5 ações</span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <Check className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
+                    <span className="text-xs">Ferramentas ilimitadas: Roda da Vida, VVD, Valores, Eisenhower</span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <Check className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
+                    <span className="text-xs">1 uso: SWOT, SMART, Autoavaliação 360º, Crenças</span>
+                  </div>
+                </div>
+                <Button className="w-full mt-4 group-hover:bg-primary/90">
+                  Começar grátis
+                </Button>
+              </CardContent>
+            </Card>
+
+            {/* Plano Básico */}
+            <Card className="border-2 border-muted opacity-70">
+              <CardHeader className="pb-3">
+                <div className="flex items-center gap-2">
+                  <Sparkles className="h-5 w-5 text-muted-foreground" />
+                  <CardTitle className="text-lg text-muted-foreground">Básico</CardTitle>
+                </div>
+                <div className="text-2xl font-bold text-muted-foreground">R$ 29<span className="text-sm font-normal">/mês</span></div>
+              </CardHeader>
+              <CardContent className="space-y-2 text-sm text-muted-foreground">
+                <div className="space-y-1.5">
+                  <div className="flex items-start gap-2">
+                    <Check className="h-4 w-4 mt-0.5 flex-shrink-0" />
+                    <span>Dashboard "Seu Progresso"</span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <Check className="h-4 w-4 mt-0.5 flex-shrink-0" />
+                    <span>1 insight por mês</span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <Check className="h-4 w-4 mt-0.5 flex-shrink-0" />
+                    <span>Diário completo</span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <Check className="h-4 w-4 mt-0.5 flex-shrink-0" />
+                    <span>Plano de Vida ilimitado</span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <Check className="h-4 w-4 mt-0.5 flex-shrink-0" />
+                    <span>Todas as ferramentas ilimitadas</span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <Check className="h-4 w-4 mt-0.5 flex-shrink-0" />
+                    <span>Integração Google Calendar</span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <Check className="h-4 w-4 mt-0.5 flex-shrink-0" />
+                    <span>Construção Guiada</span>
+                  </div>
+                </div>
+                <Button variant="outline" className="w-full mt-4" disabled>
+                  Em breve
+                </Button>
+              </CardContent>
+            </Card>
+
+            {/* Plano Completo */}
+            <Card className="border-2 border-muted opacity-70 relative overflow-hidden">
+              <div className="absolute top-0 right-0 bg-muted text-muted-foreground text-xs px-3 py-1 rounded-bl-lg font-medium">
+                Recomendado
+              </div>
+              <CardHeader className="pb-3">
+                <div className="flex items-center gap-2">
+                  <Crown className="h-5 w-5 text-muted-foreground" />
+                  <CardTitle className="text-lg text-muted-foreground">Completo</CardTitle>
+                </div>
+                <div className="text-2xl font-bold text-muted-foreground">R$ 49<span className="text-sm font-normal">/mês</span></div>
+              </CardHeader>
+              <CardContent className="space-y-2 text-sm text-muted-foreground">
+                <div className="space-y-1.5">
+                  <div className="flex items-start gap-2">
+                    <Check className="h-4 w-4 mt-0.5 flex-shrink-0" />
+                    <span>Dashboard "Seu Progresso"</span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <Check className="h-4 w-4 mt-0.5 flex-shrink-0" />
+                    <span>Insights ilimitados</span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <Check className="h-4 w-4 mt-0.5 flex-shrink-0" />
+                    <span>Diário completo</span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <Check className="h-4 w-4 mt-0.5 flex-shrink-0" />
+                    <span>Plano de Vida ilimitado</span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <Check className="h-4 w-4 mt-0.5 flex-shrink-0" />
+                    <span>Todas as ferramentas ilimitadas</span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <Check className="h-4 w-4 mt-0.5 flex-shrink-0" />
+                    <span>Integração Google Calendar</span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <Check className="h-4 w-4 mt-0.5 flex-shrink-0" />
+                    <span>Notificações e-mail e WhatsApp</span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <Check className="h-4 w-4 mt-0.5 flex-shrink-0" />
+                    <span>Construção Guiada</span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <Check className="h-4 w-4 mt-0.5 flex-shrink-0" />
+                    <span>Gerar relatórios PDF</span>
+                  </div>
+                </div>
+                <Button variant="outline" className="w-full mt-4" disabled>
+                  Em breve
+                </Button>
+              </CardContent>
+            </Card>
+          </div>
+          <p className="text-center text-sm text-muted-foreground">
+            Os planos pagos estarão disponíveis em breve. Comece gratuitamente!
+          </p>
         </DialogContent>
       </Dialog>
     </div>
