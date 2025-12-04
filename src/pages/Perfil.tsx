@@ -8,7 +8,6 @@ import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import { ArrowLeft, User, Building2, Eye, EyeOff, Save, Crown, Sparkles, Star, Database, Check, Loader2 } from "lucide-react";
 import { NotificationPreferences } from "@/components/notifications/NotificationPreferences";
-import { ExportPDFButton } from "@/components/reports/ExportPDFButton";
 import { LGPDDataSection } from "@/components/lgpd/LGPDDataSection";
 import { supabase } from "@/integrations/supabase/client";
 import { useSubscription } from "@/hooks/useSubscription";
@@ -632,7 +631,6 @@ const Perfil = () => {
               <Database className="w-4 h-4 mr-1" />
               Gerar Dados Teste
             </Button>
-            <ExportPDFButton />
           </div>
         </div>
 

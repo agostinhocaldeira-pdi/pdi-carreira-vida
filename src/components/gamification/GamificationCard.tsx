@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Trophy, Flame, Star, Target, Sparkles } from "lucide-react";
 import { useGamification } from "@/hooks/useGamification";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { ExportPDFButton } from "@/components/reports/ExportPDFButton";
 
 export function GamificationCard() {
   const { 
@@ -115,6 +116,11 @@ export function GamificationCard() {
               )}
             </div>
           </TooltipProvider>
+        </div>
+
+        {/* Export PDF Button */}
+        <div className="pt-2 border-t">
+          <ExportPDFButton />
         </div>
       </CardContent>
     </Card>
