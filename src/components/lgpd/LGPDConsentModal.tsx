@@ -1,65 +1,21 @@
-import { useState } from "react";
 import {
   Dialog,
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Shield, FileText, Lock, CheckCircle } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
-import { toast } from "sonner";
 
 interface LGPDConsentModalProps {
   open: boolean;
-  onAccept: () => void;
-  onDecline?: () => void;
+  onClose: () => void;
 }
 
-export const LGPDConsentModal = ({ open, onAccept, onDecline }: LGPDConsentModalProps) => {
-  const [isLoading, setIsLoading] = useState(false);
-
-  const handleAccept = async () => {
-    setIsLoading(true);
-    try {
-      const { data: { user } } = await supabase.auth.getUser();
-      
-      if (user) {
-        const consents = [
-          { user_id: user.id, consent_type: 'terms_of_service' },
-          { user_id: user.id, consent_type: 'privacy_policy' },
-          { user_id: user.id, consent_type: 'data_processing' },
-        ];
-
-        const { error } = await supabase
-          .from('user_consents')
-          .upsert(consents, { onConflict: 'user_id,consent_type' });
-
-        if (error) {
-          console.error('Erro ao salvar consentimento:', error);
-          toast.error('Erro ao salvar consentimento');
-          return;
-        }
-      }
-
-      localStorage.setItem('lgpd_consent_accepted', 'true');
-      localStorage.setItem('lgpd_consent_date', new Date().toISOString());
-      
-      toast.success('Consentimento registrado com sucesso!');
-      onAccept();
-    } catch (error) {
-      console.error('Erro:', error);
-      toast.error('Erro ao processar consentimento');
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
+export const LGPDConsentModal = ({ open, onClose }: LGPDConsentModalProps) => {
   return (
-    <Dialog open={open} onOpenChange={() => {}}>
+    <Dialog open={open} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-[550px] max-h-[90vh]">
         <DialogHeader className="text-center pb-2">
           <div className="mx-auto w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-3">
@@ -134,30 +90,11 @@ export const LGPDConsentModal = ({ open, onAccept, onDecline }: LGPDConsentModal
             </section>
 
             <p className="text-xs text-muted-foreground text-center px-4">
-              Ao clicar em "Aceito", você concorda com os Termos de Uso, Política de Privacidade 
-              e autoriza o processamento dos seus dados pessoais conforme descrito acima.
+              Ao selecionar "Li e aceito" no formulário de cadastro, você concorda com os Termos de Uso, 
+              Política de Privacidade e autoriza o processamento dos seus dados pessoais conforme descrito acima.
             </p>
           </div>
         </ScrollArea>
-
-        <div className="flex flex-col sm:flex-row gap-3 pt-4 border-t">
-          {onDecline && (
-            <Button 
-              variant="outline" 
-              onClick={onDecline}
-              className="flex-1"
-            >
-              Não aceito
-            </Button>
-          )}
-          <Button 
-            onClick={handleAccept} 
-            disabled={isLoading}
-            className="flex-1"
-          >
-            {isLoading ? "Processando..." : "Aceito"}
-          </Button>
-        </div>
       </DialogContent>
     </Dialog>
   );
