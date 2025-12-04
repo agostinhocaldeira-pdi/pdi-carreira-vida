@@ -1,5 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { MessagesSquare, Send, Compass, Home, Users, Headphones, Wrench, HelpCircle } from "lucide-react";
+import { MessagesSquare, Send, Compass, Home, Users, Headphones, Wrench, HelpCircle, ChevronDown, ChevronUp } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
@@ -14,6 +14,14 @@ import LogoutButton from "@/components/LogoutButton";
 import { useRoleProtection } from "@/hooks/useRoleProtection";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { supabase } from "@/integrations/supabase/client";
+import { faqItems } from "@/pages/FAQ";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 const CATEGORIES = [
   { value: "analise_swot", label: "Análise SWOT" },
   { value: "autoavaliacao_360", label: "Autoavaliação + 360º" },
@@ -68,6 +76,75 @@ interface ManagerMessage {
   read_by_employee?: boolean;
   read_by_manager?: boolean;
 }
+
+// FAQ Section Component
+const FAQSection = () => {
+  const [isOpen, setIsOpen] = useState(false);
+
+  return (
+    <Card className="max-w-4xl mx-auto shadow-large">
+      <Collapsible open={isOpen} onOpenChange={setIsOpen}>
+        <CollapsibleTrigger asChild>
+          <CardHeader className="cursor-pointer hover:bg-muted/50 transition-colors rounded-t-lg">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-primary/10 rounded-full">
+                  <HelpCircle className="h-5 w-5 text-primary" />
+                </div>
+                <div>
+                  <CardTitle className="text-lg">FAQ - Perguntas Frequentes</CardTitle>
+                  <p className="text-sm text-muted-foreground">
+                    Encontre respostas rápidas para suas dúvidas
+                  </p>
+                </div>
+              </div>
+              {isOpen ? (
+                <ChevronUp className="h-5 w-5 text-muted-foreground" />
+              ) : (
+                <ChevronDown className="h-5 w-5 text-muted-foreground" />
+              )}
+            </div>
+          </CardHeader>
+        </CollapsibleTrigger>
+        <CollapsibleContent>
+          <CardContent className="space-y-4 pt-0">
+            {faqItems.map((category, categoryIndex) => (
+              <div key={categoryIndex} className="space-y-2">
+                <h4 className="text-sm font-semibold text-primary border-b pb-1">
+                  {category.category}
+                </h4>
+                <Accordion type="single" collapsible className="w-full">
+                  {category.questions.map((item, questionIndex) => (
+                    <AccordionItem 
+                      key={questionIndex} 
+                      value={`${categoryIndex}-${questionIndex}`}
+                      className="border rounded-lg mb-2 px-3"
+                    >
+                      <AccordionTrigger className="text-left hover:no-underline text-sm py-2">
+                        <span className="font-medium">{item.question}</span>
+                      </AccordionTrigger>
+                      <AccordionContent className="text-muted-foreground text-sm pb-3">
+                        {item.answer}
+                      </AccordionContent>
+                    </AccordionItem>
+                  ))}
+                </Accordion>
+              </div>
+            ))}
+            <div className="pt-2 border-t">
+              <Link to="/faq">
+                <Button variant="outline" size="sm" className="w-full gap-2">
+                  <HelpCircle className="w-4 h-4" />
+                  Ver FAQ Completo
+                </Button>
+              </Link>
+            </div>
+          </CardContent>
+        </CollapsibleContent>
+      </Collapsible>
+    </Card>
+  );
+};
 
 const Suporte = () => {
   const { isLoading: roleLoading, userRole, isAdmin } = useRoleProtection({ allowedRoles: ["user", "gestor", "admin"] });
@@ -915,6 +992,9 @@ const Suporte = () => {
           renderSupportForm()
         )}
 
+        {/* FAQ Section - Collapsible */}
+        <FAQSection />
+
         {/* Call to Action */}
         <Card className="max-w-4xl mx-auto bg-gradient-to-r from-primary/5 via-primary/10 to-accent/5 border-primary/20 shadow-medium">
           <CardContent className="py-8 text-center space-y-3">
@@ -927,12 +1007,6 @@ const Suporte = () => {
                 <Button variant="outline" className="w-full sm:w-auto gap-2">
                   <Home className="w-4 h-4" />
                   Voltar ao Dashboard
-                </Button>
-              </Link>
-              <Link to="/faq">
-                <Button variant="outline" className="w-full sm:w-auto gap-2">
-                  <HelpCircle className="w-4 h-4" />
-                  FAQ / Ajuda
                 </Button>
               </Link>
               <Link to="/ferramentas">

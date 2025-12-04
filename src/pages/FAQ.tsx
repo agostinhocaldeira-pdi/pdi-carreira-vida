@@ -1,5 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { HelpCircle, Home, ChevronDown, MessagesSquare } from "lucide-react";
+import { HelpCircle, Home, MessagesSquare } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import LogoutButton from "@/components/LogoutButton";
@@ -10,7 +10,8 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 
-const faqItems = [
+// Export faqItems for use in other components
+export const faqItems = [
   {
     category: "Primeiros Passos",
     questions: [
@@ -135,6 +136,27 @@ const faqItems = [
       {
         question: "Posso exportar todos os meus dados?",
         answer: "Sim! Na página de Perfil, você encontra a opção de exportar todos os seus dados em formato JSON, conforme exigido pela LGPD."
+      }
+    ]
+  },
+  {
+    category: "Assinatura e Pagamentos",
+    questions: [
+      {
+        question: "Como cancelo minha assinatura?",
+        answer: "Para cancelar sua assinatura, acesse a página de Perfil e clique no botão 'Gerenciar Assinatura' abaixo do seu plano atual. Você será direcionado ao portal do Stripe onde poderá cancelar, alterar forma de pagamento ou atualizar dados de cobrança."
+      },
+      {
+        question: "Posso trocar de plano?",
+        answer: "Sim! Acesse a página de Perfil e clique em 'Gerenciar Assinatura'. No portal, você pode fazer upgrade ou downgrade do seu plano a qualquer momento."
+      },
+      {
+        question: "Após cancelar, perco acesso imediatamente?",
+        answer: "Não. Após cancelar, você mantém acesso até o final do período já pago. Por exemplo, se cancelar no dia 15 e seu ciclo termina no dia 30, você continua usando até o dia 30."
+      },
+      {
+        question: "Quais formas de pagamento são aceitas?",
+        answer: "Aceitamos cartões de crédito (Visa, Mastercard, American Express, etc.) através da plataforma Stripe, que é segura e amplamente utilizada mundialmente."
       }
     ]
   },
