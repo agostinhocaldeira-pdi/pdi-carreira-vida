@@ -52,7 +52,7 @@ const Signup = () => {
     if (!validateForm()) return;
 
     if (!lgpdAccepted) {
-      setShowLGPDModal(true);
+      toast.error("Você precisa aceitar os Termos de Uso e Política de Privacidade");
       return;
     }
 
@@ -123,11 +123,6 @@ const Signup = () => {
     }
   };
 
-  const handleLGPDAccept = () => {
-    setLgpdAccepted(true);
-    setShowLGPDModal(false);
-    performSignup();
-  };
 
   const handleSelectFreePlan = () => {
     setShowPlansModal(false);
@@ -245,18 +240,12 @@ const Signup = () => {
               </div>
             </div>
 
-            {/* Checkbox de aceite prévio */}
+            {/* Checkbox de aceite */}
             <div className="flex items-start space-x-2 pt-2">
               <Checkbox 
                 id="lgpd-preview" 
                 checked={lgpdAccepted}
-                onCheckedChange={(checked) => {
-                  if (checked) {
-                    setShowLGPDModal(true);
-                  } else {
-                    setLgpdAccepted(false);
-                  }
-                }}
+                onCheckedChange={(checked) => setLgpdAccepted(checked === true)}
                 disabled={isLoading}
               />
               <label htmlFor="lgpd-preview" className="text-xs text-muted-foreground cursor-pointer leading-relaxed">
@@ -264,7 +253,10 @@ const Signup = () => {
                 Li e aceito os{" "}
                 <button 
                   type="button" 
-                  onClick={() => setShowLGPDModal(true)}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setShowLGPDModal(true);
+                  }}
                   className="text-primary hover:underline"
                 >
                   Termos de Uso e Política de Privacidade
@@ -297,8 +289,7 @@ const Signup = () => {
       {/* Modal LGPD */}
       <LGPDConsentModal 
         open={showLGPDModal}
-        onAccept={handleLGPDAccept}
-        onDecline={() => setShowLGPDModal(false)}
+        onClose={() => setShowLGPDModal(false)}
       />
 
       {/* Plans Selection Modal */}
