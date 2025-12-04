@@ -349,6 +349,98 @@ const Index = () => {
         </div>
       </section>
 
+      {/* VVD Method Section */}
+      <section className="py-12 sm:py-20 px-4 bg-muted/30 overflow-hidden">
+        <div className="container mx-auto max-w-6xl">
+          <div className="grid lg:grid-cols-2 gap-8 sm:gap-12 items-center">
+            {/* Content */}
+            <div className="order-2 lg:order-1">
+              <Badge variant="secondary" className="mb-4 text-xs sm:text-sm bg-primary/10 text-primary border-0">
+                ✨ Metodologia Exclusiva
+              </Badge>
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 sm:mb-6">
+                Método VVD: Sua Visão de Vida Desejada
+              </h2>
+              <p className="text-muted-foreground mb-4 text-sm sm:text-base leading-relaxed">
+                A maioria das pessoas sabe o que <em>não</em> quer. Mas pouquíssimas conseguem descrever, 
+                com clareza, a vida que realmente desejam viver. É aí que entra o <strong>Método VVD</strong>.
+              </p>
+              <p className="text-muted-foreground mb-4 text-sm sm:text-base leading-relaxed">
+                Desenvolvido especialmente para o PDI - Carreira & Vida, o VVD te guia num processo 
+                de construção da sua <strong>Visão de Vida Desejada</strong> — um texto vivo que descreve 
+                quem você quer ser, como quer viver e o que quer conquistar nos próximos anos.
+              </p>
+              <p className="text-muted-foreground mb-6 text-sm sm:text-base leading-relaxed">
+                Não é sobre sonhar acordado. É sobre criar um norte tão claro que cada decisão do seu 
+                dia-a-dia passa a fazer sentido. <em>Quando você sabe para onde vai, o caminho aparece.</em>
+              </p>
+              
+              <div className="space-y-3 mb-6">
+                <div className="flex items-start gap-3">
+                  <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <Check className="h-3.5 w-3.5 text-primary" />
+                  </div>
+                  <div>
+                    <p className="font-medium text-sm sm:text-base">Processo guiado passo a passo</p>
+                    <p className="text-xs sm:text-sm text-muted-foreground">Perguntas estratégicas que extraem o melhor de você</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3">
+                  <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <Check className="h-3.5 w-3.5 text-primary" />
+                  </div>
+                  <div>
+                    <p className="font-medium text-sm sm:text-base">Integração com seus objetivos</p>
+                    <p className="text-xs sm:text-sm text-muted-foreground">Cada meta que você cria se conecta à sua VVD</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3">
+                  <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <Check className="h-3.5 w-3.5 text-primary" />
+                  </div>
+                  <div>
+                    <p className="font-medium text-sm sm:text-base">Documento vivo e editável</p>
+                    <p className="text-xs sm:text-sm text-muted-foreground">Sua visão evolui junto com você</p>
+                  </div>
+                </div>
+              </div>
+
+              <Button 
+                onClick={() => setIsModalOpen(true)}
+                className="text-sm sm:text-base"
+              >
+                Criar minha Visão de Vida
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Button>
+            </div>
+
+            {/* Visual */}
+            <div className="order-1 lg:order-2">
+              <Card className="border-primary/20 bg-gradient-to-br from-primary/5 via-purple-500/5 to-pink-500/5 overflow-hidden">
+                <CardContent className="p-6 sm:p-8">
+                  <div className="flex items-center gap-2 mb-4">
+                    <Compass className="h-6 w-6 text-primary" />
+                    <span className="font-semibold text-sm text-primary">Exemplo de VVD</span>
+                  </div>
+                  <div className="bg-background/80 rounded-lg p-4 sm:p-6 border border-border/50">
+                    <p className="text-sm sm:text-base text-foreground/90 italic leading-relaxed">
+                      "Em 2027, sou uma profissional realizada que equilibra uma carreira em ascensão 
+                      com tempo de qualidade para minha família. Acordo cedo, pratico exercícios e 
+                      trabalho com projetos que me desafiam e fazem diferença. Tenho autonomia financeira, 
+                      viajo pelo menos duas vezes ao ano e cultivo amizades verdadeiras. 
+                      Sou reconhecida pela minha competência e pela forma como inspiro outras pessoas..."
+                    </p>
+                  </div>
+                  <p className="text-xs text-muted-foreground mt-4 text-center">
+                    Isso não é ficção. É um norte. E você vai construir o seu.
+                  </p>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Technology Section */}
       <section className="py-12 sm:py-20 px-4 bg-gradient-to-br from-primary/5 via-purple-500/5 to-pink-500/5">
         <div className="container mx-auto max-w-6xl">
