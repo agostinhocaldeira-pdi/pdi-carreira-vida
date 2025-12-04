@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import { UnsavedChangesProvider } from "@/contexts/UnsavedChangesContext";
+import { SubscriptionProvider } from "@/contexts/SubscriptionContext";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import Landing from "./pages/Landing";
@@ -39,42 +40,44 @@ const App = () => (
   <QueryClientProvider client={queryClient}>
     <LanguageProvider>
       <UnsavedChangesProvider>
-        <TooltipProvider>
-          <Toaster />
-          <Sonner />
-          <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/leadp" element={<Landing />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/signup" element={<Signup />} />
-            <Route path="/onboarding" element={<Onboarding />} />
-            <Route path="/home" element={<Home />} />
-            <Route path="/diario" element={<Diario />} />
-            <Route path="/construcao-guiada" element={<ConstrucaoGuiada />} />
-            <Route path="/ferramentas" element={<Ferramentas />} />
-            <Route path="/suporte" element={<Suporte />} />
-            <Route path="/admin" element={<Admin />} />
-            <Route path="/admin/usuarios" element={<AdminUsuarios />} />
-            <Route path="/roda-da-vida" element={<RodaDaVida />} />
-            <Route path="/ferramentas/valores" element={<Valores />} />
-            <Route path="/ferramentas/eisenhower" element={<MatrizEisenhower />} />
-            <Route path="/ferramentas/crencas" element={<Crencas />} />
-            <Route path="/ferramentas/swot" element={<AnaliseSwot />} />
-            <Route path="/ferramentas/smart" element={<MetodoSmart />} />
-            <Route path="/ferramentas/metodo-vvd" element={<MetodoVvd />} />
-            <Route path="/ferramentas/autoavaliacao-360" element={<Autoavaliacao360 />} />
-            <Route path="/integracoes" element={<Integracoes />} />
-            <Route path="/cadastrar-empresa" element={<CadastrarEmpresa />} />
-            <Route path="/dashboard-empresa" element={<DashboardEmpresa />} />
-            <Route path="/gestao-pdis" element={<GestaoPDIs />} />
-            <Route path="/perfil" element={<Perfil />} />
-            <Route path="/faq" element={<FAQ />} />
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-          </BrowserRouter>
-        </TooltipProvider>
+        <SubscriptionProvider>
+          <TooltipProvider>
+            <Toaster />
+            <Sonner />
+            <BrowserRouter>
+            <Routes>
+              <Route path="/" element={<Index />} />
+              <Route path="/leadp" element={<Landing />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/signup" element={<Signup />} />
+              <Route path="/onboarding" element={<Onboarding />} />
+              <Route path="/home" element={<Home />} />
+              <Route path="/diario" element={<Diario />} />
+              <Route path="/construcao-guiada" element={<ConstrucaoGuiada />} />
+              <Route path="/ferramentas" element={<Ferramentas />} />
+              <Route path="/suporte" element={<Suporte />} />
+              <Route path="/admin" element={<Admin />} />
+              <Route path="/admin/usuarios" element={<AdminUsuarios />} />
+              <Route path="/roda-da-vida" element={<RodaDaVida />} />
+              <Route path="/ferramentas/valores" element={<Valores />} />
+              <Route path="/ferramentas/eisenhower" element={<MatrizEisenhower />} />
+              <Route path="/ferramentas/crencas" element={<Crencas />} />
+              <Route path="/ferramentas/swot" element={<AnaliseSwot />} />
+              <Route path="/ferramentas/smart" element={<MetodoSmart />} />
+              <Route path="/ferramentas/metodo-vvd" element={<MetodoVvd />} />
+              <Route path="/ferramentas/autoavaliacao-360" element={<Autoavaliacao360 />} />
+              <Route path="/integracoes" element={<Integracoes />} />
+              <Route path="/cadastrar-empresa" element={<CadastrarEmpresa />} />
+              <Route path="/dashboard-empresa" element={<DashboardEmpresa />} />
+              <Route path="/gestao-pdis" element={<GestaoPDIs />} />
+              <Route path="/perfil" element={<Perfil />} />
+              <Route path="/faq" element={<FAQ />} />
+              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+            </BrowserRouter>
+          </TooltipProvider>
+        </SubscriptionProvider>
       </UnsavedChangesProvider>
     </LanguageProvider>
   </QueryClientProvider>
