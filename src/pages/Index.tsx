@@ -1,6 +1,14 @@
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
 import { 
   Rocket, 
   BookOpen, 
@@ -12,11 +20,14 @@ import {
   Sparkles,
   ArrowRight,
   Heart,
-  Lightbulb
+  Lightbulb,
+  User,
+  Building2
 } from "lucide-react";
 
 const Index = () => {
   const navigate = useNavigate();
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const journeySteps = [
     {
@@ -78,32 +89,14 @@ const Index = () => {
             <span className="font-bold text-sm sm:text-xl whitespace-nowrap">PDI</span>
             <span className="font-bold text-sm sm:text-xl hidden sm:inline whitespace-nowrap">- Carreira & Vida</span>
           </div>
-          <div className="flex items-center gap-1 sm:gap-2">
-            <Button 
-              variant="ghost" 
-              size="sm"
-              onClick={() => navigate("/login")}
-              className="text-muted-foreground hover:text-foreground text-xs sm:text-sm px-2 sm:px-3 h-8 sm:h-9"
-            >
-              Login
-            </Button>
-            <Button 
-              variant="outline"
-              size="sm"
-              onClick={() => navigate("/cadastrar-empresa")}
-              className="text-xs sm:text-sm px-2 sm:px-3 h-8 sm:h-9"
-            >
-              <span className="hidden sm:inline">Sou Empresa</span>
-              <span className="sm:hidden">Empresa</span>
-            </Button>
-            <Button 
-              size="sm"
-              onClick={() => navigate("/signup")}
-              className="bg-primary hover:bg-primary/90 text-xs sm:text-sm px-2 sm:px-3 h-8 sm:h-9"
-            >
-              Cadastrar
-            </Button>
-          </div>
+          <Button 
+            variant="ghost" 
+            size="sm"
+            onClick={() => navigate("/login")}
+            className="text-muted-foreground hover:text-foreground text-xs sm:text-sm px-2 sm:px-3 h-8 sm:h-9"
+          >
+            Login
+          </Button>
         </div>
       </header>
 
@@ -120,7 +113,7 @@ const Index = () => {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button 
               size="lg" 
-              onClick={() => navigate("/signup")}
+              onClick={() => setIsModalOpen(true)}
               className="text-lg px-8 py-6 bg-primary hover:bg-primary/90"
             >
               Começar minha jornada
@@ -232,7 +225,7 @@ const Index = () => {
           </p>
           <Button 
             size="lg" 
-            onClick={() => navigate("/signup")}
+            onClick={() => setIsModalOpen(true)}
             className="text-base sm:text-lg px-6 sm:px-10 py-5 sm:py-6 bg-primary hover:bg-primary/90 w-full sm:w-auto max-w-xs sm:max-w-none"
           >
             Criar meu PDI
@@ -247,6 +240,52 @@ const Index = () => {
           <p>© 2024 PDI - Carreira & Vida. Todos os direitos reservados.</p>
         </div>
       </footer>
+
+      {/* Registration Modal */}
+      <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-center text-xl">Como deseja se cadastrar?</DialogTitle>
+            <DialogDescription className="text-center">
+              Escolha a opção que melhor se aplica a você
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <Button
+              variant="outline"
+              className="h-auto py-6 flex flex-col items-center gap-3 hover:border-primary hover:bg-primary/5"
+              onClick={() => {
+                setIsModalOpen(false);
+                navigate("/signup");
+              }}
+            >
+              <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
+                <User className="h-6 w-6 text-primary" />
+              </div>
+              <div className="text-center">
+                <div className="font-semibold">Sou Pessoa Física</div>
+                <div className="text-sm text-muted-foreground">Quero criar meu PDI pessoal</div>
+              </div>
+            </Button>
+            <Button
+              variant="outline"
+              className="h-auto py-6 flex flex-col items-center gap-3 hover:border-primary hover:bg-primary/5"
+              onClick={() => {
+                setIsModalOpen(false);
+                navigate("/cadastrar-empresa");
+              }}
+            >
+              <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
+                <Building2 className="h-6 w-6 text-primary" />
+              </div>
+              <div className="text-center">
+                <div className="font-semibold">Sou Empresa</div>
+                <div className="text-sm text-muted-foreground">Quero cadastrar minha empresa</div>
+              </div>
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
