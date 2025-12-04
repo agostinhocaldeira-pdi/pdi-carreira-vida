@@ -748,7 +748,7 @@ const Perfil = () => {
                 {/* Plano Básico */}
                 <Card className="border-2 border-green-500 hover:border-green-600 transition-colors relative overflow-hidden">
                   <div className="absolute top-0 right-0 bg-green-500 text-white text-xs px-3 py-1 rounded-bl-lg font-medium animate-pulse">
-                    🎉 1 ano de acesso!
+                    🎉 Promoção de lançamento!
                   </div>
                   <CardHeader className="pb-3">
                     <div className="flex items-center gap-2">
@@ -756,7 +756,7 @@ const Perfil = () => {
                       <CardTitle className="text-lg">Básico</CardTitle>
                     </div>
                     <div className="text-2xl font-bold">
-                      R$ 29<span className="text-sm font-normal text-muted-foreground">/ano</span>
+                      R$ 14,90<span className="text-sm font-normal text-muted-foreground">/mês</span>
                     </div>
                   </CardHeader>
                   <CardContent className="space-y-2 text-sm">
@@ -856,7 +856,7 @@ const Perfil = () => {
 
               <div className="bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-800 rounded-lg p-3 text-center">
                 <p className="text-sm font-medium text-green-700 dark:text-green-300">
-                  🚀 Promoção de lançamento: acesso completo ao Plano Básico por 1 ano inteiro!
+                  🚀 Promoção de lançamento: acesso completo ao Plano Básico por apenas R$ 14,90/mês!
                 </p>
               </div>
             </CardContent>
