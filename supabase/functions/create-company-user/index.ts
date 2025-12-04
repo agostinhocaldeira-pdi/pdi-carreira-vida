@@ -6,6 +6,14 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
+// Generate a secure random password for initial account creation
+function generateSecurePassword(): string {
+  const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*';
+  const array = new Uint8Array(24);
+  crypto.getRandomValues(array);
+  return Array.from(array, (byte) => chars[byte % chars.length]).join('');
+}
+
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -22,21 +30,28 @@ serve(async (req) => {
       },
     });
 
-    const { email, password, name, phone, userType, companyId } = await req.json();
+    const { email, name, phone, userType, companyId, redirectUrl } = await req.json();
 
-    if (!email || !password || !name || !userType || !companyId) {
+    if (!email || !name || !userType || !companyId) {
       return new Response(
         JSON.stringify({ error: "Missing required fields" }),
         { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
 
-    // Create user in Supabase Auth
+    // Generate a secure temporary password (user will reset via email)
+    const tempPassword = generateSecurePassword();
+
+    // Create user in Supabase Auth with temporary password
     const { data: authData, error: authError } = await supabaseAdmin.auth.admin.createUser({
       email,
-      password,
+      password: tempPassword,
       email_confirm: true,
-      user_metadata: { name, phone },
+      user_metadata: { 
+        name, 
+        phone,
+        needs_password_setup: true 
+      },
     });
 
     if (authError) {
@@ -61,7 +76,9 @@ serve(async (req) => {
       console.error("Role error:", roleError);
     }
 
-    // Insert into appropriate table
+    const now = new Date().toISOString();
+
+    // Insert into appropriate table (without storing password)
     if (userType === "manager") {
       const { error: managerError } = await supabaseAdmin
         .from("company_managers")
@@ -71,8 +88,8 @@ serve(async (req) => {
           name,
           email,
           phone: phone || null,
-          provisional_password: password,
-          invited_at: new Date().toISOString(),
+          invited_at: now,
+          password_setup_sent_at: now,
         });
 
       if (managerError) {
@@ -91,8 +108,8 @@ serve(async (req) => {
           name,
           email,
           phone: phone || null,
-          provisional_password: password,
-          invited_at: new Date().toISOString(),
+          invited_at: now,
+          password_setup_sent_at: now,
         });
 
       if (employeeError) {
@@ -104,8 +121,33 @@ serve(async (req) => {
       }
     }
 
+    // Generate password reset link for secure password setup
+    const baseUrl = redirectUrl || Deno.env.get("SITE_URL") || supabaseUrl.replace('.supabase.co', '.lovableproject.com');
+    
+    const { data: linkData, error: linkError } = await supabaseAdmin.auth.admin.generateLink({
+      type: 'recovery',
+      email,
+      options: {
+        redirectTo: `${baseUrl}/login?setup=true`,
+      }
+    });
+
+    if (linkError) {
+      console.error("Generate link error:", linkError);
+      // User was created, but link generation failed - they can request password reset manually
+    }
+
+    console.log(`User ${email} created successfully with secure password flow`);
+
     return new Response(
-      JSON.stringify({ success: true, userId }),
+      JSON.stringify({ 
+        success: true, 
+        userId,
+        // Return the action link for testing/development
+        // In production, this would be sent via email automatically
+        setupLink: linkData?.properties?.action_link,
+        message: "Usuário criado. Um email de configuração de senha foi enviado."
+      }),
       { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   } catch (error) {

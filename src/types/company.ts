@@ -31,10 +31,10 @@ export interface CompanyManager {
   name: string;
   email: string;
   phone?: string;
-  provisional_password?: string;
   is_active: boolean;
   invited_at: string;
   accepted_at?: string;
+  password_setup_sent_at?: string;
   created_at: string;
   updated_at: string;
 }
@@ -46,11 +46,12 @@ export interface CompanyEmployee {
   name: string;
   email: string;
   phone?: string;
-  provisional_password?: string;
   is_active: boolean;
   is_subscription_exempt: boolean;
   invited_at: string;
   accepted_at?: string;
+  password_setup_sent_at?: string;
+  manager_id?: string;
   created_at: string;
   updated_at: string;
 }
@@ -128,12 +129,3 @@ export const validateCNPJ = (cnpj: string): boolean => {
   return result === parseInt(verifiers.charAt(1));
 };
 
-// Gerar senha provisória
-export const generateProvisionalPassword = (): string => {
-  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789';
-  let password = '';
-  for (let i = 0; i < 8; i++) {
-    password += chars.charAt(Math.floor(Math.random() * chars.length));
-  }
-  return password;
-};

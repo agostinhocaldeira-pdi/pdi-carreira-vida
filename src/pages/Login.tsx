@@ -122,13 +122,15 @@ const Login = () => {
     if (userRole === 'gestor') {
       const { data: managerData } = await supabase
         .from('company_managers')
-        .select('id, company_id, name, accepted_at, provisional_password')
+        .select('id, company_id, name, accepted_at')
         .eq('user_id', userId)
         .single();
 
       if (managerData) {
-        // Verificar se é primeiro acesso
-        if (!managerData.accepted_at && managerData.provisional_password) {
+        // Verificar se é primeiro acesso via user_metadata
+        const needsPasswordSetup = user.user_metadata?.needs_password_setup === true;
+        
+        if (!managerData.accepted_at && needsPasswordSetup) {
           setPendingLogin({
             userId,
             userType: "manager",
@@ -159,13 +161,15 @@ const Login = () => {
     // 4. Verificar se é funcionário
     const { data: employeeData } = await supabase
       .from('company_employees')
-      .select('id, company_id, name, accepted_at, provisional_password')
+      .select('id, company_id, name, accepted_at')
       .eq('user_id', userId)
       .maybeSingle();
 
     if (employeeData) {
-      // Verificar se é primeiro acesso
-      if (!employeeData.accepted_at && employeeData.provisional_password) {
+      // Verificar se é primeiro acesso via user_metadata
+      const needsPasswordSetup = user.user_metadata?.needs_password_setup === true;
+      
+      if (!employeeData.accepted_at && needsPasswordSetup) {
         setPendingLogin({
           userId,
           userType: "employee",
@@ -254,16 +258,20 @@ const Login = () => {
         return;
       }
 
-      // Atualizar accepted_at no banco
+      // Atualizar accepted_at no banco e limpar flag de setup
       const tableName = pendingLogin.userType === "manager" ? "company_managers" : "company_employees";
       await supabase
         .from(tableName)
         .update({ 
-          accepted_at: new Date().toISOString(),
-          provisional_password: null 
+          accepted_at: new Date().toISOString()
         })
         .eq("user_id", pendingLogin.userId)
         .eq("company_id", pendingLogin.companyId);
+
+      // Limpar flag needs_password_setup do user metadata
+      await supabase.auth.updateUser({
+        data: { needs_password_setup: false }
+      });
 
       // Criar sessão
       localStorage.setItem("user", JSON.stringify({
