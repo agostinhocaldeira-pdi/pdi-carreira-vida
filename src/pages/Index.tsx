@@ -85,11 +85,10 @@ const Index = () => {
               variant="outline" 
               size="sm"
               onClick={() => navigate("/cadastrar-empresa")}
-              className="gap-1 text-xs sm:text-sm px-2 sm:px-3 h-8 sm:h-9"
+              className="gap-1.5 text-xs sm:text-sm px-2 sm:px-3 h-8 sm:h-9"
             >
-              <Building2 className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-              <span className="hidden md:inline">Cadastrar minha empresa</span>
-              <span className="hidden sm:inline md:hidden">Empresa</span>
+              <Users className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+              <span className="hidden sm:inline">Para Empresas</span>
             </Button>
             <Button 
               variant="ghost" 
