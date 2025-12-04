@@ -26,3 +26,9 @@ verify_jwt = false
 
 [functions.customer-portal]
 verify_jwt = false
+
+[functions.send-notification-email]
+verify_jwt = false
+
+[functions.check-diary-reminders]
+verify_jwt = false
