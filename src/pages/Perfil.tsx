@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
-import { ArrowLeft, User, Building2, Eye, EyeOff, Save, Crown, Sparkles, Star, Database } from "lucide-react";
+import { ArrowLeft, User, Building2, Eye, EyeOff, Save, Crown, Sparkles, Star, Database, Check } from "lucide-react";
 import { NotificationPreferences } from "@/components/notifications/NotificationPreferences";
 import { ExportPDFButton } from "@/components/reports/ExportPDFButton";
 import { LGPDDataSection } from "@/components/lgpd/LGPDDataSection";
@@ -708,10 +708,37 @@ const Perfil = () => {
                     </div>
                     <div className="text-2xl font-bold">R$ 0<span className="text-sm font-normal text-muted-foreground">/mês</span></div>
                   </CardHeader>
-                  <CardContent className="space-y-2 text-sm text-muted-foreground">
-                    <p>• Acesso básico às ferramentas</p>
-                    <p>• Diário limitado</p>
-                    <p>• 1 objetivo por vez</p>
+                  <CardContent className="space-y-2 text-sm">
+                    <div className="space-y-1.5 text-muted-foreground">
+                      <div className="flex items-start gap-2">
+                        <Check className="h-4 w-4 mt-0.5 flex-shrink-0" />
+                        <span>Acesso por 30 dias</span>
+                      </div>
+                      <div className="flex items-start gap-2">
+                        <Check className="h-4 w-4 mt-0.5 flex-shrink-0" />
+                        <span>Dashboard "Seu Progresso"</span>
+                      </div>
+                      <div className="flex items-start gap-2">
+                        <Check className="h-4 w-4 mt-0.5 flex-shrink-0" />
+                        <span>Gerar 1 insight</span>
+                      </div>
+                      <div className="flex items-start gap-2">
+                        <Check className="h-4 w-4 mt-0.5 flex-shrink-0" />
+                        <span>Diário completo</span>
+                      </div>
+                      <div className="flex items-start gap-2">
+                        <Check className="h-4 w-4 mt-0.5 flex-shrink-0" />
+                        <span>1 objetivo, 1 meta, 5 ações</span>
+                      </div>
+                      <div className="flex items-start gap-2">
+                        <Check className="h-4 w-4 mt-0.5 flex-shrink-0" />
+                        <span className="text-xs">Ferramentas ilimitadas: Roda da Vida, VVD, Valores, Eisenhower</span>
+                      </div>
+                      <div className="flex items-start gap-2">
+                        <Check className="h-4 w-4 mt-0.5 flex-shrink-0" />
+                        <span className="text-xs">1 uso: SWOT, SMART, Autoavaliação 360º, Crenças</span>
+                      </div>
+                    </div>
                     <Button variant="outline" className="w-full mt-4" disabled>
                       Plano Atual
                     </Button>
@@ -727,10 +754,37 @@ const Perfil = () => {
                     </div>
                     <div className="text-2xl font-bold">R$ 29<span className="text-sm font-normal text-muted-foreground">/mês</span></div>
                   </CardHeader>
-                  <CardContent className="space-y-2 text-sm text-muted-foreground">
-                    <p>• Todas as ferramentas</p>
-                    <p>• Diário ilimitado</p>
-                    <p>• 3 objetivos simultâneos</p>
+                  <CardContent className="space-y-2 text-sm">
+                    <div className="space-y-1.5 text-muted-foreground">
+                      <div className="flex items-start gap-2">
+                        <Check className="h-4 w-4 mt-0.5 flex-shrink-0" />
+                        <span>Dashboard "Seu Progresso"</span>
+                      </div>
+                      <div className="flex items-start gap-2">
+                        <Check className="h-4 w-4 mt-0.5 flex-shrink-0" />
+                        <span>1 insight por mês</span>
+                      </div>
+                      <div className="flex items-start gap-2">
+                        <Check className="h-4 w-4 mt-0.5 flex-shrink-0" />
+                        <span>Diário completo</span>
+                      </div>
+                      <div className="flex items-start gap-2">
+                        <Check className="h-4 w-4 mt-0.5 flex-shrink-0" />
+                        <span>Plano de Vida ilimitado</span>
+                      </div>
+                      <div className="flex items-start gap-2">
+                        <Check className="h-4 w-4 mt-0.5 flex-shrink-0" />
+                        <span>Todas as ferramentas ilimitadas</span>
+                      </div>
+                      <div className="flex items-start gap-2">
+                        <Check className="h-4 w-4 mt-0.5 flex-shrink-0" />
+                        <span>Integração Google Calendar</span>
+                      </div>
+                      <div className="flex items-start gap-2">
+                        <Check className="h-4 w-4 mt-0.5 flex-shrink-0" />
+                        <span>Construção Guiada</span>
+                      </div>
+                    </div>
                     <Button className="w-full mt-4" disabled>
                       Em breve
                     </Button>
@@ -749,10 +803,45 @@ const Perfil = () => {
                     </div>
                     <div className="text-2xl font-bold">R$ 49<span className="text-sm font-normal text-muted-foreground">/mês</span></div>
                   </CardHeader>
-                  <CardContent className="space-y-2 text-sm text-muted-foreground">
-                    <p>• Tudo do Básico</p>
-                    <p>• IA ilimitada</p>
-                    <p>• Suporte prioritário</p>
+                  <CardContent className="space-y-2 text-sm">
+                    <div className="space-y-1.5 text-muted-foreground">
+                      <div className="flex items-start gap-2">
+                        <Check className="h-4 w-4 mt-0.5 flex-shrink-0" />
+                        <span>Dashboard "Seu Progresso"</span>
+                      </div>
+                      <div className="flex items-start gap-2">
+                        <Check className="h-4 w-4 mt-0.5 flex-shrink-0" />
+                        <span>Insights ilimitados</span>
+                      </div>
+                      <div className="flex items-start gap-2">
+                        <Check className="h-4 w-4 mt-0.5 flex-shrink-0" />
+                        <span>Diário completo</span>
+                      </div>
+                      <div className="flex items-start gap-2">
+                        <Check className="h-4 w-4 mt-0.5 flex-shrink-0" />
+                        <span>Plano de Vida ilimitado</span>
+                      </div>
+                      <div className="flex items-start gap-2">
+                        <Check className="h-4 w-4 mt-0.5 flex-shrink-0" />
+                        <span>Todas as ferramentas ilimitadas</span>
+                      </div>
+                      <div className="flex items-start gap-2">
+                        <Check className="h-4 w-4 mt-0.5 flex-shrink-0" />
+                        <span>Integração Google Calendar</span>
+                      </div>
+                      <div className="flex items-start gap-2">
+                        <Check className="h-4 w-4 mt-0.5 flex-shrink-0" />
+                        <span>Notificações e-mail e WhatsApp</span>
+                      </div>
+                      <div className="flex items-start gap-2">
+                        <Check className="h-4 w-4 mt-0.5 flex-shrink-0" />
+                        <span>Construção Guiada</span>
+                      </div>
+                      <div className="flex items-start gap-2">
+                        <Check className="h-4 w-4 mt-0.5 flex-shrink-0" />
+                        <span>Gerar relatórios PDF</span>
+                      </div>
+                    </div>
                     <Button className="w-full mt-4 bg-amber-500 hover:bg-amber-600" disabled>
                       Em breve
                     </Button>
