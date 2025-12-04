@@ -204,7 +204,7 @@ export const TrialExpiredModal = ({ open, onOpenChange }: TrialExpiredModalProps
 
           <div className="bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-800 rounded-lg p-3 text-center mt-4">
             <p className="text-sm font-medium text-green-700 dark:text-green-300">
-              🚀 Promoção de lançamento: acesso completo ao Plano Básico por apenas R$ 14,90/mês!
+              🚀 Promoção de lançamento: acesso do plano completo liberado no Plano Básico por apenas R$ 14,90/mês!
             </p>
           </div>
         </div>
