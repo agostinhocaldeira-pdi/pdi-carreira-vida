@@ -609,7 +609,7 @@ const Perfil = () => {
     <div className="min-h-screen bg-gradient-subtle p-4 sm:p-6">
       <div className="max-w-2xl mx-auto space-y-6">
         {/* Header */}
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col gap-4">
           <div className="flex items-center gap-4">
             <Button variant="ghost" size="icon" onClick={() => navigate("/home")}>
               <ArrowLeft className="h-5 w-5" />
@@ -619,7 +619,7 @@ const Perfil = () => {
               <p className="text-muted-foreground text-sm">Gerencie suas informações pessoais</p>
             </div>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             <Button 
               variant="outline" 
               size="sm" 
