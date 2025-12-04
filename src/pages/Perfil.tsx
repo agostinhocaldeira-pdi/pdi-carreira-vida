@@ -777,7 +777,7 @@ const Perfil = () => {
             <CardContent>
               <div className="grid gap-4 sm:grid-cols-3">
                 {/* Plano Gratuito */}
-                <Card className="border-2 border-muted hover:border-primary/50 transition-colors">
+                <Card className={`border-2 transition-colors ${subscription.plan === 'basico' ? 'border-muted opacity-60' : 'border-muted hover:border-primary/50'}`}>
                   <CardHeader className="pb-3">
                     <div className="flex items-center gap-2">
                       <Star className="h-5 w-5 text-muted-foreground" />
