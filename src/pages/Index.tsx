@@ -11,10 +11,8 @@ import {
   TrendingUp,
   Sparkles,
   ArrowRight,
-  Users,
   Heart,
-  Lightbulb,
-  Building2
+  Lightbulb
 } from "lucide-react";
 
 const Index = () => {
@@ -80,16 +78,7 @@ const Index = () => {
             <span className="font-bold text-sm sm:text-xl truncate">PDI</span>
             <span className="font-bold text-sm sm:text-xl hidden sm:inline">- Carreira & Vida</span>
           </div>
-          <div className="flex items-center gap-1.5 sm:gap-3 shrink-0">
-            <Button 
-              variant="outline" 
-              size="sm"
-              onClick={() => navigate("/cadastrar-empresa")}
-              className="gap-1.5 text-xs sm:text-sm px-2 sm:px-3 h-8 sm:h-9"
-            >
-              <Users className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-              <span className="hidden sm:inline">Para Empresas</span>
-            </Button>
+          <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
             <Button 
               variant="ghost" 
               size="sm"
@@ -99,12 +88,20 @@ const Index = () => {
               Login
             </Button>
             <Button 
+              variant="outline"
+              size="sm"
+              onClick={() => navigate("/cadastrar-empresa")}
+              className="text-xs sm:text-sm px-2 sm:px-3 h-8 sm:h-9"
+            >
+              <span className="hidden sm:inline">Sou Empresa</span>
+              <span className="sm:hidden">Empresa</span>
+            </Button>
+            <Button 
               size="sm"
               onClick={() => navigate("/signup")}
               className="bg-primary hover:bg-primary/90 text-xs sm:text-sm px-2 sm:px-3 h-8 sm:h-9"
             >
-              <span className="hidden sm:inline">Me cadastrar</span>
-              <span className="sm:hidden">Cadastrar</span>
+              Cadastrar
             </Button>
           </div>
         </div>
