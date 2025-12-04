@@ -74,33 +74,38 @@ const Index = () => {
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/30">
       {/* Header */}
       <header className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-border/50">
-        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <Sparkles className="h-6 w-6 text-primary" />
-            <span className="font-bold text-xl">PDI - Carreira & Vida</span>
+        <div className="container mx-auto px-3 sm:px-4 py-3 sm:py-4 flex items-center justify-between gap-2">
+          <div className="flex items-center gap-1.5 sm:gap-2 min-w-0 shrink-0">
+            <Sparkles className="h-5 w-5 sm:h-6 sm:w-6 text-primary shrink-0" />
+            <span className="font-bold text-sm sm:text-xl truncate">PDI</span>
+            <span className="font-bold text-sm sm:text-xl hidden sm:inline">- Carreira & Vida</span>
           </div>
-          <div className="flex items-center gap-2 sm:gap-3">
+          <div className="flex items-center gap-1.5 sm:gap-3 shrink-0">
             <Button 
               variant="outline" 
+              size="sm"
               onClick={() => navigate("/cadastrar-empresa")}
-              className="gap-1.5 text-xs sm:text-sm"
+              className="gap-1 text-xs sm:text-sm px-2 sm:px-3 h-8 sm:h-9"
             >
-              <Building2 className="h-4 w-4" />
-              <span className="hidden sm:inline">Cadastrar minha empresa</span>
-              <span className="sm:hidden">Empresa</span>
+              <Building2 className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+              <span className="hidden md:inline">Cadastrar minha empresa</span>
+              <span className="hidden sm:inline md:hidden">Empresa</span>
             </Button>
             <Button 
               variant="ghost" 
+              size="sm"
               onClick={() => navigate("/login")}
-              className="text-muted-foreground hover:text-foreground"
+              className="text-muted-foreground hover:text-foreground text-xs sm:text-sm px-2 sm:px-3 h-8 sm:h-9"
             >
               Login
             </Button>
             <Button 
+              size="sm"
               onClick={() => navigate("/signup")}
-              className="bg-primary hover:bg-primary/90"
+              className="bg-primary hover:bg-primary/90 text-xs sm:text-sm px-2 sm:px-3 h-8 sm:h-9"
             >
-              Me cadastrar
+              <span className="hidden sm:inline">Me cadastrar</span>
+              <span className="sm:hidden">Cadastrar</span>
             </Button>
           </div>
         </div>
