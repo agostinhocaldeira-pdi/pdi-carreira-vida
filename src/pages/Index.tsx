@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { ChevronDown, ChevronUp } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -44,6 +45,7 @@ import { Badge } from "@/components/ui/badge";
 const Index = () => {
   const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isJourneyExpanded, setIsJourneyExpanded] = useState(true);
 
   const journeySteps = [
     {
@@ -257,37 +259,52 @@ const Index = () => {
       {/* Journey Steps */}
       <section className="py-12 sm:py-16 px-4">
         <div className="container mx-auto max-w-6xl">
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center mb-3 sm:mb-4">
-            Uma jornada pensada para você
-          </h2>
-          <p className="text-muted-foreground text-center mb-8 sm:mb-12 max-w-2xl mx-auto text-sm sm:text-base">
-            Não é sobre fazer mais. É sobre fazer o que importa, com clareza e consistência.
-          </p>
+          <button 
+            onClick={() => setIsJourneyExpanded(!isJourneyExpanded)}
+            className="w-full flex items-center justify-center gap-2 mb-3 sm:mb-4 group"
+          >
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center group-hover:text-primary transition-colors">
+              Minha Jornada
+            </h2>
+            {isJourneyExpanded ? (
+              <ChevronUp className="h-6 w-6 text-muted-foreground group-hover:text-primary transition-colors" />
+            ) : (
+              <ChevronDown className="h-6 w-6 text-muted-foreground group-hover:text-primary transition-colors" />
+            )}
+          </button>
           
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-            {journeySteps.map((step, index) => (
-              <Card 
-                key={index} 
-                className="group hover:shadow-lg transition-all duration-300 border-border/50 bg-card/50 backdrop-blur-sm overflow-hidden"
-              >
-                <CardContent className="p-4 sm:p-6">
-                  <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-gradient-to-br ${step.color} flex items-center justify-center mb-3 sm:mb-4 group-hover:scale-110 transition-transform`}>
-                    <step.icon className="h-5 w-5 sm:h-6 sm:w-6 text-white" />
-                  </div>
-                  <div className="flex items-center gap-2 mb-2">
-                    <span className="text-xs font-semibold text-muted-foreground bg-muted px-2 py-1 rounded-full">
-                      Etapa {index + 1}
-                    </span>
-                  </div>
-                  <h3 className="text-lg sm:text-xl font-semibold mb-2">{step.title}</h3>
-                  <p className="text-muted-foreground text-xs sm:text-sm mb-3">{step.description}</p>
-                  <p className="text-xs text-primary/80 italic border-l-2 border-primary/30 pl-3">
-                    {step.insight}
-                  </p>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+          {isJourneyExpanded && (
+            <>
+              <p className="text-muted-foreground text-center mb-8 sm:mb-12 max-w-2xl mx-auto text-sm sm:text-base">
+                Não é sobre fazer mais. É sobre fazer o que importa, com clareza e consistência.
+              </p>
+              
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+                {journeySteps.map((step, index) => (
+                  <Card 
+                    key={index} 
+                    className="group hover:shadow-lg transition-all duration-300 border-border/50 bg-card/50 backdrop-blur-sm overflow-hidden"
+                  >
+                    <CardContent className="p-4 sm:p-6">
+                      <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-gradient-to-br ${step.color} flex items-center justify-center mb-3 sm:mb-4 group-hover:scale-110 transition-transform`}>
+                        <step.icon className="h-5 w-5 sm:h-6 sm:w-6 text-white" />
+                      </div>
+                      <div className="flex items-center gap-2 mb-2">
+                        <span className="text-xs font-semibold text-muted-foreground bg-muted px-2 py-1 rounded-full">
+                          Etapa {index + 1}
+                        </span>
+                      </div>
+                      <h3 className="text-lg sm:text-xl font-semibold mb-2">{step.title}</h3>
+                      <p className="text-muted-foreground text-xs sm:text-sm mb-3">{step.description}</p>
+                      <p className="text-xs text-primary/80 italic border-l-2 border-primary/30 pl-3">
+                        {step.insight}
+                      </p>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </>
+          )}
         </div>
       </section>
 
