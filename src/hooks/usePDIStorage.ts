@@ -1,8 +1,8 @@
 /**
  * usePDIStorage - Unified storage hook for PDI data
  * 
- * Automatically uses Supabase for authenticated users,
- * falls back to localStorage for unauthenticated users.
+ * Uses Supabase for all storage operations, checking authentication
+ * on each call to prevent race conditions.
  */
 
 import { useState, useEffect, useCallback } from 'react';
@@ -20,17 +20,24 @@ import type {
   EisenhowerTasks,
 } from '@/types/pdi';
 
+// Helper to check auth status on each call (prevents race conditions)
+async function checkAuthStatus(): Promise<{ isAuthenticated: boolean; userId: string | null }> {
+  const { data: { user } } = await supabase.auth.getUser();
+  return { isAuthenticated: !!user, userId: user?.id || null };
+}
+
 export function usePDIStorage() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
-  // Check authentication status
+  // Check authentication status on mount
   useEffect(() => {
     const checkAuth = async () => {
       const { data: { user } } = await supabase.auth.getUser();
       setIsAuthenticated(!!user);
       setUserId(user?.id || null);
+      setLoading(false);
     };
 
     checkAuth();
@@ -38,6 +45,7 @@ export function usePDIStorage() {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       setIsAuthenticated(!!session?.user);
       setUserId(session?.user?.id || null);
+      setLoading(false);
     });
 
     return () => subscription.unsubscribe();
@@ -47,195 +55,217 @@ export function usePDIStorage() {
   // VVD
   // ============================================
   const getVvd = useCallback(async (): Promise<string> => {
-    if (isAuthenticated) {
+    const { isAuthenticated: isAuth } = await checkAuthStatus();
+    if (isAuth) {
       const data = await supabaseStorageService.getVvd();
       return data?.vvd_text || '';
     }
     return storageService.getVvd();
-  }, [isAuthenticated]);
+  }, []);
 
   const saveVvd = useCallback(async (vvd: string): Promise<void> => {
-    if (isAuthenticated) {
+    const { isAuthenticated: isAuth } = await checkAuthStatus();
+    if (isAuth) {
       await supabaseStorageService.saveVvd({ vvd_text: vvd });
     } else {
       storageService.saveVvd(vvd);
     }
-  }, [isAuthenticated]);
+  }, []);
 
   // ============================================
   // VALORES
   // ============================================
   const getValores = useCallback(async (): Promise<string[]> => {
-    if (isAuthenticated) {
+    const { isAuthenticated: isAuth } = await checkAuthStatus();
+    if (isAuth) {
       return await supabaseStorageService.getValores();
     }
     return storageService.getMeusValores();
-  }, [isAuthenticated]);
+  }, []);
 
   const saveValores = useCallback(async (valores: string[]): Promise<void> => {
-    if (isAuthenticated) {
+    const { isAuthenticated: isAuth } = await checkAuthStatus();
+    if (isAuth) {
       await supabaseStorageService.saveValores(valores);
     } else {
       storageService.saveMeusValores(valores);
     }
-  }, [isAuthenticated]);
+  }, []);
 
   // ============================================
   // ÁREAS DA VIDA
   // ============================================
   const getAreasVida = useCallback(async (): Promise<AreaVida[]> => {
-    if (isAuthenticated) {
+    const { isAuthenticated: isAuth } = await checkAuthStatus();
+    if (isAuth) {
       return await supabaseStorageService.getAreasVida();
     }
     return storageService.getAreasVida();
-  }, [isAuthenticated]);
+  }, []);
 
   const saveAreasVida = useCallback(async (areas: AreaVida[]): Promise<void> => {
-    if (isAuthenticated) {
+    const { isAuthenticated: isAuth } = await checkAuthStatus();
+    if (isAuth) {
       await supabaseStorageService.saveAreasVida(areas);
     } else {
       storageService.saveAreasVida(areas);
     }
-  }, [isAuthenticated]);
+  }, []);
 
   // ============================================
   // OBJETIVOS
   // ============================================
   const getObjetivos = useCallback(async (): Promise<Objetivo[]> => {
-    if (isAuthenticated) {
+    const { isAuthenticated: isAuth } = await checkAuthStatus();
+    if (isAuth) {
       return await supabaseStorageService.getObjetivos();
     }
     return storageService.getObjetivos();
-  }, [isAuthenticated]);
+  }, []);
 
   const saveObjetivos = useCallback(async (objetivos: Objetivo[]): Promise<void> => {
-    if (isAuthenticated) {
+    const { isAuthenticated: isAuth } = await checkAuthStatus();
+    if (isAuth) {
       await supabaseStorageService.saveObjetivos(objetivos);
     } else {
       storageService.saveObjetivos(objetivos);
     }
-  }, [isAuthenticated]);
+  }, []);
 
   // ============================================
   // METAS
   // ============================================
   const getMetas = useCallback(async (): Promise<Meta[]> => {
-    if (isAuthenticated) {
+    const { isAuthenticated: isAuth } = await checkAuthStatus();
+    if (isAuth) {
       return await supabaseStorageService.getMetas();
     }
     return storageService.getMetas();
-  }, [isAuthenticated]);
+  }, []);
 
   const saveMetas = useCallback(async (metas: Meta[]): Promise<void> => {
-    if (isAuthenticated) {
+    const { isAuthenticated: isAuth } = await checkAuthStatus();
+    if (isAuth) {
       await supabaseStorageService.saveMetas(metas);
     } else {
       storageService.saveMetas(metas);
     }
-  }, [isAuthenticated]);
+  }, []);
 
   // ============================================
   // DIÁRIO
   // ============================================
   const getDiario = useCallback(async (): Promise<DiarioEntry[]> => {
-    if (isAuthenticated) {
+    const { isAuthenticated: isAuth } = await checkAuthStatus();
+    if (isAuth) {
       return await supabaseStorageService.getDiario();
     }
     return storageService.getDiario();
-  }, [isAuthenticated]);
+  }, []);
 
   const getDiarioByDate = useCallback(async (date: string): Promise<DiarioEntry | null> => {
-    if (isAuthenticated) {
+    const { isAuthenticated: isAuth } = await checkAuthStatus();
+    if (isAuth) {
       return await supabaseStorageService.getDiarioByDate(date);
     }
     return storageService.getDiarioByDate(date) || null;
-  }, [isAuthenticated]);
+  }, []);
 
   const saveDiarioEntry = useCallback(async (entry: DiarioEntry): Promise<void> => {
-    if (isAuthenticated) {
+    const { isAuthenticated: isAuth } = await checkAuthStatus();
+    if (isAuth) {
       await supabaseStorageService.saveDiarioEntry(entry);
     } else {
       storageService.saveDiarioEntry(entry);
     }
-  }, [isAuthenticated]);
+  }, []);
 
   // ============================================
   // HABILIDADES (Strengths/Weaknesses)
   // ============================================
   const getHabilidades = useCallback(async (): Promise<Habilidade[]> => {
-    if (isAuthenticated) {
+    const { isAuthenticated: isAuth } = await checkAuthStatus();
+    if (isAuth) {
       return await supabaseStorageService.getHabilidades();
     }
     return storageService.getHabilidades();
-  }, [isAuthenticated]);
+  }, []);
 
   const saveHabilidades = useCallback(async (habilidades: Habilidade[]): Promise<void> => {
-    if (isAuthenticated) {
+    const { isAuthenticated: isAuth } = await checkAuthStatus();
+    if (isAuth) {
       await supabaseStorageService.saveHabilidades(habilidades);
     } else {
       storageService.saveHabilidades(habilidades);
     }
-  }, [isAuthenticated]);
+  }, []);
 
   // ============================================
   // SWOT
   // ============================================
   const getSwotAnalysis = useCallback(async (): Promise<SwotAnalysis | null> => {
-    if (isAuthenticated) {
+    const { isAuthenticated: isAuth } = await checkAuthStatus();
+    if (isAuth) {
       return await supabaseStorageService.getSwotAnalysis();
     }
     return storageService.getSwotAnalysis();
-  }, [isAuthenticated]);
+  }, []);
 
   const saveSwotAnalysis = useCallback(async (swot: SwotAnalysis): Promise<void> => {
-    if (isAuthenticated) {
+    const { isAuthenticated: isAuth } = await checkAuthStatus();
+    if (isAuth) {
       await supabaseStorageService.saveSwotAnalysis(swot);
     } else {
       storageService.saveSwotAnalysis(swot);
     }
-  }, [isAuthenticated]);
+  }, []);
 
   // ============================================
   // CRENÇAS
   // ============================================
   const getCrencas = useCallback(async (): Promise<CrencaTrabalho[]> => {
-    if (isAuthenticated) {
+    const { isAuthenticated: isAuth } = await checkAuthStatus();
+    if (isAuth) {
       return await supabaseStorageService.getCrencas();
     }
     return storageService.getCrencas();
-  }, [isAuthenticated]);
+  }, []);
 
   const saveCrencas = useCallback(async (crencas: CrencaTrabalho[]): Promise<void> => {
-    if (isAuthenticated) {
+    const { isAuthenticated: isAuth } = await checkAuthStatus();
+    if (isAuth) {
       await supabaseStorageService.saveCrencas(crencas);
     } else {
       storageService.saveCrencas(crencas);
     }
-  }, [isAuthenticated]);
+  }, []);
 
   // ============================================
   // EISENHOWER
   // ============================================
   const getEisenhowerTasks = useCallback(async (): Promise<EisenhowerTasks> => {
-    if (isAuthenticated) {
+    const { isAuthenticated: isAuth } = await checkAuthStatus();
+    if (isAuth) {
       return await supabaseStorageService.getEisenhowerTasks();
     }
     return storageService.getEisenhowerTasks();
-  }, [isAuthenticated]);
+  }, []);
 
   const saveEisenhowerTasks = useCallback(async (tasks: EisenhowerTasks): Promise<void> => {
-    if (isAuthenticated) {
+    const { isAuthenticated: isAuth } = await checkAuthStatus();
+    if (isAuth) {
       await supabaseStorageService.saveEisenhowerTasks(tasks);
     } else {
       storageService.saveEisenhowerTasks(tasks);
     }
-  }, [isAuthenticated]);
+  }, []);
 
   // ============================================
   // INSIGHTS
   // ============================================
   const getUserInsight = useCallback(async (): Promise<{ insight: string; date: string } | null> => {
-    if (isAuthenticated) {
+    const { isAuthenticated: isAuth } = await checkAuthStatus();
+    if (isAuth) {
       const data = await supabaseStorageService.getUserInsight();
       if (data) {
         return { insight: data.insight_text, date: data.generated_at };
@@ -245,35 +275,38 @@ export function usePDIStorage() {
     const insight = storageService.getUserInsight();
     const date = storageService.getLastInsightDate();
     return insight ? { insight, date } : null;
-  }, [isAuthenticated]);
+  }, []);
 
   const saveUserInsight = useCallback(async (insight: string): Promise<void> => {
-    if (isAuthenticated) {
+    const { isAuthenticated: isAuth } = await checkAuthStatus();
+    if (isAuth) {
       await supabaseStorageService.saveUserInsight(insight);
     } else {
       storageService.saveUserInsight(insight);
       storageService.saveLastInsightDate(new Date().toISOString());
     }
-  }, [isAuthenticated]);
+  }, []);
 
   // ============================================
   // SKILLS (Competências)
   // ============================================
   const getSkills = useCallback(async (): Promise<string[]> => {
-    if (isAuthenticated) {
+    const { isAuthenticated: isAuth } = await checkAuthStatus();
+    if (isAuth) {
       return await supabaseStorageService.getSkills();
     }
     // For localStorage, skills are stored differently - extract from habilidades
     const habs = storageService.getHabilidades();
     return habs.filter(h => h.tipo === 'forte').map(h => h.texto);
-  }, [isAuthenticated]);
+  }, []);
 
   const saveSkills = useCallback(async (skills: string[]): Promise<void> => {
-    if (isAuthenticated) {
+    const { isAuthenticated: isAuth } = await checkAuthStatus();
+    if (isAuth) {
       await supabaseStorageService.saveSkills(skills);
     }
     // localStorage doesn't have separate skills storage
-  }, [isAuthenticated]);
+  }, []);
 
   return {
     isAuthenticated,
