@@ -263,19 +263,15 @@ const PlanoDeVida = ({ onTabChange, onOpenChange, forcedTab, forcedOpen }: Plano
           if (localInsight) setInsight(localInsight);
         }
 
-        // Verificar admin
-        const user = localStorage.getItem("user");
-        if (user) {
-          const userData = JSON.parse(user);
-          const savedAdmins = localStorage.getItem("administrators");
-          if (savedAdmins) {
-            const administrators = JSON.parse(savedAdmins);
-            const userIsAdmin = administrators.some(
-              (admin: { email: string }) => admin.email === userData.email
-            );
-            setIsAdmin(userIsAdmin);
-            if (userIsAdmin) setCanGenerateInsight(true);
-          }
+        // Verificar admin via server-side RPC (secure)
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session?.user?.id) {
+          const { data: isAdminResult } = await supabase.rpc('has_role', {
+            _user_id: session.user.id,
+            _role: 'admin'
+          });
+          setIsAdmin(!!isAdminResult);
+          if (isAdminResult) setCanGenerateInsight(true);
         }
       } catch (error) {
         console.error("Error loading data:", error);
