@@ -56,20 +56,28 @@ const ProgressSection = () => {
     // Evento customizado para sincronizar na mesma aba
     window.addEventListener("insightUpdated", syncInsight);
 
-    const currentUserEmail = localStorage.getItem("userEmail");
-    const savedAdmins = JSON.parse(localStorage.getItem("administrators") || "[]");
-    const userIsAdmin = savedAdmins.includes(currentUserEmail);
-    setIsAdmin(userIsAdmin);
-
-    if (!userIsAdmin) {
-      const lastInsightDate = localStorage.getItem("lastInsightDate");
-      if (lastInsightDate) {
-        const lastDate = new Date(lastInsightDate);
-        const now = new Date();
-        const diffInDays = Math.floor((now.getTime() - lastDate.getTime()) / (1000 * 60 * 60 * 24));
-        setCanGenerateInsight(diffInDays >= 30);
+    // Check admin status via server-side RPC (secure)
+    const checkAdminStatus = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session?.user?.id) {
+        const { data: isAdminResult } = await supabase.rpc('has_role', {
+          _user_id: session.user.id,
+          _role: 'admin'
+        });
+        setIsAdmin(!!isAdminResult);
+        
+        if (!isAdminResult) {
+          const lastInsightDate = localStorage.getItem("lastInsightDate");
+          if (lastInsightDate) {
+            const lastDate = new Date(lastInsightDate);
+            const now = new Date();
+            const diffInDays = Math.floor((now.getTime() - lastDate.getTime()) / (1000 * 60 * 60 * 24));
+            setCanGenerateInsight(diffInDays >= 30);
+          }
+        }
       }
-    }
+    };
+    checkAdminStatus();
 
     return () => {
       window.removeEventListener("storage", syncInsight);
