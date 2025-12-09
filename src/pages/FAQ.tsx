@@ -127,6 +127,51 @@ export const faqItems = [
     ]
   },
   {
+    category: "Gamificação e Badges",
+    questions: [
+      {
+        question: "O que são os badges e como funcionam?",
+        answer: "Badges são conquistas que você desbloqueia ao cumprir determinados critérios no PDI. Eles representam seu progresso e dedicação, além de conceder pontos que aumentam seu nível. Os badges são exibidos na seção 'Seu Progresso' do Dashboard."
+      },
+      {
+        question: "Quais são os badges disponíveis?",
+        answer: "Existem 17 badges divididos em categorias: Diário (Primeiro Passo, Semana Consistente, Mês de Reflexão), Objetivos (Visionário, Foco Total), Metas (Planejador, Estrategista), Ações (Executor, Máquina de Ação), Plano de Vida (Visão Clara, Valores Definidos), Ferramentas (Autoconhecimento, Analista, Metas SMART) e Nível (Aprendiz, Praticante, Mestre)."
+      },
+      {
+        question: "Como desbloquear os badges de Diário?",
+        answer: "📝 Primeiro Passo (10 pts): Registre seu primeiro dia no diário. 🔥 Semana Consistente (50 pts): Registre 7 dias consecutivos no diário. 🏆 Mês de Reflexão (200 pts): Registre 30 dias consecutivos no diário."
+      },
+      {
+        question: "Como desbloquear os badges de Objetivos e Metas?",
+        answer: "🎯 Visionário (10 pts): Crie seu primeiro objetivo. 🎯 Foco Total (30 pts): Tenha 3 objetivos ativos. 📊 Planejador (10 pts): Crie sua primeira meta. 📊 Estrategista (100 pts): Crie 10 metas no total."
+      },
+      {
+        question: "Como desbloquear os badges de Ações?",
+        answer: "⚡ Executor (10 pts): Complete sua primeira ação marcando-a como 'concluído'. ⚡ Máquina de Ação (200 pts): Complete 50 ações no total."
+      },
+      {
+        question: "Como desbloquear os badges de Plano de Vida?",
+        answer: "🌟 Visão Clara (50 pts): Defina e salve sua Visão de Vida Desejada (VVD). 💎 Valores Definidos (50 pts): Complete o exercício de Valores com pelo menos 6 valores selecionados."
+      },
+      {
+        question: "Como desbloquear os badges de Ferramentas?",
+        answer: "🎡 Autoconhecimento (30 pts): Complete a Roda da Vida com todas as 10 áreas preenchidas. 📋 Analista (30 pts): Complete a Análise SWOT com pelo menos um item. 🧠 Metas SMART (40 pts): Crie uma meta usando o método SMART na página de Ferramentas."
+      },
+      {
+        question: "Como desbloquear os badges de Nível?",
+        answer: "⭐ Aprendiz (100 pts): Alcance o nível 5. ⭐ Praticante (200 pts): Alcance o nível 10. 👑 Mestre (500 pts): Alcance o nível 25. Você ganha níveis acumulando pontos ao desbloquear outros badges."
+      },
+      {
+        question: "Como funciona o sistema de níveis?",
+        answer: "Cada badge desbloqueado concede pontos. Esses pontos acumulam e determinam seu nível atual. Os primeiros níveis exigem menos pontos, mas a quantidade necessária aumenta progressivamente. Por exemplo: Nível 2 = 50 pts, Nível 5 = 500 pts, Nível 10 = 2.250 pts, Nível 25 = 10.500 pts."
+      },
+      {
+        question: "O que é o streak e como funciona?",
+        answer: "O streak (sequência) conta quantos dias consecutivos você registrou atividades no diário. Se você pular um dia, o streak volta para 1. Seu maior streak (recorde) fica registrado. Manter streaks altos desbloqueia badges como 'Semana Consistente' e 'Mês de Reflexão'."
+      }
+    ]
+  },
+  {
     category: "Exportação e Relatórios",
     questions: [
       {
