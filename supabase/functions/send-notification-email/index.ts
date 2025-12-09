@@ -46,7 +46,7 @@ const generateDiaryReminderHtml = (name: string, daysInactive: number): string =
       </div>
       <p>Que tal registrar como foi seu dia hoje? Suas reflexões, conquistas e aprendizados são valiosos para sua jornada de desenvolvimento.</p>
       <center>
-        <a href="https://zlclwweeyrvrgxuukdhl.lovableproject.com/home" class="cta-button">Acessar meu Diário</a>
+        <a href="https://pdicarreiraevida.com.br/home" class="cta-button">Acessar meu Diário</a>
       </center>
     </div>
     <div class="footer">
@@ -92,7 +92,7 @@ const generateGoalDeadlineHtml = (name: string, goals: any[]): string => `
       `).join('')}
       <p>Não deixe para a última hora! Revise seu progresso e ajuste suas ações se necessário.</p>
       <center>
-        <a href="https://zlclwweeyrvrgxuukdhl.lovableproject.com/home" class="cta-button">Ver minhas Metas</a>
+        <a href="https://pdicarreiraevida.com.br/home" class="cta-button">Ver minhas Metas</a>
       </center>
     </div>
     <div class="footer">
@@ -146,7 +146,7 @@ const generateWeeklySummaryHtml = (name: string, data: any): string => `
       </center>
       <p style="margin-top: 25px;">Continue assim! Cada pequeno passo conta para alcançar seus objetivos.</p>
       <center>
-        <a href="https://zlclwweeyrvrgxuukdhl.lovableproject.com/home" class="cta-button">Ver meu Progresso</a>
+        <a href="https://pdicarreiraevida.com.br/home" class="cta-button">Ver meu Progresso</a>
       </center>
     </div>
     <div class="footer">
@@ -225,7 +225,7 @@ const handler = async (req: Request): Promise<Response> => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        from: "PDI - Carreira & Vida <onboarding@resend.dev>",
+        from: "PDI - Carreira & Vida <notificacoes@pdicarreiraevida.com.br>",
         to: [finalEmail],
         subject: finalSubject || "Notificação do PDI",
         html: htmlContent,
