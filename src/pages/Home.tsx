@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Link, useNavigate } from "react-router-dom";
-import { Target, TrendingUp, BookOpen, MessagesSquare, Book, Sparkles, User, Zap, Star, Shield, Lock, ChevronDown, AlertCircle, Link2, Users, Bell } from "lucide-react";
+import { Target, TrendingUp, BookOpen, MessagesSquare, Book, Sparkles, User, Zap, Star, Shield, Lock, ChevronDown, AlertCircle, Link2, Users, Bell, HelpCircle } from "lucide-react";
 import ProgressSection from "@/components/home/ProgressSection";
 import DiarioSection from "@/components/home/DiarioSection";
 import PlanoDeVida from "@/components/home/PlanoDeVida";
@@ -455,6 +455,20 @@ const Home = () => {
                           <h3 className="font-semibold">Integrações</h3>
                           <p className="text-sm text-muted-foreground">
                             Conecte com Google Calendar, Notion e mais
+                          </p>
+                        </CardContent>
+                      </Card>
+                    </Link>
+
+                    <Link to="/faq">
+                      <Card className="hover:shadow-medium transition-all cursor-pointer h-full border-2 hover:border-primary">
+                        <CardContent className="pt-6 text-center space-y-3">
+                          <div className="w-12 h-12 mx-auto bg-primary/10 rounded-full flex items-center justify-center">
+                            <HelpCircle className="w-6 h-6 text-primary" />
+                          </div>
+                          <h3 className="font-semibold">FAQ</h3>
+                          <p className="text-sm text-muted-foreground">
+                            Perguntas frequentes e dúvidas comuns
                           </p>
                         </CardContent>
                       </Card>
