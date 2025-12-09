@@ -1,7 +1,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
-import { Trophy, Flame, Star, Target, Sparkles } from "lucide-react";
+import { Trophy, Flame, Star, Target, Sparkles, HelpCircle } from "lucide-react";
 import { useGamification } from "@/hooks/useGamification";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { ExportPDFButton } from "@/components/reports/ExportPDFButton";
@@ -77,10 +77,20 @@ export function GamificationCard() {
 
         {/* Achievements Grid */}
         <div className="space-y-2">
-          <h4 className="text-sm font-medium flex items-center gap-2">
-            <Trophy className="w-4 h-4 text-amber-500" />
-            Conquistas ({unlockedAchievements.length}/{unlockedAchievements.length + lockedAchievements.length})
-          </h4>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <h4 className="text-sm font-medium flex items-center gap-2 cursor-help w-fit">
+                  <Trophy className="w-4 h-4 text-amber-500" />
+                  Conquistas ({unlockedAchievements.length}/{unlockedAchievements.length + lockedAchievements.length})
+                  <HelpCircle className="w-3.5 h-3.5 text-muted-foreground" />
+                </h4>
+              </TooltipTrigger>
+              <TooltipContent side="top" className="max-w-[250px]">
+                <p className="text-sm">Acesse o FAQ na seção Suporte para entender sobre Gamificação e Badges</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
           <TooltipProvider>
             <div className="flex flex-wrap gap-2">
               {unlockedAchievements.slice(0, 8).map((achievement) => (
