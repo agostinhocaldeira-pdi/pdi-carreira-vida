@@ -15,7 +15,6 @@ import LanguageSelector from "@/components/LanguageSelector";
 import LogoutButton from "@/components/LogoutButton";
 import { SatisfactionSurveyModal } from "@/components/SatisfactionSurveyModal";
 import { useSatisfactionSurvey } from "@/hooks/useSatisfactionSurvey";
-import { GamificationCard } from "@/components/gamification/GamificationCard";
 import { AchievementNotification } from "@/components/gamification/AchievementNotification";
 import { useGamification } from "@/hooks/useGamification";
 import { ExportPDFButton } from "@/components/reports/ExportPDFButton";
@@ -348,13 +347,8 @@ const Home = () => {
         {/* Trial Status Banner */}
         <TrialStatusBanner />
 
-        {/* Gamification Card */}
-        <section className="animate-slide-up">
-          <GamificationCard />
-        </section>
-
         {/* Progresso Section */}
-        <section className="animate-slide-up" style={{ animationDelay: "0.05s" }}>
+        <section className="animate-slide-up">
           <ProgressSection />
         </section>
 
