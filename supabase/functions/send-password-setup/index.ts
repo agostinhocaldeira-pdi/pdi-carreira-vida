@@ -31,7 +31,7 @@ serve(async (req) => {
       );
     }
 
-    const baseUrl = redirectUrl || Deno.env.get("SITE_URL") || "https://lovable.dev";
+    const baseUrl = redirectUrl || Deno.env.get("SITE_URL") || "https://pdicarreiraevida.com.br";
     
     // Generate password reset link
     const { data, error } = await supabaseAdmin.auth.admin.generateLink({

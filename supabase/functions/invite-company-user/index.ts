@@ -117,7 +117,7 @@ serve(async (req) => {
     }
 
     // Send password reset email so user can set their password
-    const baseUrl = redirectUrl || Deno.env.get("SITE_URL") || "https://lovable.dev";
+    const baseUrl = redirectUrl || Deno.env.get("SITE_URL") || "https://pdicarreiraevida.com.br";
     const { error: resetError } = await supabaseAdmin.auth.admin.generateLink({
       type: 'magiclink',
       email,
