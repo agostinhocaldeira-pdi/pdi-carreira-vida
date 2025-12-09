@@ -6,7 +6,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { useNavigate } from "react-router-dom";
-import { Shield, Home, Users, Settings, Activity, AlertCircle, Trash2, UserPlus, Star, Zap, TrendingUp, Building2, UserCog, UserCheck, Mail } from "lucide-react";
+import { Shield, Home, Users, Settings, Activity, AlertCircle, Trash2, UserPlus, Star, Zap, TrendingUp, Building2, UserCog, UserCheck, Mail, DollarSign } from "lucide-react";
+import FinancialDashboard from "@/components/admin/FinancialDashboard";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { toast } from "sonner";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, LineChart, Line } from "recharts";
@@ -918,6 +919,9 @@ const Admin = () => {
             </div>
           </CardContent>
         </Card>
+
+        {/* Financial Dashboard */}
+        <FinancialDashboard />
 
         {/* Recent Activity */}
         <Card className="shadow-medium">
