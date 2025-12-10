@@ -196,13 +196,8 @@ const Login = () => {
       return;
     }
 
-    // 5. Verificar se é admin
+    // 5. Verificar se é admin (verificação via Supabase user_roles)
     if (userRole === 'admin') {
-      const admins = JSON.parse(localStorage.getItem("administrators") || "[]");
-      if (!admins.some((a: any) => a.email?.toLowerCase() === userEmail.toLowerCase())) {
-        admins.push({ name: userName, email: userEmail, phone: userPhone });
-        localStorage.setItem("administrators", JSON.stringify(admins));
-      }
 
       localStorage.setItem("user", JSON.stringify({
         id: userId,

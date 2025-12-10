@@ -226,7 +226,7 @@ const Suporte = () => {
     }
   }, [location.state, tickets]);
 
-  const loadTickets = () => {
+  const loadTickets = async () => {
     const user = localStorage.getItem("user");
     if (!user) return;
     
@@ -234,11 +234,16 @@ const Suporte = () => {
     const allTickets = JSON.parse(localStorage.getItem("supportTickets") || "[]");
     const allMessages = JSON.parse(localStorage.getItem("supportMessages") || "[]");
 
-    // Verificar se é admin para mostrar todos os tickets
-    const administrators = JSON.parse(localStorage.getItem("administrators") || "[]");
-    const userIsAdmin = administrators.some((admin: any) => 
-      admin.email?.toLowerCase() === userData.email?.toLowerCase()
-    );
+    // Verificar se é admin via Supabase
+    const { data: { session } } = await supabase.auth.getSession();
+    let userIsAdmin = false;
+    if (session?.user) {
+      const { data: adminCheck } = await supabase.rpc('has_role', {
+        _user_id: session.user.id,
+        _role: 'admin'
+      });
+      userIsAdmin = !!adminCheck;
+    }
 
     // Admin vê todos os tickets, outros usuários veem apenas os seus
     const filteredTickets = userIsAdmin 
