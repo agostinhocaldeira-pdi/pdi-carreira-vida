@@ -1,20 +1,84 @@
 import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { useIntegrations } from "@/hooks/useIntegrations";
 import { IntegrationType } from "@/types/integrations";
-import { ArrowLeft, Link2, Link2Off, RefreshCw, Clock, AlertCircle } from "lucide-react";
+import { ArrowLeft, Link2, Link2Off, RefreshCw, Clock, AlertCircle, CheckCircle2 } from "lucide-react";
 import { useRoleProtection } from "@/hooks/useRoleProtection";
+import { supabase } from "@/integrations/supabase/client";
+import { GoogleCalendarService } from "@/services/integrations/GoogleCalendarService";
 
 const Integracoes = () => {
   useRoleProtection({ allowedRoles: ["user", "gestor"] });
   const navigate = useNavigate();
   const { toast } = useToast();
   const { integrations, isLoading, connectIntegration, disconnectIntegration } = useIntegrations();
+  const [googleCalendarConnected, setGoogleCalendarConnected] = useState(false);
+  const [connecting, setConnecting] = useState(false);
+
+  // Check if Google Calendar is connected via OAuth
+  useEffect(() => {
+    const checkGoogleConnection = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        // Check if user has Google provider linked
+        const hasGoogleProvider = user.app_metadata?.providers?.includes('google') ||
+          user.identities?.some(i => i.provider === 'google');
+        
+        if (hasGoogleProvider) {
+          setGoogleCalendarConnected(true);
+          // Save to user_integrations
+          await supabase
+            .from('user_integrations')
+            .upsert({
+              user_id: user.id,
+              integration_type: 'google_calendar',
+              is_connected: true,
+              connected_at: new Date().toISOString(),
+              updated_at: new Date().toISOString(),
+            }, { onConflict: 'user_id,integration_type' });
+        }
+      }
+    };
+    
+    checkGoogleConnection();
+  }, []);
+
+  const handleGoogleCalendarConnect = async () => {
+    setConnecting(true);
+    try {
+      const service = new GoogleCalendarService();
+      await service.connect();
+    } catch (error) {
+      console.error('Google Calendar connection error:', error);
+      toast({
+        title: "Erro ao conectar",
+        description: "Não foi possível conectar ao Google Calendar. Tente novamente.",
+        variant: "destructive",
+      });
+      setConnecting(false);
+    }
+  };
+
+  const handleGoogleCalendarDisconnect = async () => {
+    const service = new GoogleCalendarService();
+    await service.disconnect();
+    setGoogleCalendarConnected(false);
+    toast({
+      title: "Desconectado",
+      description: "Google Calendar foi desconectado.",
+    });
+  };
 
   const handleConnect = async (type: IntegrationType, name: string) => {
+    if (type === 'google_calendar') {
+      handleGoogleCalendarConnect();
+      return;
+    }
+    
     try {
       await connectIntegration(type);
       toast({
@@ -31,6 +95,11 @@ const Integracoes = () => {
   };
 
   const handleDisconnect = async (type: IntegrationType, name: string) => {
+    if (type === 'google_calendar') {
+      handleGoogleCalendarDisconnect();
+      return;
+    }
+    
     await disconnectIntegration(type);
     toast({
       title: "Desconectado",
@@ -45,6 +114,14 @@ const Integracoes = () => {
       </div>
     );
   }
+
+  // Update Google Calendar status in integrations array
+  const updatedIntegrations = integrations.map(integration => {
+    if (integration.id === 'google_calendar') {
+      return { ...integration, isConnected: googleCalendarConnected };
+    }
+    return integration;
+  });
 
   return (
     <div className="min-h-screen bg-background">
@@ -62,16 +139,29 @@ const Integracoes = () => {
           </div>
         </div>
 
+        {/* Google Calendar Highlight */}
+        <Card className="mb-8 border-green-500/30 bg-green-500/5">
+          <CardContent className="flex items-start gap-3 pt-6">
+            <CheckCircle2 className="w-5 h-5 text-green-500 mt-0.5" />
+            <div>
+              <p className="font-medium text-sm">Google Calendar disponível!</p>
+              <p className="text-sm text-muted-foreground mt-1">
+                Conecte seu Google Calendar para sincronizar seus objetivos, metas e ações 
+                diretamente com seu calendário.
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+
         {/* Info Card */}
         <Card className="mb-8 border-primary/20 bg-primary/5">
           <CardContent className="flex items-start gap-3 pt-6">
             <AlertCircle className="w-5 h-5 text-primary mt-0.5" />
             <div>
-              <p className="font-medium text-sm">Integrações em desenvolvimento</p>
+              <p className="font-medium text-sm">Outras integrações em desenvolvimento</p>
               <p className="text-sm text-muted-foreground mt-1">
-                Estamos trabalhando para disponibilizar as integrações abaixo. 
-                Em breve você poderá sincronizar seus objetivos, metas e ações 
-                com suas ferramentas favoritas de gestão de tarefas e calendário.
+                Estamos trabalhando para disponibilizar mais integrações. 
+                Em breve você poderá sincronizar com Notion, Todoist e outras ferramentas.
               </p>
             </div>
           </CardContent>
@@ -79,72 +169,85 @@ const Integracoes = () => {
 
         {/* Integrations Grid */}
         <div className="grid gap-4 md:grid-cols-2">
-          {integrations.map((integration) => (
-            <Card key={integration.id} className="relative overflow-hidden">
-              <CardHeader className="pb-3">
-                <div className="flex items-start justify-between">
-                  <div className="flex items-center gap-3">
-                    <span className="text-3xl">{integration.icon}</span>
-                    <div>
-                      <CardTitle className="text-lg">{integration.name}</CardTitle>
-                      <CardDescription className="text-sm mt-1">
-                        {integration.description}
-                      </CardDescription>
-                    </div>
-                  </div>
-                  <Badge 
-                    variant={integration.isConnected ? "default" : "secondary"}
-                    className="shrink-0"
-                  >
-                    {integration.isConnected ? "Conectado" : "Disponível em breve"}
-                  </Badge>
-                </div>
-              </CardHeader>
-              <CardContent>
-                {integration.isConnected ? (
-                  <div className="space-y-3">
-                    {integration.lastSyncAt && (
-                      <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                        <Clock className="w-4 h-4" />
-                        <span>
-                          Última sincronização:{" "}
-                          {new Date(integration.lastSyncAt).toLocaleDateString("pt-BR")}
-                        </span>
+          {updatedIntegrations.map((integration) => {
+            const isGoogleCalendar = integration.id === 'google_calendar';
+            const isAvailable = isGoogleCalendar;
+            
+            return (
+              <Card 
+                key={integration.id} 
+                className={`relative overflow-hidden ${isGoogleCalendar ? 'ring-2 ring-green-500/30' : ''}`}
+              >
+                <CardHeader className="pb-3">
+                  <div className="flex items-start justify-between">
+                    <div className="flex items-center gap-3">
+                      <span className="text-3xl">{integration.icon}</span>
+                      <div>
+                        <CardTitle className="text-lg">{integration.name}</CardTitle>
+                        <CardDescription className="text-sm mt-1">
+                          {integration.description}
+                        </CardDescription>
                       </div>
-                    )}
-                    <div className="flex gap-2">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="flex-1"
-                        onClick={() => handleDisconnect(integration.id, integration.name)}
-                      >
-                        <Link2Off className="w-4 h-4 mr-2" />
-                        Desconectar
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="flex-1"
-                      >
-                        <RefreshCw className="w-4 h-4 mr-2" />
-                        Sincronizar
-                      </Button>
                     </div>
+                    <Badge 
+                      variant={integration.isConnected ? "default" : isAvailable ? "outline" : "secondary"}
+                      className={`shrink-0 ${integration.isConnected ? 'bg-green-500' : isAvailable ? 'border-green-500 text-green-600' : ''}`}
+                    >
+                      {integration.isConnected ? "Conectado" : isAvailable ? "Disponível" : "Em breve"}
+                    </Badge>
                   </div>
-                ) : (
-                  <Button
-                    variant="outline"
-                    className="w-full"
-                    onClick={() => handleConnect(integration.id, integration.name)}
-                  >
-                    <Link2 className="w-4 h-4 mr-2" />
-                    Conectar
-                  </Button>
-                )}
-              </CardContent>
-            </Card>
-          ))}
+                </CardHeader>
+                <CardContent>
+                  {integration.isConnected ? (
+                    <div className="space-y-3">
+                      {integration.lastSyncAt && (
+                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                          <Clock className="w-4 h-4" />
+                          <span>
+                            Última sincronização:{" "}
+                            {new Date(integration.lastSyncAt).toLocaleDateString("pt-BR")}
+                          </span>
+                        </div>
+                      )}
+                      <div className="flex gap-2">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="flex-1"
+                          onClick={() => handleDisconnect(integration.id, integration.name)}
+                        >
+                          <Link2Off className="w-4 h-4 mr-2" />
+                          Desconectar
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="flex-1"
+                        >
+                          <RefreshCw className="w-4 h-4 mr-2" />
+                          Sincronizar
+                        </Button>
+                      </div>
+                    </div>
+                  ) : (
+                    <Button
+                      variant={isAvailable ? "default" : "outline"}
+                      className={`w-full ${isAvailable ? 'bg-green-600 hover:bg-green-700' : ''}`}
+                      onClick={() => handleConnect(integration.id, integration.name)}
+                      disabled={connecting && isGoogleCalendar}
+                    >
+                      {connecting && isGoogleCalendar ? (
+                        <RefreshCw className="w-4 h-4 mr-2 animate-spin" />
+                      ) : (
+                        <Link2 className="w-4 h-4 mr-2" />
+                      )}
+                      {isAvailable ? 'Conectar agora' : 'Conectar'}
+                    </Button>
+                  )}
+                </CardContent>
+              </Card>
+            );
+          })}
         </div>
 
         {/* Back Button */}
