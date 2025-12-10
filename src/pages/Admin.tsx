@@ -78,16 +78,23 @@ const Admin = () => {
         setAdminEmail(session.user.email || "");
       }
       
-      // Carregar administradores (users com role admin)
+      // Carregar administradores do Supabase (users com role admin)
       const { data: adminRoles } = await supabase
         .from('user_roles')
         .select('user_id')
         .eq('role', 'admin');
       
-      // Por enquanto, manter localStorage para lista de admins legacy
-      const savedAdmins = localStorage.getItem("administrators");
-      if (savedAdmins) {
-        setAdministrators(JSON.parse(savedAdmins));
+      if (adminRoles && adminRoles.length > 0) {
+        // Buscar dados dos usuários admin via auth.users não é possível diretamente
+        // Os admins são gerenciados via user_roles table - exibimos apenas info básica
+        const adminList: Administrator[] = adminRoles.map((role, index) => ({
+          id: role.user_id,
+          name: `Admin ${index + 1}`,
+          email: session?.user?.id === role.user_id ? session.user.email || '' : `admin-${role.user_id.slice(0, 8)}`,
+          phone: '',
+          createdAt: new Date().toISOString()
+        }));
+        setAdministrators(adminList);
       }
 
       // Carregar empresas do Supabase
@@ -185,12 +192,10 @@ const Admin = () => {
       createdAt: new Date().toISOString()
     };
 
-    const updatedAdmins = [...administrators, administrator];
-    setAdministrators(updatedAdmins);
-    localStorage.setItem("administrators", JSON.stringify(updatedAdmins));
-    
+    // Nota: Para adicionar admin, é necessário criar o usuário no Supabase Auth
+    // e depois adicionar o role na tabela user_roles
+    toast.error("Para adicionar um novo administrador, é necessário primeiro criar o usuário no sistema e depois atribuir o role de admin via banco de dados.");
     setNewAdmin({ name: "", email: "", phone: "" });
-    toast.success("Administrador cadastrado com sucesso!");
   };
 
   const handleDeleteAdmin = (id: string) => {
@@ -205,11 +210,22 @@ const Admin = () => {
     setDeleteAdminId(id);
   };
 
-  const confirmDeleteAdmin = () => {
+  const confirmDeleteAdmin = async () => {
     if (deleteAdminId) {
+      // Remover role de admin no Supabase
+      const { error } = await supabase
+        .from('user_roles')
+        .delete()
+        .eq('user_id', deleteAdminId)
+        .eq('role', 'admin');
+      
+      if (error) {
+        toast.error("Erro ao remover administrador: " + error.message);
+        return;
+      }
+      
       const updatedAdmins = administrators.filter(admin => admin.id !== deleteAdminId);
       setAdministrators(updatedAdmins);
-      localStorage.setItem("administrators", JSON.stringify(updatedAdmins));
       toast.success("Administrador removido com sucesso!");
       setDeleteAdminId(null);
     }
