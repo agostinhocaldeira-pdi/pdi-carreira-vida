@@ -76,8 +76,8 @@ export function GamificationCard() {
         </div>
 
         {/* Achievements Grid */}
-        <div className="space-y-2">
-          <TooltipProvider>
+        <TooltipProvider delayDuration={100}>
+          <div className="space-y-2">
             <Tooltip>
               <TooltipTrigger asChild>
                 <h4 className="text-sm font-medium flex items-center gap-2 cursor-help w-fit">
@@ -86,12 +86,10 @@ export function GamificationCard() {
                   <HelpCircle className="w-3.5 h-3.5 text-muted-foreground" />
                 </h4>
               </TooltipTrigger>
-              <TooltipContent side="top" className="max-w-[250px]">
+              <TooltipContent side="top" className="max-w-[250px] z-50">
                 <p className="text-sm">Acesse o FAQ na seção Suporte para entender sobre Gamificação e Badges</p>
               </TooltipContent>
             </Tooltip>
-          </TooltipProvider>
-          <TooltipProvider>
             <div className="flex flex-wrap gap-2">
               {unlockedAchievements.slice(0, 8).map((achievement) => (
                 <Tooltip key={achievement.code}>
@@ -125,8 +123,8 @@ export function GamificationCard() {
                 </div>
               )}
             </div>
-          </TooltipProvider>
-        </div>
+          </div>
+        </TooltipProvider>
 
         {/* Export PDF Button */}
         <div className="pt-2 border-t">
