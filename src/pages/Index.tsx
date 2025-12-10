@@ -188,7 +188,9 @@ const Index = () => {
   };
 
   const handlePlanClick = (planName: string) => {
-    setSelectedPlan(planName.toLowerCase());
+    // Normalize plan name: remove accents and convert to lowercase
+    const normalizedPlan = planName.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    setSelectedPlan(normalizedPlan);
     setIsModalOpen(true);
   };
 
