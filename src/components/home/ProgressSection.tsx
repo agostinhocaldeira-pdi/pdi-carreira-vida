@@ -46,12 +46,12 @@ const ProgressSection = () => {
     q2: []
   });
   
-  // Mock data - will be dynamic later
-  const progressData = {
-    objectives: 65,
-    goals: 45,
-    actions: 78,
-  };
+  // Real progress data calculated from user data
+  const [progressData, setProgressData] = useState({
+    objectives: { percentage: 0, completed: 0, total: 0 },
+    goals: { percentage: 0, completed: 0, total: 0 },
+    actions: { percentage: 0, completed: 0, total: 0 },
+  });
 
   useEffect(() => {
     const syncInsight = () => {
@@ -103,6 +103,38 @@ const ProgressSection = () => {
     // Load data from localStorage
     let objetivos = JSON.parse(localStorage.getItem("objetivos") || "[]");
     let metas = JSON.parse(localStorage.getItem("metas") || "[]");
+    
+    // Calculate real progress data
+    const totalObjetivos = objetivos.length;
+    const completedObjetivos = objetivos.filter((obj: any) => 
+      obj.status?.toLowerCase() === "concluido" || obj.status?.toLowerCase() === "concluído"
+    ).length;
+    const objetivosPercentage = totalObjetivos > 0 ? Math.round((completedObjetivos / totalObjetivos) * 100) : 0;
+
+    const totalMetas = metas.length;
+    const completedMetas = metas.filter((meta: any) => 
+      meta.status?.toLowerCase() === "concluido" || meta.status?.toLowerCase() === "concluído" || meta.concluida === true
+    ).length;
+    const metasPercentage = totalMetas > 0 ? Math.round((completedMetas / totalMetas) * 100) : 0;
+
+    // Count all actions from all metas
+    let totalActions = 0;
+    let completedActions = 0;
+    metas.forEach((meta: any) => {
+      if (meta.acoes && Array.isArray(meta.acoes)) {
+        totalActions += meta.acoes.length;
+        completedActions += meta.acoes.filter((acao: any) => 
+          acao.status?.toLowerCase() === "concluido" || acao.status?.toLowerCase() === "concluído"
+        ).length;
+      }
+    });
+    const actionsPercentage = totalActions > 0 ? Math.round((completedActions / totalActions) * 100) : 0;
+
+    setProgressData({
+      objectives: { percentage: objetivosPercentage, completed: completedObjetivos, total: totalObjetivos },
+      goals: { percentage: metasPercentage, completed: completedMetas, total: totalMetas },
+      actions: { percentage: actionsPercentage, completed: completedActions, total: totalActions },
+    });
     
     // Load pending items - handle both data structures
     // Check for "pendente" status or items with expired dates
@@ -596,13 +628,15 @@ Analise as correlações entre estes elementos e forneça um insight sobre a ess
                     </div>
                     <div>
                       <p className="text-sm font-medium">Objetivos</p>
-                      <p className="text-2xl font-bold">{progressData.objectives}%</p>
+                      <p className="text-2xl font-bold">{progressData.objectives.percentage}%</p>
                     </div>
                   </div>
                 </div>
-                <Progress value={progressData.objectives} className="h-2" />
+                <Progress value={progressData.objectives.percentage} className="h-2" />
                 <p className="text-xs text-muted-foreground">
-                  3 de 5 objetivos em andamento
+                  {progressData.objectives.total > 0 
+                    ? `${progressData.objectives.completed} de ${progressData.objectives.total} objetivos concluídos`
+                    : "Nenhum objetivo cadastrado"}
                 </p>
               </div>
 
@@ -615,13 +649,15 @@ Analise as correlações entre estes elementos e forneça um insight sobre a ess
                     </div>
                     <div>
                       <p className="text-sm font-medium">Metas</p>
-                      <p className="text-2xl font-bold">{progressData.goals}%</p>
+                      <p className="text-2xl font-bold">{progressData.goals.percentage}%</p>
                     </div>
                   </div>
                 </div>
-                <Progress value={progressData.goals} className="h-2" />
+                <Progress value={progressData.goals.percentage} className="h-2" />
                 <p className="text-xs text-muted-foreground">
-                  9 de 20 metas concluídas
+                  {progressData.goals.total > 0 
+                    ? `${progressData.goals.completed} de ${progressData.goals.total} metas concluídas`
+                    : "Nenhuma meta cadastrada"}
                 </p>
               </div>
 
@@ -634,13 +670,15 @@ Analise as correlações entre estes elementos e forneça um insight sobre a ess
                     </div>
                     <div>
                       <p className="text-sm font-medium">Ações</p>
-                      <p className="text-2xl font-bold">{progressData.actions}%</p>
+                      <p className="text-2xl font-bold">{progressData.actions.percentage}%</p>
                     </div>
                   </div>
                 </div>
-                <Progress value={progressData.actions} className="h-2" />
+                <Progress value={progressData.actions.percentage} className="h-2" />
                 <p className="text-xs text-muted-foreground">
-                  78 de 100 ações realizadas
+                  {progressData.actions.total > 0 
+                    ? `${progressData.actions.completed} de ${progressData.actions.total} ações realizadas`
+                    : "Nenhuma ação cadastrada"}
                 </p>
               </div>
             </div>
