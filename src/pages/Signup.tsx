@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useNavigate, Link, useSearchParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -19,6 +19,8 @@ import { LGPDConsentModal } from "@/components/lgpd/LGPDConsentModal";
 
 const Signup = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const planFromUrl = searchParams.get('plan');
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -112,8 +114,48 @@ const Signup = () => {
 
         toast.success("Perfil criado com sucesso!");
         
-        // Show plans modal instead of navigating directly
-        setShowPlansModal(true);
+        // If user came with basico plan intent, go directly to checkout
+        if (planFromUrl === 'basico') {
+          // Trigger checkout directly
+          setTimeout(async () => {
+            try {
+              const { data: session } = await supabase.auth.getSession();
+              
+              if (!session?.session?.access_token) {
+                toast.error("Sessão expirada. Por favor, faça login novamente.");
+                navigate("/login");
+                return;
+              }
+
+              const { data, error } = await supabase.functions.invoke('create-checkout', {
+                headers: {
+                  Authorization: `Bearer ${session.session.access_token}`,
+                },
+              });
+
+              if (error) {
+                console.error('Checkout error:', error);
+                toast.error("Erro ao iniciar checkout. Tente novamente.");
+                setShowPlansModal(true);
+                return;
+              }
+
+              if (data?.url) {
+                window.location.href = data.url;
+              } else {
+                toast.error("Erro ao obter URL de checkout.");
+                setShowPlansModal(true);
+              }
+            } catch (error) {
+              console.error('Checkout error:', error);
+              toast.error("Erro ao processar pagamento. Tente novamente.");
+              setShowPlansModal(true);
+            }
+          }, 500);
+        } else {
+          // Show plans modal for plan selection
+          setShowPlansModal(true);
+        }
       }
     } catch (error: any) {
       console.error("Erro no cadastro:", error);
