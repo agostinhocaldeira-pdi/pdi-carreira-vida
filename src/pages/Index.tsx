@@ -175,9 +175,21 @@ const Index = () => {
     { icon: Calendar, text: "Funcionários não pagam assinatura" }
   ];
 
+  const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
+
   const handlePessoaFisicaClick = () => {
     setIsModalOpen(false);
-    navigate("/signup");
+    // Pass the selected plan as a query parameter
+    if (selectedPlan === 'basico') {
+      navigate("/signup?plan=basico");
+    } else {
+      navigate("/signup");
+    }
+  };
+
+  const handlePlanClick = (planName: string) => {
+    setSelectedPlan(planName.toLowerCase());
+    setIsModalOpen(true);
   };
 
   return (
@@ -217,7 +229,7 @@ const Index = () => {
           <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center">
             <Button 
               size="lg" 
-              onClick={() => setIsModalOpen(true)}
+              onClick={() => handlePlanClick('gratuito')}
               className="text-base sm:text-lg px-6 sm:px-8 py-5 sm:py-6 bg-primary hover:bg-primary/90"
             >
               Começar minha jornada
@@ -639,7 +651,7 @@ const Index = () => {
                       className="w-full text-sm sm:text-base"
                       variant={plan.variant}
                       disabled={plan.disabled}
-                      onClick={() => !plan.disabled && setIsModalOpen(true)}
+                      onClick={() => !plan.disabled && handlePlanClick(plan.name)}
                     >
                       {plan.cta}
                     </Button>
@@ -739,7 +751,7 @@ const Index = () => {
           </p>
           <Button 
             size="lg" 
-            onClick={() => setIsModalOpen(true)}
+            onClick={() => handlePlanClick('gratuito')}
             className="text-base sm:text-lg px-8 sm:px-10 py-5 sm:py-6 bg-primary hover:bg-primary/90"
           >
             Criar meu PDI gratuitamente
