@@ -663,6 +663,37 @@ const Index = () => {
             </div>
           </div>
 
+          {/* Flash Promotion Banner */}
+          <div className="mb-12 sm:mb-16">
+            <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-amber-500 via-orange-500 to-red-500 p-[2px]">
+              <div className="relative bg-background rounded-2xl p-6 sm:p-8 text-center">
+                <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-amber-500 via-orange-500 to-red-500 animate-pulse" />
+                <div className="flex items-center justify-center gap-2 mb-3">
+                  <Zap className="h-6 w-6 sm:h-8 sm:w-8 text-amber-500 animate-pulse" />
+                  <Badge className="bg-gradient-to-r from-amber-500 to-orange-500 text-white border-0 text-sm sm:text-base px-3 py-1">
+                    ⚡ PROMOÇÃO RELÂMPAGO ⚡
+                  </Badge>
+                  <Zap className="h-6 w-6 sm:h-8 sm:w-8 text-amber-500 animate-pulse" />
+                </div>
+                <h3 className="text-xl sm:text-2xl md:text-3xl font-bold mb-2 bg-gradient-to-r from-amber-600 via-orange-500 to-red-500 bg-clip-text text-transparent">
+                  Plano Gratuito com TODAS as funções liberadas!
+                </h3>
+                <p className="text-muted-foreground text-sm sm:text-base max-w-2xl mx-auto mb-4">
+                  Por tempo limitado, o plano gratuito dá acesso completo a todas as ferramentas, 
+                  PDI ilimitado e recursos premium. Aproveite antes que acabe!
+                </p>
+                <Button 
+                  size="lg"
+                  onClick={() => handlePlanClick('gratuito')}
+                  className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-semibold text-sm sm:text-base"
+                >
+                  Começar grátis agora
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+          </div>
+
           {/* Company Plans */}
           <div>
             <h3 className="text-lg sm:text-xl font-semibold text-center mb-6 sm:mb-8 flex items-center justify-center gap-2">
