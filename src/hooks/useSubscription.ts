@@ -106,30 +106,15 @@ export const useSubscription = () => {
       console.error('Error checking Stripe subscription:', error);
     }
 
-    // For regular users without subscription, check trial period
-    const createdAt = new Date(user.created_at);
-    const now = new Date();
-    const diffTime = now.getTime() - createdAt.getTime();
-    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-    const daysRemaining = Math.max(0, TRIAL_DAYS - diffDays);
-
-    if (diffDays >= TRIAL_DAYS) {
-      setState({
-        status: 'expired',
-        plan: 'gratuito',
-        daysRemaining: 0,
-        canEdit: false,
-        subscriptionEnd: null,
-      });
-    } else {
-      setState({
-        status: 'trial',
-        plan: 'gratuito',
-        daysRemaining,
-        canEdit: true,
-        subscriptionEnd: null,
-      });
-    }
+    // Plano Gratuito: acesso completo, apenas com limitações de IA
+    // No futuro, quando o plano Básico for cobrado, vamos limitar o Gratuito
+    setState({
+      status: 'active',
+      plan: 'gratuito',
+      daysRemaining: null,
+      canEdit: true,
+      subscriptionEnd: null,
+    });
   }, []);
 
   useEffect(() => {
