@@ -13,11 +13,18 @@ export class GoogleCalendarService extends BaseIntegrationService {
     this.log('Initiating Google Calendar OAuth flow');
     
     try {
+      // Use the current origin, but ensure it's not localhost
+      let redirectUrl = window.location.origin;
+      if (redirectUrl.includes('localhost')) {
+        // Fallback to the preview URL
+        redirectUrl = 'https://bd032101-4369-41f5-ab27-f3d841e82d1b.lovableproject.com';
+      }
+      
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
           scopes: 'https://www.googleapis.com/auth/calendar.events',
-          redirectTo: `${window.location.origin}/integracoes`,
+          redirectTo: `${redirectUrl}/integracoes`,
           queryParams: {
             access_type: 'offline',
             prompt: 'consent',
