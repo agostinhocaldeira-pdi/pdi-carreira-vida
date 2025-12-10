@@ -79,14 +79,14 @@ export function GamificationCard() {
         <TooltipProvider delayDuration={100}>
           <div className="space-y-2">
             <Tooltip>
-              <TooltipTrigger asChild>
-                <h4 className="text-sm font-medium flex items-center gap-2 cursor-help w-fit">
+              <TooltipTrigger>
+                <span className="text-sm font-medium flex items-center gap-2 cursor-help w-fit">
                   <Trophy className="w-4 h-4 text-amber-500" />
                   Conquistas ({unlockedAchievements.length}/{unlockedAchievements.length + lockedAchievements.length})
                   <HelpCircle className="w-3.5 h-3.5 text-muted-foreground" />
-                </h4>
+                </span>
               </TooltipTrigger>
-              <TooltipContent side="top" className="max-w-[250px] z-50">
+              <TooltipContent side="top" className="max-w-[250px]">
                 <p className="text-sm">Acesse o FAQ na seção Suporte para entender sobre Gamificação e Badges</p>
               </TooltipContent>
             </Tooltip>
