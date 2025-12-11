@@ -267,27 +267,57 @@ class SupabaseStorageService {
     if (!userId) return;
 
     // Clear existing
-    await supabase.from('user_goals').delete().eq('user_id', userId);
-
     for (const meta of metas) {
       // Handle both camelCase and snake_case property names for compatibility
       const objetivoId = meta.objetivo_id || (meta as any).objetivoId || null;
       const dataAlvo = meta.data_alvo || (meta as any).dataAlvo || null;
+      const metaId = typeof meta.id === 'string' && meta.id.includes('-') ? meta.id : undefined;
       
-      const { data: goal, error: goalError } = await supabase
-        .from('user_goals')
-        .insert({
-          user_id: userId,
-          objective_id: objetivoId,
-          texto: meta.texto,
-          data_alvo: dataAlvo,
-          status: meta.concluida ? 'concluido' : 'a fazer',
-          from_smart: meta.from_smart || false,
-        })
-        .select()
-        .single();
+      // Use upsert to update existing or insert new
+      const goalData = {
+        user_id: userId,
+        objective_id: objetivoId,
+        texto: meta.texto,
+        data_alvo: dataAlvo,
+        status: meta.concluida ? 'concluido' : 'a fazer',
+        from_smart: meta.from_smart || false,
+        updated_at: new Date().toISOString(),
+      };
 
-      if (goalError || !goal) continue;
+      let goalId: string;
+
+      if (metaId) {
+        // Update existing goal
+        const { data: updatedGoal, error: updateError } = await supabase
+          .from('user_goals')
+          .update(goalData)
+          .eq('id', metaId)
+          .eq('user_id', userId)
+          .select()
+          .single();
+        
+        if (updateError || !updatedGoal) {
+          console.error('Error updating goal:', updateError);
+          continue;
+        }
+        goalId = updatedGoal.id;
+      } else {
+        // Insert new goal
+        const { data: newGoal, error: insertError } = await supabase
+          .from('user_goals')
+          .insert(goalData)
+          .select()
+          .single();
+        
+        if (insertError || !newGoal) {
+          console.error('Error inserting goal:', insertError);
+          continue;
+        }
+        goalId = newGoal.id;
+      }
+
+      // Delete existing actions for this goal before re-inserting
+      await supabase.from('user_actions').delete().eq('goal_id', goalId);
 
       // Save actions
       for (const acao of meta.acoes || []) {
@@ -295,7 +325,7 @@ class SupabaseStorageService {
           .from('user_actions')
           .insert({
             user_id: userId,
-            goal_id: goal.id,
+            goal_id: goalId,
             texto: acao.acao,
             periodicidade: acao.periodicidade,
             status: acao.status?.replace('-', ' ') || 'a fazer',
