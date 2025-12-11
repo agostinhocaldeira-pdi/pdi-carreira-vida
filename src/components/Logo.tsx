@@ -1,4 +1,4 @@
-import logoImage from "@/assets/logo_pdi.jpg";
+import logoImage from "@/assets/logo_pdi.png";
 
 interface LogoProps {
   size?: "sm" | "md" | "lg";
