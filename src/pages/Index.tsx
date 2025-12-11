@@ -218,9 +218,6 @@ const Index = () => {
       {/* Hero Section */}
       <section className="pt-28 sm:pt-32 pb-12 sm:pb-16 px-4">
         <div className="container mx-auto text-center max-w-4xl">
-          <Badge variant="secondary" className="mb-4 text-xs sm:text-sm">
-            +2.000 pessoas transformando suas vidas
-          </Badge>
           <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 sm:mb-6 bg-gradient-to-r from-primary via-purple-500 to-pink-500 bg-clip-text text-transparent leading-tight">
             Você não precisa de mais motivação. Precisa de um plano.
           </h1>
