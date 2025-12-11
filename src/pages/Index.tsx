@@ -836,19 +836,140 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Social Proof */}
-      <section className="py-12 sm:py-16 px-4">
-        <div className="container mx-auto max-w-4xl text-center">
-          <div className="flex justify-center gap-1 mb-4">
-            {[...Array(5)].map((_, i) => (
-              <Star key={i} className="h-5 w-5 sm:h-6 sm:w-6 fill-yellow-400 text-yellow-400" />
-            ))}
+      {/* Social Proof - Depoimentos Reais */}
+      <section className="py-12 sm:py-20 px-4 bg-muted/20">
+        <div className="container mx-auto max-w-6xl">
+          <div className="text-center mb-8 sm:mb-12">
+            <Badge variant="secondary" className="mb-4 text-xs sm:text-sm">
+              Quem já transformou sua vida
+            </Badge>
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 sm:mb-4">
+              Depoimentos reais de quem viveu a jornada
+            </h2>
+            <p className="text-muted-foreground max-w-2xl mx-auto text-sm sm:text-base">
+              Pessoas comuns que decidiram investir em si mesmas e colheram resultados extraordinários.
+            </p>
           </div>
-          <p className="text-base sm:text-lg text-muted-foreground italic mb-4">
-            "Pela primeira vez, sinto que tenho controle sobre minha vida e minha carreira. 
-            O PDI me deu clareza para tomar decisões que eu vinha adiando há anos."
-          </p>
-          <p className="text-sm font-medium">— Mariana S., Gerente de Projetos</p>
+
+          <div className="grid sm:grid-cols-2 gap-4 sm:gap-6">
+            {/* Depoimento 1 - Eric */}
+            <Card className="border-border/50 bg-card/50 backdrop-blur-sm">
+              <CardContent className="p-5 sm:p-6">
+                <div className="flex justify-center gap-1 mb-4">
+                  {[...Array(5)].map((_, i) => (
+                    <Star key={i} className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                  ))}
+                </div>
+                <p className="text-sm sm:text-base text-muted-foreground italic mb-4 leading-relaxed">
+                  "Participar do PDI foi extremamente importante para mim. Além de sair com um plano de execução 
+                  muito bem estruturado, ganhei conhecimento para repetir sozinho o ciclo de reflexão, planejamento 
+                  e ação. Vale muito a pena."
+                </p>
+                <div className="flex items-center justify-center gap-2">
+                  <p className="text-sm font-medium">— Eric Pereira</p>
+                  <a 
+                    href="https://www.linkedin.com/in/eric-pereira-b05a5611b/" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="text-[#0A66C2] hover:opacity-80 transition-opacity"
+                    aria-label="LinkedIn de Eric Pereira"
+                  >
+                    <svg className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+                    </svg>
+                  </a>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Depoimento 2 - Gabriele */}
+            <Card className="border-border/50 bg-card/50 backdrop-blur-sm">
+              <CardContent className="p-5 sm:p-6">
+                <div className="flex justify-center gap-1 mb-4">
+                  {[...Array(5)].map((_, i) => (
+                    <Star key={i} className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                  ))}
+                </div>
+                <p className="text-sm sm:text-base text-muted-foreground italic mb-4 leading-relaxed">
+                  "Antes eu nem sabia o que era um PDI. Hoje eu tenho clareza do que quero para os próximos 5, 10 
+                  e até 20 anos. O curso abriu um horizonte de oportunidades e foi fundamental para o meu autoconhecimento."
+                </p>
+                <div className="flex items-center justify-center gap-2">
+                  <p className="text-sm font-medium">— Gabriele Campos</p>
+                  <a 
+                    href="https://www.linkedin.com/in/gabrielle-campos-406b8a1b2/" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="text-[#0A66C2] hover:opacity-80 transition-opacity"
+                    aria-label="LinkedIn de Gabriele Campos"
+                  >
+                    <svg className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+                    </svg>
+                  </a>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Depoimento 3 - Larissa */}
+            <Card className="border-border/50 bg-card/50 backdrop-blur-sm">
+              <CardContent className="p-5 sm:p-6">
+                <div className="flex justify-center gap-1 mb-4">
+                  {[...Array(5)].map((_, i) => (
+                    <Star key={i} className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                  ))}
+                </div>
+                <p className="text-sm sm:text-base text-muted-foreground italic mb-4 leading-relaxed">
+                  "O treinamento é extremamente didático. Ele fez eu refletir sobre o futuro e me ajudou a traçar 
+                  caminhos claros para alcançar meus objetivos. Já estou colocando tudo em prática e tem me ajudado muito."
+                </p>
+                <div className="flex items-center justify-center gap-2">
+                  <p className="text-sm font-medium">— Larissa Schuartz</p>
+                  <a 
+                    href="https://www.linkedin.com/in/larissa-schwartz-5553651a5/" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="text-[#0A66C2] hover:opacity-80 transition-opacity"
+                    aria-label="LinkedIn de Larissa Schuartz"
+                  >
+                    <svg className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+                    </svg>
+                  </a>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Depoimento 4 - Lucas */}
+            <Card className="border-border/50 bg-card/50 backdrop-blur-sm">
+              <CardContent className="p-5 sm:p-6">
+                <div className="flex justify-center gap-1 mb-4">
+                  {[...Array(5)].map((_, i) => (
+                    <Star key={i} className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                  ))}
+                </div>
+                <p className="text-sm sm:text-base text-muted-foreground italic mb-4 leading-relaxed">
+                  "Eu sabia o que queria, mas executar parecia um monstro de sete cabeças. Fazer o curso foi como 
+                  acender uma luz em um quarto escuro. Hoje tenho um PDI completo, claro e realista — um dos melhores 
+                  investimentos que já fiz em mim."
+                </p>
+                <div className="flex items-center justify-center gap-2">
+                  <p className="text-sm font-medium">— Lucas Sá</p>
+                  <a 
+                    href="https://www.linkedin.com/in/lucazartu/?locale=pt_BR" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="text-[#0A66C2] hover:opacity-80 transition-opacity"
+                    aria-label="LinkedIn de Lucas Sá"
+                  >
+                    <svg className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+                    </svg>
+                  </a>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
         </div>
       </section>
 
