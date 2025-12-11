@@ -165,8 +165,8 @@ class SupabaseStorageService {
       return [];
     }
 
-    return (data || []).map((obj, index) => ({
-      id: index + 1,
+    return (data || []).map((obj) => ({
+      id: obj.id, // Preserve the actual UUID from database
       texto: obj.texto,
       data_alvo: obj.data_alvo,
       conexao_vvd: obj.conexao_vvd,
@@ -246,7 +246,7 @@ class SupabaseStorageService {
       }
 
       metas.push({
-        id: metas.length + 1,
+        id: goal.id, // Preserve the actual UUID from database
         objetivo_id: goal.objective_id || '',
         objetivoId: goal.objective_id || '', // camelCase alias for compatibility
         texto: goal.texto,
