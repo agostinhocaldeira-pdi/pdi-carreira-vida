@@ -6,11 +6,12 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { useNavigate } from "react-router-dom";
-import { Shield, Home, Users, Settings, Activity, AlertCircle, Trash2, UserPlus, Star, Zap, TrendingUp, Building2, UserCog, UserCheck, Mail, DollarSign } from "lucide-react";
+import { Shield, Home, Users, Trash2, UserPlus, Building2, UserCog, UserCheck, Mail, Zap } from "lucide-react";
 import FinancialDashboard from "@/components/admin/FinancialDashboard";
+import AdminMetricsPanel from "@/components/admin/AdminMetricsPanel";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { toast } from "sonner";
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, LineChart, Line } from "recharts";
+
 import LogoutButton from "@/components/LogoutButton";
 import ConfirmDeleteDialog from "@/components/ConfirmDeleteDialog";
 import { useRoleProtection } from "@/hooks/useRoleProtection";
@@ -291,21 +292,6 @@ const Admin = () => {
               </Badge>
             </div>
           </CardHeader>
-          <CardContent>
-            <div className="bg-destructive/5 border border-destructive/20 rounded-lg p-4">
-              <div className="flex items-start gap-3">
-                <AlertCircle className="w-5 h-5 text-destructive flex-shrink-0 mt-0.5" />
-                <div className="space-y-1">
-                  <p className="text-sm font-medium">Dados Mockados</p>
-                  <p className="text-xs text-muted-foreground">
-                    Esta é uma simulação de área administrativa. Os dados exibidos são mockados 
-                    para fins de demonstração. Em produção, esta área seria protegida por autenticação 
-                    real e políticas de RLS no banco de dados.
-                  </p>
-                </div>
-              </div>
-            </div>
-          </CardContent>
         </Card>
 
         {/* Notificações Pendentes - Admin */}
@@ -449,64 +435,8 @@ const Admin = () => {
           </CardContent>
         </Card>
 
-        {/* Admin Dashboard Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <Card 
-            className="hover:shadow-medium transition-all cursor-pointer hover:border-primary/50"
-            onClick={() => navigate("/admin/usuarios")}
-          >
-            <CardContent className="pt-6">
-              <div className="flex items-center justify-between mb-4">
-                <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
-                  <Users className="w-6 h-6 text-primary" />
-                </div>
-                <Badge variant="secondary">Mockado</Badge>
-              </div>
-              <h3 className="text-2xl font-bold mb-1">127</h3>
-              <p className="text-sm text-muted-foreground">Usuários Cadastrados</p>
-              <div className="mt-3 pt-3 border-t border-border/50 space-y-2">
-                <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">Usuários Ativos:</span>
-                  <span className="font-medium text-green-600">124</span>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">Taxa de Engajamento:</span>
-                  <span className="font-bold text-primary">98%</span>
-                </div>
-                <p className="text-xs text-muted-foreground italic pt-1">
-                  Fórmula: (usuários ativos nos últimos 30 dias / total) × 100
-                </p>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className="hover:shadow-medium transition-all">
-            <CardContent className="pt-6">
-              <div className="flex items-center justify-between mb-4">
-                <div className="w-12 h-12 bg-green-500/10 rounded-lg flex items-center justify-center">
-                  <TrendingUp className="w-6 h-6 text-green-600" />
-                </div>
-                <Badge variant="secondary">Mockado</Badge>
-              </div>
-              <h3 className="text-2xl font-bold mb-1 text-green-600">72%</h3>
-              <p className="text-sm text-muted-foreground">Taxa de Sucesso</p>
-              <div className="mt-3 pt-3 border-t border-border/50 space-y-1">
-                <div className="flex justify-between text-xs">
-                  <span className="text-muted-foreground">Objetivos:</span>
-                  <span className="font-medium">342</span>
-                </div>
-                <div className="flex justify-between text-xs">
-                  <span className="text-muted-foreground">Metas:</span>
-                  <span className="font-medium">891</span>
-                </div>
-                <div className="flex justify-between text-xs">
-                  <span className="text-muted-foreground">Ações:</span>
-                  <span className="font-medium">2.156</span>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
+        {/* Painel de Métricas Real */}
+        <AdminMetricsPanel />
 
         {/* Cadastro de Administradores */}
         <Card className="shadow-medium">
@@ -765,207 +695,8 @@ const Admin = () => {
           </CardContent>
         </Card>
 
-        {/* Pesquisas de Satisfação */}
-        <Card className="shadow-medium">
-          <CardHeader>
-            <CardTitle className="text-lg flex items-center gap-2">
-              <TrendingUp className="w-5 h-5 text-primary" />
-              Pesquisas de Satisfação
-            </CardTitle>
-            <CardDescription>
-              Análise de CSAT (Satisfação) e CES (Esforço) dos usuários (Dados Mockados)
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            {/* Resumo Geral */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="p-4 bg-primary/5 rounded-lg border border-primary/10">
-                <div className="flex items-center gap-2 mb-2">
-                  <Star className="w-4 h-4 text-primary" />
-                  <span className="text-sm font-medium">CSAT Médio</span>
-                </div>
-                <p className="text-2xl font-bold">4.3/5</p>
-                <p className="text-xs text-muted-foreground mt-1">Satisfação geral</p>
-              </div>
-              
-              <div className="p-4 bg-primary/5 rounded-lg border border-primary/10">
-                <div className="flex items-center gap-2 mb-2">
-                  <Zap className="w-4 h-4 text-primary" />
-                  <span className="text-sm font-medium">CES Médio</span>
-                </div>
-                <p className="text-2xl font-bold">5.8/7</p>
-                <p className="text-xs text-muted-foreground mt-1">Facilidade de uso</p>
-              </div>
-              
-              <div className="p-4 bg-primary/5 rounded-lg border border-primary/10">
-                <div className="flex items-center gap-2 mb-2">
-                  <Users className="w-4 h-4 text-primary" />
-                  <span className="text-sm font-medium">Respostas</span>
-                </div>
-                <p className="text-2xl font-bold">143</p>
-                <p className="text-xs text-muted-foreground mt-1">Total de feedbacks</p>
-              </div>
-            </div>
-
-            {/* Gráfico de Tendência */}
-            <div>
-              <h4 className="text-sm font-semibold mb-3">Tendência de Satisfação (últimos 6 meses)</h4>
-              <ResponsiveContainer width="100%" height={250}>
-                <LineChart
-                  data={[
-                    { mes: "Jan", csat: 3.8, ces: 5.2 },
-                    { mes: "Fev", csat: 4.0, ces: 5.4 },
-                    { mes: "Mar", csat: 4.1, ces: 5.6 },
-                    { mes: "Abr", csat: 4.2, ces: 5.5 },
-                    { mes: "Mai", csat: 4.3, ces: 5.7 },
-                    { mes: "Jun", csat: 4.3, ces: 5.8 },
-                  ]}
-                >
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="mes" />
-                  <YAxis />
-                  <Tooltip />
-                  <Legend />
-                  <Line type="monotone" dataKey="csat" stroke="hsl(var(--primary))" name="CSAT (1-5)" strokeWidth={2} />
-                  <Line type="monotone" dataKey="ces" stroke="hsl(var(--destructive))" name="CES (1-7)" strokeWidth={2} />
-                </LineChart>
-              </ResponsiveContainer>
-            </div>
-
-            {/* Gráfico por Seção */}
-            <div>
-              <h4 className="text-sm font-semibold mb-3">Satisfação por Seção</h4>
-              <ResponsiveContainer width="100%" height={300}>
-                <BarChart
-                  data={[
-                    { secao: "Diário", csat: 4.5, ces: 6.2 },
-                    { secao: "Plano de Vida", csat: 4.2, ces: 5.5 },
-                    { secao: "Objetivos", csat: 4.4, ces: 5.8 },
-                    { secao: "Roda da Vida", csat: 4.1, ces: 5.4 },
-                    { secao: "SWOT", csat: 4.0, ces: 5.3 },
-                    { secao: "VVD", csat: 4.3, ces: 5.9 },
-                  ]}
-                >
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="secao" angle={-15} textAnchor="end" height={80} />
-                  <YAxis />
-                  <Tooltip />
-                  <Legend />
-                  <Bar dataKey="csat" fill="hsl(var(--primary))" name="CSAT (1-5)" />
-                  <Bar dataKey="ces" fill="hsl(var(--destructive))" name="CES (1-7)" />
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
-
-            {/* Tabela de Feedbacks Recentes */}
-            <div>
-              <h4 className="text-sm font-semibold mb-3">Feedbacks Recentes</h4>
-              <div className="rounded-lg border overflow-x-auto">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Data</TableHead>
-                      <TableHead>Tipo</TableHead>
-                      <TableHead>Seção</TableHead>
-                      <TableHead>Nota</TableHead>
-                      <TableHead>Comentário</TableHead>
-                      <TableHead>Usuário</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {[
-                      { 
-                        data: "2025-01-20", 
-                        tipo: "CSAT", 
-                        secao: "Diário", 
-                        nota: "5/5", 
-                        comentario: "Muito útil para reflexão diária!",
-                        usuario: "joao@exemplo.com"
-                      },
-                      { 
-                        data: "2025-01-19", 
-                        tipo: "CES", 
-                        secao: "Roda da Vida", 
-                        nota: "6/7", 
-                        comentario: "Fácil de usar, interface intuitiva",
-                        usuario: "maria@exemplo.com"
-                      },
-                      { 
-                        data: "2025-01-19", 
-                        tipo: "CSAT", 
-                        secao: "Objetivos", 
-                        nota: "4/5", 
-                        comentario: "Bom, mas poderia ter mais exemplos",
-                        usuario: "pedro@exemplo.com"
-                      },
-                      { 
-                        data: "2025-01-18", 
-                        tipo: "CES", 
-                        secao: "VVD", 
-                        nota: "7/7", 
-                        comentario: "Muito fácil, adorei a IA!",
-                        usuario: "ana@exemplo.com"
-                      },
-                      { 
-                        data: "2025-01-18", 
-                        tipo: "CSAT", 
-                        secao: "SWOT", 
-                        nota: "3/5", 
-                        comentario: "Poderia ter mais explicações sobre cada quadrante",
-                        usuario: "carlos@exemplo.com"
-                      },
-                    ].map((feedback, index) => (
-                      <TableRow key={index}>
-                        <TableCell className="whitespace-nowrap">{feedback.data}</TableCell>
-                        <TableCell>
-                          <Badge variant={feedback.tipo === "CSAT" ? "default" : "secondary"} className="gap-1">
-                            {feedback.tipo === "CSAT" ? <Star className="w-3 h-3" /> : <Zap className="w-3 h-3" />}
-                            {feedback.tipo}
-                          </Badge>
-                        </TableCell>
-                        <TableCell>{feedback.secao}</TableCell>
-                        <TableCell className="font-semibold">{feedback.nota}</TableCell>
-                        <TableCell className="max-w-xs truncate">{feedback.comentario}</TableCell>
-                        <TableCell className="text-muted-foreground text-sm">{feedback.usuario}</TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
         {/* Financial Dashboard */}
         <FinancialDashboard />
-
-        {/* Recent Activity */}
-        <Card className="shadow-medium">
-          <CardHeader>
-            <CardTitle className="text-lg flex items-center gap-2">
-              <Activity className="w-5 h-5 text-primary" />
-              Atividades Recentes (Mockado)
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-3">
-              {[
-                { user: "João Silva", action: "completou um objetivo", time: "há 5 minutos" },
-                { user: "Maria Santos", action: "criou novo PDI", time: "há 12 minutos" },
-                { user: "Pedro Costa", action: "atualizou Roda da Vida", time: "há 23 minutos" },
-                { user: "Ana Oliveira", action: "completou módulo de estudo", time: "há 1 hora" },
-              ].map((activity, index) => (
-                <div key={index} className="flex items-center justify-between py-2 border-b last:border-0">
-                  <div>
-                    <p className="text-sm font-medium">{activity.user}</p>
-                    <p className="text-xs text-muted-foreground">{activity.action}</p>
-                  </div>
-                  <span className="text-xs text-muted-foreground">{activity.time}</span>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
       </main>
 
       {/* Dialog de Confirmação de Exclusão */}
