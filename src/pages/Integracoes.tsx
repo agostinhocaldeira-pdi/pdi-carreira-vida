@@ -336,14 +336,14 @@ const Integracoes = () => {
                       variant={isAvailable ? "default" : "outline"}
                       className={`w-full ${isAvailable ? 'bg-green-600 hover:bg-green-700' : ''}`}
                       onClick={() => handleConnect(integration.id, integration.name)}
-                      disabled={connecting && isGoogleCalendar}
+                      disabled={!isGoogleCalendar || (connecting && isGoogleCalendar)}
                     >
                       {connecting && isGoogleCalendar ? (
                         <RefreshCw className="w-4 h-4 mr-2 animate-spin" />
                       ) : (
                         <Link2 className="w-4 h-4 mr-2" />
                       )}
-                      {isAvailable ? 'Conectar agora' : 'Conectar'}
+                      {isAvailable ? 'Conectar agora' : 'Em breve'}
                     </Button>
                   )}
                 </CardContent>
