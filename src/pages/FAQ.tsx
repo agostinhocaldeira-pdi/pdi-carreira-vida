@@ -1,5 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { HelpCircle, Home, MessagesSquare } from "lucide-react";
+import { HelpCircle, Home, MessagesSquare, MessageCircle } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import LogoutButton from "@/components/LogoutButton";
@@ -9,6 +9,8 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { useEffect, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
 
 // Export faqItems for use in other components
 export const faqItems = [
@@ -225,6 +227,20 @@ export const faqItems = [
 ];
 
 const FAQ = () => {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    const checkAuth = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      setIsLoggedIn(!!session);
+    };
+    checkAuth();
+  }, []);
+
+  const whatsappNumber = "5511995677999";
+  const whatsappMessage = encodeURIComponent("Olá! Tenho uma dúvida sobre o PDI Carreira & Vida.");
+  const whatsappLink = `https://wa.me/${whatsappNumber}?text=${whatsappMessage}`;
+
   return (
     <div className="min-h-screen bg-gradient-subtle">
       <header className="bg-card border-b shadow-soft">
@@ -234,7 +250,7 @@ const FAQ = () => {
               <HelpCircle className="w-6 h-6 text-primary" />
               <h1 className="text-2xl font-bold">FAQ - Perguntas Frequentes</h1>
             </div>
-            <LogoutButton />
+            {isLoggedIn && <LogoutButton />}
           </div>
         </div>
       </header>
@@ -279,21 +295,43 @@ const FAQ = () => {
           <CardContent className="py-8 text-center space-y-3">
             <h3 className="text-xl font-semibold">Não encontrou sua resposta?</h3>
             <p className="text-muted-foreground max-w-2xl mx-auto">
-              Entre em contato com nossa equipe de suporte ou volte ao dashboard.
+              {isLoggedIn 
+                ? "Entre em contato com nossa equipe de suporte ou volte ao dashboard."
+                : "Tire suas dúvidas diretamente pelo WhatsApp com nossa equipe."
+              }
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
-              <Link to="/home">
-                <Button variant="outline" className="w-full sm:w-auto gap-2">
-                  <Home className="w-4 h-4" />
-                  Voltar ao Dashboard
-                </Button>
-              </Link>
-              <Link to="/suporte">
-                <Button className="w-full sm:w-auto gap-2">
-                  <MessagesSquare className="w-4 h-4" />
-                  Falar com Suporte
-                </Button>
-              </Link>
+              {isLoggedIn ? (
+                <>
+                  <Link to="/home">
+                    <Button variant="outline" className="w-full sm:w-auto gap-2">
+                      <Home className="w-4 h-4" />
+                      Voltar ao Dashboard
+                    </Button>
+                  </Link>
+                  <Link to="/suporte">
+                    <Button className="w-full sm:w-auto gap-2">
+                      <MessagesSquare className="w-4 h-4" />
+                      Falar com Suporte
+                    </Button>
+                  </Link>
+                </>
+              ) : (
+                <>
+                  <Link to="/">
+                    <Button variant="outline" className="w-full sm:w-auto gap-2">
+                      <Home className="w-4 h-4" />
+                      Voltar ao Início
+                    </Button>
+                  </Link>
+                  <a href={whatsappLink} target="_blank" rel="noopener noreferrer">
+                    <Button className="w-full sm:w-auto gap-2 bg-green-600 hover:bg-green-700">
+                      <MessageCircle className="w-4 h-4" />
+                      Tirar Dúvidas pelo WhatsApp
+                    </Button>
+                  </a>
+                </>
+              )}
             </div>
           </CardContent>
         </Card>
