@@ -248,8 +248,10 @@ class SupabaseStorageService {
       metas.push({
         id: metas.length + 1,
         objetivo_id: goal.objective_id || '',
+        objetivoId: goal.objective_id || '', // camelCase alias for compatibility
         texto: goal.texto,
         data_alvo: goal.data_alvo || '',
+        dataAlvo: goal.data_alvo || '', // camelCase alias for compatibility
         concluida: goal.status === 'concluido',
         from_smart: goal.from_smart || false,
         acoes,
@@ -268,13 +270,17 @@ class SupabaseStorageService {
     await supabase.from('user_goals').delete().eq('user_id', userId);
 
     for (const meta of metas) {
+      // Handle both camelCase and snake_case property names for compatibility
+      const objetivoId = meta.objetivo_id || (meta as any).objetivoId || null;
+      const dataAlvo = meta.data_alvo || (meta as any).dataAlvo || null;
+      
       const { data: goal, error: goalError } = await supabase
         .from('user_goals')
         .insert({
           user_id: userId,
-          objective_id: meta.objetivo_id || null,
+          objective_id: objetivoId,
           texto: meta.texto,
-          data_alvo: meta.data_alvo || null,
+          data_alvo: dataAlvo,
           status: meta.concluida ? 'concluido' : 'a fazer',
           from_smart: meta.from_smart || false,
         })
