@@ -267,11 +267,6 @@ const Index = () => {
           <p className="text-lg sm:text-xl font-medium text-foreground mb-6">
             Se você se identificou, o problema não é você. É a falta de um sistema.
           </p>
-          <div className="p-4 sm:p-6 bg-primary/5 border border-primary/20 rounded-2xl max-w-2xl mx-auto">
-            <p className="text-lg sm:text-xl md:text-2xl font-semibold bg-gradient-to-r from-primary via-purple-500 to-pink-500 bg-clip-text text-transparent">
-              É como ter um coach, um RH e uma bússola de vida no bolso.
-            </p>
-          </div>
         </div>
       </section>
 
