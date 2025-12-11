@@ -139,6 +139,18 @@ export class GoogleCalendarService extends BaseIntegrationService {
     this.log('Sync events called - fetching objectives and metas to export');
     
     try {
+      // First check if we have a valid access token
+      const accessToken = await this.getAccessToken();
+      if (!accessToken) {
+        this.log('No provider_token available - user needs to reconnect Google');
+        return {
+          success: false,
+          itemsSynced: 0,
+          errors: ['Token do Google expirado. Por favor, desconecte e reconecte sua conta Google.'],
+          lastSyncAt: new Date().toISOString(),
+        };
+      }
+
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) {
         return {
@@ -162,6 +174,8 @@ export class GoogleCalendarService extends BaseIntegrationService {
         .select('*')
         .eq('user_id', user.id)
         .not('data_alvo', 'is', null);
+
+      this.log('Found objectives: ' + (objectives?.length || 0) + ', goals: ' + (goals?.length || 0));
 
       const objectivesResult = await this.exportObjectives(objectives || []);
       const goalsResult = await this.exportMetas(goals || []);
