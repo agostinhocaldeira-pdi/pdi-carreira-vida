@@ -93,14 +93,14 @@ export const SatisfactionSurveyModal = ({ open, onOpenChange, sectionCompleted }
         <div className="space-y-6 pt-4">
           {/* Rating Scale */}
           <div className="flex flex-col items-center gap-4">
-            <div className="flex gap-2 justify-center">
+            <div className="flex flex-wrap gap-2 justify-center">
               {Array.from({ length: maxRating }, (_, i) => i + 1).map((value) => (
                 <button
                   key={value}
                   onClick={() => setRating(value)}
                   onMouseEnter={() => setHoveredRating(value)}
                   onMouseLeave={() => setHoveredRating(0)}
-                  className={`w-12 h-12 rounded-full border-2 flex items-center justify-center font-semibold transition-all ${
+                  className={`w-10 h-10 sm:w-12 sm:h-12 rounded-full border-2 flex items-center justify-center font-semibold text-sm sm:text-base transition-all ${
                     value <= (hoveredRating || rating)
                       ? "bg-primary text-primary-foreground border-primary scale-110 shadow-glow"
                       : "border-border hover:border-primary hover:scale-105"

@@ -11,7 +11,7 @@ serve(async (req) => {
   }
 
   try {
-    const { vvd, valores, areasVida } = await req.json();
+    const { vvd, valores, areasVida, surveyData, onboardingData } = await req.json();
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     
     if (!LOVABLE_API_KEY) {
@@ -19,10 +19,53 @@ serve(async (req) => {
     }
 
     // Preparar dados para análise
-    const valoresPreenchidos = valores.filter((v: string) => v.trim() !== "");
-    const areasPreenchidas = areasVida.filter(
+    const valoresPreenchidos = valores?.filter((v: string) => v.trim() !== "") || [];
+    const areasPreenchidas = areasVida?.filter(
       (area: any) => area.notaAtual && area.notaDesejada
-    );
+    ) || [];
+
+    // Mapear respostas da pesquisa para texto legível
+    const mapWakeUpTime = (value: string) => {
+      const map: Record<string, string> = {
+        "antes-6h": "Antes das 6h",
+        "6h-8h": "Entre 6h e 8h",
+        "8h-10h": "Entre 8h e 10h",
+        "depois-10h": "Depois das 10h"
+      };
+      return map[value] || value;
+    };
+
+    const mapExerciseFrequency = (value: string) => {
+      const map: Record<string, string> = {
+        "nunca": "Raramente/Nunca",
+        "1-2x": "1-2x por semana",
+        "3-4x": "3-4x por semana",
+        "5+x": "5x ou mais"
+      };
+      return map[value] || value;
+    };
+
+    const mapMainGoal = (value: string) => {
+      const map: Record<string, string> = {
+        "carreira": "Crescer na carreira",
+        "saude": "Melhorar a saúde",
+        "financeiro": "Estabilidade financeira",
+        "relacionamentos": "Melhorar relacionamentos",
+        "equilibrio": "Equilíbrio vida/trabalho",
+        "autoconhecimento": "Autoconhecimento"
+      };
+      return map[value] || value;
+    };
+
+    const mapLearningStyle = (value: string) => {
+      const map: Record<string, string> = {
+        "lendo": "Lendo livros/artigos",
+        "videos": "Assistindo vídeos",
+        "praticando": "Praticando/Fazendo",
+        "conversando": "Conversando com pessoas"
+      };
+      return map[value] || value;
+    };
 
     // Criar o prompt para análise
     const prompt = `Você é um coach de desenvolvimento pessoal e carreira. Analise as seguintes informações do Plano de Vida de um usuário e crie um insight profundo e personalizado:
@@ -41,6 +84,18 @@ ${areasPreenchidas.length > 0
   : "Nenhuma área avaliada ainda"
 }
 
+**Perfil do Onboarding:**
+- Fase atual: ${onboardingData?.currentPhase || "Não informado"}
+- Expectativas: ${onboardingData?.expectations || "Não informado"}
+
+**Pesquisa de Hábitos e Preferências:**
+- Horário de acordar: ${surveyData?.wakeUpTime ? mapWakeUpTime(surveyData.wakeUpTime) : "Não informado"}
+- Frequência de exercícios: ${surveyData?.exerciseFrequency ? mapExerciseFrequency(surveyData.exerciseFrequency) : "Não informado"}
+- Principal objetivo: ${surveyData?.mainGoal ? mapMainGoal(surveyData.mainGoal) : "Não informado"}
+- Estilo de aprendizagem: ${surveyData?.learningStyle ? mapLearningStyle(surveyData.learningStyle) : "Não informado"}
+- Maior desafio: ${surveyData?.biggestChallenge || "Não informado"}
+- Fonte de motivação: ${surveyData?.motivationSource || "Não informado"}
+
 INSTRUÇÕES IMPORTANTES:
 - Escreva APENAS 2 parágrafos curtos e diretos
 - Cada parágrafo deve ter no máximo 4-5 linhas
@@ -48,10 +103,11 @@ INSTRUÇÕES IMPORTANTES:
 - Extraia apenas a ESSÊNCIA do que descobriu sobre o usuário
 - Use linguagem empática e motivadora
 - Foque nos insights mais importantes e correlações principais
+- LEVE EM CONSIDERAÇÃO os hábitos, objetivos e desafios da pesquisa para personalizar os insights
 
 Estruture sua resposta em exatamente 2 parágrafos:
-1º parágrafo: Quem é essa pessoa (valores, visão e padrões principais)
-2º parágrafo: Áreas prioritárias e sugestão de próximos passos`;
+1º parágrafo: Quem é essa pessoa (valores, visão, padrões e características comportamentais)
+2º parágrafo: Áreas prioritárias e sugestão de próximos passos considerando seu estilo de aprendizagem e objetivos`;
 
 
     console.log("Calling Lovable AI for insight generation...");
