@@ -257,9 +257,10 @@ const Index = () => {
       </section>
 
       {/* Why Now Section */}
-      <section className="py-12 sm:py-16 px-4">
+      {/* Por que agora? Section */}
+      <section className="py-12 sm:py-20 px-4 bg-gradient-to-br from-primary/5 via-background to-purple-500/5">
         <div className="container mx-auto max-w-5xl">
-          <div className="text-center mb-8 sm:mb-10">
+          <div className="text-center mb-10 sm:mb-14">
             <Badge variant="secondary" className="mb-4 text-xs sm:text-sm">
               O momento é agora
             </Badge>
@@ -267,48 +268,108 @@ const Index = () => {
               Por que agora?
             </h2>
             <p className="text-muted-foreground max-w-2xl mx-auto text-sm sm:text-base">
-              O mundo mudou. Você também precisa mudar a forma como planeja sua vida.
+              Não é sobre o momento perfeito. É sobre decidir que você merece mais.
             </p>
           </div>
           
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-            <Card className="border-border/50 bg-card/50 backdrop-blur-sm text-center">
-              <CardContent className="p-4 sm:p-6">
-                <TrendingUp className="h-8 w-8 text-primary mx-auto mb-3" />
-                <h3 className="font-semibold text-sm sm:text-base mb-2">Mercado em explosão</h3>
-                <p className="text-xs sm:text-sm text-muted-foreground">
-                  Autodesenvolvimento cresce <strong>7-12% ao ano</strong> globalmente
-                </p>
+          <div className="grid md:grid-cols-2 gap-6 sm:gap-8">
+            {/* Motivo 1 */}
+            <Card className="border-primary/20 bg-gradient-to-br from-card to-primary/5 hover:shadow-xl transition-all duration-300">
+              <CardContent className="p-6 sm:p-8">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center">
+                    <span className="text-lg font-bold text-primary">1</span>
+                  </div>
+                  <h3 className="font-bold text-base sm:text-lg">
+                    Porque você sabe que pode mais
+                  </h3>
+                </div>
+                <div className="space-y-3 text-sm sm:text-base text-muted-foreground leading-relaxed">
+                  <p>
+                    Você sente — mesmo que não diga em voz alta — que existe uma versão muito melhor de você esperando para nascer.
+                  </p>
+                  <p>
+                    Uma versão mais leve, mais clara e mais firme. Mas essa versão não aparece sozinha. Ela precisa de <strong className="text-foreground">direção</strong>. E direção precisa de um <strong className="text-foreground">plano</strong>.
+                  </p>
+                  <p className="text-primary font-medium pt-2 border-t border-border/30">
+                    O motivo para começar agora é simples: você se deve essa chance.
+                  </p>
+                </div>
               </CardContent>
             </Card>
-            
-            <Card className="border-border/50 bg-card/50 backdrop-blur-sm text-center">
-              <CardContent className="p-4 sm:p-6">
-                <Users className="h-8 w-8 text-primary mx-auto mb-3" />
-                <h3 className="font-semibold text-sm sm:text-base mb-2">Trabalho remoto</h3>
-                <p className="text-xs sm:text-sm text-muted-foreground">
-                  Mais autonomia exige mais <strong>autogestão</strong> e clareza
-                </p>
+
+            {/* Motivo 2 */}
+            <Card className="border-orange-500/20 bg-gradient-to-br from-card to-orange-500/5 hover:shadow-xl transition-all duration-300">
+              <CardContent className="p-6 sm:p-8">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-10 h-10 rounded-full bg-orange-500/20 flex items-center justify-center">
+                    <span className="text-lg font-bold text-orange-500">2</span>
+                  </div>
+                  <h3 className="font-bold text-base sm:text-lg">
+                    Porque o automático está te drenando
+                  </h3>
+                </div>
+                <div className="space-y-3 text-sm sm:text-base text-muted-foreground leading-relaxed">
+                  <p>
+                    Acordar, sobreviver ao dia, dormir… repetir. Esse ciclo silencioso vai apagando sua identidade, seus sonhos e sua força.
+                  </p>
+                  <p>
+                    A verdade é dura, mas libertadora: <strong className="text-foreground">sem um mapa, você vai rodar em círculos</strong>.
+                  </p>
+                  <p className="text-orange-500 font-medium pt-2 border-t border-border/30">
+                    Começar o PDI hoje é recuperar o controle da sua própria história.
+                  </p>
+                </div>
               </CardContent>
             </Card>
-            
-            <Card className="border-border/50 bg-card/50 backdrop-blur-sm text-center">
-              <CardContent className="p-4 sm:p-6">
-                <Cpu className="h-8 w-8 text-primary mx-auto mb-3" />
-                <h3 className="font-semibold text-sm sm:text-base mb-2">IA personalizada</h3>
-                <p className="text-xs sm:text-sm text-muted-foreground">
-                  Tecnologia que entende <strong>seu contexto</strong> e acelera resultados
-                </p>
+
+            {/* Motivo 3 */}
+            <Card className="border-purple-500/20 bg-gradient-to-br from-card to-purple-500/5 hover:shadow-xl transition-all duration-300">
+              <CardContent className="p-6 sm:p-8">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-10 h-10 rounded-full bg-purple-500/20 flex items-center justify-center">
+                    <span className="text-lg font-bold text-purple-500">3</span>
+                  </div>
+                  <h3 className="font-bold text-base sm:text-lg">
+                    Porque seu futuro está sendo decidido agora
+                  </h3>
+                </div>
+                <div className="space-y-3 text-sm sm:text-base text-muted-foreground leading-relaxed">
+                  <p>
+                    Existe um "você de amanhã" observando o que você faz hoje. Ele pode te agradecer… ou te cobrar.
+                  </p>
+                  <p>
+                    O futuro não acontece do nada: ele é construído por pequenas escolhas feitas agora. E escolher não fazer nada também é uma escolha — <strong className="text-foreground">normalmente a mais cara delas</strong>.
+                  </p>
+                  <p className="text-purple-500 font-medium pt-2 border-t border-border/30">
+                    Começar agora é dizer para a vida: "Eu estou no comando."
+                  </p>
+                </div>
               </CardContent>
             </Card>
-            
-            <Card className="border-border/50 bg-card/50 backdrop-blur-sm text-center">
-              <CardContent className="p-4 sm:p-6">
-                <Zap className="h-8 w-8 text-primary mx-auto mb-3" />
-                <h3 className="font-semibold text-sm sm:text-base mb-2">Resultados rápidos</h3>
-                <p className="text-xs sm:text-sm text-muted-foreground">
-                  Clareza, autonomia e <strong>ação imediata</strong> — é o que você busca
-                </p>
+
+            {/* Motivo 4 */}
+            <Card className="border-emerald-500/20 bg-gradient-to-br from-card to-emerald-500/5 hover:shadow-xl transition-all duration-300">
+              <CardContent className="p-6 sm:p-8">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-10 h-10 rounded-full bg-emerald-500/20 flex items-center justify-center">
+                    <span className="text-lg font-bold text-emerald-500">4</span>
+                  </div>
+                  <h3 className="font-bold text-base sm:text-lg">
+                    Porque você merece viver com sentido
+                  </h3>
+                </div>
+                <div className="space-y-3 text-sm sm:text-base text-muted-foreground leading-relaxed">
+                  <p>
+                    Quantas vezes você adiou seus sonhos "para quando der"? Quantas vezes colocou todo mundo na frente de você?
+                  </p>
+                  <p>
+                    Você não precisa esperar o caos, nem o próximo susto. O PDI existe para <strong className="text-foreground">te devolver o sentido que você perdeu pelo caminho</strong>.
+                  </p>
+                  <p className="text-emerald-500 font-medium pt-2 border-t border-border/30">
+                    Começar agora não é só inteligente. É um ato de amor-próprio.
+                  </p>
+                </div>
               </CardContent>
             </Card>
           </div>
