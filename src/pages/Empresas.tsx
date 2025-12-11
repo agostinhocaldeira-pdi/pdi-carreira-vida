@@ -67,7 +67,7 @@ const Empresas = () => {
   const companyPricing = [
     { range: "1-10 funcionários", price: "R$ 300", period: "/mês", perEmployee: "R$ 30,00/funcionário" },
     { range: "11-50 funcionários", price: "R$ 600", period: "/mês", perEmployee: "R$ 12,00/funcionário" },
-    { range: "51+ funcionários", price: "R$ 1.200", period: "/mês", perEmployee: "A partir de R$ 23,53/funcionário", highlight: true }
+    { range: "51+ funcionários", price: "R$ 900", period: "/mês", perEmployee: "A partir de R$ 17,65/funcionário", highlight: true }
   ];
 
   const whyCompaniesNeed = [
