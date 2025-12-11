@@ -255,6 +255,9 @@ const Index = () => {
       {/* Problem-Solution */}
       <section className="py-12 sm:py-16 px-4 bg-muted/20">
         <div className="container mx-auto max-w-4xl text-center">
+          <h2 className="text-xl sm:text-2xl md:text-3xl font-bold mb-6 text-foreground">
+            Milhões de profissionais sabem que precisam evoluir, mas não sabem <span className="text-primary">por onde começar</span>.
+          </h2>
           <p className="text-base sm:text-lg text-muted-foreground mb-4 italic">
             "Eu sei o que preciso fazer, mas não consigo manter o foco..."
           </p>
@@ -264,9 +267,125 @@ const Index = () => {
           <p className="text-base sm:text-lg text-muted-foreground mb-6 sm:mb-8 italic">
             "Já tentei de tudo, mas sempre volto à estaca zero..."
           </p>
-          <p className="text-lg sm:text-xl font-medium text-foreground">
+          <p className="text-lg sm:text-xl font-medium text-foreground mb-6">
             Se você se identificou, o problema não é você. É a falta de um sistema.
           </p>
+          <div className="p-4 sm:p-6 bg-primary/5 border border-primary/20 rounded-2xl max-w-2xl mx-auto">
+            <p className="text-lg sm:text-xl md:text-2xl font-semibold bg-gradient-to-r from-primary via-purple-500 to-pink-500 bg-clip-text text-transparent">
+              É como ter um coach, um RH e uma bússola de vida no bolso.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* Why Now Section */}
+      <section className="py-12 sm:py-16 px-4">
+        <div className="container mx-auto max-w-5xl">
+          <div className="text-center mb-8 sm:mb-10">
+            <Badge variant="secondary" className="mb-4 text-xs sm:text-sm">
+              O momento é agora
+            </Badge>
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 sm:mb-4">
+              Por que agora?
+            </h2>
+            <p className="text-muted-foreground max-w-2xl mx-auto text-sm sm:text-base">
+              O mundo mudou. Você também precisa mudar a forma como planeja sua vida.
+            </p>
+          </div>
+          
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+            <Card className="border-border/50 bg-card/50 backdrop-blur-sm text-center">
+              <CardContent className="p-4 sm:p-6">
+                <TrendingUp className="h-8 w-8 text-primary mx-auto mb-3" />
+                <h3 className="font-semibold text-sm sm:text-base mb-2">Mercado em explosão</h3>
+                <p className="text-xs sm:text-sm text-muted-foreground">
+                  Autodesenvolvimento cresce <strong>7-12% ao ano</strong> globalmente
+                </p>
+              </CardContent>
+            </Card>
+            
+            <Card className="border-border/50 bg-card/50 backdrop-blur-sm text-center">
+              <CardContent className="p-4 sm:p-6">
+                <Users className="h-8 w-8 text-primary mx-auto mb-3" />
+                <h3 className="font-semibold text-sm sm:text-base mb-2">Trabalho remoto</h3>
+                <p className="text-xs sm:text-sm text-muted-foreground">
+                  Mais autonomia exige mais <strong>autogestão</strong> e clareza
+                </p>
+              </CardContent>
+            </Card>
+            
+            <Card className="border-border/50 bg-card/50 backdrop-blur-sm text-center">
+              <CardContent className="p-4 sm:p-6">
+                <Cpu className="h-8 w-8 text-primary mx-auto mb-3" />
+                <h3 className="font-semibold text-sm sm:text-base mb-2">IA personalizada</h3>
+                <p className="text-xs sm:text-sm text-muted-foreground">
+                  Tecnologia que entende <strong>seu contexto</strong> e acelera resultados
+                </p>
+              </CardContent>
+            </Card>
+            
+            <Card className="border-border/50 bg-card/50 backdrop-blur-sm text-center">
+              <CardContent className="p-4 sm:p-6">
+                <Zap className="h-8 w-8 text-primary mx-auto mb-3" />
+                <h3 className="font-semibold text-sm sm:text-base mb-2">Resultados rápidos</h3>
+                <p className="text-xs sm:text-sm text-muted-foreground">
+                  Clareza, autonomia e <strong>ação imediata</strong> — é o que você busca
+                </p>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </section>
+
+      {/* Target Audiences */}
+      <section className="py-12 sm:py-16 px-4 bg-muted/30">
+        <div className="container mx-auto max-w-5xl">
+          <div className="text-center mb-8 sm:mb-10">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 sm:mb-4">
+              Para quem é o PDI?
+            </h2>
+            <p className="text-muted-foreground max-w-2xl mx-auto text-sm sm:text-base">
+              Três públicos, um objetivo em comum: evolução consistente.
+            </p>
+          </div>
+          
+          <div className="grid sm:grid-cols-3 gap-4 sm:gap-6">
+            <Card className="border-primary/30 bg-gradient-to-br from-primary/5 to-transparent hover:shadow-lg transition-all">
+              <CardContent className="p-5 sm:p-6 text-center">
+                <div className="w-14 h-14 mx-auto rounded-full bg-primary/10 flex items-center justify-center mb-4">
+                  <User className="h-7 w-7 text-primary" />
+                </div>
+                <h3 className="text-lg sm:text-xl font-semibold mb-2">Profissionais</h3>
+                <p className="text-muted-foreground text-xs sm:text-sm">
+                  Pessoas buscando <strong>clareza de propósito</strong>, transição de carreira ou simplesmente evoluir de forma estruturada.
+                </p>
+              </CardContent>
+            </Card>
+            
+            <Card className="border-primary/30 bg-gradient-to-br from-purple-500/5 to-transparent hover:shadow-lg transition-all">
+              <CardContent className="p-5 sm:p-6 text-center">
+                <div className="w-14 h-14 mx-auto rounded-full bg-purple-500/10 flex items-center justify-center mb-4">
+                  <Building2 className="h-7 w-7 text-purple-500" />
+                </div>
+                <h3 className="text-lg sm:text-xl font-semibold mb-2">Empresas</h3>
+                <p className="text-muted-foreground text-xs sm:text-sm">
+                  Organizações que querem <strong>PDI fácil</strong> para times, com OKRs alinhados e gestão centralizada.
+                </p>
+              </CardContent>
+            </Card>
+            
+            <Card className="border-primary/30 bg-gradient-to-br from-pink-500/5 to-transparent hover:shadow-lg transition-all">
+              <CardContent className="p-5 sm:p-6 text-center">
+                <div className="w-14 h-14 mx-auto rounded-full bg-pink-500/10 flex items-center justify-center mb-4">
+                  <Star className="h-7 w-7 text-pink-500" />
+                </div>
+                <h3 className="text-lg sm:text-xl font-semibold mb-2">Coaches & Mentores</h3>
+                <p className="text-muted-foreground text-xs sm:text-sm">
+                  Profissionais que precisam de uma <strong>ferramenta prática</strong> para entregar valor aos seus clientes.
+                </p>
+              </CardContent>
+            </Card>
+          </div>
         </div>
       </section>
 
