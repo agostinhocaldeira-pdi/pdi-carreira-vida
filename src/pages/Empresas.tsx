@@ -11,23 +11,19 @@ import {
   TrendingUp, 
   CheckCircle2, 
   ArrowRight, 
-  Sparkles,
   Bell,
   FileText,
   Calendar,
-  Shield,
-  Zap,
   Crown,
   Award,
   Briefcase,
   LineChart,
-  Clock,
   Heart,
   Check,
-  ChevronRight,
   Star,
   MessageCircle
 } from "lucide-react";
+import Logo from "@/components/Logo";
 
 const Empresas = () => {
   const navigate = useNavigate();
@@ -147,11 +143,9 @@ const Empresas = () => {
         <div className="container mx-auto px-3 sm:px-4 py-3 sm:py-4 flex items-center justify-between">
           <button 
             onClick={() => navigate("/")}
-            className="flex items-center gap-1.5 sm:gap-2 hover:opacity-80 transition-opacity"
+            className="hover:opacity-80 transition-opacity"
           >
-            <Sparkles className="h-5 w-5 sm:h-6 sm:w-6 text-primary flex-shrink-0" />
-            <span className="font-bold text-sm sm:text-xl whitespace-nowrap">PDI</span>
-            <span className="font-bold text-sm sm:text-xl hidden sm:inline whitespace-nowrap">- Carreira & Vida</span>
+            <Logo size="md" />
           </button>
           <div className="flex items-center gap-2 sm:gap-3">
             <Button 

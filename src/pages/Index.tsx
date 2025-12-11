@@ -41,6 +41,7 @@ import {
   Smartphone
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import Logo from "@/components/Logo";
 
 const Index = () => {
   const navigate = useNavigate();
@@ -185,11 +186,7 @@ const Index = () => {
       {/* Header */}
       <header className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-border/50">
         <div className="container mx-auto px-3 sm:px-4 py-3 sm:py-4 flex items-center justify-between">
-          <div className="flex items-center gap-1.5 sm:gap-2">
-            <Sparkles className="h-5 w-5 sm:h-6 sm:w-6 text-primary flex-shrink-0" />
-            <span className="font-bold text-sm sm:text-xl whitespace-nowrap">PDI</span>
-            <span className="font-bold text-sm sm:text-xl hidden sm:inline whitespace-nowrap">- Carreira & Vida</span>
-          </div>
+          <Logo size="md" />
           <Button 
             variant="ghost" 
             size="sm"
