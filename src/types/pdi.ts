@@ -40,8 +40,10 @@ export interface Meta {
   id: number;
   user_id?: string;
   objetivo_id: string;
+  objetivoId?: string; // camelCase alias for compatibility
   texto: string;
   data_alvo: string;
+  dataAlvo?: string; // camelCase alias for compatibility
   medicao?: string;
   inicio?: string;
   concluida: boolean;
