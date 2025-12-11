@@ -25,7 +25,8 @@ import {
   Heart,
   Check,
   ChevronRight,
-  Star
+  Star,
+  MessageCircle
 } from "lucide-react";
 
 const Empresas = () => {
@@ -465,14 +466,30 @@ const Empresas = () => {
           <p className="text-muted-foreground mb-6 sm:mb-8 text-sm sm:text-base">
             O PDI é a ponte entre os objetivos da empresa e o crescimento de cada colaborador.
           </p>
-          <Button 
-            size="lg" 
-            onClick={() => navigate("/cadastrar-empresa")}
-            className="text-base sm:text-lg px-8 sm:px-10 py-5 sm:py-6 bg-primary hover:bg-primary/90"
-          >
-            Começar agora
-            <ArrowRight className="ml-2 h-5 w-5" />
-          </Button>
+          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center">
+            <Button 
+              size="lg" 
+              onClick={() => navigate("/cadastrar-empresa")}
+              className="text-base sm:text-lg px-8 sm:px-10 py-5 sm:py-6 bg-primary hover:bg-primary/90"
+            >
+              Começar agora
+              <ArrowRight className="ml-2 h-5 w-5" />
+            </Button>
+            <a 
+              href="https://wa.me/5511995677999?text=Ol%C3%A1!%20Tenho%20interesse%20no%20PDI%20para%20minha%20empresa." 
+              target="_blank" 
+              rel="noopener noreferrer"
+            >
+              <Button 
+                size="lg" 
+                variant="outline"
+                className="text-base sm:text-lg px-8 sm:px-10 py-5 sm:py-6 bg-green-600 hover:bg-green-700 text-white border-green-600 hover:border-green-700 w-full sm:w-auto"
+              >
+                <MessageCircle className="mr-2 h-5 w-5" />
+                Tirar Dúvidas pelo WhatsApp
+              </Button>
+            </a>
+          </div>
         </div>
       </section>
 
