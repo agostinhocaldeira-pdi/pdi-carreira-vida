@@ -26,15 +26,22 @@ const Integracoes = () => {
       const service = new GoogleCalendarService();
       const result = await service.syncEvents();
       
-      if (result.success) {
+      if (result.success && result.itemsSynced > 0) {
         toast({
           title: "Sincronização concluída!",
-          description: result.itemsSynced > 0 
-            ? `${result.itemsSynced} item(ns) exportado(s) para o Google Calendar.`
-            : "Nenhum objetivo ou meta com data alvo encontrado para sincronizar.",
+          description: `${result.itemsSynced} item(ns) exportado(s) para o Google Calendar.`,
+        });
+      } else if (result.errors && result.errors.length > 0) {
+        toast({
+          title: "Erro na sincronização",
+          description: result.errors[0],
+          variant: "destructive",
         });
       } else {
-        throw new Error(result.errors?.join(', ') || 'Erro desconhecido');
+        toast({
+          title: "Nada para sincronizar",
+          description: "Nenhum objetivo ou meta com data alvo encontrado.",
+        });
       }
     } catch (error: any) {
       console.error('Sync error:', error);
