@@ -48,6 +48,7 @@ import { OKRsTab } from "@/components/company/OKRsTab";
 import { BarChart3, Target } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useRoleProtection } from "@/hooks/useRoleProtection";
+import Logo from "@/components/Logo";
 
 interface Manager {
   id: string;
@@ -502,7 +503,7 @@ const DashboardEmpresa = () => {
       <header className="bg-background/80 backdrop-blur-md border-b border-border/50 sticky top-0 z-50">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <Building2 className="h-6 w-6 text-primary" />
+            <Logo size="sm" showText={false} />
             <div>
               <h1 className="font-bold text-lg">
                 {company?.razaoSocial || "Dashboard Empresa"}

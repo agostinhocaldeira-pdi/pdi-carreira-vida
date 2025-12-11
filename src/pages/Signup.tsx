@@ -16,6 +16,7 @@ import { toast } from "sonner";
 import { UserPlus, Eye, EyeOff, Loader2, Shield, Star, Sparkles, Crown, Check } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { LGPDConsentModal } from "@/components/lgpd/LGPDConsentModal";
+import Logo from "@/components/Logo";
 
 const Signup = () => {
   const navigate = useNavigate();
@@ -212,6 +213,9 @@ const Signup = () => {
     <div className="min-h-screen flex items-center justify-center px-4 py-6 sm:p-4 bg-gradient-subtle">
       <Card className="w-full max-w-md shadow-large animate-slide-up">
         <CardHeader className="space-y-2 text-center pb-4 sm:pb-6">
+          <div className="flex justify-center mb-2">
+            <Logo size="lg" showText={false} />
+          </div>
           <CardTitle className="text-2xl sm:text-3xl font-bold">PDI - Carreira & Vida</CardTitle>
           <CardDescription className="text-sm sm:text-base">
             Crie seu perfil e comece sua jornada de desenvolvimento
