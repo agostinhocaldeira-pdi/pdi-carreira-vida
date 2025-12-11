@@ -32,6 +32,21 @@ const Integracoes = () => {
           description: `${result.itemsSynced} item(ns) exportado(s) para o Google Calendar.`,
         });
       } else if (result.errors && result.errors.length > 0) {
+        // Check if it's a token error - if so, re-authenticate automatically
+        const isTokenError = result.errors.some(e => 
+          e.includes('Token') || e.includes('expirado') || e.includes('reconect')
+        );
+        
+        if (isTokenError) {
+          toast({
+            title: "Renovando acesso...",
+            description: "Redirecionando para autenticação do Google.",
+          });
+          // Trigger OAuth with pending sync flag
+          await service.connect({ pendingSync: 'true' });
+          return;
+        }
+        
         toast({
           title: "Erro na sincronização",
           description: result.errors[0],
@@ -47,14 +62,15 @@ const Integracoes = () => {
       console.error('Sync error:', error);
       toast({
         title: "Erro na sincronização",
-        description: error.message || "Não foi possível sincronizar. Tente reconectar sua conta Google.",
+        description: error.message || "Não foi possível sincronizar.",
         variant: "destructive",
       });
     } finally {
       setSyncing(false);
     }
   };
-  // Check if Google Calendar is connected via OAuth
+
+  // Check if Google Calendar is connected via OAuth and handle pending sync
   useEffect(() => {
     const checkGoogleConnection = async () => {
       const { data: { user } } = await supabase.auth.getUser();
@@ -75,12 +91,44 @@ const Integracoes = () => {
               connected_at: new Date().toISOString(),
               updated_at: new Date().toISOString(),
             }, { onConflict: 'user_id,integration_type' });
+          
+          // Check if there's a pending sync after OAuth redirect
+          const service = new GoogleCalendarService();
+          if (service.hasPendingSync()) {
+            service.clearPendingSync();
+            // Small delay to ensure session is fully loaded with provider_token
+            setTimeout(async () => {
+              setSyncing(true);
+              try {
+                const result = await service.syncEvents();
+                if (result.success && result.itemsSynced > 0) {
+                  toast({
+                    title: "Sincronização concluída!",
+                    description: `${result.itemsSynced} item(ns) exportado(s) para o Google Calendar.`,
+                  });
+                } else if (result.errors && result.errors.length > 0) {
+                  toast({
+                    title: "Erro na sincronização",
+                    description: result.errors[0],
+                    variant: "destructive",
+                  });
+                } else {
+                  toast({
+                    title: "Nada para sincronizar",
+                    description: "Nenhum objetivo ou meta com data alvo encontrado.",
+                  });
+                }
+              } finally {
+                setSyncing(false);
+              }
+            }, 1000);
+          }
         }
       }
     };
     
     checkGoogleConnection();
-  }, []);
+  }, [toast]);
 
   const handleGoogleCalendarConnect = async () => {
     setConnecting(true);
