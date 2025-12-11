@@ -1353,6 +1353,7 @@ export type Database = {
     }
     Functions: {
       export_user_data: { Args: { target_user_id: string }; Returns: Json }
+      get_employee_company_id: { Args: { _user_id: string }; Returns: string }
       get_manager_company_id: { Args: { _user_id: string }; Returns: string }
       get_manager_employee_user_ids: {
         Args: { _manager_user_id: string }
@@ -1369,6 +1370,10 @@ export type Database = {
       is_company_manager: { Args: { _user_id: string }; Returns: boolean }
       is_company_owner: {
         Args: { _company_id: string; _user_id: string }
+        Returns: boolean
+      }
+      user_owns_employee_company: {
+        Args: { _company_id: string; _owner_user_id: string }
         Returns: boolean
       }
     }
