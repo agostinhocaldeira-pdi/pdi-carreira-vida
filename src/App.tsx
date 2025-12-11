@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { LanguageProvider } from "@/contexts/LanguageContext";
 import { UnsavedChangesProvider } from "@/contexts/UnsavedChangesContext";
 import { SubscriptionProvider } from "@/contexts/SubscriptionContext";
+import ScrollToTop from "@/components/ScrollToTop";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import Landing from "./pages/Landing";
@@ -46,6 +47,7 @@ const App = () => (
             <Toaster />
             <Sonner />
             <BrowserRouter>
+            <ScrollToTop />
             <Routes>
               <Route path="/" element={<Index />} />
               <Route path="/leadp" element={<Landing />} />
