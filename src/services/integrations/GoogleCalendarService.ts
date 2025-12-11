@@ -102,6 +102,7 @@ export class GoogleCalendarService extends BaseIntegrationService {
 
   private async getAccessToken(): Promise<string | null> {
     const { data: { session } } = await supabase.auth.getSession();
+    console.log('[GoogleCalendar] getAccessToken - session exists:', !!session, 'provider_token exists:', !!session?.provider_token);
     return session?.provider_token || null;
   }
 

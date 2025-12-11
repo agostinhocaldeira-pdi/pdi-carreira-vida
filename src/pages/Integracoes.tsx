@@ -73,11 +73,19 @@ const Integracoes = () => {
   // Check if Google Calendar is connected via OAuth and handle pending sync
   useEffect(() => {
     const checkGoogleConnection = async () => {
+      // First check if there's a fresh session with provider_token (just returned from OAuth)
+      const { data: { session } } = await supabase.auth.getSession();
+      const providerToken = session?.provider_token;
+      
+      console.log('[GoogleCalendar] Session check - provider_token exists:', !!providerToken);
+      
       const { data: { user } } = await supabase.auth.getUser();
       if (user) {
         // Check if user has Google provider linked
         const hasGoogleProvider = user.app_metadata?.providers?.includes('google') ||
           user.identities?.some(i => i.provider === 'google');
+        
+        console.log('[GoogleCalendar] Has Google provider:', hasGoogleProvider);
         
         if (hasGoogleProvider) {
           setGoogleCalendarConnected(true);
@@ -92,36 +100,45 @@ const Integracoes = () => {
               updated_at: new Date().toISOString(),
             }, { onConflict: 'user_id,integration_type' });
           
-          // Check if there's a pending sync after OAuth redirect
+          // Check if there's a pending sync AND we have a fresh provider_token
           const service = new GoogleCalendarService();
-          if (service.hasPendingSync()) {
+          if (service.hasPendingSync() && providerToken) {
+            console.log('[GoogleCalendar] Pending sync detected with valid token - syncing now');
             service.clearPendingSync();
-            // Small delay to ensure session is fully loaded with provider_token
-            setTimeout(async () => {
-              setSyncing(true);
-              try {
-                const result = await service.syncEvents();
-                if (result.success && result.itemsSynced > 0) {
-                  toast({
-                    title: "Sincronização concluída!",
-                    description: `${result.itemsSynced} item(ns) exportado(s) para o Google Calendar.`,
-                  });
-                } else if (result.errors && result.errors.length > 0) {
-                  toast({
-                    title: "Erro na sincronização",
-                    description: result.errors[0],
-                    variant: "destructive",
-                  });
-                } else {
-                  toast({
-                    title: "Nada para sincronizar",
-                    description: "Nenhum objetivo ou meta com data alvo encontrado.",
-                  });
-                }
-              } finally {
-                setSyncing(false);
+            
+            setSyncing(true);
+            try {
+              const result = await service.syncEvents();
+              console.log('[GoogleCalendar] Sync result:', result);
+              
+              if (result.success && result.itemsSynced > 0) {
+                toast({
+                  title: "Sincronização concluída!",
+                  description: `${result.itemsSynced} item(ns) exportado(s) para o Google Calendar.`,
+                });
+              } else if (result.errors && result.errors.length > 0) {
+                toast({
+                  title: "Erro na sincronização",
+                  description: result.errors[0],
+                  variant: "destructive",
+                });
+              } else {
+                toast({
+                  title: "Nada para sincronizar",
+                  description: "Nenhum objetivo ou meta com data alvo encontrado.",
+                });
               }
-            }, 1000);
+            } finally {
+              setSyncing(false);
+            }
+          } else if (service.hasPendingSync() && !providerToken) {
+            console.log('[GoogleCalendar] Pending sync but no provider_token - clearing flag');
+            service.clearPendingSync();
+            toast({
+              title: "Token não disponível",
+              description: "Por favor, clique em Sincronizar novamente para autenticar.",
+              variant: "destructive",
+            });
           }
         }
       }
