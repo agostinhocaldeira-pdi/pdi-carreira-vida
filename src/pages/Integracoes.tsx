@@ -18,7 +18,35 @@ const Integracoes = () => {
   const { integrations, isLoading, connectIntegration, disconnectIntegration } = useIntegrations();
   const [googleCalendarConnected, setGoogleCalendarConnected] = useState(false);
   const [connecting, setConnecting] = useState(false);
+  const [syncing, setSyncing] = useState(false);
 
+  const handleGoogleCalendarSync = async () => {
+    setSyncing(true);
+    try {
+      const service = new GoogleCalendarService();
+      const result = await service.syncEvents();
+      
+      if (result.success) {
+        toast({
+          title: "Sincronização concluída!",
+          description: result.itemsSynced > 0 
+            ? `${result.itemsSynced} item(ns) exportado(s) para o Google Calendar.`
+            : "Nenhum objetivo ou meta com data alvo encontrado para sincronizar.",
+        });
+      } else {
+        throw new Error(result.errors?.join(', ') || 'Erro desconhecido');
+      }
+    } catch (error: any) {
+      console.error('Sync error:', error);
+      toast({
+        title: "Erro na sincronização",
+        description: error.message || "Não foi possível sincronizar. Tente reconectar sua conta Google.",
+        variant: "destructive",
+      });
+    } finally {
+      setSyncing(false);
+    }
+  };
   // Check if Google Calendar is connected via OAuth
   useEffect(() => {
     const checkGoogleConnection = async () => {
@@ -223,9 +251,11 @@ const Integracoes = () => {
                           variant="outline"
                           size="sm"
                           className="flex-1"
+                          onClick={handleGoogleCalendarSync}
+                          disabled={syncing}
                         >
-                          <RefreshCw className="w-4 h-4 mr-2" />
-                          Sincronizar
+                          <RefreshCw className={`w-4 h-4 mr-2 ${syncing ? 'animate-spin' : ''}`} />
+                          {syncing ? 'Sincronizando...' : 'Sincronizar'}
                         </Button>
                       </div>
                     </div>
