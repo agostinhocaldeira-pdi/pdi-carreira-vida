@@ -386,8 +386,12 @@ const PlanoDeVida = ({ onTabChange, onOpenChange, forcedTab, forcedOpen }: Plano
     setIsGeneratingInsight(true);
     
     try {
+      // Buscar dados da pesquisa e onboarding
+      const surveyData = JSON.parse(localStorage.getItem("userSurvey") || "{}");
+      const onboardingData = JSON.parse(localStorage.getItem("onboarding") || "{}");
+      
       const { data, error } = await supabase.functions.invoke('generate-insight', {
-        body: { vvd, valores, areasVida }
+        body: { vvd, valores, areasVida, surveyData, onboardingData }
       });
 
       if (error) {
