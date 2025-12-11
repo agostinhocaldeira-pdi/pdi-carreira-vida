@@ -923,10 +923,10 @@ const Index = () => {
               <Button 
                 size="lg"
                 onClick={() => navigate("/empresas")}
-                className="bg-white text-indigo-700 hover:bg-white/90 font-semibold text-base px-8"
+                className="bg-background text-primary hover:bg-background/90 font-semibold text-sm sm:text-base px-4 sm:px-8 w-full sm:w-auto"
               >
                 Conhecer soluções para empresas
-                <ArrowRight className="ml-2 h-5 w-5" />
+                <ArrowRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5" />
               </Button>
             </div>
           </div>
