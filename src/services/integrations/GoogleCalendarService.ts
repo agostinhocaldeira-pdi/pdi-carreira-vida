@@ -16,8 +16,14 @@ export class GoogleCalendarService extends BaseIntegrationService {
     super('google_calendar');
   }
 
-  async connect(): Promise<boolean> {
+  async connect(credentials?: Record<string, string>): Promise<boolean> {
+    const pendingSync = credentials?.pendingSync === 'true';
     this.log('Initiating Google Calendar OAuth flow');
+    
+    // Store pending sync intent
+    if (pendingSync) {
+      localStorage.setItem('google_calendar_pending_sync', 'true');
+    }
     
     try {
       // Use the current origin, but ensure it's not localhost
@@ -49,6 +55,14 @@ export class GoogleCalendarService extends BaseIntegrationService {
       this.log('Failed to connect to Google Calendar:', error);
       throw error;
     }
+  }
+
+  hasPendingSync(): boolean {
+    return localStorage.getItem('google_calendar_pending_sync') === 'true';
+  }
+
+  clearPendingSync(): void {
+    localStorage.removeItem('google_calendar_pending_sync');
   }
 
   async disconnect(): Promise<boolean> {
