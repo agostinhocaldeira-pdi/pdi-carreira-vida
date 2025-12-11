@@ -887,7 +887,7 @@ const DashboardEmpresa = () => {
                     <CardContent className="p-6 text-center">
                       <CreditCard className="w-8 h-8 text-green-600 mx-auto mb-2" />
                       <p className="text-3xl font-bold text-green-600">
-                        R$ {employees.length <= 10 ? "300,00" : employees.length <= 50 ? "600,00" : "1.200,00"}
+                        R$ {employees.length <= 10 ? "300,00" : employees.length <= 50 ? "600,00" : "900,00"}
                       </p>
                       <p className="text-sm text-muted-foreground">Valor Mensal</p>
                     </CardContent>
@@ -942,7 +942,7 @@ const DashboardEmpresa = () => {
                         </TableRow>
                         <TableRow className={employees.length > 50 ? "bg-primary/5" : ""}>
                           <TableCell className="font-medium">51+ funcionários</TableCell>
-                          <TableCell>R$ 1.200,00</TableCell>
+                          <TableCell>R$ 900,00</TableCell>
                           <TableCell>
                             {employees.length > 50 ? (
                               <Badge>Plano Atual</Badge>
