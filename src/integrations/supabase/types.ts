@@ -1353,11 +1353,22 @@ export type Database = {
     }
     Functions: {
       export_user_data: { Args: { target_user_id: string }; Returns: Json }
+      get_manager_company_id: { Args: { _user_id: string }; Returns: string }
+      get_manager_employee_user_ids: {
+        Args: { _manager_user_id: string }
+        Returns: string[]
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
           _user_id: string
         }
+        Returns: boolean
+      }
+      is_company_employee: { Args: { _user_id: string }; Returns: boolean }
+      is_company_manager: { Args: { _user_id: string }; Returns: boolean }
+      is_company_owner: {
+        Args: { _company_id: string; _user_id: string }
         Returns: boolean
       }
     }
