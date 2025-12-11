@@ -43,6 +43,12 @@ import {
 import { Badge } from "@/components/ui/badge";
 import Logo from "@/components/Logo";
 
+// Import marketing images
+import heroGrowth from "@/assets/hero-growth.jpg";
+import journeyPath from "@/assets/journey-path.jpg";
+import selfDiscovery from "@/assets/self-discovery.jpg";
+import growthStairs from "@/assets/growth-stairs.jpg";
+
 const Index = () => {
   const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -200,56 +206,78 @@ const Index = () => {
 
       {/* Hero Section */}
       <section className="pt-28 sm:pt-32 pb-12 sm:pb-16 px-4">
-        <div className="container mx-auto text-center max-w-4xl">
-          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 sm:mb-6 bg-gradient-to-r from-primary via-purple-500 to-pink-500 bg-clip-text text-transparent leading-tight">
-            Você não precisa de mais motivação. Precisa de um plano.
-          </h1>
-          <p className="text-base sm:text-lg md:text-xl text-muted-foreground mb-6 sm:mb-8 max-w-2xl mx-auto">
-            O PDI integra carreira e vida porque, no fundo, você sabe: não dá pra separar uma da outra. 
-            Aqui você vai do autoconhecimento à ação — todos os dias.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center">
-            <Button 
-              size="lg" 
-              onClick={() => handlePlanClick('gratuito')}
-              className="text-base sm:text-lg px-6 sm:px-8 py-5 sm:py-6 bg-primary hover:bg-primary/90"
-            >
-              Começar minha jornada
-              <ArrowRight className="ml-2 h-5 w-5" />
-            </Button>
-            <Button 
-              size="lg" 
-              variant="outline"
-              onClick={() => document.getElementById('planos')?.scrollIntoView({ behavior: 'smooth' })}
-              className="text-base sm:text-lg px-6 sm:px-8 py-5 sm:py-6"
-            >
-              Ver planos
-            </Button>
+        <div className="container mx-auto max-w-6xl">
+          <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
+            <div className="text-center lg:text-left">
+              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-5xl font-bold mb-4 sm:mb-6 bg-gradient-to-r from-primary via-purple-500 to-pink-500 bg-clip-text text-transparent leading-tight">
+                Você não precisa de mais motivação. Precisa de um plano.
+              </h1>
+              <p className="text-base sm:text-lg md:text-xl text-muted-foreground mb-6 sm:mb-8">
+                O PDI integra carreira e vida porque, no fundo, você sabe: não dá pra separar uma da outra. 
+                Aqui você vai do autoconhecimento à ação — todos os dias.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center lg:justify-start">
+                <Button 
+                  size="lg" 
+                  onClick={() => handlePlanClick('gratuito')}
+                  className="text-base sm:text-lg px-6 sm:px-8 py-5 sm:py-6 bg-primary hover:bg-primary/90"
+                >
+                  Começar minha jornada
+                  <ArrowRight className="ml-2 h-5 w-5" />
+                </Button>
+                <Button 
+                  size="lg" 
+                  variant="outline"
+                  onClick={() => document.getElementById('planos')?.scrollIntoView({ behavior: 'smooth' })}
+                  className="text-base sm:text-lg px-6 sm:px-8 py-5 sm:py-6"
+                >
+                  Ver planos
+                </Button>
+              </div>
+              <p className="text-xs sm:text-sm text-muted-foreground mt-4">
+                Comece grátis. Sem cartão de crédito.
+              </p>
+            </div>
+            <div className="hidden lg:block">
+              <img 
+                src={heroGrowth} 
+                alt="Pessoa no topo da montanha celebrando conquista" 
+                className="rounded-2xl shadow-2xl w-full h-auto object-cover"
+              />
+            </div>
           </div>
-          <p className="text-xs sm:text-sm text-muted-foreground mt-4">
-            Comece grátis. Sem cartão de crédito.
-          </p>
         </div>
       </section>
 
       {/* Problem-Solution */}
       <section className="py-12 sm:py-16 px-4 bg-muted/20">
-        <div className="container mx-auto max-w-4xl text-center">
-          <h2 className="text-xl sm:text-2xl md:text-3xl font-bold mb-6 text-foreground">
-            Milhões de profissionais sabem que precisam evoluir, mas não sabem <span className="text-primary">por onde começar</span>.
-          </h2>
-          <p className="text-base sm:text-lg text-muted-foreground mb-4 italic">
-            "Eu sei o que preciso fazer, mas não consigo manter o foco..."
-          </p>
-          <p className="text-base sm:text-lg text-muted-foreground mb-4 italic">
-            "Tenho tantos objetivos que não sei por onde começar..."
-          </p>
-          <p className="text-base sm:text-lg text-muted-foreground mb-6 sm:mb-8 italic">
-            "Já tentei de tudo, mas sempre volto à estaca zero..."
-          </p>
-          <p className="text-lg sm:text-xl font-medium text-foreground mb-6">
-            Se você se identificou, o problema não é você. É a falta de um sistema.
-          </p>
+        <div className="container mx-auto max-w-6xl">
+          <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
+            <div className="hidden lg:block order-2 lg:order-1">
+              <img 
+                src={journeyPath} 
+                alt="Pessoa caminhando em direção ao horizonte" 
+                className="rounded-2xl shadow-xl w-full h-auto object-cover"
+              />
+            </div>
+            <div className="text-center lg:text-left order-1 lg:order-2">
+              <h2 className="text-xl sm:text-2xl md:text-3xl font-bold mb-6 text-foreground">
+                Milhões de profissionais sabem que precisam evoluir, mas não sabem <span className="text-primary">por onde começar</span>.
+              </h2>
+              <p className="text-base sm:text-lg text-muted-foreground mb-4 italic">
+                "Eu sei o que preciso fazer, mas não consigo manter o foco..."
+              </p>
+              <p className="text-base sm:text-lg text-muted-foreground mb-4 italic">
+                "Tenho tantos objetivos que não sei por onde começar..."
+              </p>
+              <p className="text-base sm:text-lg text-muted-foreground mb-6 sm:mb-8 italic">
+                "Já tentei de tudo, mas sempre volto à estaca zero..."
+              </p>
+              <p className="text-lg sm:text-xl font-medium text-foreground mb-6">
+                Se você se identificou, o problema não é você. É a falta de um sistema.
+              </p>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -375,54 +403,65 @@ const Index = () => {
 
       {/* Target Audiences */}
       <section className="py-12 sm:py-16 px-4 bg-muted/30">
-        <div className="container mx-auto max-w-4xl">
-          <div className="text-center mb-8 sm:mb-10">
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 sm:mb-4">
-              Para quem é o PDI?
-            </h2>
-            <p className="text-muted-foreground max-w-2xl mx-auto text-sm sm:text-base">
-              Profissionais que buscam evolução consistente.
-            </p>
-          </div>
-          
-          <div className="grid sm:grid-cols-2 gap-4 sm:gap-6">
-            <Card className="border-primary/30 bg-gradient-to-br from-primary/5 to-transparent hover:shadow-lg transition-all">
-              <CardContent className="p-5 sm:p-6 text-center">
-                <div className="w-14 h-14 mx-auto rounded-full bg-primary/10 flex items-center justify-center mb-4">
-                  <User className="h-7 w-7 text-primary" />
-                </div>
-                <h3 className="text-lg sm:text-xl font-semibold mb-2">Profissionais</h3>
-                <p className="text-muted-foreground text-xs sm:text-sm">
-                  Pessoas buscando <strong>clareza de propósito</strong>, transição de carreira ou simplesmente evoluir de forma estruturada.
+        <div className="container mx-auto max-w-6xl">
+          <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
+            <div>
+              <div className="text-center lg:text-left mb-8 sm:mb-10">
+                <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 sm:mb-4">
+                  Para quem é o PDI?
+                </h2>
+                <p className="text-muted-foreground max-w-2xl mx-auto lg:mx-0 text-sm sm:text-base">
+                  Profissionais que buscam evolução consistente.
                 </p>
-              </CardContent>
-            </Card>
-            
-            <Card className="border-primary/30 bg-gradient-to-br from-pink-500/5 to-transparent hover:shadow-lg transition-all">
-              <CardContent className="p-5 sm:p-6 text-center">
-                <div className="w-14 h-14 mx-auto rounded-full bg-pink-500/10 flex items-center justify-center mb-4">
-                  <Star className="h-7 w-7 text-pink-500" />
-                </div>
-                <h3 className="text-lg sm:text-xl font-semibold mb-2">Coaches & Mentores</h3>
-                <p className="text-muted-foreground text-xs sm:text-sm">
-                  Profissionais que precisam de uma <strong>ferramenta prática</strong> para entregar valor aos seus clientes.
-                </p>
-              </CardContent>
-            </Card>
-          </div>
+              </div>
+              
+              <div className="grid sm:grid-cols-2 gap-4 sm:gap-6">
+                <Card className="border-primary/30 bg-gradient-to-br from-primary/5 to-transparent hover:shadow-lg transition-all">
+                  <CardContent className="p-5 sm:p-6 text-center">
+                    <div className="w-14 h-14 mx-auto rounded-full bg-primary/10 flex items-center justify-center mb-4">
+                      <User className="h-7 w-7 text-primary" />
+                    </div>
+                    <h3 className="text-lg sm:text-xl font-semibold mb-2">Profissionais</h3>
+                    <p className="text-muted-foreground text-xs sm:text-sm">
+                      Pessoas buscando <strong>clareza de propósito</strong>, transição de carreira ou simplesmente evoluir de forma estruturada.
+                    </p>
+                  </CardContent>
+                </Card>
+                
+                <Card className="border-primary/30 bg-gradient-to-br from-pink-500/5 to-transparent hover:shadow-lg transition-all">
+                  <CardContent className="p-5 sm:p-6 text-center">
+                    <div className="w-14 h-14 mx-auto rounded-full bg-pink-500/10 flex items-center justify-center mb-4">
+                      <Star className="h-7 w-7 text-pink-500" />
+                    </div>
+                    <h3 className="text-lg sm:text-xl font-semibold mb-2">Coaches & Mentores</h3>
+                    <p className="text-muted-foreground text-xs sm:text-sm">
+                      Profissionais que precisam de uma <strong>ferramenta prática</strong> para entregar valor aos seus clientes.
+                    </p>
+                  </CardContent>
+                </Card>
+              </div>
 
-          {/* Link para Empresas */}
-          <div className="text-center mt-8 pt-6 border-t border-border/30">
-            <p className="text-muted-foreground text-sm mb-3">
-              Quer desenvolver sua equipe inteira?
-            </p>
-            <Button 
-              variant="link"
-              onClick={() => navigate("/empresas")}
-              className="text-primary"
-            >
-              Conheça o PDI para Empresas →
-            </Button>
+              {/* Link para Empresas */}
+              <div className="text-center lg:text-left mt-8 pt-6 border-t border-border/30">
+                <p className="text-muted-foreground text-sm mb-3">
+                  Quer desenvolver sua equipe inteira?
+                </p>
+                <Button 
+                  variant="link"
+                  onClick={() => navigate("/empresas")}
+                  className="text-primary"
+                >
+                  Conheça o PDI para Empresas →
+                </Button>
+              </div>
+            </div>
+            <div className="hidden lg:block">
+              <img 
+                src={selfDiscovery} 
+                alt="Profissional planejando seu desenvolvimento" 
+                className="rounded-2xl shadow-xl w-full h-auto object-cover"
+              />
+            </div>
           </div>
         </div>
       </section>

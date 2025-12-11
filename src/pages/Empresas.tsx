@@ -25,6 +25,12 @@ import {
 } from "lucide-react";
 import Logo from "@/components/Logo";
 
+// Import marketing images
+import teamCollaboration from "@/assets/team-collaboration.jpg";
+import leadershipMentoring from "@/assets/leadership-mentoring.jpg";
+import teamSuccess from "@/assets/team-success.jpg";
+import corporateGrowth from "@/assets/corporate-growth.jpg";
+
 const Empresas = () => {
   const navigate = useNavigate();
 
@@ -170,39 +176,50 @@ const Empresas = () => {
 
       {/* Hero Section */}
       <section className="pt-28 sm:pt-32 pb-12 sm:pb-16 px-4">
-        <div className="container mx-auto text-center max-w-4xl">
-          <Badge variant="secondary" className="mb-4 text-xs sm:text-sm bg-primary/10 text-primary border-0">
-            <Building2 className="h-3 w-3 mr-1" />
-            PDI para Empresas
-          </Badge>
-          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 sm:mb-6 bg-gradient-to-r from-primary via-purple-500 to-pink-500 bg-clip-text text-transparent leading-tight">
-            Desenvolva sua equipe com clareza, não com burocracia.
-          </h1>
-          <p className="text-base sm:text-lg md:text-xl text-muted-foreground mb-6 sm:mb-8 max-w-2xl mx-auto">
-            PDI corporativo que alinha objetivos individuais aos OKRs da empresa. 
-            Gestão centralizada, relatórios inteligentes e equipes mais engajadas.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center">
-            <Button 
-              size="lg" 
-              onClick={() => navigate("/cadastrar-empresa")}
-              className="text-base sm:text-lg px-6 sm:px-8 py-5 sm:py-6 bg-primary hover:bg-primary/90"
-            >
-              Cadastrar minha empresa
-              <ArrowRight className="ml-2 h-5 w-5" />
-            </Button>
-            <Button 
-              size="lg" 
-              variant="outline"
-              onClick={() => document.getElementById('precos')?.scrollIntoView({ behavior: 'smooth' })}
-              className="text-base sm:text-lg px-6 sm:px-8 py-5 sm:py-6"
-            >
-              Ver preços
-            </Button>
+        <div className="container mx-auto max-w-6xl">
+          <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
+            <div className="text-center lg:text-left">
+              <Badge variant="secondary" className="mb-4 text-xs sm:text-sm bg-primary/10 text-primary border-0">
+                <Building2 className="h-3 w-3 mr-1" />
+                PDI para Empresas
+              </Badge>
+              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-5xl font-bold mb-4 sm:mb-6 bg-gradient-to-r from-primary via-purple-500 to-pink-500 bg-clip-text text-transparent leading-tight">
+                Desenvolva sua equipe com clareza, não com burocracia.
+              </h1>
+              <p className="text-base sm:text-lg md:text-xl text-muted-foreground mb-6 sm:mb-8">
+                PDI corporativo que alinha objetivos individuais aos OKRs da empresa. 
+                Gestão centralizada, relatórios inteligentes e equipes mais engajadas.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center lg:justify-start">
+                <Button 
+                  size="lg" 
+                  onClick={() => navigate("/cadastrar-empresa")}
+                  className="text-base sm:text-lg px-6 sm:px-8 py-5 sm:py-6 bg-primary hover:bg-primary/90"
+                >
+                  Cadastrar minha empresa
+                  <ArrowRight className="ml-2 h-5 w-5" />
+                </Button>
+                <Button 
+                  size="lg" 
+                  variant="outline"
+                  onClick={() => document.getElementById('precos')?.scrollIntoView({ behavior: 'smooth' })}
+                  className="text-base sm:text-lg px-6 sm:px-8 py-5 sm:py-6"
+                >
+                  Ver preços
+                </Button>
+              </div>
+              <p className="text-xs sm:text-sm text-muted-foreground mt-4">
+                Funcionários não pagam nada. Investimento apenas da empresa.
+              </p>
+            </div>
+            <div className="hidden lg:block">
+              <img 
+                src={teamCollaboration} 
+                alt="Equipe colaborando em ambiente corporativo" 
+                className="rounded-2xl shadow-2xl w-full h-auto object-cover"
+              />
+            </div>
           </div>
-          <p className="text-xs sm:text-sm text-muted-foreground mt-4">
-            Funcionários não pagam nada. Investimento apenas da empresa.
-          </p>
         </div>
       </section>
 
@@ -288,63 +305,85 @@ const Empresas = () => {
 
       {/* Differentiators */}
       <section className="py-12 sm:py-20 px-4">
-        <div className="container mx-auto max-w-5xl">
-          <div className="text-center mb-8 sm:mb-12">
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 sm:mb-4">
-              Por que o PDI é diferente?
-            </h2>
-            <p className="text-muted-foreground max-w-2xl mx-auto text-sm sm:text-base">
-              Não é mais uma ferramenta de RH. É uma plataforma que as pessoas realmente usam.
-            </p>
-          </div>
-          
-          <div className="grid sm:grid-cols-2 gap-4 sm:gap-6">
-            {differentiators.map((diff, index) => (
-              <div 
-                key={index}
-                className="p-5 sm:p-6 rounded-xl border border-border/50 bg-card/30 hover:border-primary/30 transition-all"
-              >
-                <div className="flex items-start gap-3">
-                  <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                    <Check className="h-4 w-4 text-primary" />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-base sm:text-lg mb-2">{diff.title}</h3>
-                    <p className="text-muted-foreground text-xs sm:text-sm">{diff.description}</p>
-                  </div>
-                </div>
+        <div className="container mx-auto max-w-6xl">
+          <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
+            <div className="hidden lg:block">
+              <img 
+                src={leadershipMentoring} 
+                alt="Líder orientando equipe" 
+                className="rounded-2xl shadow-xl w-full h-auto object-cover"
+              />
+            </div>
+            <div>
+              <div className="text-center lg:text-left mb-8 sm:mb-12">
+                <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 sm:mb-4">
+                  Por que o PDI é diferente?
+                </h2>
+                <p className="text-muted-foreground max-w-2xl mx-auto lg:mx-0 text-sm sm:text-base">
+                  Não é mais uma ferramenta de RH. É uma plataforma que as pessoas realmente usam.
+                </p>
               </div>
-            ))}
+              
+              <div className="grid sm:grid-cols-2 gap-4 sm:gap-6">
+                {differentiators.map((diff, index) => (
+                  <div 
+                    key={index}
+                    className="p-5 sm:p-6 rounded-xl border border-border/50 bg-card/30 hover:border-primary/30 transition-all"
+                  >
+                    <div className="flex items-start gap-3">
+                      <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                        <Check className="h-4 w-4 text-primary" />
+                      </div>
+                      <div>
+                        <h3 className="font-semibold text-base sm:text-lg mb-2">{diff.title}</h3>
+                        <p className="text-muted-foreground text-xs sm:text-sm">{diff.description}</p>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
       {/* Use Cases */}
       <section className="py-12 sm:py-16 px-4 bg-muted/20">
-        <div className="container mx-auto max-w-5xl">
-          <div className="text-center mb-8 sm:mb-10">
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 sm:mb-4">
-              Casos de uso
-            </h2>
-            <p className="text-muted-foreground max-w-2xl mx-auto text-sm sm:text-base">
-              Como empresas estão usando o PDI para transformar suas equipes
-            </p>
-          </div>
-          
-          <div className="grid sm:grid-cols-2 gap-4 sm:gap-6">
-            {useCases.map((useCase, index) => (
-              <Card key={index} className="border-border/50 bg-card/50 hover:shadow-md transition-all">
-                <CardContent className="p-5 sm:p-6 flex items-start gap-4">
-                  <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
-                    <useCase.icon className="h-5 w-5 text-primary" />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-sm sm:text-base mb-1">{useCase.title}</h3>
-                    <p className="text-muted-foreground text-xs sm:text-sm">{useCase.description}</p>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
+        <div className="container mx-auto max-w-6xl">
+          <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
+            <div>
+              <div className="text-center lg:text-left mb-8 sm:mb-10">
+                <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 sm:mb-4">
+                  Casos de uso
+                </h2>
+                <p className="text-muted-foreground max-w-2xl mx-auto lg:mx-0 text-sm sm:text-base">
+                  Como empresas estão usando o PDI para transformar suas equipes
+                </p>
+              </div>
+              
+              <div className="grid sm:grid-cols-2 gap-4 sm:gap-6">
+                {useCases.map((useCase, index) => (
+                  <Card key={index} className="border-border/50 bg-card/50 hover:shadow-md transition-all">
+                    <CardContent className="p-5 sm:p-6 flex items-start gap-4">
+                      <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+                        <useCase.icon className="h-5 w-5 text-primary" />
+                      </div>
+                      <div>
+                        <h3 className="font-semibold text-sm sm:text-base mb-1">{useCase.title}</h3>
+                        <p className="text-muted-foreground text-xs sm:text-sm">{useCase.description}</p>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </div>
+            <div className="hidden lg:block">
+              <img 
+                src={corporateGrowth} 
+                alt="Equipe analisando resultados de crescimento" 
+                className="rounded-2xl shadow-xl w-full h-auto object-cover"
+              />
+            </div>
           </div>
         </div>
       </section>
@@ -436,17 +475,28 @@ const Empresas = () => {
 
       {/* Social Proof */}
       <section className="py-12 sm:py-16 px-4 bg-muted/20">
-        <div className="container mx-auto max-w-4xl text-center">
-          <div className="flex justify-center gap-1 mb-4">
-            {[...Array(5)].map((_, i) => (
-              <Star key={i} className="h-5 w-5 sm:h-6 sm:w-6 fill-yellow-400 text-yellow-400" />
-            ))}
+        <div className="container mx-auto max-w-6xl">
+          <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
+            <div className="hidden lg:block">
+              <img 
+                src={teamSuccess} 
+                alt="Equipe celebrando conquista" 
+                className="rounded-2xl shadow-xl w-full h-auto object-cover"
+              />
+            </div>
+            <div className="text-center lg:text-left">
+              <div className="flex justify-center lg:justify-start gap-1 mb-4">
+                {[...Array(5)].map((_, i) => (
+                  <Star key={i} className="h-5 w-5 sm:h-6 sm:w-6 fill-yellow-400 text-yellow-400" />
+                ))}
+              </div>
+              <p className="text-base sm:text-lg text-muted-foreground italic mb-4">
+                "Finalmente conseguimos acompanhar o desenvolvimento de cada pessoa do time. 
+                O PDI transformou nossa cultura de feedbacks e aumentou muito o engajamento."
+              </p>
+              <p className="text-sm font-medium">— Ricardo M., Diretor de RH</p>
+            </div>
           </div>
-          <p className="text-base sm:text-lg text-muted-foreground italic mb-4">
-            "Finalmente conseguimos acompanhar o desenvolvimento de cada pessoa do time. 
-            O PDI transformou nossa cultura de feedbacks e aumentou muito o engajamento."
-          </p>
-          <p className="text-sm font-medium">— Ricardo M., Diretor de RH</p>
         </div>
       </section>
 
