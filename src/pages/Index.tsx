@@ -1083,10 +1083,10 @@ const Index = () => {
           <Button 
             size="lg" 
             onClick={() => handlePlanClick('gratuito')}
-            className="text-base sm:text-lg px-8 sm:px-10 py-5 sm:py-6 bg-primary hover:bg-primary/90"
+            className="text-sm sm:text-base md:text-lg px-6 sm:px-8 md:px-10 py-4 sm:py-5 md:py-6 bg-primary hover:bg-primary/90 w-full sm:w-auto max-w-xs sm:max-w-none mx-auto"
           >
             Criar meu PDI gratuitamente
-            <ArrowRight className="ml-2 h-5 w-5" />
+            <ArrowRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5" />
           </Button>
           <p className="text-xs text-muted-foreground mt-4">
             30 dias grátis • Cancele quando quiser
