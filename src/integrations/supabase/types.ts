@@ -439,6 +439,45 @@ export type Database = {
         }
         Relationships: []
       }
+      leads: {
+        Row: {
+          confirmation_token: string | null
+          created_at: string
+          ebook_downloaded: boolean | null
+          email: string
+          email_confirmed: boolean | null
+          id: string
+          name: string
+          phone: string | null
+          source: string
+          updated_at: string
+        }
+        Insert: {
+          confirmation_token?: string | null
+          created_at?: string
+          ebook_downloaded?: boolean | null
+          email: string
+          email_confirmed?: boolean | null
+          id?: string
+          name: string
+          phone?: string | null
+          source?: string
+          updated_at?: string
+        }
+        Update: {
+          confirmation_token?: string | null
+          created_at?: string
+          ebook_downloaded?: boolean | null
+          email?: string
+          email_confirmed?: boolean | null
+          id?: string
+          name?: string
+          phone?: string | null
+          source?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       okr_key_results: {
         Row: {
           created_at: string

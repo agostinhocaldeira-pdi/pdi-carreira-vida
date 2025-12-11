@@ -35,6 +35,8 @@ import GestaoPDIs from "./pages/GestaoPDIs";
 import Perfil from "./pages/Perfil";
 import FAQ from "./pages/FAQ";
 import Empresas from "./pages/Empresas";
+import Ebook from "./pages/Ebook";
+import EbookDownload from "./pages/EbookDownload";
 
 const queryClient = new QueryClient();
 
@@ -76,6 +78,8 @@ const App = () => (
               <Route path="/perfil" element={<Perfil />} />
               <Route path="/faq" element={<FAQ />} />
               <Route path="/empresas" element={<Empresas />} />
+              <Route path="/ebook" element={<Ebook />} />
+              <Route path="/ebook-download" element={<EbookDownload />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>

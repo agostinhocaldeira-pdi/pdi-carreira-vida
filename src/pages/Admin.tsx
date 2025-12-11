@@ -6,9 +6,10 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { useNavigate } from "react-router-dom";
-import { Shield, Home, Users, Trash2, UserPlus, Building2, UserCog, UserCheck, Mail, Zap } from "lucide-react";
+import { Shield, Home, Users, Trash2, UserPlus, Building2, UserCog, UserCheck, Mail, Zap, BookOpen } from "lucide-react";
 import FinancialDashboard from "@/components/admin/FinancialDashboard";
 import AdminMetricsPanel from "@/components/admin/AdminMetricsPanel";
+import LeadsManagement from "@/components/admin/LeadsManagement";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { toast } from "sonner";
 
@@ -437,6 +438,9 @@ const Admin = () => {
 
         {/* Painel de Métricas Real */}
         <AdminMetricsPanel />
+
+        {/* Gestão de Leads */}
+        <LeadsManagement />
 
         {/* Cadastro de Administradores */}
         <Card className="shadow-medium">
