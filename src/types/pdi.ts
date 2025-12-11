@@ -14,7 +14,7 @@ export interface DiarioEntry {
 }
 
 export interface Objetivo {
-  id: number;
+  id: number | string; // Support both numeric and UUID IDs
   user_id?: string;
   texto: string;
   data_alvo?: string;
@@ -37,7 +37,7 @@ export interface Passo {
 }
 
 export interface Meta {
-  id: number;
+  id: number | string; // Support both numeric and UUID IDs
   user_id?: string;
   objetivo_id: string;
   objetivoId?: string; // camelCase alias for compatibility
