@@ -491,8 +491,8 @@ const Empresas = () => {
                 ))}
               </div>
               <p className="text-base sm:text-lg text-muted-foreground italic mb-4">
-                "Finalmente conseguimos acompanhar o desenvolvimento de cada pessoa do time. 
-                O PDI transformou nossa cultura de feedbacks e aumentou muito o engajamento."
+                "Consiga acompanhar o desenvolvimento de cada pessoa do time. 
+                O PDI transforma a cultura de feedbacks e aumenta muito o engajamento."
               </p>
               <p className="text-sm font-medium">— Ricardo M., Diretor de RH</p>
             </div>
