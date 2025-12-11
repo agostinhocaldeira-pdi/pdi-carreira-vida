@@ -160,20 +160,6 @@ const Index = () => {
     }
   ];
 
-  const companyPricing = [
-    { range: "1-10 funcionários", price: "R$ 50/mês" },
-    { range: "11-20 funcionários", price: "R$ 90/mês" },
-    { range: "21+ funcionários", price: "R$ 150/mês" }
-  ];
-
-  const companyFeatures = [
-    { icon: Users, text: "Gestão de equipes e gestores" },
-    { icon: BarChart3, text: "Dashboard de progresso coletivo" },
-    { icon: Target, text: "OKRs corporativos vinculados ao PDI" },
-    { icon: FileText, text: "Relatórios consolidados para RH" },
-    { icon: Bell, text: "Notificações automáticas" },
-    { icon: Calendar, text: "Funcionários não pagam assinatura" }
-  ];
 
   const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
 
@@ -331,17 +317,17 @@ const Index = () => {
 
       {/* Target Audiences */}
       <section className="py-12 sm:py-16 px-4 bg-muted/30">
-        <div className="container mx-auto max-w-5xl">
+        <div className="container mx-auto max-w-4xl">
           <div className="text-center mb-8 sm:mb-10">
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 sm:mb-4">
               Para quem é o PDI?
             </h2>
             <p className="text-muted-foreground max-w-2xl mx-auto text-sm sm:text-base">
-              Três públicos, um objetivo em comum: evolução consistente.
+              Profissionais que buscam evolução consistente.
             </p>
           </div>
           
-          <div className="grid sm:grid-cols-3 gap-4 sm:gap-6">
+          <div className="grid sm:grid-cols-2 gap-4 sm:gap-6">
             <Card className="border-primary/30 bg-gradient-to-br from-primary/5 to-transparent hover:shadow-lg transition-all">
               <CardContent className="p-5 sm:p-6 text-center">
                 <div className="w-14 h-14 mx-auto rounded-full bg-primary/10 flex items-center justify-center mb-4">
@@ -350,18 +336,6 @@ const Index = () => {
                 <h3 className="text-lg sm:text-xl font-semibold mb-2">Profissionais</h3>
                 <p className="text-muted-foreground text-xs sm:text-sm">
                   Pessoas buscando <strong>clareza de propósito</strong>, transição de carreira ou simplesmente evoluir de forma estruturada.
-                </p>
-              </CardContent>
-            </Card>
-            
-            <Card className="border-primary/30 bg-gradient-to-br from-purple-500/5 to-transparent hover:shadow-lg transition-all">
-              <CardContent className="p-5 sm:p-6 text-center">
-                <div className="w-14 h-14 mx-auto rounded-full bg-purple-500/10 flex items-center justify-center mb-4">
-                  <Building2 className="h-7 w-7 text-purple-500" />
-                </div>
-                <h3 className="text-lg sm:text-xl font-semibold mb-2">Empresas</h3>
-                <p className="text-muted-foreground text-xs sm:text-sm">
-                  Organizações que querem <strong>PDI fácil</strong> para times, com OKRs alinhados e gestão centralizada.
                 </p>
               </CardContent>
             </Card>
@@ -377,6 +351,20 @@ const Index = () => {
                 </p>
               </CardContent>
             </Card>
+          </div>
+
+          {/* Link para Empresas */}
+          <div className="text-center mt-8 pt-6 border-t border-border/30">
+            <p className="text-muted-foreground text-sm mb-3">
+              Quer desenvolver sua equipe inteira?
+            </p>
+            <Button 
+              variant="link"
+              onClick={() => navigate("/empresas")}
+              className="text-primary"
+            >
+              Conheça o PDI para Empresas →
+            </Button>
           </div>
         </div>
       </section>
@@ -805,64 +793,19 @@ const Index = () => {
             </div>
           </div>
 
-          {/* Company Plans */}
-          <div>
-            <h3 className="text-lg sm:text-xl font-semibold text-center mb-6 sm:mb-8 flex items-center justify-center gap-2">
-              <Building2 className="h-5 w-5 text-primary" />
-              Para Empresas
-            </h3>
-            <div className="grid lg:grid-cols-2 gap-6 sm:gap-8">
-              {/* Company Features */}
-              <Card className="border-border/50">
-                <CardHeader>
-                  <CardTitle className="text-lg sm:text-xl">Desenvolva sua equipe</CardTitle>
-                  <CardDescription className="text-xs sm:text-sm">
-                    PDI corporativo com gestão centralizada e OKRs alinhados
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid sm:grid-cols-2 gap-3 sm:gap-4">
-                    {companyFeatures.map((feature, index) => (
-                      <div key={index} className="flex items-center gap-2 sm:gap-3">
-                        <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
-                          <feature.icon className="h-4 w-4 text-primary" />
-                        </div>
-                        <span className="text-xs sm:text-sm">{feature.text}</span>
-                      </div>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-
-              {/* Company Pricing */}
-              <Card className="border-border/50">
-                <CardHeader>
-                  <CardTitle className="text-lg sm:text-xl">Preços por tamanho</CardTitle>
-                  <CardDescription className="text-xs sm:text-sm">
-                    Quanto maior a equipe, maior o impacto na cultura
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-3 sm:space-y-4 mb-4 sm:mb-6">
-                    {companyPricing.map((tier, index) => (
-                      <div 
-                        key={index}
-                        className="flex items-center justify-between p-3 sm:p-4 rounded-lg bg-muted/50"
-                      >
-                        <span className="font-medium text-sm sm:text-base">{tier.range}</span>
-                        <span className="text-primary font-bold text-sm sm:text-base">{tier.price}</span>
-                      </div>
-                    ))}
-                  </div>
-                  <Button 
-                    className="w-full text-sm sm:text-base"
-                    onClick={() => navigate("/cadastrar-empresa")}
-                  >
-                    Cadastrar minha empresa
-                  </Button>
-                </CardContent>
-              </Card>
-            </div>
+          {/* Link para Empresas */}
+          <div className="text-center pt-6 border-t border-border/50">
+            <p className="text-muted-foreground text-sm mb-3">
+              Quer desenvolver sua equipe?
+            </p>
+            <Button 
+              variant="outline"
+              onClick={() => navigate("/empresas")}
+              className="text-sm"
+            >
+              <Building2 className="h-4 w-4 mr-2" />
+              Conheça o PDI para Empresas
+            </Button>
           </div>
         </div>
       </section>
@@ -977,7 +920,7 @@ const Index = () => {
               className="h-auto py-6 flex flex-col items-center gap-3 hover:border-primary hover:bg-primary/5"
               onClick={() => {
                 setIsModalOpen(false);
-                navigate("/cadastrar-empresa");
+                navigate("/empresas");
               }}
             >
               <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
@@ -985,7 +928,7 @@ const Index = () => {
               </div>
               <div className="text-center">
                 <div className="font-semibold">Sou Empresa</div>
-                <div className="text-sm text-muted-foreground">Quero cadastrar minha empresa</div>
+                <div className="text-sm text-muted-foreground">Conheça o PDI corporativo</div>
               </div>
             </Button>
           </div>
