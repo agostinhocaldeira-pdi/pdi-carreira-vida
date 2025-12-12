@@ -265,7 +265,18 @@ const Tutorial = () => {
       pdf.setFont("helvetica", "normal");
       pdf.text("Guia Completo para Pessoa Física", pageWidth / 2, 48, { align: "center" });
 
-      yPos = 80;
+      // Website link
+      yPos = 70;
+      pdf.setTextColor(59, 130, 246);
+      pdf.setFontSize(11);
+      pdf.setFont("helvetica", "bold");
+      pdf.text("Acesse a aplicação: www.pdicarreiraevida.com.br", pageWidth / 2, yPos, { align: "center" });
+      pdf.setTextColor(100, 100, 100);
+      pdf.setFontSize(9);
+      pdf.setFont("helvetica", "normal");
+      pdf.text("(Clique ou digite no navegador para acessar)", pageWidth / 2, yPos + 6, { align: "center" });
+
+      yPos = 90;
       pdf.setTextColor(0, 0, 0);
 
       // Table of contents
