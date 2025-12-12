@@ -217,6 +217,16 @@ const Tutorial = () => {
     }
   ];
 
+  const loadImage = (src: string): Promise<HTMLImageElement> => {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.crossOrigin = "anonymous";
+      img.onload = () => resolve(img);
+      img.onerror = reject;
+      img.src = src;
+    });
+  };
+
   const generatePDF = async () => {
     setIsGeneratingPDF(true);
     try {
@@ -235,6 +245,12 @@ const Tutorial = () => {
         }
         return false;
       };
+
+      // Pre-load all images
+      const imagePromises = sections.map(section => 
+        section.image ? loadImage(section.image).catch(() => null) : Promise.resolve(null)
+      );
+      const loadedImages = await Promise.all(imagePromises);
 
       // Title page
       pdf.setFillColor(59, 130, 246);
@@ -269,7 +285,10 @@ const Tutorial = () => {
       yPos = margin;
 
       // Content sections
-      sections.forEach((section) => {
+      for (let i = 0; i < sections.length; i++) {
+        const section = sections[i];
+        const sectionImage = loadedImages[i];
+
         checkNewPage(40);
 
         // Section header
@@ -284,21 +303,41 @@ const Tutorial = () => {
         yPos += 20;
         pdf.setTextColor(0, 0, 0);
 
+        // Add image if loaded
+        if (sectionImage) {
+          const imgWidth = contentWidth;
+          const imgHeight = (sectionImage.height / sectionImage.width) * imgWidth;
+          const maxImgHeight = 60;
+          const finalImgHeight = Math.min(imgHeight, maxImgHeight);
+          const finalImgWidth = (finalImgHeight / imgHeight) * imgWidth;
+          
+          checkNewPage(finalImgHeight + 10);
+          
+          try {
+            pdf.addImage(sectionImage, 'PNG', margin + (contentWidth - finalImgWidth) / 2, yPos, finalImgWidth, finalImgHeight);
+            yPos += finalImgHeight + 8;
+          } catch (e) {
+            console.warn("Erro ao adicionar imagem:", e);
+          }
+        }
+
         // Flow steps
         if (section.flowSteps) {
+          checkNewPage(20);
           pdf.setFontSize(10);
           pdf.setFont("helvetica", "bold");
           pdf.text("Fluxo de navegação:", margin, yPos);
           yPos += 6;
           pdf.setFont("helvetica", "normal");
+          pdf.setFontSize(9);
           const flowText = section.flowSteps.join(" → ");
-          const flowLines = pdf.splitTextToSize(flowText, contentWidth);
+          const flowLines = pdf.splitTextToSize(flowText, contentWidth - 4);
           flowLines.forEach((line: string) => {
             checkNewPage(6);
-            pdf.text(line, margin, yPos);
+            pdf.text(line, margin + 2, yPos);
             yPos += 5;
           });
-          yPos += 8;
+          yPos += 6;
         }
 
         section.content.forEach((item) => {
@@ -323,12 +362,16 @@ const Tutorial = () => {
         });
 
         yPos += 10;
-      });
+      }
 
-      // Footer
-      pdf.setFontSize(10);
-      pdf.setTextColor(128, 128, 128);
-      pdf.text(`Gerado em ${new Date().toLocaleDateString('pt-BR')} - PDI Carreira & Vida`, pageWidth / 2, pageHeight - 10, { align: "center" });
+      // Footer on all pages
+      const totalPages = pdf.getNumberOfPages();
+      for (let p = 1; p <= totalPages; p++) {
+        pdf.setPage(p);
+        pdf.setFontSize(10);
+        pdf.setTextColor(128, 128, 128);
+        pdf.text(`Gerado em ${new Date().toLocaleDateString('pt-BR')} - PDI Carreira & Vida`, pageWidth / 2, pageHeight - 10, { align: "center" });
+      }
 
       pdf.save("tutorial-pdi-pessoa-fisica.pdf");
       toast.success("PDF gerado com sucesso!");
