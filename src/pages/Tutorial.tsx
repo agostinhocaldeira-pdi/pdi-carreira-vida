@@ -9,13 +9,14 @@ import jsPDF from "jspdf";
 import Logo from "@/components/Logo";
 
 // Import tutorial images
-import dashboardOverview from "@/assets/tutorial/dashboard-overview.jpg";
-import onboardingFlow from "@/assets/tutorial/onboarding-flow.jpg";
-import planoVida from "@/assets/tutorial/plano-vida.jpg";
-import maoNaMassa from "@/assets/tutorial/mao-na-massa.jpg";
-import diario from "@/assets/tutorial/diario.jpg";
-import ferramentas from "@/assets/tutorial/ferramentas.jpg";
-import progresso from "@/assets/tutorial/progresso.jpg";
+import onboardingImg from "@/assets/tutorial/1-onboarding.png";
+import planoVidaImg from "@/assets/tutorial/2-plano-vida.png";
+import maoNaMassaImg from "@/assets/tutorial/3-mao-na-massa.png";
+import diarioImg from "@/assets/tutorial/4-diario.png";
+import ferramentasImg from "@/assets/tutorial/5-ferramentas.png";
+import progressoImg from "@/assets/tutorial/6-progresso.png";
+import integracoesImg from "@/assets/tutorial/7-integracoes.png";
+import perfilImg from "@/assets/tutorial/8-perfil.png";
 
 const Tutorial = () => {
   const navigate = useNavigate();
@@ -26,8 +27,8 @@ const Tutorial = () => {
       id: "onboarding",
       icon: BookOpen,
       title: "1. Onboarding e Configuração Inicial",
-      image: onboardingFlow,
-      imageAlt: "Fluxo de onboarding mostrando etapas de cadastro",
+      image: onboardingImg,
+      imageAlt: "Tela inicial do PDI Carreira & Vida",
       flowSteps: ["Acesse a landing page", "Clique em 'Começar minha jornada'", "Preencha seus dados pessoais", "Complete o endereço com CEP", "Escolha seu plano", "Finalize o cadastro"],
       content: [
         {
@@ -48,8 +49,8 @@ const Tutorial = () => {
       id: "plano-vida",
       icon: Target,
       title: "2. Plano de Vida",
-      image: planoVida,
-      imageAlt: "Interface do Plano de Vida com VVD e objetivos",
+      image: planoVidaImg,
+      imageAlt: "Interface do Plano de Vida com VVD e valores",
       flowSteps: ["Menu lateral → Plano de Vida", "Preencha seu VVD", "Defina seus 12 valores", "Cadastre até 3 objetivos", "Conecte objetivos ao VVD"],
       content: [
         {
@@ -70,8 +71,8 @@ const Tutorial = () => {
       id: "mao-na-massa",
       icon: CheckSquare,
       title: "3. Mão na Massa",
-      image: maoNaMassa,
-      imageAlt: "Tabela de metas e ações com status",
+      image: maoNaMassaImg,
+      imageAlt: "Tabela de metas cadastradas",
       flowSteps: ["Acesse Mão na Massa", "Selecione um objetivo", "Cadastre uma nova meta", "Defina data alvo e status", "Adicione ações à meta", "Acompanhe na tabela"],
       content: [
         {
@@ -92,8 +93,8 @@ const Tutorial = () => {
       id: "diario",
       icon: Calendar,
       title: "4. Diário",
-      image: diario,
-      imageAlt: "Interface do diário com calendário e registro de humor",
+      image: diarioImg,
+      imageAlt: "Interface do diário com registro de humor e reflexões",
       flowSteps: ["Acesse o Diário", "Selecione 'Registro de Hoje'", "Escolha seu humor do dia", "Escreva reflexões e gratidão", "Marque hábitos concluídos", "Salve o registro"],
       content: [
         {
@@ -114,8 +115,8 @@ const Tutorial = () => {
       id: "ferramentas",
       icon: Wrench,
       title: "5. Ferramentas de Autoconhecimento",
-      image: ferramentas,
-      imageAlt: "Grid de ferramentas de autoconhecimento",
+      image: ferramentasImg,
+      imageAlt: "Página de ferramentas de autodesenvolvimento",
       flowSteps: ["Menu → Ferramentas", "Escolha uma ferramenta", "Complete o exercício guiado", "Salve seus resultados", "Volte quando quiser revisar"],
       content: [
         {
@@ -152,8 +153,8 @@ const Tutorial = () => {
       id: "progresso",
       icon: TrendingUp,
       title: "6. Progresso e Insights",
-      image: progresso,
-      imageAlt: "Dashboard de progresso com gráficos e conquistas",
+      image: progressoImg,
+      imageAlt: "Dashboard de progresso com gamificação e insights",
       flowSteps: ["Acesse o Dashboard", "Veja barras de progresso", "Confira itens pendentes", "Gere insights de IA", "Acompanhe gamificação", "Exporte relatórios PDF"],
       content: [
         {
@@ -178,8 +179,8 @@ const Tutorial = () => {
       id: "integracoes",
       icon: Link2,
       title: "7. Integrações",
-      image: dashboardOverview,
-      imageAlt: "Página de integrações com Google Calendar",
+      image: integracoesImg,
+      imageAlt: "Página de integrações com Google Calendar conectado",
       flowSteps: ["Menu → Integrações", "Clique em Conectar", "Autorize com Google", "Sincronize metas", "Eventos criados automaticamente"],
       content: [
         {
@@ -196,8 +197,8 @@ const Tutorial = () => {
       id: "perfil",
       icon: User,
       title: "8. Perfil e Assinatura",
-      image: dashboardOverview,
-      imageAlt: "Página de perfil com dados e assinatura",
+      image: perfilImg,
+      imageAlt: "Página de notificações e lembretes",
       flowSteps: ["Clique em Perfil no header", "Visualize seus dados", "Edite informações", "Gerencie assinatura", "Configure notificações"],
       content: [
         {
