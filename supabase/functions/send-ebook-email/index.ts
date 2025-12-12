@@ -53,8 +53,7 @@ const handler = async (req: Request): Promise<Response> => {
 
     const config = ebookConfigs[ebookType || 'default'] || ebookConfigs.default;
 
-    // Use preview URL while production domain SSL is being configured
-    const baseUrl = Deno.env.get("BASE_URL") || "https://pdi-carreira-e-vida.lovable.app";
+    const baseUrl = Deno.env.get("BASE_URL") || "https://pdicarreiraevida.com.br";
     const downloadLink = `${baseUrl}${config.downloadPath}?token=${confirmationToken}`;
 
     const emailResponse = await resend.emails.send({
