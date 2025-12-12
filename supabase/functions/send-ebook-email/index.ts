@@ -25,7 +25,8 @@ const handler = async (req: Request): Promise<Response> => {
 
     console.log(`Sending ebook email to ${email} for ${name}`);
 
-    const baseUrl = "https://pdicarreiraevida.com.br";
+    // Use preview URL while production domain SSL is being configured
+    const baseUrl = Deno.env.get("BASE_URL") || "https://pdi-carreira-e-vida.lovable.app";
     const downloadLink = `${baseUrl}/ebook-download?token=${confirmationToken}`;
 
     const emailResponse = await resend.emails.send({
