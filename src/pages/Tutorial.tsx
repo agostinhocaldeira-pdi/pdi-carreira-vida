@@ -289,7 +289,18 @@ const Tutorial = () => {
         const section = sections[i];
         const sectionImage = loadedImages[i];
 
-        checkNewPage(40);
+        // Calculate space needed for header + image together
+        let headerAndImageHeight = 20; // header height
+        if (sectionImage) {
+          const imgWidth = contentWidth;
+          const imgHeight = (sectionImage.height / sectionImage.width) * imgWidth;
+          const maxImgHeight = 55;
+          const finalImgHeight = Math.min(imgHeight, maxImgHeight);
+          headerAndImageHeight += finalImgHeight + 10;
+        }
+        
+        // Check if we need a new page for header+image together
+        checkNewPage(headerAndImageHeight);
 
         // Section header
         pdf.setFillColor(59, 130, 246);
@@ -300,28 +311,26 @@ const Tutorial = () => {
         pdf.setFont("helvetica", "bold");
         pdf.text(section.title, margin + 5, yPos + 8);
         
-        yPos += 20;
+        yPos += 18;
         pdf.setTextColor(0, 0, 0);
 
-        // Add image if loaded
+        // Add image if loaded (now guaranteed to be on same page as header)
         if (sectionImage) {
           const imgWidth = contentWidth;
           const imgHeight = (sectionImage.height / sectionImage.width) * imgWidth;
-          const maxImgHeight = 60;
+          const maxImgHeight = 55;
           const finalImgHeight = Math.min(imgHeight, maxImgHeight);
           const finalImgWidth = (finalImgHeight / imgHeight) * imgWidth;
           
-          checkNewPage(finalImgHeight + 10);
-          
           try {
             pdf.addImage(sectionImage, 'PNG', margin + (contentWidth - finalImgWidth) / 2, yPos, finalImgWidth, finalImgHeight);
-            yPos += finalImgHeight + 8;
+            yPos += finalImgHeight + 6;
           } catch (e) {
             console.warn("Erro ao adicionar imagem:", e);
           }
         }
 
-        // Flow steps
+        // Flow steps - with proper margin calculation
         if (section.flowSteps) {
           checkNewPage(20);
           pdf.setFontSize(10);
@@ -329,15 +338,15 @@ const Tutorial = () => {
           pdf.text("Fluxo de navegação:", margin, yPos);
           yPos += 6;
           pdf.setFont("helvetica", "normal");
-          pdf.setFontSize(9);
+          pdf.setFontSize(8);
           const flowText = section.flowSteps.join(" → ");
-          const flowLines = pdf.splitTextToSize(flowText, contentWidth - 4);
+          const flowLines = pdf.splitTextToSize(flowText, contentWidth - 10);
           flowLines.forEach((line: string) => {
-            checkNewPage(6);
-            pdf.text(line, margin + 2, yPos);
-            yPos += 5;
+            checkNewPage(5);
+            pdf.text(line, margin + 5, yPos);
+            yPos += 4;
           });
-          yPos += 6;
+          yPos += 5;
         }
 
         section.content.forEach((item) => {
