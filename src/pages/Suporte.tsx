@@ -1038,6 +1038,9 @@ const Suporte = () => {
           renderSupportForm()
         )}
 
+        {/* Tutorials Section */}
+        <TutorialsSection />
+
         {/* FAQ Section - Collapsible */}
         <FAQSection />
 
