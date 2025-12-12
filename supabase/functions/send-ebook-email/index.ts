@@ -12,7 +12,33 @@ interface EbookEmailRequest {
   name: string;
   email: string;
   confirmationToken: string;
+  ebookType?: string;
 }
+
+interface EbookConfig {
+  title: string;
+  subject: string;
+  downloadPath: string;
+  color: string;
+  colorLight: string;
+}
+
+const ebookConfigs: Record<string, EbookConfig> = {
+  default: {
+    title: "Pequeno Manual para Grandes Conquistas",
+    subject: "📚 Seu E-book: Pequeno Manual para Grandes Conquistas",
+    downloadPath: "/ebook-download",
+    color: "#8B5CF6",
+    colorLight: "#faf5ff",
+  },
+  bancario: {
+    title: "Manual do Bancário",
+    subject: "🏦 Seu E-book: Manual do Bancário",
+    downloadPath: "/ebook-bancario-download",
+    color: "#2563eb",
+    colorLight: "#eff6ff",
+  },
+};
 
 const handler = async (req: Request): Promise<Response> => {
   // Handle CORS preflight requests
@@ -21,18 +47,20 @@ const handler = async (req: Request): Promise<Response> => {
   }
 
   try {
-    const { name, email, confirmationToken }: EbookEmailRequest = await req.json();
+    const { name, email, confirmationToken, ebookType }: EbookEmailRequest = await req.json();
 
-    console.log(`Sending ebook email to ${email} for ${name}`);
+    console.log(`Sending ebook email to ${email} for ${name}, type: ${ebookType || 'default'}`);
+
+    const config = ebookConfigs[ebookType || 'default'] || ebookConfigs.default;
 
     // Use preview URL while production domain SSL is being configured
     const baseUrl = Deno.env.get("BASE_URL") || "https://pdi-carreira-e-vida.lovable.app";
-    const downloadLink = `${baseUrl}/ebook-download?token=${confirmationToken}`;
+    const downloadLink = `${baseUrl}${config.downloadPath}?token=${confirmationToken}`;
 
     const emailResponse = await resend.emails.send({
       from: "PDI Carreira & Vida <notificacoes@pdicarreiraevida.com.br>",
       to: [email],
-      subject: "📚 Seu E-book: Pequeno Manual para Grandes Conquistas",
+      subject: config.subject,
       html: `
 <!DOCTYPE html>
 <html>
@@ -48,7 +76,7 @@ const handler = async (req: Request): Promise<Response> => {
           
           <!-- Header -->
           <tr>
-            <td style="background: linear-gradient(135deg, #8B5CF6, #7C3AED); padding: 40px 30px; text-align: center;">
+            <td style="background: linear-gradient(135deg, ${config.color}, ${config.color}dd); padding: 40px 30px; text-align: center;">
               <h1 style="margin: 0; color: #ffffff; font-size: 28px; font-weight: 700;">
                 Seu E-book está pronto! 📚
               </h1>
@@ -63,8 +91,8 @@ const handler = async (req: Request): Promise<Response> => {
               </p>
               
               <p style="margin: 0 0 20px; color: #374151; font-size: 16px; line-height: 1.6;">
-                Muito obrigado por baixar o e-book <strong>"Pequeno Manual para Grandes Conquistas"</strong>. 
-                Este é o primeiro passo para uma jornada de autodesenvolvimento e transformação pessoal.
+                Muito obrigado por baixar o e-book <strong>"${config.title}"</strong>. 
+                Este é o primeiro passo para uma jornada de sucesso na sua carreira.
               </p>
 
               <p style="margin: 0 0 30px; color: #374151; font-size: 16px; line-height: 1.6;">
@@ -75,7 +103,7 @@ const handler = async (req: Request): Promise<Response> => {
               <table role="presentation" style="width: 100%; border-collapse: collapse;">
                 <tr>
                   <td align="center">
-                    <a href="${downloadLink}" style="display: inline-block; background: linear-gradient(135deg, #8B5CF6, #7C3AED); color: #ffffff; text-decoration: none; padding: 16px 40px; border-radius: 8px; font-weight: 600; font-size: 16px;">
+                    <a href="${downloadLink}" style="display: inline-block; background: linear-gradient(135deg, ${config.color}, ${config.color}dd); color: #ffffff; text-decoration: none; padding: 16px 40px; border-radius: 8px; font-weight: 600; font-size: 16px;">
                       📥 Baixar meu E-book
                     </a>
                   </td>
@@ -85,7 +113,7 @@ const handler = async (req: Request): Promise<Response> => {
               <p style="margin: 30px 0 20px; color: #6b7280; font-size: 14px; line-height: 1.6;">
                 Se o botão não funcionar, copie e cole este link no seu navegador:
                 <br>
-                <a href="${downloadLink}" style="color: #8B5CF6; word-break: break-all;">${downloadLink}</a>
+                <a href="${downloadLink}" style="color: ${config.color}; word-break: break-all;">${downloadLink}</a>
               </p>
             </td>
           </tr>
@@ -99,7 +127,7 @@ const handler = async (req: Request): Promise<Response> => {
           
           <!-- Footer CTA -->
           <tr>
-            <td style="padding: 30px; background-color: #faf5ff;">
+            <td style="padding: 30px; background-color: ${config.colorLight};">
               <p style="margin: 0 0 15px; color: #374151; font-size: 16px; font-weight: 600; text-align: center;">
                 🚀 Quer ir além do e-book?
               </p>
@@ -110,7 +138,7 @@ const handler = async (req: Request): Promise<Response> => {
               <table role="presentation" style="width: 100%; border-collapse: collapse;">
                 <tr>
                   <td align="center">
-                    <a href="${baseUrl}/signup" style="display: inline-block; background-color: #ffffff; color: #8B5CF6; text-decoration: none; padding: 12px 30px; border-radius: 8px; font-weight: 600; font-size: 14px; border: 2px solid #8B5CF6;">
+                    <a href="${baseUrl}/signup" style="display: inline-block; background-color: #ffffff; color: ${config.color}; text-decoration: none; padding: 12px 30px; border-radius: 8px; font-weight: 600; font-size: 14px; border: 2px solid ${config.color};">
                       Conhecer o PDI
                     </a>
                   </td>
