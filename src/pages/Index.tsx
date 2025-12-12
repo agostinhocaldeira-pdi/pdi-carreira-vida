@@ -875,7 +875,7 @@ const Index = () => {
                   Plano Gratuito com TODAS as funções liberadas!
                 </h3>
                 <p className="text-muted-foreground text-sm sm:text-base max-w-2xl mx-auto mb-4">
-                  Por tempo limitado, o plano gratuito dá acesso completo a todas as ferramentas, 
+                  Para os <strong className="text-foreground">primeiros 100 usuários</strong>, liberamos acesso completo por <strong className="text-foreground">1 ano</strong> a todas as ferramentas, 
                   PDI ilimitado e recursos premium. Aproveite antes que acabe!
                 </p>
                 <Button 
