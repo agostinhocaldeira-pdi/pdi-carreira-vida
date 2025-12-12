@@ -339,13 +339,20 @@ const Tutorial = () => {
           yPos += 6;
           pdf.setFont("helvetica", "normal");
           pdf.setFontSize(8);
-          const flowText = section.flowSteps.join(" → ");
-          const flowLines = pdf.splitTextToSize(flowText, contentWidth - 10);
-          flowLines.forEach((line: string) => {
-            checkNewPage(5);
-            pdf.text(line, margin + 5, yPos);
-            yPos += 4;
+
+          const flowMaxWidth = contentWidth - 20; // extra padding inside content area
+          const flowX = margin + 10; // indent inside main margin
+
+          section.flowSteps.forEach((step) => {
+            const stepText = `• ${step}`;
+            const stepLines = pdf.splitTextToSize(stepText, flowMaxWidth);
+            stepLines.forEach((line: string) => {
+              checkNewPage(5);
+              pdf.text(line, flowX, yPos);
+              yPos += 4;
+            });
           });
+
           yPos += 5;
         }
 
