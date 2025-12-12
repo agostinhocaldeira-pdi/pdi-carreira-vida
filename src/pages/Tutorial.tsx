@@ -1,12 +1,21 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { ArrowLeft, Download, BookOpen, Target, CheckSquare, Calendar, Wrench, TrendingUp, Link2, User, Loader2 } from "lucide-react";
+import { ArrowLeft, Download, BookOpen, Target, CheckSquare, Calendar, Wrench, TrendingUp, Link2, User, Loader2, ChevronRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import jsPDF from "jspdf";
 import Logo from "@/components/Logo";
+
+// Import tutorial images
+import dashboardOverview from "@/assets/tutorial/dashboard-overview.jpg";
+import onboardingFlow from "@/assets/tutorial/onboarding-flow.jpg";
+import planoVida from "@/assets/tutorial/plano-vida.jpg";
+import maoNaMassa from "@/assets/tutorial/mao-na-massa.jpg";
+import diario from "@/assets/tutorial/diario.jpg";
+import ferramentas from "@/assets/tutorial/ferramentas.jpg";
+import progresso from "@/assets/tutorial/progresso.jpg";
 
 const Tutorial = () => {
   const navigate = useNavigate();
@@ -17,6 +26,9 @@ const Tutorial = () => {
       id: "onboarding",
       icon: BookOpen,
       title: "1. Onboarding e Configuração Inicial",
+      image: onboardingFlow,
+      imageAlt: "Fluxo de onboarding mostrando etapas de cadastro",
+      flowSteps: ["Acesse a landing page", "Clique em 'Começar minha jornada'", "Preencha seus dados pessoais", "Complete o endereço com CEP", "Escolha seu plano", "Finalize o cadastro"],
       content: [
         {
           subtitle: "Criando sua conta",
@@ -36,6 +48,9 @@ const Tutorial = () => {
       id: "plano-vida",
       icon: Target,
       title: "2. Plano de Vida",
+      image: planoVida,
+      imageAlt: "Interface do Plano de Vida com VVD e objetivos",
+      flowSteps: ["Menu lateral → Plano de Vida", "Preencha seu VVD", "Defina seus 12 valores", "Cadastre até 3 objetivos", "Conecte objetivos ao VVD"],
       content: [
         {
           subtitle: "VVD - Visão de Vida Desejada",
@@ -55,6 +70,9 @@ const Tutorial = () => {
       id: "mao-na-massa",
       icon: CheckSquare,
       title: "3. Mão na Massa",
+      image: maoNaMassa,
+      imageAlt: "Tabela de metas e ações com status",
+      flowSteps: ["Acesse Mão na Massa", "Selecione um objetivo", "Cadastre uma nova meta", "Defina data alvo e status", "Adicione ações à meta", "Acompanhe na tabela"],
       content: [
         {
           subtitle: "Cadastrando Metas",
@@ -74,6 +92,9 @@ const Tutorial = () => {
       id: "diario",
       icon: Calendar,
       title: "4. Diário",
+      image: diario,
+      imageAlt: "Interface do diário com calendário e registro de humor",
+      flowSteps: ["Acesse o Diário", "Selecione 'Registro de Hoje'", "Escolha seu humor do dia", "Escreva reflexões e gratidão", "Marque hábitos concluídos", "Salve o registro"],
       content: [
         {
           subtitle: "Registro de Hoje",
@@ -93,6 +114,9 @@ const Tutorial = () => {
       id: "ferramentas",
       icon: Wrench,
       title: "5. Ferramentas de Autoconhecimento",
+      image: ferramentas,
+      imageAlt: "Grid de ferramentas de autoconhecimento",
+      flowSteps: ["Menu → Ferramentas", "Escolha uma ferramenta", "Complete o exercício guiado", "Salve seus resultados", "Volte quando quiser revisar"],
       content: [
         {
           subtitle: "Roda da Vida",
@@ -128,6 +152,9 @@ const Tutorial = () => {
       id: "progresso",
       icon: TrendingUp,
       title: "6. Progresso e Insights",
+      image: progresso,
+      imageAlt: "Dashboard de progresso com gráficos e conquistas",
+      flowSteps: ["Acesse o Dashboard", "Veja barras de progresso", "Confira itens pendentes", "Gere insights de IA", "Acompanhe gamificação", "Exporte relatórios PDF"],
       content: [
         {
           subtitle: "Dashboard de Progresso",
@@ -151,6 +178,9 @@ const Tutorial = () => {
       id: "integracoes",
       icon: Link2,
       title: "7. Integrações",
+      image: dashboardOverview,
+      imageAlt: "Página de integrações com Google Calendar",
+      flowSteps: ["Menu → Integrações", "Clique em Conectar", "Autorize com Google", "Sincronize metas", "Eventos criados automaticamente"],
       content: [
         {
           subtitle: "Google Calendar",
@@ -166,6 +196,9 @@ const Tutorial = () => {
       id: "perfil",
       icon: User,
       title: "8. Perfil e Assinatura",
+      image: dashboardOverview,
+      imageAlt: "Página de perfil com dados e assinatura",
+      flowSteps: ["Clique em Perfil no header", "Visualize seus dados", "Edite informações", "Gerencie assinatura", "Configure notificações"],
       content: [
         {
           subtitle: "Dados Pessoais",
@@ -193,7 +226,6 @@ const Tutorial = () => {
       const contentWidth = pageWidth - 2 * margin;
       let yPos = margin;
 
-      // Helper function to add new page if needed
       const checkNewPage = (requiredSpace: number) => {
         if (yPos + requiredSpace > pageHeight - margin) {
           pdf.addPage();
@@ -227,7 +259,7 @@ const Tutorial = () => {
 
       pdf.setFontSize(12);
       pdf.setFont("helvetica", "normal");
-      sections.forEach((section, index) => {
+      sections.forEach((section) => {
         pdf.text(`${section.title}`, margin, yPos);
         yPos += 8;
       });
@@ -236,7 +268,7 @@ const Tutorial = () => {
       yPos = margin;
 
       // Content sections
-      sections.forEach((section, sectionIndex) => {
+      sections.forEach((section) => {
         checkNewPage(40);
 
         // Section header
@@ -251,16 +283,31 @@ const Tutorial = () => {
         yPos += 20;
         pdf.setTextColor(0, 0, 0);
 
-        section.content.forEach((item, itemIndex) => {
+        // Flow steps
+        if (section.flowSteps) {
+          pdf.setFontSize(10);
+          pdf.setFont("helvetica", "bold");
+          pdf.text("Fluxo de navegação:", margin, yPos);
+          yPos += 6;
+          pdf.setFont("helvetica", "normal");
+          const flowText = section.flowSteps.join(" → ");
+          const flowLines = pdf.splitTextToSize(flowText, contentWidth);
+          flowLines.forEach((line: string) => {
+            checkNewPage(6);
+            pdf.text(line, margin, yPos);
+            yPos += 5;
+          });
+          yPos += 8;
+        }
+
+        section.content.forEach((item) => {
           checkNewPage(30);
 
-          // Subtitle
           pdf.setFontSize(12);
           pdf.setFont("helvetica", "bold");
           pdf.text(item.subtitle, margin, yPos);
           yPos += 8;
 
-          // Text content
           pdf.setFontSize(10);
           pdf.setFont("helvetica", "normal");
           const lines = pdf.splitTextToSize(item.text, contentWidth);
@@ -277,7 +324,7 @@ const Tutorial = () => {
         yPos += 10;
       });
 
-      // Footer on last page
+      // Footer
       pdf.setFontSize(10);
       pdf.setTextColor(128, 128, 128);
       pdf.text(`Gerado em ${new Date().toLocaleDateString('pt-BR')} - PDI Carreira & Vida`, pageWidth / 2, pageHeight - 10, { align: "center" });
@@ -339,6 +386,40 @@ const Tutorial = () => {
               </AccordionTrigger>
               <AccordionContent className="pb-4">
                 <div className="space-y-6 pt-2">
+                  {/* Image */}
+                  {section.image && (
+                    <div className="rounded-lg overflow-hidden border shadow-sm">
+                      <img 
+                        src={section.image} 
+                        alt={section.imageAlt} 
+                        className="w-full h-auto object-cover"
+                      />
+                    </div>
+                  )}
+
+                  {/* Flow Steps */}
+                  {section.flowSteps && (
+                    <div className="bg-primary/5 rounded-lg p-4">
+                      <h4 className="font-medium text-sm text-primary mb-3 flex items-center gap-2">
+                        <ChevronRight className="h-4 w-4" />
+                        Fluxo de Navegação
+                      </h4>
+                      <div className="flex flex-wrap items-center gap-2 text-sm">
+                        {section.flowSteps.map((step, index) => (
+                          <div key={index} className="flex items-center gap-2">
+                            <span className="bg-background px-3 py-1.5 rounded-full border text-foreground">
+                              {step}
+                            </span>
+                            {index < section.flowSteps.length - 1 && (
+                              <ChevronRight className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Content */}
                   {section.content.map((item, index) => (
                     <div key={index} className="border-l-2 border-primary/30 pl-4">
                       <h4 className="font-medium text-foreground mb-2">{item.subtitle}</h4>
