@@ -77,6 +77,47 @@ interface ManagerMessage {
   read_by_manager?: boolean;
 }
 
+// Tutorials Section Component
+const TutorialsSection = () => {
+  return (
+    <Card className="max-w-4xl mx-auto shadow-large mb-6">
+      <CardHeader>
+        <div className="flex items-center gap-3">
+          <div className="p-2 bg-primary/10 rounded-full">
+            <Compass className="h-5 w-5 text-primary" />
+          </div>
+          <div>
+            <CardTitle className="text-lg">Tutoriais</CardTitle>
+            <p className="text-sm text-muted-foreground">
+              Aprenda a usar todas as funcionalidades do PDI
+            </p>
+          </div>
+        </div>
+      </CardHeader>
+      <CardContent className="space-y-3">
+        <Link to="/tutorial">
+          <Button variant="outline" className="w-full justify-start gap-3 h-auto py-3">
+            <Users className="h-5 w-5 text-primary" />
+            <div className="text-left">
+              <p className="font-medium">Tutorial para Pessoa Física</p>
+              <p className="text-xs text-muted-foreground">Guia completo de todas as funcionalidades</p>
+            </div>
+          </Button>
+        </Link>
+        <Link to="/tutorial-empresa">
+          <Button variant="outline" className="w-full justify-start gap-3 h-auto py-3">
+            <Headphones className="h-5 w-5 text-green-600" />
+            <div className="text-left">
+              <p className="font-medium">Tutorial para Empresas</p>
+              <p className="text-xs text-muted-foreground">Gerencie gestores, funcionários e OKRs</p>
+            </div>
+          </Button>
+        </Link>
+      </CardContent>
+    </Card>
+  );
+};
+
 // FAQ Section Component
 const FAQSection = () => {
   const [isOpen, setIsOpen] = useState(false);

@@ -2,11 +2,17 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { ArrowLeft, Download, Building2, Users, UserCog, CreditCard, BarChart3, Target, Loader2 } from "lucide-react";
+import { ArrowLeft, Download, Building2, Users, UserCog, CreditCard, BarChart3, Target, Loader2, ChevronRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import jsPDF from "jspdf";
 import Logo from "@/components/Logo";
+
+// Import tutorial images
+import dashboardEmpresa from "@/assets/tutorial/dashboard-empresa.jpg";
+import dashboardOverview from "@/assets/tutorial/dashboard-overview.jpg";
+import onboardingFlow from "@/assets/tutorial/onboarding-flow.jpg";
+import progresso from "@/assets/tutorial/progresso.jpg";
 
 const TutorialEmpresa = () => {
   const navigate = useNavigate();
@@ -17,6 +23,9 @@ const TutorialEmpresa = () => {
       id: "cadastro",
       icon: Building2,
       title: "1. Cadastro e Configuração da Empresa",
+      image: onboardingFlow,
+      imageAlt: "Fluxo de cadastro de empresa",
+      flowSteps: ["Acesse 'Sou Empresa'", "Preencha dados da empresa", "Informe representante", "Complete endereço", "Defina senha", "Acesse dashboard"],
       content: [
         {
           subtitle: "Criando a conta da empresa",
@@ -40,6 +49,9 @@ const TutorialEmpresa = () => {
       id: "dashboard",
       icon: Users,
       title: "2. Dashboard da Empresa",
+      image: dashboardEmpresa,
+      imageAlt: "Visão geral do dashboard empresarial",
+      flowSteps: ["Login como empresa", "Visualize resumo", "Navegue pelas abas", "Gestores/Funcionários/OKRs"],
       content: [
         {
           subtitle: "Visão geral",
@@ -55,6 +67,9 @@ const TutorialEmpresa = () => {
       id: "gestores",
       icon: UserCog,
       title: "3. Gerenciando Gestores",
+      image: dashboardEmpresa,
+      imageAlt: "Aba de gestores no dashboard",
+      flowSteps: ["Aba Gestores", "Adicionar Gestor", "Preencher dados", "Enviar convite", "Gestor recebe e-mail", "Configura senha"],
       content: [
         {
           subtitle: "Adicionando gestores",
@@ -78,6 +93,9 @@ const TutorialEmpresa = () => {
       id: "funcionarios",
       icon: Users,
       title: "4. Gerenciando Funcionários",
+      image: dashboardEmpresa,
+      imageAlt: "Aba de funcionários com tabela de gerenciamento",
+      flowSteps: ["Aba Funcionários", "Adicionar Funcionário", "Enviar convite", "Selecionar múltiplos", "Atribuir Gestor", "Ver Progresso"],
       content: [
         {
           subtitle: "Adicionando funcionários",
@@ -101,6 +119,9 @@ const TutorialEmpresa = () => {
       id: "faturamento",
       icon: CreditCard,
       title: "5. Faturamento",
+      image: dashboardOverview,
+      imageAlt: "Aba de faturamento com resumo de custos",
+      flowSteps: ["Aba Faturamento", "Ver funcionários ativos", "Conferir faixa de preço", "Contatar suporte para pagamento"],
       content: [
         {
           subtitle: "Modelo de precificação",
@@ -120,6 +141,9 @@ const TutorialEmpresa = () => {
       id: "relatorios",
       icon: BarChart3,
       title: "6. Relatórios",
+      image: progresso,
+      imageAlt: "Dashboard de relatórios com métricas consolidadas",
+      flowSteps: ["Aba Relatórios", "Ver métricas consolidadas", "Filtrar por período", "Analisar alinhamento OKRs", "Exportar PDF"],
       content: [
         {
           subtitle: "Relatório consolidado",
@@ -143,6 +167,9 @@ const TutorialEmpresa = () => {
       id: "okrs",
       icon: Target,
       title: "7. OKRs da Empresa",
+      image: dashboardEmpresa,
+      imageAlt: "Aba de OKRs com objetivos e resultados-chave",
+      flowSteps: ["Aba OKRs", "Criar novo OKR", "Definir resultados-chave", "Vincular funcionários", "Acompanhar progresso"],
       content: [
         {
           subtitle: "Criando OKRs",
@@ -174,7 +201,6 @@ const TutorialEmpresa = () => {
       const contentWidth = pageWidth - 2 * margin;
       let yPos = margin;
 
-      // Helper function to add new page if needed
       const checkNewPage = (requiredSpace: number) => {
         if (yPos + requiredSpace > pageHeight - margin) {
           pdf.addPage();
@@ -232,16 +258,31 @@ const TutorialEmpresa = () => {
         yPos += 20;
         pdf.setTextColor(0, 0, 0);
 
+        // Flow steps
+        if (section.flowSteps) {
+          pdf.setFontSize(10);
+          pdf.setFont("helvetica", "bold");
+          pdf.text("Fluxo de navegação:", margin, yPos);
+          yPos += 6;
+          pdf.setFont("helvetica", "normal");
+          const flowText = section.flowSteps.join(" → ");
+          const flowLines = pdf.splitTextToSize(flowText, contentWidth);
+          flowLines.forEach((line: string) => {
+            checkNewPage(6);
+            pdf.text(line, margin, yPos);
+            yPos += 5;
+          });
+          yPos += 8;
+        }
+
         section.content.forEach((item) => {
           checkNewPage(30);
 
-          // Subtitle
           pdf.setFontSize(12);
           pdf.setFont("helvetica", "bold");
           pdf.text(item.subtitle, margin, yPos);
           yPos += 8;
 
-          // Text content
           pdf.setFontSize(10);
           pdf.setFont("helvetica", "normal");
           const lines = pdf.splitTextToSize(item.text, contentWidth);
@@ -258,7 +299,7 @@ const TutorialEmpresa = () => {
         yPos += 10;
       });
 
-      // Footer on last page
+      // Footer
       pdf.setFontSize(10);
       pdf.setTextColor(128, 128, 128);
       pdf.text(`Gerado em ${new Date().toLocaleDateString('pt-BR')} - PDI Carreira & Vida`, pageWidth / 2, pageHeight - 10, { align: "center" });
@@ -324,6 +365,40 @@ const TutorialEmpresa = () => {
               </AccordionTrigger>
               <AccordionContent className="pb-4">
                 <div className="space-y-6 pt-2">
+                  {/* Image */}
+                  {section.image && (
+                    <div className="rounded-lg overflow-hidden border shadow-sm">
+                      <img 
+                        src={section.image} 
+                        alt={section.imageAlt} 
+                        className="w-full h-auto object-cover"
+                      />
+                    </div>
+                  )}
+
+                  {/* Flow Steps */}
+                  {section.flowSteps && (
+                    <div className="bg-green-500/5 rounded-lg p-4">
+                      <h4 className="font-medium text-sm text-green-600 mb-3 flex items-center gap-2">
+                        <ChevronRight className="h-4 w-4" />
+                        Fluxo de Navegação
+                      </h4>
+                      <div className="flex flex-wrap items-center gap-2 text-sm">
+                        {section.flowSteps.map((step, index) => (
+                          <div key={index} className="flex items-center gap-2">
+                            <span className="bg-background px-3 py-1.5 rounded-full border text-foreground">
+                              {step}
+                            </span>
+                            {index < section.flowSteps.length - 1 && (
+                              <ChevronRight className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Content */}
                   {section.content.map((item, index) => (
                     <div key={index} className="border-l-2 border-green-500/30 pl-4">
                       <h4 className="font-medium text-foreground mb-2">{item.subtitle}</h4>

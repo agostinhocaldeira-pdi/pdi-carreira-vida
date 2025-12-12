@@ -1,7 +1,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
-import { BookOpen, Home, PlayCircle, FileText } from "lucide-react";
+import { BookOpen, Home, PlayCircle, FileText, GraduationCap } from "lucide-react";
 import { Link } from "react-router-dom";
 import LogoutButton from "@/components/LogoutButton";
 import { useRoleProtection } from "@/hooks/useRoleProtection";
@@ -146,14 +146,20 @@ const ConstrucaoGuiada = () => {
           </CardContent>
         </Card>
 
-        {/* Botão Voltar ao Dashboard */}
+        {/* Botões de ação */}
         <Card className="shadow-large">
           <CardContent className="pt-6">
-            <div className="flex justify-center">
+            <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <Link to="/home">
                 <Button size="lg" className="gap-2 w-full sm:w-auto">
                   <Home className="w-4 h-4" />
                   Voltar ao Dashboard
+                </Button>
+              </Link>
+              <Link to="/tutorial">
+                <Button size="lg" variant="outline" className="gap-2 w-full sm:w-auto">
+                  <GraduationCap className="w-4 h-4" />
+                  Ver Tutorial Completo
                 </Button>
               </Link>
             </div>
