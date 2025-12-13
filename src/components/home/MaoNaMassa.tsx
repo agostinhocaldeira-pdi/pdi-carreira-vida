@@ -74,26 +74,33 @@ const MaoNaMassa = () => {
   const [deletePassoId, setDeletePassoId] = useState<number | null>(null);
   const [deleteMetaId, setDeleteMetaId] = useState<number | null>(null);
 
-  // Carregar dados
+  // Carregar dados - apenas uma vez no mount
   useEffect(() => {
+    let isMounted = true;
+    
     const loadData = async () => {
-      setIsLoading(true);
+      // Carregar do localStorage primeiro (instantâneo)
+      const localObjetivos = JSON.parse(localStorage.getItem("objetivos") || "[]");
+      const localMetas = JSON.parse(localStorage.getItem("metas") || "[]");
+      
+      if (isMounted) {
+        setObjetivosDisponiveis(localObjetivos);
+        setMetasCadastradas(localMetas);
+        setIsLoading(false);
+      }
+      
+      // Depois tentar sincronizar com Supabase em background
       try {
-        // Objetivos
         const savedObjetivos = await storage.getObjetivos();
-        if (savedObjetivos && savedObjetivos.length > 0) {
+        if (isMounted && savedObjetivos && savedObjetivos.length > 0) {
           setObjetivosDisponiveis(savedObjetivos.map((obj: any) => ({
             id: obj.id,
             texto: obj.texto,
           })));
-        } else {
-          const localObjetivos = JSON.parse(localStorage.getItem("objetivos") || "[]");
-          setObjetivosDisponiveis(localObjetivos);
         }
 
-        // Metas
         const savedMetas = await storage.getMetas();
-        if (savedMetas && savedMetas.length > 0) {
+        if (isMounted && savedMetas && savedMetas.length > 0) {
           setMetasCadastradas(savedMetas.map((meta: any) => ({
             id: meta.id,
             objetivoId: meta.objetivo_id || meta.objetivoId,
@@ -106,24 +113,18 @@ const MaoNaMassa = () => {
             passos: meta.passos || [],
             from_smart: meta.from_smart,
           })));
-        } else {
-          const localMetas = JSON.parse(localStorage.getItem("metas") || "[]");
-          setMetasCadastradas(localMetas);
         }
       } catch (error) {
-        console.error("Error loading data:", error);
-        // Fallback to localStorage
-        const localObjetivos = JSON.parse(localStorage.getItem("objetivos") || "[]");
-        setObjetivosDisponiveis(localObjetivos);
-        const localMetas = JSON.parse(localStorage.getItem("metas") || "[]");
-        setMetasCadastradas(localMetas);
-      } finally {
-        setIsLoading(false);
+        console.error("Error syncing with Supabase:", error);
       }
     };
 
     loadData();
-  }, [storage.isAuthenticated]);
+    
+    return () => {
+      isMounted = false;
+    };
+  }, []); // Sem dependências - carrega apenas uma vez
 
   // Escutar evento para abrir formulário de meta com objetivo pré-selecionado
   useEffect(() => {
