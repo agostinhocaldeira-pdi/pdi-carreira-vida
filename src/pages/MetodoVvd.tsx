@@ -7,9 +7,11 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import LogoutButton from "@/components/LogoutButton";
+import { usePDIStorage } from "@/hooks/usePDIStorage";
 
 const MetodoVvd = () => {
   const navigate = useNavigate();
+  const { saveVvd } = usePDIStorage();
   const [step, setStep] = useState(1);
   const [freeText, setFreeText] = useState("");
   const [paragraphText, setParagraphText] = useState("");
@@ -124,24 +126,29 @@ const MetodoVvd = () => {
     });
   };
 
-  const handleFinalSave = () => {
+  const handleFinalSave = async () => {
     if (!sentenceText.trim()) {
       toast.error("A frase não pode estar vazia.");
       return;
     }
 
-    // Salvar no localStorage
-    localStorage.setItem("vvd", sentenceText);
-    
-    // Disparar evento customizado para sincronizar com PlanoDeVida
-    window.dispatchEvent(new CustomEvent("vvdUpdated"));
+    try {
+      // Salvar via usePDIStorage (Supabase ou localStorage)
+      await saveVvd(sentenceText);
+      
+      // Disparar evento customizado para sincronizar com PlanoDeVida
+      window.dispatchEvent(new CustomEvent("vvdUpdated"));
 
-    toast.success("Visão de Vida Desejada salva com sucesso!", {
-      description: "Sua VVD foi automaticamente adicionada ao seu Plano de Vida."
-    });
+      toast.success("Visão de Vida Desejada salva com sucesso!", {
+        description: "Sua VVD foi automaticamente adicionada ao seu Plano de Vida."
+      });
 
-    // Redirecionar para home
-    setTimeout(() => navigate("/home"), 1500);
+      // Redirecionar para home
+      setTimeout(() => navigate("/home"), 1500);
+    } catch (error) {
+      console.error("Erro ao salvar VVD:", error);
+      toast.error("Erro ao salvar VVD. Tente novamente.");
+    }
   };
 
   return (
