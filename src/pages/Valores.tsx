@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Link, useNavigate } from "react-router-dom";
-import { ArrowLeft, ArrowRight, Heart, CheckCircle2, Sparkles } from "lucide-react";
+import { ArrowLeft, ArrowRight, Heart, CheckCircle2, Sparkles, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import {
   AlertDialog,
@@ -16,6 +16,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import LogoutButton from "@/components/LogoutButton";
+import { usePDIStorage } from "@/hooks/usePDIStorage";
 
 const VALORES_LISTA = [
   "Abundância", "Aceitação", "Adaptabilidade", "Afeto", "Ajuda", "Alegria",
@@ -40,24 +41,33 @@ const VALORES_LISTA = [
 
 const Valores = () => {
   const navigate = useNavigate();
+  const { getValores, saveValores } = usePDIStorage();
   const [etapa, setEtapa] = useState(1);
   const [valoresSelecionados20, setValoresSelecionados20] = useState<string[]>([]);
   const [valoresSelecionados10, setValoresSelecionados10] = useState<string[]>([]);
   const [valoresSelecionados6, setValoresSelecionados6] = useState<string[]>([]);
   const [showSuccessDialog, setShowSuccessDialog] = useState(false);
   const [exercicioConcluido, setExercicioConcluido] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
-    // Verificar se o exercício já foi concluído
-    const savedValores = localStorage.getItem("meus_valores");
-    if (savedValores) {
-      const valores = JSON.parse(savedValores);
-      if (valores.length === 6) {
-        setExercicioConcluido(true);
-        setValoresSelecionados6(valores);
+    // Verificar se o exercício já foi concluído (do Supabase)
+    const loadValores = async () => {
+      try {
+        const savedValores = await getValores();
+        if (savedValores && savedValores.length >= 6) {
+          setExercicioConcluido(true);
+          setValoresSelecionados6(savedValores.slice(0, 6));
+        }
+      } catch (error) {
+        console.error('Erro ao carregar valores:', error);
+      } finally {
+        setIsLoading(false);
       }
-    }
-  }, []);
+    };
+    loadValores();
+  }, [getValores]);
 
   const toggleValor = (valor: string) => {
     if (etapa === 1) {
@@ -108,24 +118,33 @@ const Valores = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const handleSalvar = () => {
+  const handleSalvar = async () => {
     if (valoresSelecionados6.length === 6) {
-      // Salvar no localStorage
-      localStorage.setItem("meus_valores", JSON.stringify(valoresSelecionados6));
-      
-      // Atualizar também o formato antigo para compatibilidade
-      const valoresArray = Array(12).fill("");
-      valoresSelecionados6.forEach((valor, index) => {
-        valoresArray[index] = valor;
-      });
-      localStorage.setItem("valores", JSON.stringify(valoresArray));
-      
-      // Disparar evento para sincronizar
-      window.dispatchEvent(new Event("valoresUpdated"));
-      
-      setShowSuccessDialog(true);
+      setIsSaving(true);
+      try {
+        // Salvar no Supabase
+        await saveValores(valoresSelecionados6);
+        
+        // Disparar evento para sincronizar
+        window.dispatchEvent(new Event("valoresUpdated"));
+        
+        setShowSuccessDialog(true);
+      } catch (error) {
+        console.error('Erro ao salvar valores:', error);
+        toast.error("Erro ao salvar valores");
+      } finally {
+        setIsSaving(false);
+      }
     }
   };
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-subtle flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
 
   const getValoresParaExibir = () => {
     if (etapa === 1) return VALORES_LISTA;
@@ -370,11 +389,11 @@ const Valores = () => {
                 ) : (
                   <Button
                     onClick={handleSalvar}
-                    disabled={valoresSelecionados6.length !== 6}
+                    disabled={valoresSelecionados6.length !== 6 || isSaving}
                     className="w-full sm:w-auto gap-2"
                   >
-                    <Heart className="w-4 h-4" />
-                    Salvar no Plano de Vida
+                    {isSaving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Heart className="w-4 h-4" />}
+                    {isSaving ? "Salvando..." : "Salvar no Plano de Vida"}
                   </Button>
                 )}
               </div>
