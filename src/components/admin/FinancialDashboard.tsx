@@ -77,13 +77,13 @@ const FinancialDashboard = () => {
     amount: ""
   });
 
-  // Mock data for automatic costs - in production, these would come from APIs
-  const getAutomaticCosts = (month: string) => ({
-    subscriptionRevenue: Math.floor(Math.random() * 5000) + 1000, // Mock: R$ 1000-6000
-    lovableCost: 99, // Fixed Lovable plan cost
+  // Custos fixos reais - valores a serem atualizados manualmente ou via integração futura
+  const getAutomaticCosts = () => ({
+    subscriptionRevenue: 0, // Será integrado com Stripe API
+    lovableCost: 99, // Custo fixo do plano Lovable
     resendCost: 0, // Free tier
-    stripeCost: Math.floor(Math.random() * 100) + 10, // ~2.9% of revenue
-    supabaseCost: 0, // Free tier
+    stripeCost: 0, // Será calculado baseado nas transações reais
+    supabaseCost: 0, // Free tier (Lovable Cloud)
   });
 
   useEffect(() => {
@@ -100,7 +100,7 @@ const FinancialDashboard = () => {
   };
 
   const currentMonthExpenses = manualExpenses.filter(e => e.month === selectedMonth);
-  const automaticCosts = getAutomaticCosts(selectedMonth);
+  const automaticCosts = getAutomaticCosts();
 
   const totalManualExpenses = currentMonthExpenses.reduce((sum, e) => sum + e.amount, 0);
   const totalAutomaticCosts = automaticCosts.lovableCost + automaticCosts.resendCost + 
