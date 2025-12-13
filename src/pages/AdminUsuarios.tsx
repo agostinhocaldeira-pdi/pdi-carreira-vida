@@ -5,13 +5,14 @@ import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Progress } from "@/components/ui/progress";
 import { useNavigate } from "react-router-dom";
-import { Shield, ArrowLeft, Users, Search, UserCheck, UserX } from "lucide-react";
+import { Shield, ArrowLeft, Users, Search, UserCheck, UserX, RefreshCw } from "lucide-react";
 import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
 import LogoutButton from "@/components/LogoutButton";
 import { useRoleProtection } from "@/hooks/useRoleProtection";
+import { supabase } from "@/integrations/supabase/client";
 
-interface MockUser {
+interface UserData {
   id: string;
   name: string;
   email: string;
@@ -19,6 +20,7 @@ interface MockUser {
   dataCadastro: string;
   ultimoAcesso: string;
   status: "ativo" | "inativo";
+  role: string;
   atividades: {
     objetivos: number;
     metas: number;
@@ -27,122 +29,143 @@ interface MockUser {
   };
 }
 
-// Dados mockados para teste
-const mockUsers: MockUser[] = [
-  {
-    id: "1",
-    name: "Maria Silva",
-    email: "maria.silva@email.com",
-    phone: "(11) 98765-4321",
-    dataCadastro: "2024-01-15",
-    ultimoAcesso: "2024-12-03",
-    status: "ativo",
-    atividades: { objetivos: 80, metas: 65, acoes: 45, diario: 90 }
-  },
-  {
-    id: "2",
-    name: "João Santos",
-    email: "joao.santos@email.com",
-    phone: "(21) 99876-5432",
-    dataCadastro: "2024-02-20",
-    ultimoAcesso: "2024-12-01",
-    status: "ativo",
-    atividades: { objetivos: 50, metas: 40, acoes: 30, diario: 60 }
-  },
-  {
-    id: "3",
-    name: "Ana Costa",
-    email: "ana.costa@email.com",
-    phone: "(31) 91234-5678",
-    dataCadastro: "2024-03-10",
-    ultimoAcesso: "2024-10-15",
-    status: "inativo",
-    atividades: { objetivos: 20, metas: 15, acoes: 10, diario: 25 }
-  },
-  {
-    id: "4",
-    name: "Carlos Oliveira",
-    email: "carlos.oliveira@email.com",
-    phone: "(41) 92345-6789",
-    dataCadastro: "2024-04-05",
-    ultimoAcesso: "2024-12-02",
-    status: "ativo",
-    atividades: { objetivos: 95, metas: 88, acoes: 75, diario: 100 }
-  },
-  {
-    id: "5",
-    name: "Fernanda Lima",
-    email: "fernanda.lima@email.com",
-    phone: "(51) 93456-7890",
-    dataCadastro: "2024-05-12",
-    ultimoAcesso: "2024-11-28",
-    status: "ativo",
-    atividades: { objetivos: 70, metas: 55, acoes: 60, diario: 80 }
-  },
-  {
-    id: "6",
-    name: "Roberto Almeida",
-    email: "roberto.almeida@email.com",
-    phone: "(61) 94567-8901",
-    dataCadastro: "2024-06-18",
-    ultimoAcesso: "2024-08-20",
-    status: "inativo",
-    atividades: { objetivos: 10, metas: 5, acoes: 0, diario: 15 }
-  },
-  {
-    id: "7",
-    name: "Patrícia Mendes",
-    email: "patricia.mendes@email.com",
-    phone: "(71) 95678-9012",
-    dataCadastro: "2024-07-22",
-    ultimoAcesso: "2024-12-03",
-    status: "ativo",
-    atividades: { objetivos: 85, metas: 72, acoes: 68, diario: 95 }
-  },
-  {
-    id: "8",
-    name: "Lucas Ferreira",
-    email: "lucas.ferreira@email.com",
-    phone: "(81) 96789-0123",
-    dataCadastro: "2024-08-30",
-    ultimoAcesso: "2024-11-30",
-    status: "ativo",
-    atividades: { objetivos: 60, metas: 48, acoes: 35, diario: 70 }
-  },
-  {
-    id: "9",
-    name: "Juliana Rocha",
-    email: "juliana.rocha@email.com",
-    phone: "(91) 97890-1234",
-    dataCadastro: "2024-09-14",
-    ultimoAcesso: "2024-11-25",
-    status: "ativo",
-    atividades: { objetivos: 45, metas: 38, acoes: 25, diario: 55 }
-  },
-  {
-    id: "10",
-    name: "Marcos Souza",
-    email: "marcos.souza@email.com",
-    phone: "(11) 98901-2345",
-    dataCadastro: "2024-10-08",
-    ultimoAcesso: "2024-10-10",
-    status: "inativo",
-    atividades: { objetivos: 5, metas: 0, acoes: 0, diario: 10 }
-  }
-];
-
 const AdminUsuarios = () => {
-  // Proteção de role - apenas admin pode acessar
   const { isLoading: roleLoading, isAdmin } = useRoleProtection({
     allowedRoles: ["admin"],
     redirectTo: "/home"
   });
   
   const [searchTerm, setSearchTerm] = useState("");
-  const [users] = useState<MockUser[]>(mockUsers);
+  const [users, setUsers] = useState<UserData[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
 
-  // Loading state
+  const fetchUsers = async () => {
+    setIsLoading(true);
+    try {
+      // Buscar todos os usuários com roles
+      const { data: rolesData, error: rolesError } = await supabase
+        .from("user_roles")
+        .select("user_id, role, created_at");
+
+      if (rolesError) throw rolesError;
+
+      // Para cada usuário, buscar dados de atividades
+      const usersWithData: UserData[] = await Promise.all(
+        (rolesData || []).map(async (roleEntry) => {
+          const userId = roleEntry.user_id;
+
+          // Buscar objetivos
+          const { data: objetivos } = await supabase
+            .from("user_objectives")
+            .select("id, status")
+            .eq("user_id", userId);
+
+          // Buscar metas
+          const { data: metas } = await supabase
+            .from("user_goals")
+            .select("id, status")
+            .eq("user_id", userId);
+
+          // Buscar ações
+          const { data: acoes } = await supabase
+            .from("user_actions")
+            .select("id, status")
+            .eq("user_id", userId);
+
+          // Buscar entradas do diário
+          const { data: diario } = await supabase
+            .from("diary_entries")
+            .select("id, entry_date")
+            .eq("user_id", userId);
+
+          // Buscar onboarding para nome
+          const { data: onboarding } = await supabase
+            .from("user_onboarding")
+            .select("expectations")
+            .eq("user_id", userId)
+            .maybeSingle();
+
+          // Buscar endereço para dados adicionais
+          const { data: address } = await supabase
+            .from("user_addresses")
+            .select("*")
+            .eq("user_id", userId)
+            .maybeSingle();
+
+          // Buscar streaks para último acesso
+          const { data: streaks } = await supabase
+            .from("user_streaks")
+            .select("last_activity_date, updated_at")
+            .eq("user_id", userId)
+            .maybeSingle();
+
+          // Calcular progresso
+          const totalObjetivos = objetivos?.length || 0;
+          const objetivosConcluidos = objetivos?.filter(o => 
+            o.status?.toLowerCase() === "concluido" || o.status?.toLowerCase() === "concluído"
+          ).length || 0;
+          const objetivosProgress = totalObjetivos > 0 ? Math.round((objetivosConcluidos / totalObjetivos) * 100) : 0;
+
+          const totalMetas = metas?.length || 0;
+          const metasConcluidas = metas?.filter(m => 
+            m.status?.toLowerCase() === "concluido" || m.status?.toLowerCase() === "concluído"
+          ).length || 0;
+          const metasProgress = totalMetas > 0 ? Math.round((metasConcluidas / totalMetas) * 100) : 0;
+
+          const totalAcoes = acoes?.length || 0;
+          const acoesConcluidas = acoes?.filter(a => 
+            a.status?.toLowerCase() === "concluido" || a.status?.toLowerCase() === "concluído"
+          ).length || 0;
+          const acoesProgress = totalAcoes > 0 ? Math.round((acoesConcluidas / totalAcoes) * 100) : 0;
+
+          // Diário - calcular % baseado nos últimos 30 dias
+          const last30Days = 30;
+          const diarioEntries = diario?.length || 0;
+          const diarioProgress = Math.min(100, Math.round((diarioEntries / last30Days) * 100));
+
+          // Determinar último acesso
+          const lastActivity = streaks?.last_activity_date || streaks?.updated_at || roleEntry.created_at;
+          
+          // Determinar status (inativo se mais de 30 dias sem acesso)
+          const daysSinceAccess = lastActivity ? 
+            Math.floor((new Date().getTime() - new Date(lastActivity).getTime()) / (1000 * 60 * 60 * 24)) : 999;
+          const status = daysSinceAccess > 30 ? "inativo" : "ativo";
+
+          return {
+            id: userId,
+            name: `Usuário ${userId.slice(0, 8)}`, // Placeholder - sem acesso direto ao auth.users
+            email: "-", // Protegido por RLS
+            phone: "-",
+            dataCadastro: roleEntry.created_at,
+            ultimoAcesso: lastActivity || roleEntry.created_at,
+            status: status as "ativo" | "inativo",
+            role: roleEntry.role,
+            atividades: {
+              objetivos: objetivosProgress,
+              metas: metasProgress,
+              acoes: acoesProgress,
+              diario: diarioProgress
+            }
+          };
+        })
+      );
+
+      setUsers(usersWithData);
+    } catch (error) {
+      console.error("Erro ao buscar usuários:", error);
+      toast.error("Erro ao carregar usuários");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (isAdmin) {
+      fetchUsers();
+    }
+  }, [isAdmin]);
+
   if (roleLoading) {
     return (
       <div className="min-h-screen bg-gradient-subtle flex items-center justify-center">
@@ -156,14 +179,15 @@ const AdminUsuarios = () => {
 
   const filteredUsers = users.filter(user =>
     user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    user.email.toLowerCase().includes(searchTerm.toLowerCase())
+    user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    user.role.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString("pt-BR");
   };
 
-  const getProgressAverage = (atividades: MockUser["atividades"]) => {
+  const getProgressAverage = (atividades: UserData["atividades"]) => {
     const { objetivos, metas, acoes, diario } = atividades;
     return Math.round((objetivos + metas + acoes + diario) / 4);
   };
@@ -174,6 +198,19 @@ const AdminUsuarios = () => {
     const diffTime = today.getTime() - lastAccess.getTime();
     const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
     return diffDays;
+  };
+
+  const getRoleBadge = (role: string) => {
+    switch (role) {
+      case "admin":
+        return <Badge variant="destructive">Admin</Badge>;
+      case "empresa":
+        return <Badge className="bg-purple-600 hover:bg-purple-700">Empresa</Badge>;
+      case "gestor":
+        return <Badge className="bg-blue-600 hover:bg-blue-700">Gestor</Badge>;
+      default:
+        return <Badge variant="secondary">Usuário</Badge>;
+    }
   };
 
   if (!isAdmin) {
@@ -232,14 +269,23 @@ const AdminUsuarios = () => {
                   Inativos: {filteredUsers.filter(u => u.status === "inativo").length}
                 </CardDescription>
               </div>
-              <Badge variant="secondary" className="w-fit">Dados Mockados</Badge>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={fetchUsers}
+                disabled={isLoading}
+                className="gap-2"
+              >
+                <RefreshCw className={`w-4 h-4 ${isLoading ? 'animate-spin' : ''}`} />
+                Atualizar
+              </Button>
             </div>
           </CardHeader>
           <CardContent>
             <div className="flex items-center gap-2">
               <Search className="w-4 h-4 text-muted-foreground" />
               <Input
-                placeholder="Buscar por nome ou e-mail..."
+                placeholder="Buscar por nome, e-mail ou role..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="max-w-sm"
@@ -251,85 +297,87 @@ const AdminUsuarios = () => {
         {/* Users Table */}
         <Card className="shadow-medium">
           <CardContent className="pt-6">
-            <div className="rounded-lg border overflow-x-auto">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Nome</TableHead>
-                    <TableHead>E-mail</TableHead>
-                    <TableHead className="hidden md:table-cell">Telefone</TableHead>
-                    <TableHead className="hidden lg:table-cell">Data Cadastro</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead className="text-center">Dias sem Acesso</TableHead>
-                    <TableHead className="min-w-[200px]">Atividades</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {filteredUsers.length === 0 ? (
+            {isLoading ? (
+              <div className="flex items-center justify-center py-12">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+              </div>
+            ) : (
+              <div className="rounded-lg border overflow-x-auto">
+                <Table>
+                  <TableHeader>
                     <TableRow>
-                      <TableCell colSpan={8} className="text-center text-muted-foreground py-8">
-                        Nenhum usuário encontrado
-                      </TableCell>
+                      <TableHead>ID</TableHead>
+                      <TableHead>Role</TableHead>
+                      <TableHead className="hidden lg:table-cell">Data Cadastro</TableHead>
+                      <TableHead>Status</TableHead>
+                      <TableHead className="text-center">Dias sem Acesso</TableHead>
+                      <TableHead className="min-w-[200px]">Atividades</TableHead>
                     </TableRow>
-                  ) : (
-                    filteredUsers.map((user) => (
-                      <TableRow key={user.id}>
-                        <TableCell className="font-medium">{user.name}</TableCell>
-                        <TableCell className="text-muted-foreground">{user.email}</TableCell>
-                        <TableCell className="hidden md:table-cell text-muted-foreground">
-                          {user.phone}
-                        </TableCell>
-                        <TableCell className="hidden lg:table-cell text-muted-foreground">
-                          {formatDate(user.dataCadastro)}
-                        </TableCell>
-                        <TableCell>
-                          {user.status === "ativo" ? (
-                            <Badge variant="default" className="gap-1 bg-green-600 hover:bg-green-700">
-                              <UserCheck className="w-3 h-3" />
-                              Ativo
-                            </Badge>
-                          ) : (
-                            <Badge variant="secondary" className="gap-1">
-                              <UserX className="w-3 h-3" />
-                              Inativo
-                            </Badge>
-                          )}
-                        </TableCell>
-                        <TableCell className="text-center">
-                          {(() => {
-                            const days = getDaysSinceLastAccess(user.ultimoAcesso);
-                            if (days === 0) {
-                              return <Badge variant="default" className="bg-green-600">Hoje</Badge>;
-                            } else if (days <= 7) {
-                              return <Badge variant="secondary">{days} dias</Badge>;
-                            } else if (days <= 30) {
-                              return <Badge variant="outline" className="text-yellow-600 border-yellow-600">{days} dias</Badge>;
-                            } else {
-                              return <Badge variant="destructive">{days} dias</Badge>;
-                            }
-                          })()}
-                        </TableCell>
-                        <TableCell>
-                          <div className="space-y-2">
-                            <div className="flex items-center justify-between text-xs">
-                              <span className="text-muted-foreground">Progresso geral</span>
-                              <span className="font-medium">{getProgressAverage(user.atividades)}%</span>
-                            </div>
-                            <Progress value={getProgressAverage(user.atividades)} className="h-2" />
-                            <div className="grid grid-cols-2 gap-1 text-xs text-muted-foreground">
-                              <span>Obj: {user.atividades.objetivos}%</span>
-                              <span>Metas: {user.atividades.metas}%</span>
-                              <span>Ações: {user.atividades.acoes}%</span>
-                              <span>Diário: {user.atividades.diario}%</span>
-                            </div>
-                          </div>
+                  </TableHeader>
+                  <TableBody>
+                    {filteredUsers.length === 0 ? (
+                      <TableRow>
+                        <TableCell colSpan={6} className="text-center text-muted-foreground py-8">
+                          Nenhum usuário encontrado
                         </TableCell>
                       </TableRow>
-                    ))
-                  )}
-                </TableBody>
-              </Table>
-            </div>
+                    ) : (
+                      filteredUsers.map((user) => (
+                        <TableRow key={user.id}>
+                          <TableCell className="font-mono text-xs">{user.id.slice(0, 8)}...</TableCell>
+                          <TableCell>{getRoleBadge(user.role)}</TableCell>
+                          <TableCell className="hidden lg:table-cell text-muted-foreground">
+                            {formatDate(user.dataCadastro)}
+                          </TableCell>
+                          <TableCell>
+                            {user.status === "ativo" ? (
+                              <Badge variant="default" className="gap-1 bg-green-600 hover:bg-green-700">
+                                <UserCheck className="w-3 h-3" />
+                                Ativo
+                              </Badge>
+                            ) : (
+                              <Badge variant="secondary" className="gap-1">
+                                <UserX className="w-3 h-3" />
+                                Inativo
+                              </Badge>
+                            )}
+                          </TableCell>
+                          <TableCell className="text-center">
+                            {(() => {
+                              const days = getDaysSinceLastAccess(user.ultimoAcesso);
+                              if (days === 0) {
+                                return <Badge variant="default" className="bg-green-600">Hoje</Badge>;
+                              } else if (days <= 7) {
+                                return <Badge variant="secondary">{days} dias</Badge>;
+                              } else if (days <= 30) {
+                                return <Badge variant="outline" className="text-yellow-600 border-yellow-600">{days} dias</Badge>;
+                              } else {
+                                return <Badge variant="destructive">{days} dias</Badge>;
+                              }
+                            })()}
+                          </TableCell>
+                          <TableCell>
+                            <div className="space-y-2">
+                              <div className="flex items-center justify-between text-xs">
+                                <span className="text-muted-foreground">Progresso geral</span>
+                                <span className="font-medium">{getProgressAverage(user.atividades)}%</span>
+                              </div>
+                              <Progress value={getProgressAverage(user.atividades)} className="h-2" />
+                              <div className="grid grid-cols-2 gap-1 text-xs text-muted-foreground">
+                                <span>Obj: {user.atividades.objetivos}%</span>
+                                <span>Metas: {user.atividades.metas}%</span>
+                                <span>Ações: {user.atividades.acoes}%</span>
+                                <span>Diário: {user.atividades.diario}%</span>
+                              </div>
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      ))
+                    )}
+                  </TableBody>
+                </Table>
+              </div>
+            )}
           </CardContent>
         </Card>
 
