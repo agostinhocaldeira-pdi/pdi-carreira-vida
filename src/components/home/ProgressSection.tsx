@@ -141,11 +141,22 @@ const ProgressSection = () => {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     
+    const isDateExpired = (dateStr: string | undefined): boolean => {
+      if (!dateStr) return false;
+      // Parse the date string and compare only the date part (not time)
+      const [year, month, day] = dateStr.split('-').map(Number);
+      if (!year || !month || !day) return false;
+      const targetDate = new Date(year, month - 1, day);
+      targetDate.setHours(0, 0, 0, 0);
+      return targetDate < today;
+    };
+    
     const pendingObjetivos = objetivos.filter((obj: any) => {
       const status = obj.status?.toLowerCase() || "";
       const dataAlvo = obj.dataAlvo || obj.data_alvo;
       const isPending = status === "pendente" || status === "a-fazer";
-      const isExpired = dataAlvo && new Date(dataAlvo) < today && status !== "concluido";
+      const isCompleted = status === "concluido" || status === "concluído";
+      const isExpired = !isCompleted && isDateExpired(dataAlvo);
       return isPending || isExpired;
     });
     
@@ -153,7 +164,8 @@ const ProgressSection = () => {
       const status = meta.status?.toLowerCase() || "";
       const dataAlvo = meta.dataAlvo || meta.data_alvo;
       const isPending = status === "pendente" || status === "a-fazer";
-      const isExpired = dataAlvo && new Date(dataAlvo) < today && status !== "concluido" && !meta.concluida;
+      const isCompleted = status === "concluido" || status === "concluído" || meta.concluida === true;
+      const isExpired = !isCompleted && isDateExpired(dataAlvo);
       return isPending || isExpired;
     });
     
