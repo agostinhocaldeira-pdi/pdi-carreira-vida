@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -14,7 +14,8 @@ import {
   Calendar,
   Zap,
   X,
-  GripVertical
+  GripVertical,
+  Loader2
 } from "lucide-react";
 import { toast } from "sonner";
 import {
@@ -36,6 +37,8 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import LogoutButton from "@/components/LogoutButton";
+import { usePDIStorage } from "@/hooks/usePDIStorage";
+import type { EisenhowerTasks } from "@/types/pdi";
 
 type Quadrante = "urgente-importante" | "importante" | "urgente" | "eliminar";
 
@@ -46,50 +49,99 @@ interface Tarefa {
   criadaEm: string;
 }
 
+// Mapear quadrantes para keys do EisenhowerTasks
+const quadranteToKey: Record<Quadrante, keyof EisenhowerTasks> = {
+  "urgente-importante": "urgente_importante",
+  "importante": "nao_urgente_importante",
+  "urgente": "urgente_nao_importante",
+  "eliminar": "nao_urgente_nao_importante"
+};
+
 const MatrizEisenhower = () => {
+  const { getEisenhowerTasks, saveEisenhowerTasks } = usePDIStorage();
   const [tarefas, setTarefas] = useState<Tarefa[]>([]);
   const [novaTarefa, setNovaTarefa] = useState("");
   const [quadranteSelecionado, setQuadranteSelecionado] = useState<Quadrante | null>(null);
   const [showAddDialog, setShowAddDialog] = useState(false);
   const [tarefaParaDeletar, setTarefaParaDeletar] = useState<string | null>(null);
   const [tarefaParaMover, setTarefaParaMover] = useState<Tarefa | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     // Scroll para o topo ao montar o componente
     window.scrollTo(0, 0);
     
-    const savedTarefas = localStorage.getItem("eisenhower_tarefas");
-    if (savedTarefas) {
-      const tarefasParsed = JSON.parse(savedTarefas);
-      setTarefas(tarefasParsed);
-      
-      // Sincronizar com o formato para ProgressSection
-      const tarefasOrganizadas = {
-        q1: tarefasParsed.filter((t: Tarefa) => t.quadrante === "urgente-importante").map((t: Tarefa) => t.texto),
-        q2: tarefasParsed.filter((t: Tarefa) => t.quadrante === "importante").map((t: Tarefa) => t.texto),
-        q3: tarefasParsed.filter((t: Tarefa) => t.quadrante === "urgente").map((t: Tarefa) => t.texto),
-        q4: tarefasParsed.filter((t: Tarefa) => t.quadrante === "eliminar").map((t: Tarefa) => t.texto),
-      };
-      localStorage.setItem("eisenhowerTasks", JSON.stringify(tarefasOrganizadas));
-    }
-  }, []);
-
-  const salvarTarefas = (novasTarefas: Tarefa[]) => {
-    setTarefas(novasTarefas);
-    localStorage.setItem("eisenhower_tarefas", JSON.stringify(novasTarefas));
-    
-    // Organizar tarefas por quadrante para o ProgressSection
-    const tarefasOrganizadas = {
-      q1: novasTarefas.filter(t => t.quadrante === "urgente-importante").map(t => t.texto),
-      q2: novasTarefas.filter(t => t.quadrante === "importante").map(t => t.texto),
-      q3: novasTarefas.filter(t => t.quadrante === "urgente").map(t => t.texto),
-      q4: novasTarefas.filter(t => t.quadrante === "eliminar").map(t => t.texto),
+    const loadTarefas = async () => {
+      try {
+        const savedTasks = await getEisenhowerTasks();
+        if (savedTasks) {
+          // Converter do formato EisenhowerTasks para Tarefa[]
+          const tarefasArray: Tarefa[] = [];
+          
+          savedTasks.urgente_importante?.forEach((texto, idx) => {
+            tarefasArray.push({
+              id: `ui-${idx}-${Date.now()}`,
+              texto,
+              quadrante: "urgente-importante",
+              criadaEm: new Date().toISOString()
+            });
+          });
+          
+          savedTasks.nao_urgente_importante?.forEach((texto, idx) => {
+            tarefasArray.push({
+              id: `nui-${idx}-${Date.now()}`,
+              texto,
+              quadrante: "importante",
+              criadaEm: new Date().toISOString()
+            });
+          });
+          
+          savedTasks.urgente_nao_importante?.forEach((texto, idx) => {
+            tarefasArray.push({
+              id: `uni-${idx}-${Date.now()}`,
+              texto,
+              quadrante: "urgente",
+              criadaEm: new Date().toISOString()
+            });
+          });
+          
+          savedTasks.nao_urgente_nao_importante?.forEach((texto, idx) => {
+            tarefasArray.push({
+              id: `nuni-${idx}-${Date.now()}`,
+              texto,
+              quadrante: "eliminar",
+              criadaEm: new Date().toISOString()
+            });
+          });
+          
+          setTarefas(tarefasArray);
+        }
+      } catch (error) {
+        console.error('Erro ao carregar tarefas:', error);
+      } finally {
+        setIsLoading(false);
+      }
     };
-    localStorage.setItem("eisenhowerTasks", JSON.stringify(tarefasOrganizadas));
+    
+    loadTarefas();
+  }, [getEisenhowerTasks]);
+
+  const salvarTarefas = useCallback(async (novasTarefas: Tarefa[]) => {
+    setTarefas(novasTarefas);
+    
+    // Converter para formato EisenhowerTasks e salvar no Supabase
+    const eisenhowerTasks: EisenhowerTasks = {
+      urgente_importante: novasTarefas.filter(t => t.quadrante === "urgente-importante").map(t => t.texto),
+      nao_urgente_importante: novasTarefas.filter(t => t.quadrante === "importante").map(t => t.texto),
+      urgente_nao_importante: novasTarefas.filter(t => t.quadrante === "urgente").map(t => t.texto),
+      nao_urgente_nao_importante: novasTarefas.filter(t => t.quadrante === "eliminar").map(t => t.texto),
+    };
+    
+    await saveEisenhowerTasks(eisenhowerTasks);
     
     // Disparar evento para sincronizar com o ProgressSection
     window.dispatchEvent(new Event("eisenhowerUpdated"));
-  };
+  }, [saveEisenhowerTasks]);
 
   const handleAdicionarTarefa = () => {
     if (!novaTarefa.trim() || !quadranteSelecionado) return;
@@ -256,6 +308,14 @@ const MatrizEisenhower = () => {
       </Card>
     );
   };
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-subtle flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-subtle">

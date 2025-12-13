@@ -1,13 +1,15 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowLeft, Edit2, Save, X, Check } from "lucide-react";
+import { ArrowLeft, Edit2, Save, X, Check, Loader2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer, Legend } from "recharts";
 import { toast } from "sonner";
 import LogoutButton from "@/components/LogoutButton";
 import { useRoleProtection } from "@/hooks/useRoleProtection";
+import { usePDIStorage } from "@/hooks/usePDIStorage";
+import type { AreaVida } from "@/types/pdi";
 
 interface LifeArea {
   area: string;
@@ -31,26 +33,63 @@ const defaultAreas: LifeArea[] = [
 export default function RodaDaVida() {
   useRoleProtection({ allowedRoles: ["user", "gestor"] });
   const navigate = useNavigate();
+  const { getAreasVida, saveAreasVida, loading: storageLoading } = usePDIStorage();
   const [areas, setAreas] = useState<LifeArea[]>(defaultAreas);
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
   const [tempArea, setTempArea] = useState<LifeArea | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isSaving, setIsSaving] = useState(false);
 
+  // Carregar áreas do Supabase
   useEffect(() => {
-    const savedAreas = localStorage.getItem("rodaDaVida");
-    if (savedAreas) {
-      setAreas(JSON.parse(savedAreas));
-    }
-  }, []);
+    const loadAreas = async () => {
+      try {
+        const savedAreas = await getAreasVida();
+        if (savedAreas && savedAreas.length > 0) {
+          setAreas(savedAreas.map(a => ({
+            area: a.area,
+            notaAtual: a.nota_atual,
+            notaDesejada: a.nota_desejada
+          })));
+        }
+      } catch (error) {
+        console.error('Erro ao carregar áreas:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    loadAreas();
+  }, [getAreasVida]);
 
-  const saveAreas = (newAreas: LifeArea[]) => {
-    localStorage.setItem("rodaDaVida", JSON.stringify(newAreas));
+  const saveAreas = useCallback(async (newAreas: LifeArea[]) => {
     setAreas(newAreas);
-  };
+    // Salvar no Supabase em background
+    const areasVida: AreaVida[] = newAreas.map((a, idx) => ({
+      id: idx + 1,
+      area: a.area,
+      nota_atual: a.notaAtual,
+      nota_desejada: a.notaDesejada
+    }));
+    await saveAreasVida(areasVida);
+  }, [saveAreasVida]);
 
-  const handleSaveToPlanoDeVida = () => {
-    // Sincroniza as áreas da Roda da Vida com o Plano de Vida
-    localStorage.setItem("areasVida", JSON.stringify(areas));
-    toast.success("Áreas da Vida atualizadas no Plano de Vida com sucesso!");
+  const handleSaveToPlanoDeVida = async () => {
+    setIsSaving(true);
+    try {
+      const areasVida: AreaVida[] = areas.map((a, idx) => ({
+        id: idx + 1,
+        area: a.area,
+        nota_atual: a.notaAtual,
+        nota_desejada: a.notaDesejada
+      }));
+      await saveAreasVida(areasVida);
+      toast.success("Áreas da Vida atualizadas no Plano de Vida com sucesso!");
+    } catch (error) {
+      console.error('Erro ao salvar:', error);
+      toast.error("Erro ao salvar áreas da vida");
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const handleEdit = (index: number) => {
@@ -78,6 +117,14 @@ export default function RodaDaVida() {
     atual: area.notaAtual,
     desejada: area.notaDesejada,
   }));
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background p-4 md:p-8">
@@ -269,9 +316,10 @@ export default function RodaDaVida() {
                 onClick={handleSaveToPlanoDeVida}
                 className="gap-2 w-full sm:w-auto"
                 size="lg"
+                disabled={isSaving}
               >
-                <Check className="h-4 w-4" />
-                Salvar no Plano de Vida
+                {isSaving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Check className="h-4 w-4" />}
+                {isSaving ? "Salvando..." : "Salvar no Plano de Vida"}
               </Button>
               <Button
                 variant="outline"
