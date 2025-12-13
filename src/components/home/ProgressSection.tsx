@@ -12,8 +12,10 @@ import { toast } from "sonner";
 import { Link } from "react-router-dom";
 import { useGamification } from "@/hooks/useGamification";
 import { ExportPDFButton } from "@/components/reports/ExportPDFButton";
+import { usePDIStorage } from "@/hooks/usePDIStorage";
 
 const ProgressSection = () => {
+  const { getEisenhowerTasks } = usePDIStorage();
   const { 
     streak, 
     getUnlockedAchievements, 
@@ -178,12 +180,31 @@ const ProgressSection = () => {
   }, []);
 
   useEffect(() => {
-    const loadEisenhowerTasks = () => {
-      const tasks = JSON.parse(localStorage.getItem("eisenhowerTasks") || "{}");
-      setEisenhowerTasks({
-        q1: tasks.q1 || [],
-        q2: tasks.q2 || []
-      });
+    const loadEisenhowerTasks = async () => {
+      try {
+        const tasks = await getEisenhowerTasks();
+        if (tasks) {
+          setEisenhowerTasks({
+            q1: tasks.urgente_importante || [],
+            q2: tasks.nao_urgente_importante || []
+          });
+        } else {
+          // Fallback para localStorage
+          const localTasks = JSON.parse(localStorage.getItem("eisenhowerTasks") || "{}");
+          setEisenhowerTasks({
+            q1: localTasks.urgente_importante || localTasks.q1 || [],
+            q2: localTasks.nao_urgente_importante || localTasks.q2 || []
+          });
+        }
+      } catch (error) {
+        console.error("Erro ao carregar tarefas Eisenhower:", error);
+        // Fallback para localStorage
+        const localTasks = JSON.parse(localStorage.getItem("eisenhowerTasks") || "{}");
+        setEisenhowerTasks({
+          q1: localTasks.urgente_importante || localTasks.q1 || [],
+          q2: localTasks.nao_urgente_importante || localTasks.q2 || []
+        });
+      }
     };
 
     loadEisenhowerTasks();
@@ -200,7 +221,7 @@ const ProgressSection = () => {
       window.removeEventListener("storage", handleStorageChange);
       window.removeEventListener("eisenhowerUpdated", handleStorageChange);
     };
-  }, []);
+  }, [getEisenhowerTasks]);
 
   const handleGenerateInsight = async () => {
     if (!canGenerateInsight && !isAdmin) {
