@@ -169,27 +169,11 @@ const ProgressSection = () => {
       return isPending || isExpired;
     });
     
-    let pendingActions: any[] = [];
-    metas.forEach((meta: any, metaIdx: number) => {
-      if (meta.acoes && Array.isArray(meta.acoes)) {
-        const metaPendingActions = meta.acoes
-          .filter((acao: any) => {
-            const status = acao.status?.toLowerCase() || "";
-            return status === "pendente" || status === "a-fazer";
-          })
-          .map((acao: any, acaoIdx: number) => ({ 
-            ...acao, 
-            id: acao.id || `${meta.id || metaIdx}-${acaoIdx}`,
-            metaTitulo: meta.meta || meta.texto 
-          }));
-        pendingActions = [...pendingActions, ...metaPendingActions];
-      }
-    });
-
+    // Ações não são consideradas para prazo expirado - apenas por status "pendente"
     setPendingItems({
       objectives: pendingObjetivos,
       goals: pendingMetas,
-      actions: pendingActions
+      actions: [] // Ações removidas da verificação de prazos expirados
     });
   }, []);
 
