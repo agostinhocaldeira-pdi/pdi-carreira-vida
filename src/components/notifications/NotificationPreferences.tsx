@@ -5,8 +5,9 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Bell, Mail, MessageSquare, Calendar, Clock, Save } from "lucide-react";
+import { Bell, Mail, MessageSquare, Calendar, Clock, Save, Loader2 } from "lucide-react";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
 
 interface NotificationPrefs {
   email_enabled: boolean;
@@ -29,34 +30,111 @@ const DAYS_OF_WEEK = [
   { value: "6", label: "Sábado" },
 ];
 
-export function NotificationPreferences() {
-  const [preferences, setPreferences] = useState<NotificationPrefs>({
-    email_enabled: true,
-    whatsapp_enabled: false,
-    diary_reminder_enabled: true,
-    diary_reminder_time: "20:00",
-    goal_deadline_reminder: true,
-    goal_deadline_days_before: 3,
-    weekly_summary_enabled: true,
-    weekly_summary_day: 0,
-  });
+const defaultPreferences: NotificationPrefs = {
+  email_enabled: true,
+  whatsapp_enabled: false,
+  diary_reminder_enabled: true,
+  diary_reminder_time: "20:00",
+  goal_deadline_reminder: true,
+  goal_deadline_days_before: 3,
+  weekly_summary_enabled: true,
+  weekly_summary_day: 0,
+};
 
+export function NotificationPreferences() {
+  const [preferences, setPreferences] = useState<NotificationPrefs>(defaultPreferences);
   const [isSaving, setIsSaving] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const stored = localStorage.getItem("notification_preferences");
-    if (stored) {
-      setPreferences(JSON.parse(stored));
-    }
+    const loadPreferences = async () => {
+      setIsLoading(true);
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        
+        if (session?.user?.id) {
+          // Try to load from Supabase
+          const { data, error } = await supabase
+            .from('user_notification_preferences')
+            .select('*')
+            .eq('user_id', session.user.id)
+            .maybeSingle();
+          
+          if (data && !error) {
+            setPreferences({
+              email_enabled: data.email_enabled,
+              whatsapp_enabled: data.whatsapp_enabled,
+              diary_reminder_enabled: data.diary_reminder_enabled,
+              diary_reminder_time: data.diary_reminder_time,
+              goal_deadline_reminder: data.goal_deadline_reminder,
+              goal_deadline_days_before: data.goal_deadline_days_before,
+              weekly_summary_enabled: data.weekly_summary_enabled,
+              weekly_summary_day: data.weekly_summary_day,
+            });
+          } else {
+            // Fallback to localStorage
+            const stored = localStorage.getItem("notification_preferences");
+            if (stored) {
+              setPreferences(JSON.parse(stored));
+            }
+          }
+        } else {
+          // Not authenticated, use localStorage
+          const stored = localStorage.getItem("notification_preferences");
+          if (stored) {
+            setPreferences(JSON.parse(stored));
+          }
+        }
+      } catch (error) {
+        console.error("Error loading preferences:", error);
+        // Fallback to localStorage
+        const stored = localStorage.getItem("notification_preferences");
+        if (stored) {
+          setPreferences(JSON.parse(stored));
+        }
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadPreferences();
   }, []);
 
   const handleSave = async () => {
     setIsSaving(true);
     try {
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      if (session?.user?.id) {
+        // Save to Supabase
+        const { error } = await supabase
+          .from('user_notification_preferences')
+          .upsert({
+            user_id: session.user.id,
+            email_enabled: preferences.email_enabled,
+            whatsapp_enabled: preferences.whatsapp_enabled,
+            diary_reminder_enabled: preferences.diary_reminder_enabled,
+            diary_reminder_time: preferences.diary_reminder_time,
+            goal_deadline_reminder: preferences.goal_deadline_reminder,
+            goal_deadline_days_before: preferences.goal_deadline_days_before,
+            weekly_summary_enabled: preferences.weekly_summary_enabled,
+            weekly_summary_day: preferences.weekly_summary_day,
+            updated_at: new Date().toISOString(),
+          }, {
+            onConflict: 'user_id'
+          });
+
+        if (error) throw error;
+      }
+      
+      // Always save to localStorage as backup
       localStorage.setItem("notification_preferences", JSON.stringify(preferences));
       toast.success("Preferências de notificação salvas!");
     } catch (error) {
-      toast.error("Erro ao salvar preferências");
+      console.error("Error saving preferences:", error);
+      // Fallback: save to localStorage only
+      localStorage.setItem("notification_preferences", JSON.stringify(preferences));
+      toast.success("Preferências salvas localmente!");
     } finally {
       setIsSaving(false);
     }
@@ -68,6 +146,16 @@ export function NotificationPreferences() {
   ) => {
     setPreferences((prev) => ({ ...prev, [key]: value }));
   };
+
+  if (isLoading) {
+    return (
+      <Card className="shadow-large">
+        <CardContent className="flex items-center justify-center py-12">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        </CardContent>
+      </Card>
+    );
+  }
 
   return (
     <Card className="shadow-large">
@@ -236,8 +324,17 @@ export function NotificationPreferences() {
         </div>
 
         <Button onClick={handleSave} disabled={isSaving} className="w-full">
-          <Save className="w-4 h-4 mr-2" />
-          {isSaving ? "Salvando..." : "Salvar Preferências"}
+          {isSaving ? (
+            <>
+              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+              Salvando...
+            </>
+          ) : (
+            <>
+              <Save className="w-4 h-4 mr-2" />
+              Salvar Preferências
+            </>
+          )}
         </Button>
       </CardContent>
     </Card>

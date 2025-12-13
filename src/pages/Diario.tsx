@@ -1,41 +1,100 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Book, Smile, Frown, Meh } from "lucide-react";
+import { Book, Smile, Frown, Meh, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import LogoutButton from "@/components/LogoutButton";
 import { useRoleProtection } from "@/hooks/useRoleProtection";
+import { usePDIStorage } from "@/hooks/usePDIStorage";
 
 const Diario = () => {
   useRoleProtection({ allowedRoles: ["user", "gestor"] });
+  const { saveDiarioEntry, getDiarioByDate } = usePDIStorage();
+  const [isLoading, setIsLoading] = useState(true);
+  const [isSaving, setIsSaving] = useState(false);
+  
+  const today = new Date().toISOString().split("T")[0];
+  
   const [entrada, setEntrada] = useState({
     humor: "",
     reflexoes: "",
     avancos: "",
     habitos: "",
     gratidao: "",
-    data: new Date().toISOString().split("T")[0],
+    data: today,
   });
 
-  const handleSave = () => {
-    const entradas = JSON.parse(localStorage.getItem("diario") || "[]");
-    entradas.push({ ...entrada, id: Date.now() });
-    localStorage.setItem("diario", JSON.stringify(entradas));
-    toast.success("Entrada do diário salva!");
-    
-    // Reset
-    setEntrada({
-      humor: "",
-      reflexoes: "",
-      avancos: "",
-      habitos: "",
-      gratidao: "",
-      data: new Date().toISOString().split("T")[0],
-    });
+  // Load existing entry for today
+  useEffect(() => {
+    const loadTodayEntry = async () => {
+      setIsLoading(true);
+      try {
+        const existingEntry = await getDiarioByDate(today);
+        if (existingEntry) {
+          setEntrada({
+            humor: existingEntry.humor || "",
+            reflexoes: existingEntry.reflexao || "",
+            avancos: existingEntry.conquistas || "",
+            habitos: Array.isArray(existingEntry.habitos) ? existingEntry.habitos.join(", ") : existingEntry.habitos || "",
+            gratidao: existingEntry.gratidao || "",
+            data: today,
+          });
+        }
+      } catch (error) {
+        console.error("Error loading diary entry:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadTodayEntry();
+  }, [getDiarioByDate, today]);
+
+  const handleSave = async () => {
+    setIsSaving(true);
+    try {
+      const diarioEntry = {
+        id: `${today}-${Date.now()}`,
+        data: today,
+        humor: entrada.humor,
+        reflexao: entrada.reflexoes,
+        conquistas: entrada.avancos,
+        habitos: entrada.habitos.split(",").map(h => h.trim()).filter(h => h),
+        gratidao: entrada.gratidao,
+      };
+      
+      // Save via usePDIStorage (Supabase or localStorage)
+      await saveDiarioEntry(diarioEntry);
+      
+      // Backup to localStorage
+      const entradas = JSON.parse(localStorage.getItem("diario") || "[]");
+      const existingIndex = entradas.findIndex((e: any) => e.data === today);
+      if (existingIndex >= 0) {
+        entradas[existingIndex] = { ...diarioEntry, id: entradas[existingIndex].id };
+      } else {
+        entradas.push(diarioEntry);
+      }
+      localStorage.setItem("diario", JSON.stringify(entradas));
+      
+      toast.success("Entrada do diário salva!");
+    } catch (error) {
+      console.error("Error saving diary:", error);
+      toast.error("Erro ao salvar entrada do diário");
+    } finally {
+      setIsSaving(false);
+    }
   };
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-subtle flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-subtle">
@@ -143,8 +202,15 @@ const Diario = () => {
               />
             </div>
 
-            <Button onClick={handleSave} className="w-full" size="lg">
-              Salvar Entrada
+            <Button onClick={handleSave} className="w-full" size="lg" disabled={isSaving}>
+              {isSaving ? (
+                <>
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  Salvando...
+                </>
+              ) : (
+                "Salvar Entrada"
+              )}
             </Button>
           </CardContent>
         </Card>
