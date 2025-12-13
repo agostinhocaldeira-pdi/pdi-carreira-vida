@@ -78,7 +78,7 @@ const PlanoDeVida = ({ onTabChange, onOpenChange, forcedTab, forcedOpen }: Plano
 
   // Estados para Habilidades
   const [novaHabilidade, setNovaHabilidade] = useState("");
-  const [habilidades, setHabilidades] = useState<Array<{ id: number; texto: string }>>([]);
+  const [habilidades, setHabilidades] = useState<Array<{ id: number; tipo: 'forte' | 'fraco'; texto: string }>>([]);
   const [editandoHabilidadeId, setEditandoHabilidadeId] = useState<number | null>(null);
   const [habilidadeEditada, setHabilidadeEditada] = useState("");
 
@@ -157,22 +157,46 @@ const PlanoDeVida = ({ onTabChange, onOpenChange, forcedTab, forcedOpen }: Plano
     };
   }, []);
 
-  // Sincronizar habilidades com a ferramenta SWOT
+  // Sincronizar habilidades com a ferramenta SWOT e carregar do Supabase
   useEffect(() => {
-    const syncHabilidades = () => {
-      const savedHabilidades = localStorage.getItem("habilidades");
-      if (savedHabilidades) {
-        setHabilidades(JSON.parse(savedHabilidades));
+    const loadHabilidades = async () => {
+      try {
+        const savedHabilidades = await storage.getHabilidades();
+        if (savedHabilidades && savedHabilidades.length > 0) {
+          setHabilidades(savedHabilidades.map((h: any) => ({
+            id: h.id || Date.now(),
+            tipo: h.tipo || 'fraco' as const,
+            texto: h.texto
+          })));
+        } else {
+          // Fallback para localStorage
+          const localHabilidades = localStorage.getItem("habilidades");
+          if (localHabilidades) {
+            const parsed = JSON.parse(localHabilidades);
+            setHabilidades(parsed.map((h: any) => ({
+              id: h.id || Date.now(),
+              tipo: h.tipo || 'fraco' as const,
+              texto: h.texto
+            })));
+          }
+        }
+      } catch (error) {
+        console.error("Erro ao carregar habilidades:", error);
       }
     };
 
-    syncHabilidades();
+    loadHabilidades();
+    
+    const syncHabilidades = () => {
+      loadHabilidades();
+    };
+    
     window.addEventListener("habilidadesUpdated", syncHabilidades);
 
     return () => {
       window.removeEventListener("habilidadesUpdated", syncHabilidades);
     };
-  }, []);
+  }, [storage]);
 
   // Carregar dados salvos
   useEffect(() => {
@@ -559,16 +583,22 @@ const PlanoDeVida = ({ onTabChange, onOpenChange, forcedTab, forcedOpen }: Plano
   };
 
   // Funções para gerenciar habilidades
-  const handleAddHabilidade = () => {
+  const handleAddHabilidade = async () => {
     if (!novaHabilidade.trim()) {
       toast.error("Digite uma habilidade para adicionar");
       return;
     }
 
-    const novaHab = { id: Date.now(), texto: novaHabilidade };
+    const novaHab = { id: Date.now(), tipo: 'fraco' as const, texto: novaHabilidade };
     const novasHabilidades = [...habilidades, novaHab];
     setHabilidades(novasHabilidades);
-    localStorage.setItem("habilidades", JSON.stringify(novasHabilidades));
+    
+    try {
+      await storage.saveHabilidades(novasHabilidades);
+    } catch (error) {
+      console.error("Erro ao salvar habilidade:", error);
+    }
+    
     setNovaHabilidade("");
     toast.success("Habilidade adicionada!");
   };
@@ -577,17 +607,23 @@ const PlanoDeVida = ({ onTabChange, onOpenChange, forcedTab, forcedOpen }: Plano
     setDeleteHabilidadeId(id);
   };
 
-  const confirmRemoveHabilidade = () => {
+  const confirmRemoveHabilidade = async () => {
     if (deleteHabilidadeId) {
       const novasHabilidades = habilidades.filter((hab) => hab.id !== deleteHabilidadeId);
       setHabilidades(novasHabilidades);
-      localStorage.setItem("habilidades", JSON.stringify(novasHabilidades));
+      
+      try {
+        await storage.saveHabilidades(novasHabilidades);
+      } catch (error) {
+        console.error("Erro ao remover habilidade:", error);
+      }
+      
       toast.success("Habilidade removida!");
       setDeleteHabilidadeId(null);
     }
   };
 
-  const handleStartEditHabilidade = (habilidade: { id: number; texto: string }) => {
+  const handleStartEditHabilidade = (habilidade: { id: number; tipo: 'forte' | 'fraco'; texto: string }) => {
     setEditandoHabilidadeId(habilidade.id);
     setHabilidadeEditada(habilidade.texto);
   };
@@ -597,7 +633,7 @@ const PlanoDeVida = ({ onTabChange, onOpenChange, forcedTab, forcedOpen }: Plano
     setHabilidadeEditada("");
   };
 
-  const handleSaveEditHabilidade = (id: number) => {
+  const handleSaveEditHabilidade = async (id: number) => {
     if (!habilidadeEditada.trim()) {
       toast.error("A habilidade não pode estar vazia");
       return;
@@ -607,7 +643,13 @@ const PlanoDeVida = ({ onTabChange, onOpenChange, forcedTab, forcedOpen }: Plano
       hab.id === id ? { ...hab, texto: habilidadeEditada } : hab
     );
     setHabilidades(novasHabilidades);
-    localStorage.setItem("habilidades", JSON.stringify(novasHabilidades));
+    
+    try {
+      await storage.saveHabilidades(novasHabilidades);
+    } catch (error) {
+      console.error("Erro ao atualizar habilidade:", error);
+    }
+    
     setEditandoHabilidadeId(null);
     setHabilidadeEditada("");
     toast.success("Habilidade atualizada!");
