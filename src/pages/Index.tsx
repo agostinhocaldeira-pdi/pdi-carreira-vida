@@ -1017,9 +1017,6 @@ const Index = () => {
             Quero conquistar meus objetivos
             <ArrowRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5" />
           </Button>
-          <p className="text-xs text-muted-foreground mt-4">
-            30 dias grátis • Cancele quando quiser
-          </p>
         </div>
       </section>
 
