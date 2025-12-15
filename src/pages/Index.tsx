@@ -52,6 +52,7 @@ import journeyPath from "@/assets/journey-path.jpg";
 import selfDiscovery from "@/assets/self-discovery.jpg";
 import growthStairs from "@/assets/growth-stairs.jpg";
 import problemSolution from "@/assets/problem-solution.png";
+import pdiFocusTarget from "@/assets/pdi-focus-target.png";
 import agostinhoCaldeira from "@/assets/agostinho-caldeira-new.jpg";
 import diaryMoodChart from "@/assets/diary-mood-chart-example.png";
 
@@ -381,11 +382,11 @@ const Index = () => {
                 </li>
               </ul>
             </div>
-            <div className="mt-6 lg:mt-0">
+            <div className="mt-6 lg:mt-0 flex justify-center">
               <img 
-                src={growthStairs} 
-                alt="Ilustração representando progresso e crescimento" 
-                className="rounded-2xl shadow-xl w-full max-w-[280px] sm:max-w-[320px] lg:max-w-full mx-auto h-auto object-cover"
+                src={pdiFocusTarget} 
+                alt="PDI - Foco em objetivos com direção clara" 
+                className="rounded-2xl shadow-xl w-full max-w-[220px] sm:max-w-[260px] lg:max-w-[300px] h-auto object-contain"
               />
             </div>
           </div>
