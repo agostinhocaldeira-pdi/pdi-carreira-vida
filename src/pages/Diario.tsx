@@ -4,17 +4,19 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Book, Smile, Frown, Meh, Loader2 } from "lucide-react";
+import { Book, Smile, Frown, Meh, Loader2, ArrowRight } from "lucide-react";
 import { toast } from "sonner";
 import LogoutButton from "@/components/LogoutButton";
 import { useRoleProtection } from "@/hooks/useRoleProtection";
 import { usePDIStorage } from "@/hooks/usePDIStorage";
+import DiaryScientificModal from "@/components/DiaryScientificModal";
 
 const Diario = () => {
   useRoleProtection({ allowedRoles: ["user", "gestor"] });
   const { saveDiarioEntry, getDiarioByDate } = usePDIStorage();
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
+  const [isScientificModalOpen, setIsScientificModalOpen] = useState(false);
   
   const today = new Date().toISOString().split("T")[0];
   
@@ -114,13 +116,22 @@ const Diario = () => {
         <Card className="max-w-3xl mx-auto shadow-large">
           <CardHeader>
             <CardTitle>Registro do Dia</CardTitle>
-            <CardDescription>
-              Data: {new Date().toLocaleDateString("pt-BR", { 
-                weekday: "long", 
-                year: "numeric", 
-                month: "long", 
-                day: "numeric" 
-              })}
+            <CardDescription className="space-y-2">
+              <span className="block">
+                Data: {new Date().toLocaleDateString("pt-BR", { 
+                  weekday: "long", 
+                  year: "numeric", 
+                  month: "long", 
+                  day: "numeric" 
+                })}
+              </span>
+              <button
+                onClick={() => setIsScientificModalOpen(true)}
+                className="inline-flex items-center gap-1 text-primary hover:text-primary/80 font-medium text-sm transition-colors underline underline-offset-4"
+              >
+                Conheça o embasamento científico do Diário
+                <ArrowRight className="h-3.5 w-3.5" />
+              </button>
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
@@ -215,6 +226,11 @@ const Diario = () => {
           </CardContent>
         </Card>
       </main>
+
+      <DiaryScientificModal 
+        open={isScientificModalOpen} 
+        onOpenChange={setIsScientificModalOpen} 
+      />
     </div>
   );
 };
