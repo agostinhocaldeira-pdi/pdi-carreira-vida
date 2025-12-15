@@ -48,7 +48,7 @@ import heroGrowth from "@/assets/hero-growth.jpg";
 import journeyPath from "@/assets/journey-path.jpg";
 import selfDiscovery from "@/assets/self-discovery.jpg";
 import growthStairs from "@/assets/growth-stairs.jpg";
-import agostinhoCaldeira from "@/assets/agostinho-caldeira.jpg";
+import agostinhoCaldeira from "@/assets/agostinho-caldeira-new.jpg";
 
 const Index = () => {
   const navigate = useNavigate();
@@ -294,7 +294,7 @@ const Index = () => {
         <div className="container mx-auto max-w-6xl">
           <div className="text-center mb-10 sm:mb-14">
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 sm:mb-4">
-              Como o SEPP transforma sua evolução
+              Como o Sistema PDI - Carreira e Vida transforma sua evolução
             </h2>
             <p className="text-muted-foreground max-w-2xl mx-auto text-sm sm:text-base">
               Um método estruturado para sair da intenção e ir para a ação.
@@ -359,7 +359,7 @@ const Index = () => {
           <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
             <div className="text-center lg:text-left">
               <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-6">
-                O que você ganha com o SEPP
+                O que o Sistema PDI - Carreira e Vida faz por você
               </h2>
               <ul className="space-y-4 text-left">
                 <li className="flex items-start gap-3">
@@ -401,6 +401,23 @@ const Index = () => {
                 className="rounded-2xl shadow-xl w-full h-auto object-cover"
               />
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Por que o PDI funciona */}
+      <section className="py-12 sm:py-16 px-4">
+        <div className="container mx-auto max-w-4xl">
+          <div className="text-center">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-6">
+              Por que o PDI – Carreira & Vida funciona
+            </h2>
+            <p className="text-muted-foreground text-sm sm:text-base md:text-lg leading-relaxed max-w-3xl mx-auto">
+              O PDI – Carreira & Vida não foi criado como uma fórmula mágica ou um método motivacional passageiro. 
+              Ele funciona porque organiza, de forma prática e acessível, princípios amplamente utilizados em 
+              psicologia comportamental, planejamento estratégico, desenvolvimento de carreira e gestão de metas, 
+              aplicados à realidade da vida pessoal e profissional.
+            </p>
           </div>
         </div>
       </section>
@@ -701,6 +718,35 @@ const Index = () => {
               </Button>
             </div>
 
+            {/* Visual - VVD Illustration */}
+            <div className="order-1 lg:order-2">
+              <div className="relative">
+                <div className="bg-gradient-to-br from-primary/10 via-purple-500/10 to-pink-500/10 rounded-2xl p-6 sm:p-8 border border-primary/20">
+                  <div className="text-center mb-6">
+                    <div className="w-16 h-16 mx-auto rounded-full bg-primary/20 flex items-center justify-center mb-4">
+                      <Compass className="h-8 w-8 text-primary" />
+                    </div>
+                    <h3 className="text-lg font-semibold text-foreground mb-2">Sua Visão de Vida</h3>
+                    <p className="text-sm text-muted-foreground">Um norte claro para suas decisões</p>
+                  </div>
+                  
+                  <div className="space-y-3">
+                    <div className="bg-background/60 backdrop-blur-sm rounded-lg p-4 border border-border/50">
+                      <p className="text-xs text-muted-foreground mb-1">Quem você quer ser?</p>
+                      <p className="text-sm text-foreground italic">"Uma pessoa realizada, equilibrada..."</p>
+                    </div>
+                    <div className="bg-background/60 backdrop-blur-sm rounded-lg p-4 border border-border/50">
+                      <p className="text-xs text-muted-foreground mb-1">Como quer viver?</p>
+                      <p className="text-sm text-foreground italic">"Com propósito, liberdade e conexões..."</p>
+                    </div>
+                    <div className="bg-background/60 backdrop-blur-sm rounded-lg p-4 border border-border/50">
+                      <p className="text-xs text-muted-foreground mb-1">O que quer conquistar?</p>
+                      <p className="text-sm text-foreground italic">"Impacto positivo, crescimento..."</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -891,19 +937,24 @@ const Index = () => {
                   muito bem estruturado, ganhei conhecimento para repetir sozinho o ciclo de reflexão, planejamento 
                   e ação. Vale muito a pena."
                 </p>
-                <div className="flex items-center justify-center gap-2">
-                  <p className="text-sm font-medium">— Eric Pereira</p>
-                  <a 
-                    href="https://www.linkedin.com/in/eric-pereira-b05a5611b/" 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="text-[#0A66C2] hover:opacity-80 transition-opacity"
-                    aria-label="LinkedIn de Eric Pereira"
-                  >
-                    <svg className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
-                    </svg>
-                  </a>
+                <div className="flex items-center justify-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center text-white font-semibold text-sm">
+                    EP
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <p className="text-sm font-medium">Eric Pereira</p>
+                    <a 
+                      href="https://www.linkedin.com/in/eric-pereira-b05a5611b/" 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="text-[#0A66C2] hover:opacity-80 transition-opacity"
+                      aria-label="LinkedIn de Eric Pereira"
+                    >
+                      <svg className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+                      </svg>
+                    </a>
+                  </div>
                 </div>
               </CardContent>
             </Card>
@@ -920,19 +971,24 @@ const Index = () => {
                   "Antes eu nem sabia o que era um PDI. Hoje eu tenho clareza do que quero para os próximos 5, 10 
                   e até 20 anos. O curso abriu um horizonte de oportunidades e foi fundamental para o meu autoconhecimento."
                 </p>
-                <div className="flex items-center justify-center gap-2">
-                  <p className="text-sm font-medium">— Gabriele Campos</p>
-                  <a 
-                    href="https://www.linkedin.com/in/gabrielle-campos-406b8a1b2/" 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="text-[#0A66C2] hover:opacity-80 transition-opacity"
-                    aria-label="LinkedIn de Gabriele Campos"
-                  >
-                    <svg className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
-                    </svg>
-                  </a>
+                <div className="flex items-center justify-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-pink-500 to-rose-500 flex items-center justify-center text-white font-semibold text-sm">
+                    GC
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <p className="text-sm font-medium">Gabriele Campos</p>
+                    <a 
+                      href="https://www.linkedin.com/in/gabrielle-campos-406b8a1b2/" 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="text-[#0A66C2] hover:opacity-80 transition-opacity"
+                      aria-label="LinkedIn de Gabriele Campos"
+                    >
+                      <svg className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+                      </svg>
+                    </a>
+                  </div>
                 </div>
               </CardContent>
             </Card>
@@ -949,19 +1005,24 @@ const Index = () => {
                   "O treinamento é extremamente didático. Ele fez eu refletir sobre o futuro e me ajudou a traçar 
                   caminhos claros para alcançar meus objetivos. Já estou colocando tudo em prática e tem me ajudado muito."
                 </p>
-                <div className="flex items-center justify-center gap-2">
-                  <p className="text-sm font-medium">— Larissa Schuartz</p>
-                  <a 
-                    href="https://www.linkedin.com/in/larissa-schwartz-5553651a5/" 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="text-[#0A66C2] hover:opacity-80 transition-opacity"
-                    aria-label="LinkedIn de Larissa Schuartz"
-                  >
-                    <svg className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
-                    </svg>
-                  </a>
+                <div className="flex items-center justify-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-purple-500 to-indigo-500 flex items-center justify-center text-white font-semibold text-sm">
+                    LS
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <p className="text-sm font-medium">Larissa Schuartz</p>
+                    <a 
+                      href="https://www.linkedin.com/in/larissa-schwartz-5553651a5/" 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="text-[#0A66C2] hover:opacity-80 transition-opacity"
+                      aria-label="LinkedIn de Larissa Schuartz"
+                    >
+                      <svg className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+                      </svg>
+                    </a>
+                  </div>
                 </div>
               </CardContent>
             </Card>
@@ -979,19 +1040,24 @@ const Index = () => {
                   acender uma luz em um quarto escuro. Hoje tenho um PDI completo, claro e realista — um dos melhores 
                   investimentos que já fiz em mim."
                 </p>
-                <div className="flex items-center justify-center gap-2">
-                  <p className="text-sm font-medium">— Lucas Sá</p>
-                  <a 
-                    href="https://www.linkedin.com/in/lucazartu/?locale=pt_BR" 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="text-[#0A66C2] hover:opacity-80 transition-opacity"
-                    aria-label="LinkedIn de Lucas Sá"
-                  >
-                    <svg className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
-                    </svg>
-                  </a>
+                <div className="flex items-center justify-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-emerald-500 to-teal-500 flex items-center justify-center text-white font-semibold text-sm">
+                    LS
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <p className="text-sm font-medium">Lucas Sá</p>
+                    <a 
+                      href="https://www.linkedin.com/in/lucazartu/?locale=pt_BR" 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="text-[#0A66C2] hover:opacity-80 transition-opacity"
+                      aria-label="LinkedIn de Lucas Sá"
+                    >
+                      <svg className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+                      </svg>
+                    </a>
+                  </div>
                 </div>
               </CardContent>
             </Card>
