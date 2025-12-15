@@ -1131,7 +1131,16 @@ const Index = () => {
 
       {/* Footer */}
       <footer className="py-6 sm:py-8 px-4 border-t border-border/50">
-        <div className="container mx-auto text-center text-xs sm:text-sm text-muted-foreground">
+        <div className="container mx-auto text-center text-xs sm:text-sm text-muted-foreground space-y-3">
+          <div>
+            <Button 
+              variant="link" 
+              onClick={() => navigate("/sobre")}
+              className="text-muted-foreground hover:text-primary text-sm"
+            >
+              Conheça o autor
+            </Button>
+          </div>
           <p>© 2024 PDI - Carreira & Vida. Todos os direitos reservados.</p>
         </div>
       </footer>

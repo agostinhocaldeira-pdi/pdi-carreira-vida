@@ -41,6 +41,7 @@ import EbookBancario from "./pages/EbookBancario";
 import EbookBancarioDownload from "./pages/EbookBancarioDownload";
 import Tutorial from "./pages/Tutorial";
 import TutorialEmpresa from "./pages/TutorialEmpresa";
+import Sobre from "./pages/Sobre";
 
 const queryClient = new QueryClient();
 
@@ -88,6 +89,7 @@ const App = () => (
               <Route path="/ebook-bancario-download" element={<EbookBancarioDownload />} />
               <Route path="/tutorial" element={<Tutorial />} />
               <Route path="/tutorial-empresa" element={<TutorialEmpresa />} />
+              <Route path="/sobre" element={<Sobre />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>
