@@ -214,7 +214,7 @@ const Index = () => {
                 Transforme seus objetivos em ações práticas e evolução contínua.
               </h1>
               <p className="text-base sm:text-lg md:text-xl text-muted-foreground mb-6 sm:mb-8">
-                Com o Método SEPP, organize sua vida e carreira com clareza, decisão e consistência — sem atalhos ou promessas vazias.
+                O sistema PDI - Carreira e Vida conta com o Método SEPP para você organizar sua vida e carreira com clareza, decisão e consistência — sem atalhos ou promessas vazias.
               </p>
               <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center lg:justify-start">
                 <Button 
