@@ -38,7 +38,9 @@ import {
   MessageCircle,
   Download,
   Shield,
-  Smartphone
+  Smartphone,
+  Play,
+  X
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import Logo from "@/components/Logo";
@@ -60,6 +62,7 @@ const Index = () => {
   const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isJourneyExpanded, setIsJourneyExpanded] = useState(true);
+  const [videoModalUrl, setVideoModalUrl] = useState<string | null>(null);
 
   const journeySteps = [
     {
@@ -964,6 +967,13 @@ const Index = () => {
                     </a>
                   </div>
                 </div>
+                <button
+                  onClick={() => setVideoModalUrl("i1VgEBOW4PI")}
+                  className="flex items-center justify-center gap-2 text-xs text-primary hover:text-primary/80 transition-colors mt-3 w-full"
+                >
+                  <Play className="h-4 w-4" />
+                  <span>Assista o depoimento completo</span>
+                </button>
               </CardContent>
             </Card>
 
@@ -995,11 +1005,18 @@ const Index = () => {
                       aria-label="LinkedIn de Gabriele Campos"
                     >
                       <svg className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+                      <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
                       </svg>
                     </a>
                   </div>
                 </div>
+                <button
+                  onClick={() => setVideoModalUrl("gpVTmaktFO8")}
+                  className="flex items-center justify-center gap-2 text-xs text-primary hover:text-primary/80 transition-colors mt-3 w-full"
+                >
+                  <Play className="h-4 w-4" />
+                  <span>Assista o depoimento completo</span>
+                </button>
               </CardContent>
             </Card>
 
@@ -1031,11 +1048,18 @@ const Index = () => {
                       aria-label="LinkedIn de Larissa Schuartz"
                     >
                       <svg className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+                      <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
                       </svg>
                     </a>
                   </div>
                 </div>
+                <button
+                  onClick={() => setVideoModalUrl("1FYfKkhVtU4")}
+                  className="flex items-center justify-center gap-2 text-xs text-primary hover:text-primary/80 transition-colors mt-3 w-full"
+                >
+                  <Play className="h-4 w-4" />
+                  <span>Assista o depoimento completo</span>
+                </button>
               </CardContent>
             </Card>
 
@@ -1247,6 +1271,29 @@ const Index = () => {
               </div>
             </Button>
           </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Video Modal */}
+      <Dialog open={!!videoModalUrl} onOpenChange={() => setVideoModalUrl(null)}>
+        <DialogContent className="sm:max-w-3xl p-0 overflow-hidden bg-black border-none">
+          <div className="relative pt-[56.25%]">
+            {videoModalUrl && (
+              <iframe
+                className="absolute top-0 left-0 w-full h-full"
+                src={`https://www.youtube.com/embed/${videoModalUrl}?autoplay=1`}
+                title="Depoimento"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+              />
+            )}
+          </div>
+          <button 
+            onClick={() => setVideoModalUrl(null)}
+            className="absolute top-2 right-2 p-2 rounded-full bg-black/50 hover:bg-black/70 text-white transition-colors"
+          >
+            <X className="h-5 w-5" />
+          </button>
         </DialogContent>
       </Dialog>
     </div>
