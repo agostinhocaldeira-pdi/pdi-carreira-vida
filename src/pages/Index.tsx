@@ -253,9 +253,12 @@ const Index = () => {
         <div className="container mx-auto max-w-6xl">
           <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
             <div className="text-center lg:text-left order-1 lg:order-1">
-              <h2 className="text-xl sm:text-2xl md:text-3xl font-bold mb-6 text-foreground">
-                O problema não é falta de vontade. <span className="text-primary">É falta de sistema.</span>
-              </h2>
+              <div className="mb-6">
+                <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-foreground">
+                  Quem planeja tem futuro, <span className="text-primary">quem não planeja tem destino.</span>
+                </h2>
+                <p className="text-sm text-muted-foreground text-right mt-2">— Mario Nazar</p>
+              </div>
               <p className="text-base sm:text-lg text-muted-foreground mb-4 leading-relaxed">
                 Vi centenas de pessoas competentes travarem em suas carreiras e vida pessoal. Objetivos importantes eram deixados de lado, decisões se acumulavam e o progresso parecia impossível.
               </p>
