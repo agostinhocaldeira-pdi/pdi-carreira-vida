@@ -765,29 +765,6 @@ const Index = () => {
               </Button>
             </div>
 
-            {/* Visual */}
-            <div className="order-1 lg:order-2">
-              <Card className="border-primary/20 bg-gradient-to-br from-primary/5 via-purple-500/5 to-pink-500/5 overflow-hidden">
-                <CardContent className="p-6 sm:p-8">
-                  <div className="flex items-center gap-2 mb-4">
-                    <Compass className="h-6 w-6 text-primary" />
-                    <span className="font-semibold text-sm text-primary">Exemplo de VVD</span>
-                  </div>
-                  <div className="bg-background/80 rounded-lg p-4 sm:p-6 border border-border/50">
-                    <p className="text-sm sm:text-base text-foreground/90 italic leading-relaxed">
-                      "Em 2027, sou uma profissional realizada que equilibra uma carreira em ascensão 
-                      com tempo de qualidade para minha família. Acordo cedo, pratico exercícios e 
-                      trabalho com projetos que me desafiam e fazem diferença. Tenho autonomia financeira, 
-                      viajo pelo menos duas vezes ao ano e cultivo amizades verdadeiras. 
-                      Sou reconhecida pela minha competência e pela forma como inspiro outras pessoas..."
-                    </p>
-                  </div>
-                  <p className="text-xs text-muted-foreground mt-4 text-center">
-                    Isso não é ficção. É um norte. E você vai construir o seu.
-                  </p>
-                </CardContent>
-              </Card>
-            </div>
           </div>
         </div>
       </section>
