@@ -243,13 +243,6 @@ const Index = () => {
                 Comece grátis. Sem cartão de crédito.
               </p>
             </div>
-            <div className="hidden lg:flex items-center justify-center">
-              <img 
-                src={heroPdiTarget} 
-                alt="PDI - Plano de Desenvolvimento Individual com foco em objetivos" 
-                className="rounded-2xl shadow-2xl max-w-[400px] h-auto object-contain"
-              />
-            </div>
           </div>
         </div>
       </section>
@@ -272,11 +265,11 @@ const Index = () => {
                 Foi assim que nasceu o <strong className="text-primary">Método SEPP</strong> (Sistema de Evolução Pessoal e Profissional), testado e validado, agora aplicado no PDI – Carreira e Vida, que ajuda pessoas a transformar objetivos em resultados reais, de forma consciente e sustentável.
               </p>
             </div>
-            <div className="hidden lg:flex items-center justify-center order-2 lg:order-2">
+            <div className="flex items-center justify-center order-2 lg:order-2 mt-6 lg:mt-0">
               <img 
                 src={problemSolution} 
                 alt="Confusão vs Evolução - Transformação com PDI" 
-                className="rounded-2xl shadow-xl max-w-[380px] h-auto object-contain"
+                className="rounded-2xl shadow-xl w-full max-w-[280px] sm:max-w-[320px] lg:max-w-[380px] h-auto object-contain"
               />
             </div>
           </div>
@@ -388,11 +381,11 @@ const Index = () => {
                 </li>
               </ul>
             </div>
-            <div className="hidden lg:block">
+            <div className="mt-6 lg:mt-0">
               <img 
                 src={growthStairs} 
                 alt="Ilustração representando progresso e crescimento" 
-                className="rounded-2xl shadow-xl w-full h-auto object-cover"
+                className="rounded-2xl shadow-xl w-full max-w-[280px] sm:max-w-[320px] lg:max-w-full mx-auto h-auto object-cover"
               />
             </div>
           </div>
