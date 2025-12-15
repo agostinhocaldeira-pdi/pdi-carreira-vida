@@ -50,6 +50,12 @@ import selfDiscovery from "@/assets/self-discovery.jpg";
 import growthStairs from "@/assets/growth-stairs.jpg";
 import agostinhoCaldeira from "@/assets/agostinho-caldeira-new.jpg";
 
+// Import testimonial photos
+import ericPereira from "@/assets/testimonials/eric-pereira.jpg";
+import gabrieleCampos from "@/assets/testimonials/gabriele-campos.jpg";
+import larissaSchuartz from "@/assets/testimonials/larissa-schuartz.jpg";
+import lucasSa from "@/assets/testimonials/lucas-sa.jpg";
+
 const Index = () => {
   const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -938,9 +944,11 @@ const Index = () => {
                   e ação. Vale muito a pena."
                 </p>
                 <div className="flex items-center justify-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center text-white font-semibold text-sm">
-                    EP
-                  </div>
+                  <img 
+                    src={ericPereira} 
+                    alt="Eric Pereira" 
+                    className="w-10 h-10 rounded-full object-cover"
+                  />
                   <div className="flex items-center gap-2">
                     <p className="text-sm font-medium">Eric Pereira</p>
                     <a 
@@ -972,9 +980,11 @@ const Index = () => {
                   e até 20 anos. O curso abriu um horizonte de oportunidades e foi fundamental para o meu autoconhecimento."
                 </p>
                 <div className="flex items-center justify-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-pink-500 to-rose-500 flex items-center justify-center text-white font-semibold text-sm">
-                    GC
-                  </div>
+                  <img 
+                    src={gabrieleCampos} 
+                    alt="Gabriele Campos" 
+                    className="w-10 h-10 rounded-full object-cover"
+                  />
                   <div className="flex items-center gap-2">
                     <p className="text-sm font-medium">Gabriele Campos</p>
                     <a 
@@ -1006,9 +1016,11 @@ const Index = () => {
                   caminhos claros para alcançar meus objetivos. Já estou colocando tudo em prática e tem me ajudado muito."
                 </p>
                 <div className="flex items-center justify-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-purple-500 to-indigo-500 flex items-center justify-center text-white font-semibold text-sm">
-                    LS
-                  </div>
+                  <img 
+                    src={larissaSchuartz} 
+                    alt="Larissa Schuartz" 
+                    className="w-10 h-10 rounded-full object-cover"
+                  />
                   <div className="flex items-center gap-2">
                     <p className="text-sm font-medium">Larissa Schuartz</p>
                     <a 
@@ -1041,9 +1053,11 @@ const Index = () => {
                   investimentos que já fiz em mim."
                 </p>
                 <div className="flex items-center justify-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-emerald-500 to-teal-500 flex items-center justify-center text-white font-semibold text-sm">
-                    LS
-                  </div>
+                  <img 
+                    src={lucasSa} 
+                    alt="Lucas Sá" 
+                    className="w-10 h-10 rounded-full object-cover"
+                  />
                   <div className="flex items-center gap-2">
                     <p className="text-sm font-medium">Lucas Sá</p>
                     <a 
