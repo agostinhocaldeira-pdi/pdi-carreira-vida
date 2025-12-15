@@ -51,6 +51,7 @@ import heroPdiTarget from "@/assets/hero-pdi-target.png";
 import journeyPath from "@/assets/journey-path.jpg";
 import selfDiscovery from "@/assets/self-discovery.jpg";
 import growthStairs from "@/assets/growth-stairs.jpg";
+import problemSolution from "@/assets/problem-solution.png";
 import agostinhoCaldeira from "@/assets/agostinho-caldeira-new.jpg";
 import diaryMoodChart from "@/assets/diary-mood-chart-example.png";
 
@@ -257,33 +258,7 @@ const Index = () => {
       <section className="py-12 sm:py-16 px-4 bg-muted/20">
         <div className="container mx-auto max-w-6xl">
           <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
-            <div className="hidden lg:block order-2 lg:order-1">
-              <div className="relative">
-                {/* Visual: Confusão vs Evolução Estruturada */}
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="bg-destructive/10 rounded-xl p-6 text-center border border-destructive/20">
-                    <div className="w-16 h-16 mx-auto rounded-full bg-destructive/20 flex items-center justify-center mb-4">
-                      <svg className="h-8 w-8 text-destructive" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <path d="M12 2v4m0 12v4M4.93 4.93l2.83 2.83m8.48 8.48l2.83 2.83M2 12h4m12 0h4M4.93 19.07l2.83-2.83m8.48-8.48l2.83-2.83"/>
-                      </svg>
-                    </div>
-                    <p className="font-medium text-destructive">Confusão</p>
-                    <p className="text-xs text-muted-foreground mt-1">Sem direção, sem foco</p>
-                  </div>
-                  <div className="bg-primary/10 rounded-xl p-6 text-center border border-primary/20">
-                    <div className="w-16 h-16 mx-auto rounded-full bg-primary/20 flex items-center justify-center mb-4">
-                      <TrendingUp className="h-8 w-8 text-primary" />
-                    </div>
-                    <p className="font-medium text-primary">Evolução</p>
-                    <p className="text-xs text-muted-foreground mt-1">Estrutura e clareza</p>
-                  </div>
-                </div>
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-background rounded-full p-2 shadow-lg">
-                  <ArrowRight className="h-6 w-6 text-primary" />
-                </div>
-              </div>
-            </div>
-            <div className="text-center lg:text-left order-1 lg:order-2">
+            <div className="text-center lg:text-left order-1 lg:order-1">
               <h2 className="text-xl sm:text-2xl md:text-3xl font-bold mb-6 text-foreground">
                 O problema não é falta de vontade. <span className="text-primary">É falta de sistema.</span>
               </h2>
@@ -296,6 +271,13 @@ const Index = () => {
               <p className="text-base sm:text-lg text-foreground font-medium leading-relaxed">
                 Foi assim que nasceu o <strong className="text-primary">Método SEPP</strong> (Sistema de Evolução Pessoal e Profissional), testado e validado, agora aplicado no PDI – Carreira e Vida, que ajuda pessoas a transformar objetivos em resultados reais, de forma consciente e sustentável.
               </p>
+            </div>
+            <div className="hidden lg:flex items-center justify-center order-2 lg:order-2">
+              <img 
+                src={problemSolution} 
+                alt="Confusão vs Evolução - Transformação com PDI" 
+                className="rounded-2xl shadow-xl max-w-[380px] h-auto object-contain"
+              />
             </div>
           </div>
         </div>
