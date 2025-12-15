@@ -51,6 +51,7 @@ import journeyPath from "@/assets/journey-path.jpg";
 import selfDiscovery from "@/assets/self-discovery.jpg";
 import growthStairs from "@/assets/growth-stairs.jpg";
 import agostinhoCaldeira from "@/assets/agostinho-caldeira-new.jpg";
+import diaryMoodChart from "@/assets/diary-mood-chart-example.png";
 
 // Import testimonial photos
 import ericPereira from "@/assets/testimonials/eric-pereira.jpg";
@@ -607,8 +608,8 @@ const Index = () => {
 
       {/* Diário Digital Inteligente Section */}
       <section className="py-12 sm:py-16 px-4 bg-gradient-to-br from-purple-500/5 via-background to-primary/5">
-        <div className="container mx-auto max-w-4xl">
-          <div className="text-center">
+        <div className="container mx-auto max-w-5xl">
+          <div className="text-center mb-10">
             <Badge variant="secondary" className="mb-4 text-xs sm:text-sm bg-purple-500/10 text-purple-600 border-0">
               <BookOpen className="h-3.5 w-3.5 mr-1.5" />
               Funcionalidade Exclusiva
@@ -627,9 +628,42 @@ const Index = () => {
                 Essa funcionalidade não é intuitiva ou casual. Ela se apoia em fundamentos amplamente estudados pela Psicologia, especialmente pela <strong className="text-foreground">Psicologia Cognitivo-Comportamental</strong> e pela <strong className="text-foreground">Psicologia Positiva</strong>.
               </p>
             </div>
+          </div>
+
+          {/* Feature: Histórico e Gráfico */}
+          <div className="grid lg:grid-cols-2 gap-8 items-center mb-10">
+            <div className="order-2 lg:order-1">
+              <img 
+                src={diaryMoodChart} 
+                alt="Gráfico de acompanhamento de humor do Diário Digital" 
+                className="rounded-xl shadow-lg border border-border/50 w-full h-auto"
+              />
+              <p className="text-xs text-muted-foreground text-center mt-2">
+                Exemplo do gráfico de acompanhamento de humor por período
+              </p>
+            </div>
+            <div className="order-1 lg:order-2 text-left">
+              <h3 className="text-xl sm:text-2xl font-semibold mb-4 text-foreground">
+                Visualize sua evolução ao longo do tempo
+              </h3>
+              <div className="space-y-3 text-muted-foreground text-sm sm:text-base leading-relaxed">
+                <p>
+                  Além de registrar seu dia, o Diário Digital Inteligente permite que você <strong className="text-foreground">consulte todo o seu histórico por período de até um ano</strong>, revisitando anotações, conquistas e reflexões passadas.
+                </p>
+                <p>
+                  E para tornar sua jornada ainda mais clara, você tem acesso a um <strong className="text-foreground">gráfico interativo que mostra o comparativo do seu humor dia a dia</strong>, permitindo identificar padrões emocionais, momentos de maior bem-estar e períodos que merecem atenção.
+                </p>
+                <p>
+                  Essa visão ampliada transforma dados em autoconhecimento — e autoconhecimento em poder de decisão.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="text-center">
             <button
               onClick={() => setIsDiaryModalOpen(true)}
-              className="mt-6 inline-flex items-center gap-2 text-primary hover:text-primary/80 font-medium text-sm sm:text-base transition-colors underline underline-offset-4"
+              className="inline-flex items-center gap-2 text-primary hover:text-primary/80 font-medium text-sm sm:text-base transition-colors underline underline-offset-4"
             >
               Conheça o embasamento científico validado por trás desta ferramenta
               <ArrowRight className="h-4 w-4" />
