@@ -598,7 +598,7 @@ const Index = () => {
             className="w-full flex items-center justify-center gap-2 mb-3 sm:mb-4 group"
           >
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center group-hover:text-primary transition-colors">
-              Minha Jornada
+              Sua jornada começa aqui
             </h2>
             {isJourneyExpanded ? (
               <ChevronUp className="h-6 w-6 text-muted-foreground group-hover:text-primary transition-colors" />
