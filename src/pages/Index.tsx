@@ -47,7 +47,7 @@ import Logo from "@/components/Logo";
 import DiaryScientificModal from "@/components/DiaryScientificModal";
 
 // Import marketing images
-import heroGrowth from "@/assets/hero-growth.jpg";
+import heroPdiTarget from "@/assets/hero-pdi-target.png";
 import journeyPath from "@/assets/journey-path.jpg";
 import selfDiscovery from "@/assets/self-discovery.jpg";
 import growthStairs from "@/assets/growth-stairs.jpg";
@@ -244,8 +244,8 @@ const Index = () => {
             </div>
             <div className="hidden lg:block">
               <img 
-                src={heroGrowth} 
-                alt="Pessoa no topo da montanha celebrando conquista" 
+                src={heroPdiTarget} 
+                alt="PDI - Plano de Desenvolvimento Individual com foco em objetivos" 
                 className="rounded-2xl shadow-2xl w-full h-auto object-cover"
               />
             </div>
