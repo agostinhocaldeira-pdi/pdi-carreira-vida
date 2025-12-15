@@ -48,6 +48,7 @@ import heroGrowth from "@/assets/hero-growth.jpg";
 import journeyPath from "@/assets/journey-path.jpg";
 import selfDiscovery from "@/assets/self-discovery.jpg";
 import growthStairs from "@/assets/growth-stairs.jpg";
+import agostinhoCaldeira from "@/assets/agostinho-caldeira.jpg";
 
 const Index = () => {
   const navigate = useNavigate();
@@ -706,14 +707,14 @@ const Index = () => {
             {/* Content */}
             <div className="order-2 lg:order-1">
               <Badge variant="secondary" className="mb-4 text-xs sm:text-sm bg-primary/10 text-primary border-0">
-                ✨ Metodologia Exclusiva
+                ✨ Ferramenta Exclusiva
               </Badge>
               <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 sm:mb-6">
-                Método VVD: Sua Visão de Vida Desejada
+                Ferramenta VVD: Sua Visão de Vida Desejada
               </h2>
               <p className="text-muted-foreground mb-4 text-sm sm:text-base leading-relaxed">
                 A maioria das pessoas sabe o que <em>não</em> quer. Mas pouquíssimas conseguem descrever, 
-                com clareza, a vida que realmente desejam viver. É aí que entra o <strong>Método VVD</strong>.
+                com clareza, a vida que realmente desejam viver. É aí que entra a <strong>Ferramenta VVD</strong>.
               </p>
               <p className="text-muted-foreground mb-4 text-sm sm:text-base leading-relaxed">
                 Desenvolvido especialmente para o PDI - Carreira & Vida, o VVD te guia num processo 
@@ -947,50 +948,6 @@ const Index = () => {
         </div>
       </section>
 
-      {/* CTA Empresas */}
-      <section className="py-12 sm:py-16 px-4 bg-muted/20">
-        <div className="container mx-auto max-w-4xl">
-          <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-700 p-6 sm:p-10">
-            <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC4wNSI+PHBhdGggZD0iTTM2IDM0djItSDI0di0yaDEyek0zNiAzMHYySDI0di0yaDEyek0zNiAyNnYySDI0di0yaDEyeiIvPjwvZz48L2c+PC9zdmc+')] opacity-30" />
-            <div className="relative z-10 text-center text-white">
-              <div className="flex items-center justify-center gap-2 mb-4">
-                <Building2 className="h-8 w-8 sm:h-10 sm:w-10" />
-              </div>
-              <h3 className="text-2xl sm:text-3xl font-bold mb-3">
-                É empresário ou RH?
-              </h3>
-              <p className="text-white/90 text-base sm:text-lg max-w-2xl mx-auto mb-4">
-                Transforme sua equipe em profissionais de alta performance com o PDI Carreira & Vida para Empresas.
-              </p>
-              <div className="flex flex-wrap justify-center gap-3 mb-6 text-sm text-white/80">
-                <span className="flex items-center gap-1">
-                  <Check className="h-4 w-4" /> Dashboard de gestão
-                </span>
-                <span className="flex items-center gap-1">
-                  <Check className="h-4 w-4" /> Acompanhamento de equipes
-                </span>
-                <span className="flex items-center gap-1">
-                  <Check className="h-4 w-4" /> OKRs alinhados
-                </span>
-                <span className="flex items-center gap-1">
-                  <Check className="h-4 w-4" /> Relatórios de progresso
-                </span>
-              </div>
-              <p className="text-white/70 text-sm mb-6">
-                Planos a partir de <span className="font-bold text-white">R$ 30/funcionário</span> • Retenha talentos • Aumente produtividade
-              </p>
-              <Button 
-                size="lg"
-                onClick={() => navigate("/empresas")}
-                className="bg-background text-primary hover:bg-background/90 font-semibold text-sm sm:text-base px-4 sm:px-8 w-full sm:w-auto"
-              >
-                Conhecer soluções para empresas
-                <ArrowRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5" />
-              </Button>
-            </div>
-          </div>
-        </div>
-      </section>
 
       {/* Social Proof - Depoimentos Reais */}
       <section className="py-12 sm:py-20 px-4 bg-muted/20">
@@ -1188,19 +1145,75 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="py-6 sm:py-8 px-4 border-t border-border/50">
-        <div className="container mx-auto text-center text-xs sm:text-sm text-muted-foreground space-y-3">
-          <div>
-            <Button 
-              variant="link" 
-              onClick={() => navigate("/sobre")}
-              className="text-muted-foreground hover:text-primary text-sm"
-            >
-              Conheça o autor
-            </Button>
+      {/* CTA Empresas - Movido para o final */}
+      <section className="py-12 sm:py-16 px-4 bg-muted/20">
+        <div className="container mx-auto max-w-4xl">
+          <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-700 p-6 sm:p-10">
+            <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC4wNSI+PHBhdGggZD0iTTM2IDM0djItSDI0di0yaDEyek0zNiAzMHYySDI0di0yaDEyek0zNiAyNnYySDI0di0yaDEyeiIvPjwvZz48L2c+PC9zdmc+')] opacity-30" />
+            <div className="relative z-10 text-center text-white">
+              <div className="flex items-center justify-center gap-2 mb-4">
+                <Building2 className="h-8 w-8 sm:h-10 sm:w-10" />
+              </div>
+              <h3 className="text-2xl sm:text-3xl font-bold mb-3">
+                É empresário ou RH?
+              </h3>
+              <p className="text-white/90 text-base sm:text-lg max-w-2xl mx-auto mb-4">
+                Transforme sua equipe em profissionais de alta performance com o PDI Carreira & Vida para Empresas.
+              </p>
+              <div className="flex flex-wrap justify-center gap-3 mb-6 text-sm text-white/80">
+                <span className="flex items-center gap-1">
+                  <Check className="h-4 w-4" /> Dashboard de gestão
+                </span>
+                <span className="flex items-center gap-1">
+                  <Check className="h-4 w-4" /> Acompanhamento de equipes
+                </span>
+                <span className="flex items-center gap-1">
+                  <Check className="h-4 w-4" /> OKRs alinhados
+                </span>
+                <span className="flex items-center gap-1">
+                  <Check className="h-4 w-4" /> Relatórios de progresso
+                </span>
+              </div>
+              <p className="text-white/70 text-sm mb-6">
+                Planos a partir de <span className="font-bold text-white">R$ 30/funcionário</span> • Retenha talentos • Aumente produtividade
+              </p>
+              <Button 
+                size="lg"
+                onClick={() => navigate("/empresas")}
+                className="bg-background text-primary hover:bg-background/90 font-semibold text-sm sm:text-base px-4 sm:px-8 w-full sm:w-auto"
+              >
+                Conhecer soluções para empresas
+                <ArrowRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5" />
+              </Button>
+            </div>
           </div>
-          <p>© 2024 PDI - Carreira & Vida. Todos os direitos reservados.</p>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="py-8 sm:py-12 px-4 border-t border-border/50 bg-muted/10">
+        <div className="container mx-auto max-w-4xl">
+          {/* Conheça o autor - Destacado */}
+          <div 
+            onClick={() => navigate("/sobre")}
+            className="flex items-center justify-center gap-4 mb-6 p-4 rounded-xl bg-gradient-to-r from-primary/10 via-purple-500/10 to-pink-500/10 border border-primary/20 cursor-pointer hover:border-primary/40 hover:shadow-lg transition-all group"
+          >
+            <img 
+              src={agostinhoCaldeira}
+              alt="Agostinho Caldeira - Criador do PDI"
+              className="w-14 h-14 sm:w-16 sm:h-16 rounded-full object-cover object-top border-2 border-primary/30 group-hover:border-primary transition-colors"
+            />
+            <div className="text-left">
+              <p className="text-xs text-muted-foreground">Criador do Método SEPP</p>
+              <p className="font-semibold text-foreground group-hover:text-primary transition-colors">Conheça o autor</p>
+              <p className="text-sm text-muted-foreground">Agostinho Caldeira</p>
+            </div>
+            <ArrowRight className="h-5 w-5 text-primary opacity-0 group-hover:opacity-100 transition-opacity" />
+          </div>
+          
+          <div className="text-center text-xs sm:text-sm text-muted-foreground">
+            <p>© 2024 PDI - Carreira & Vida. Todos os direitos reservados.</p>
+          </div>
         </div>
       </footer>
 
