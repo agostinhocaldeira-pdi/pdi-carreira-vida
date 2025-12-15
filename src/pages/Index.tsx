@@ -637,7 +637,7 @@ const Index = () => {
             </div>
           </div>
 
-          <div className="text-center">
+          <div className="text-center space-y-6">
             <button
               onClick={() => setIsDiaryModalOpen(true)}
               className="inline-flex items-center gap-2 text-primary hover:text-primary/80 font-medium text-sm sm:text-base transition-colors underline underline-offset-4"
@@ -645,6 +645,17 @@ const Index = () => {
               Conheça o embasamento científico validado por trás desta ferramenta
               <ArrowRight className="h-4 w-4" />
             </button>
+            
+            <div>
+              <Button 
+                size="lg" 
+                onClick={() => navigate('/signup')}
+                className="text-base sm:text-lg px-6 sm:px-8 py-5 sm:py-6 rounded-full shadow-lg hover:shadow-xl transition-all"
+              >
+                Começar meu Diário agora!
+                <ArrowRight className="ml-2 h-5 w-5" />
+              </Button>
+            </div>
           </div>
         </div>
       </section>
