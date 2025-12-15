@@ -351,84 +351,80 @@ const Perfil = () => {
             <CardContent>
               <div className="grid gap-4 sm:grid-cols-3">
                 {/* Plano Gratuito */}
-                <Card className={`border-2 transition-colors ${subscription.plan === 'basico' ? 'border-muted opacity-60' : 'border-muted hover:border-primary/50'}`}>
+                <Card className={`border-2 transition-colors ${subscription.plan === 'gratuito' || subscription.status === 'trial' ? 'border-primary ring-2 ring-primary/20' : 'border-muted'}`}>
                   <CardHeader className="pb-3">
-                    <div className="flex items-center gap-2">
-                      <Star className="h-5 w-5 text-muted-foreground" />
-                      <CardTitle className="text-lg">Gratuito</CardTitle>
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <Star className="h-5 w-5 text-muted-foreground" />
+                        <CardTitle className="text-lg">Gratuito</CardTitle>
+                      </div>
+                      {(subscription.plan === 'gratuito' || subscription.status === 'trial') && (
+                        <Badge variant="secondary" className="text-xs">Atual</Badge>
+                      )}
                     </div>
-                    <div className="text-2xl font-bold">R$ 0<span className="text-sm font-normal text-muted-foreground">/mês</span></div>
+                    <div className="text-2xl font-bold">R$ 0<span className="text-sm font-normal text-muted-foreground"> por 30 dias</span></div>
+                    <p className="text-xs text-muted-foreground">Experimente sem compromisso</p>
                   </CardHeader>
                   <CardContent className="space-y-2 text-sm">
                     <div className="space-y-1.5 text-muted-foreground">
                       <div className="flex items-start gap-2">
                         <Check className="h-4 w-4 mt-0.5 flex-shrink-0" />
-                        <span>Acesso por 30 dias</span>
+                        <span>1 objetivo ativo</span>
                       </div>
                       <div className="flex items-start gap-2">
                         <Check className="h-4 w-4 mt-0.5 flex-shrink-0" />
-                        <span>Dashboard "Seu Progresso"</span>
+                        <span>1 meta por objetivo</span>
                       </div>
                       <div className="flex items-start gap-2">
                         <Check className="h-4 w-4 mt-0.5 flex-shrink-0" />
-                        <span>Gerar 1 insight</span>
+                        <span>5 ações por meta</span>
                       </div>
                       <div className="flex items-start gap-2">
                         <Check className="h-4 w-4 mt-0.5 flex-shrink-0" />
-                        <span>Diário completo</span>
+                        <span>4 ferramentas ilimitadas</span>
                       </div>
                       <div className="flex items-start gap-2">
                         <Check className="h-4 w-4 mt-0.5 flex-shrink-0" />
-                        <span>1 objetivo, 1 meta, 5 ações</span>
+                        <span>4 ferramentas com 1 uso</span>
                       </div>
                       <div className="flex items-start gap-2">
                         <Check className="h-4 w-4 mt-0.5 flex-shrink-0" />
-                        <span className="text-xs">Ferramentas ilimitadas: Roda da Vida, VVD, Valores, Eisenhower</span>
-                      </div>
-                      <div className="flex items-start gap-2">
-                        <Check className="h-4 w-4 mt-0.5 flex-shrink-0" />
-                        <span className="text-xs">1 uso: SWOT, SMART, Autoavaliação 360º, Crenças</span>
+                        <span>Diário de reflexão</span>
                       </div>
                     </div>
-                    {(subscription.plan === 'gratuito' || subscription.status === 'trial') && (
-                      <Button variant="outline" className="w-full mt-4" disabled>
-                        ✓ Plano Atual
-                      </Button>
-                    )}
+                    <Button variant="outline" className="w-full mt-4" disabled>
+                      {(subscription.plan === 'gratuito' || subscription.status === 'trial') ? '✓ Plano Atual' : 'Começar grátis'}
+                    </Button>
                   </CardContent>
                 </Card>
 
                 {/* Plano Básico */}
-                <Card className="border-2 border-green-500 hover:border-green-600 transition-colors relative overflow-hidden">
-                  <div className="absolute top-0 right-0 bg-green-500 text-white text-xs px-3 py-1 rounded-bl-lg font-medium animate-pulse">
-                    🎉 Promoção de lançamento!
+                <Card className={`border-2 transition-colors relative overflow-hidden ${subscription.plan === 'basico' ? 'border-green-500 ring-2 ring-green-500/20' : 'border-green-500/50'}`}>
+                  <div className="absolute top-0 right-0 bg-green-500 text-white text-xs px-3 py-1 rounded-bl-lg font-medium">
+                    🚀 Promoção
                   </div>
                   <CardHeader className="pb-3">
-                    <div className="flex items-center gap-2">
-                      <Sparkles className="h-5 w-5 text-green-500" />
-                      <CardTitle className="text-lg">Básico</CardTitle>
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <Sparkles className="h-5 w-5 text-green-500" />
+                        <CardTitle className="text-lg">Básico</CardTitle>
+                      </div>
+                      {subscription.plan === 'basico' && (
+                        <Badge className="bg-green-500 text-xs">Atual</Badge>
+                      )}
                     </div>
-                    <div className="text-2xl font-bold">
-                      R$ 14,90<span className="text-sm font-normal text-muted-foreground">/mês</span>
-                    </div>
+                    <div className="text-2xl font-bold">R$ 14,90<span className="text-sm font-normal text-muted-foreground">/mês</span></div>
+                    <p className="text-xs text-muted-foreground">Tudo que você precisa para evoluir</p>
                   </CardHeader>
                   <CardContent className="space-y-2 text-sm">
                     <div className="space-y-1.5 text-muted-foreground">
                       <div className="flex items-start gap-2">
                         <Check className="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0" />
-                        <span>Dashboard "Seu Progresso"</span>
+                        <span>PDI ilimitado</span>
                       </div>
                       <div className="flex items-start gap-2">
                         <Check className="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0" />
-                        <span>1 insight por mês</span>
-                      </div>
-                      <div className="flex items-start gap-2">
-                        <Check className="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0" />
-                        <span>Diário completo</span>
-                      </div>
-                      <div className="flex items-start gap-2">
-                        <Check className="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0" />
-                        <span>Plano de Vida ilimitado</span>
+                        <span>1 insight de IA por mês</span>
                       </div>
                       <div className="flex items-start gap-2">
                         <Check className="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0" />
@@ -440,99 +436,66 @@ const Perfil = () => {
                       </div>
                       <div className="flex items-start gap-2">
                         <Check className="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0" />
-                        <span>Construção Guiada</span>
+                        <span>Construção Guiada completa</span>
+                      </div>
+                      <div className="flex items-start gap-2">
+                        <Check className="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0" />
+                        <span>Suporte prioritário</span>
                       </div>
                     </div>
-                    {subscription.plan === 'basico' ? (
-                      <div className="space-y-2 mt-4">
-                        <Button className="w-full bg-green-500 hover:bg-green-600" disabled>
-                          ✓ Plano Atual
-                        </Button>
-                        <Button 
-                          variant="outline" 
-                          className="w-full text-xs"
-                          onClick={handleManageSubscription}
-                        >
-                          Gerenciar Assinatura
-                        </Button>
-                      </div>
-                    ) : (
-                      <>
-                        <Button 
-                          className="w-full mt-4 bg-green-500 hover:bg-green-600" 
-                          onClick={handleCheckout}
-                          disabled={isCheckoutLoading}
-                        >
-                          {isCheckoutLoading ? (
-                            <>
-                              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                              Processando...
-                            </>
-                          ) : (
-                            "Assinar Agora"
-                          )}
-                        </Button>
-                        <p className="text-xs text-center text-muted-foreground mt-2">
-                          acesso ilimitado* a todas funcionalidades
-                        </p>
-                        <p className="text-[10px] text-center text-muted-foreground">
-                          *exceto insights com limite de 1 por mês
-                        </p>
-                      </>
-                    
+                    <Button className="w-full mt-4 bg-green-500 hover:bg-green-600" disabled>
+                      {subscription.plan === 'basico' ? '✓ Plano Atual' : 'Assinar agora'}
+                    </Button>
+                    {subscription.plan === 'basico' && (
+                      <Button 
+                        variant="outline" 
+                        className="w-full text-xs"
+                        onClick={handleManageSubscription}
+                      >
+                        Gerenciar Assinatura
+                      </Button>
                     )}
                   </CardContent>
                 </Card>
 
                 {/* Plano Completo */}
-                <Card className="border-2 border-amber-500/50 hover:border-amber-500 transition-colors relative overflow-hidden">
+                <Card className="border-2 border-amber-500/30 transition-colors relative overflow-hidden">
                   <div className="absolute top-0 right-0 bg-amber-500 text-white text-xs px-3 py-1 rounded-bl-lg font-medium">
-                    Recomendado
+                    Em breve
                   </div>
                   <CardHeader className="pb-3">
                     <div className="flex items-center gap-2">
                       <Crown className="h-5 w-5 text-amber-500" />
                       <CardTitle className="text-lg">Completo</CardTitle>
                     </div>
-                    <div className="text-2xl font-bold">R$ 49<span className="text-sm font-normal text-muted-foreground">/mês</span></div>
+                    <div className="text-2xl font-bold">R$ 59<span className="text-sm font-normal text-muted-foreground">/mês</span></div>
+                    <p className="text-xs text-muted-foreground">Máximo potencial de crescimento</p>
                   </CardHeader>
                   <CardContent className="space-y-2 text-sm">
                     <div className="space-y-1.5 text-muted-foreground">
                       <div className="flex items-start gap-2">
-                        <Check className="h-4 w-4 mt-0.5 flex-shrink-0" />
-                        <span>Dashboard "Seu Progresso"</span>
+                        <Check className="h-4 w-4 text-amber-500 mt-0.5 flex-shrink-0" />
+                        <span>Tudo do Básico</span>
                       </div>
                       <div className="flex items-start gap-2">
-                        <Check className="h-4 w-4 mt-0.5 flex-shrink-0" />
-                        <span>Insights ilimitados</span>
+                        <Check className="h-4 w-4 text-amber-500 mt-0.5 flex-shrink-0" />
+                        <span>Insights de IA ilimitados</span>
                       </div>
                       <div className="flex items-start gap-2">
-                        <Check className="h-4 w-4 mt-0.5 flex-shrink-0" />
-                        <span>Diário completo</span>
+                        <Check className="h-4 w-4 text-amber-500 mt-0.5 flex-shrink-0" />
+                        <span>Notificações por e-mail</span>
                       </div>
                       <div className="flex items-start gap-2">
-                        <Check className="h-4 w-4 mt-0.5 flex-shrink-0" />
-                        <span>Plano de Vida ilimitado</span>
+                        <Check className="h-4 w-4 text-amber-500 mt-0.5 flex-shrink-0" />
+                        <span>Notificações por WhatsApp</span>
                       </div>
                       <div className="flex items-start gap-2">
-                        <Check className="h-4 w-4 mt-0.5 flex-shrink-0" />
-                        <span>Todas as ferramentas ilimitadas</span>
+                        <Check className="h-4 w-4 text-amber-500 mt-0.5 flex-shrink-0" />
+                        <span>Relatórios em PDF</span>
                       </div>
                       <div className="flex items-start gap-2">
-                        <Check className="h-4 w-4 mt-0.5 flex-shrink-0" />
-                        <span>Integração Google Calendar</span>
-                      </div>
-                      <div className="flex items-start gap-2">
-                        <Check className="h-4 w-4 mt-0.5 flex-shrink-0" />
-                        <span>Notificações e-mail e WhatsApp</span>
-                      </div>
-                      <div className="flex items-start gap-2">
-                        <Check className="h-4 w-4 mt-0.5 flex-shrink-0" />
-                        <span>Construção Guiada</span>
-                      </div>
-                      <div className="flex items-start gap-2">
-                        <Check className="h-4 w-4 mt-0.5 flex-shrink-0" />
-                        <span>Gerar relatórios PDF</span>
+                        <Check className="h-4 w-4 text-amber-500 mt-0.5 flex-shrink-0" />
+                        <span>Acompanhamento personalizado</span>
                       </div>
                     </div>
                     <Button className="w-full mt-4 bg-amber-500 hover:bg-amber-600" disabled>
@@ -542,7 +505,7 @@ const Perfil = () => {
                 </Card>
               </div>
 
-              <div className="bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-800 rounded-lg p-3 text-center">
+              <div className="bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-800 rounded-lg p-3 text-center mt-4">
                 <p className="text-sm font-medium text-green-700 dark:text-green-300">
                   🚀 Promoção de lançamento: acesso do plano completo liberado no Plano Básico por apenas R$ 14,90/mês!
                 </p>
