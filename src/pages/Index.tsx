@@ -242,11 +242,11 @@ const Index = () => {
                 Comece grátis. Sem cartão de crédito.
               </p>
             </div>
-            <div className="hidden lg:block">
+            <div className="hidden lg:flex items-center justify-center">
               <img 
                 src={heroPdiTarget} 
                 alt="PDI - Plano de Desenvolvimento Individual com foco em objetivos" 
-                className="rounded-2xl shadow-2xl w-full h-auto object-cover"
+                className="rounded-2xl shadow-2xl max-w-[400px] h-auto object-contain"
               />
             </div>
           </div>
