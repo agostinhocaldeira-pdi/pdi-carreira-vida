@@ -210,11 +210,10 @@ const Index = () => {
           <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
             <div className="text-center lg:text-left">
               <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-5xl font-bold mb-4 sm:mb-6 bg-gradient-to-r from-primary via-purple-500 to-pink-500 bg-clip-text text-transparent leading-tight">
-                Você não precisa de mais motivação. Precisa de um plano.
+                Transforme seus objetivos em ações práticas e evolução contínua.
               </h1>
               <p className="text-base sm:text-lg md:text-xl text-muted-foreground mb-6 sm:mb-8">
-                O PDI integra carreira e vida porque, no fundo, você sabe: não dá pra separar uma da outra. 
-                Aqui você vai do autoconhecimento à ação — todos os dias.
+                Com o Método SEPP, organize sua vida e carreira com clareza, decisão e consistência — sem atalhos ou promessas vazias.
               </p>
               <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center lg:justify-start">
                 <Button 
@@ -222,16 +221,8 @@ const Index = () => {
                   onClick={() => handlePlanClick('gratuito')}
                   className="text-base sm:text-lg px-6 sm:px-8 py-5 sm:py-6 bg-primary hover:bg-primary/90"
                 >
-                  Começar minha jornada
+                  Comece sua evolução hoje
                   <ArrowRight className="ml-2 h-5 w-5" />
-                </Button>
-                <Button 
-                  size="lg" 
-                  variant="outline"
-                  onClick={() => document.getElementById('planos')?.scrollIntoView({ behavior: 'smooth' })}
-                  className="text-base sm:text-lg px-6 sm:px-8 py-5 sm:py-6"
-                >
-                  Ver planos
                 </Button>
               </div>
               <p className="text-xs sm:text-sm text-muted-foreground mt-4">
@@ -249,33 +240,165 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Problem-Solution */}
+      {/* Problem-Solution - O problema não é falta de vontade */}
       <section className="py-12 sm:py-16 px-4 bg-muted/20">
         <div className="container mx-auto max-w-6xl">
           <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
             <div className="hidden lg:block order-2 lg:order-1">
-              <img 
-                src={journeyPath} 
-                alt="Pessoa caminhando em direção ao horizonte" 
-                className="rounded-2xl shadow-xl w-full h-auto object-cover"
-              />
+              <div className="relative">
+                {/* Visual: Confusão vs Evolução Estruturada */}
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="bg-destructive/10 rounded-xl p-6 text-center border border-destructive/20">
+                    <div className="w-16 h-16 mx-auto rounded-full bg-destructive/20 flex items-center justify-center mb-4">
+                      <svg className="h-8 w-8 text-destructive" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <path d="M12 2v4m0 12v4M4.93 4.93l2.83 2.83m8.48 8.48l2.83 2.83M2 12h4m12 0h4M4.93 19.07l2.83-2.83m8.48-8.48l2.83-2.83"/>
+                      </svg>
+                    </div>
+                    <p className="font-medium text-destructive">Confusão</p>
+                    <p className="text-xs text-muted-foreground mt-1">Sem direção, sem foco</p>
+                  </div>
+                  <div className="bg-primary/10 rounded-xl p-6 text-center border border-primary/20">
+                    <div className="w-16 h-16 mx-auto rounded-full bg-primary/20 flex items-center justify-center mb-4">
+                      <TrendingUp className="h-8 w-8 text-primary" />
+                    </div>
+                    <p className="font-medium text-primary">Evolução</p>
+                    <p className="text-xs text-muted-foreground mt-1">Estrutura e clareza</p>
+                  </div>
+                </div>
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-background rounded-full p-2 shadow-lg">
+                  <ArrowRight className="h-6 w-6 text-primary" />
+                </div>
+              </div>
             </div>
             <div className="text-center lg:text-left order-1 lg:order-2">
               <h2 className="text-xl sm:text-2xl md:text-3xl font-bold mb-6 text-foreground">
-                Milhões de profissionais sabem que precisam evoluir, mas não sabem <span className="text-primary">por onde começar</span>.
+                O problema não é falta de vontade. <span className="text-primary">É falta de sistema.</span>
               </h2>
-              <p className="text-base sm:text-lg text-muted-foreground mb-4 italic">
-                "Eu sei o que preciso fazer, mas não consigo manter o foco..."
+              <p className="text-base sm:text-lg text-muted-foreground mb-4 leading-relaxed">
+                Vi centenas de pessoas competentes travarem em suas carreiras e vida pessoal. Objetivos importantes eram deixados de lado, decisões se acumulavam e o progresso parecia impossível.
               </p>
-              <p className="text-base sm:text-lg text-muted-foreground mb-4 italic">
-                "Tenho tantos objetivos que não sei por onde começar..."
+              <p className="text-base sm:text-lg text-muted-foreground mb-4 leading-relaxed">
+                Não é motivação que faltava — faltava estrutura, clareza e um método para transformar intenção em ação consistente.
               </p>
-              <p className="text-base sm:text-lg text-muted-foreground mb-6 sm:mb-8 italic">
-                "Já tentei de tudo, mas sempre volto à estaca zero..."
+              <p className="text-base sm:text-lg text-foreground font-medium leading-relaxed">
+                Foi assim que nasceu o <strong className="text-primary">Método SEPP</strong> (Sistema de Evolução Pessoal e Profissional), testado e validado, agora aplicado no PDI – Carreira e Vida, que ajuda pessoas a transformar objetivos em resultados reais, de forma consciente e sustentável.
               </p>
-              <p className="text-lg sm:text-xl font-medium text-foreground mb-6">
-                Se você se identificou, o problema não é você. É a falta de um sistema.
-              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Como o SEPP transforma sua evolução */}
+      <section className="py-12 sm:py-16 px-4">
+        <div className="container mx-auto max-w-6xl">
+          <div className="text-center mb-10 sm:mb-14">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 sm:mb-4">
+              Como o SEPP transforma sua evolução
+            </h2>
+            <p className="text-muted-foreground max-w-2xl mx-auto text-sm sm:text-base">
+              Um método estruturado para sair da intenção e ir para a ação.
+            </p>
+          </div>
+          
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+            <Card className="border-primary/20 bg-gradient-to-br from-primary/5 to-transparent hover:shadow-lg transition-all">
+              <CardContent className="p-5 sm:p-6 text-center">
+                <div className="w-14 h-14 mx-auto rounded-full bg-primary/10 flex items-center justify-center mb-4">
+                  <Compass className="h-7 w-7 text-primary" />
+                </div>
+                <h3 className="text-lg font-semibold mb-2">Clareza e Diagnóstico</h3>
+                <p className="text-muted-foreground text-sm">
+                  Organize prioridades, identifique lacunas e defina metas concretas.
+                </p>
+              </CardContent>
+            </Card>
+            
+            <Card className="border-purple-500/20 bg-gradient-to-br from-purple-500/5 to-transparent hover:shadow-lg transition-all">
+              <CardContent className="p-5 sm:p-6 text-center">
+                <div className="w-14 h-14 mx-auto rounded-full bg-purple-500/10 flex items-center justify-center mb-4">
+                  <Target className="h-7 w-7 text-purple-500" />
+                </div>
+                <h3 className="text-lg font-semibold mb-2">Estrutura e Método</h3>
+                <p className="text-muted-foreground text-sm">
+                  Transforme intenções em ações repetíveis e mensuráveis.
+                </p>
+              </CardContent>
+            </Card>
+            
+            <Card className="border-emerald-500/20 bg-gradient-to-br from-emerald-500/5 to-transparent hover:shadow-lg transition-all">
+              <CardContent className="p-5 sm:p-6 text-center">
+                <div className="w-14 h-14 mx-auto rounded-full bg-emerald-500/10 flex items-center justify-center mb-4">
+                  <TrendingUp className="h-7 w-7 text-emerald-500" />
+                </div>
+                <h3 className="text-lg font-semibold mb-2">Acompanhamento Contínuo</h3>
+                <p className="text-muted-foreground text-sm">
+                  Utilize tecnologia e processos do método para manter evolução consistente.
+                </p>
+              </CardContent>
+            </Card>
+            
+            <Card className="border-orange-500/20 bg-gradient-to-br from-orange-500/5 to-transparent hover:shadow-lg transition-all">
+              <CardContent className="p-5 sm:p-6 text-center">
+                <div className="w-14 h-14 mx-auto rounded-full bg-orange-500/10 flex items-center justify-center mb-4">
+                  <User className="h-7 w-7 text-orange-500" />
+                </div>
+                <h3 className="text-lg font-semibold mb-2">Protagonismo do Usuário</h3>
+                <p className="text-muted-foreground text-sm">
+                  Você conduz sua própria jornada, com suporte e método ao seu lado.
+                </p>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </section>
+
+      {/* O que você ganha com o SEPP */}
+      <section className="py-12 sm:py-16 px-4 bg-muted/30">
+        <div className="container mx-auto max-w-6xl">
+          <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
+            <div className="text-center lg:text-left">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-6">
+                O que você ganha com o SEPP
+              </h2>
+              <ul className="space-y-4 text-left">
+                <li className="flex items-start gap-3">
+                  <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <Check className="h-4 w-4 text-primary" />
+                  </div>
+                  <span className="text-base sm:text-lg text-foreground">Clareza e direção em sua carreira e vida pessoal</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <Check className="h-4 w-4 text-primary" />
+                  </div>
+                  <span className="text-base sm:text-lg text-foreground">Transformação de objetivos em ações mensuráveis</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <Check className="h-4 w-4 text-primary" />
+                  </div>
+                  <span className="text-base sm:text-lg text-foreground">Redução de confusão, procrastinação e decisões dispersas</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <Check className="h-4 w-4 text-primary" />
+                  </div>
+                  <span className="text-base sm:text-lg text-foreground">Evolução contínua e sustentável</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <Check className="h-4 w-4 text-primary" />
+                  </div>
+                  <span className="text-base sm:text-lg text-foreground">Aplicação prática do método com suporte de tecnologia</span>
+                </li>
+              </ul>
+            </div>
+            <div className="hidden lg:block">
+              <img 
+                src={growthStairs} 
+                alt="Ilustração representando progresso e crescimento" 
+                className="rounded-2xl shadow-xl w-full h-auto object-cover"
+              />
             </div>
           </div>
         </div>
@@ -795,103 +918,39 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Pricing Section */}
-      <section id="planos" className="py-12 sm:py-20 px-4 bg-muted/20">
-        <div className="container mx-auto max-w-6xl">
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center mb-3 sm:mb-4">
-            Escolha seu plano
-          </h2>
-          <p className="text-muted-foreground text-center mb-8 sm:mb-12 max-w-xl mx-auto text-sm sm:text-base">
-            Invista em você. O retorno é para a vida toda.
-          </p>
+      {/* Planos - OCULTADOS TEMPORARIAMENTE */}
+      {/* Seção de planos ocultada por solicitação */}
 
-          {/* Individual Plans */}
-          <div className="mb-12 sm:mb-16">
-            <h3 className="text-lg sm:text-xl font-semibold text-center mb-6 sm:mb-8 flex items-center justify-center gap-2">
-              <User className="h-5 w-5 text-primary" />
-              Para Pessoas Físicas
-            </h3>
-            <div className="grid md:grid-cols-3 gap-4 sm:gap-6">
-              {individualPlans.map((plan, index) => (
-                <Card 
-                  key={index}
-                  className={`relative overflow-hidden transition-all ${
-                    plan.highlight 
-                      ? 'border-primary shadow-lg scale-[1.02]' 
-                      : 'border-border/50 hover:border-primary/30'
-                  } ${plan.disabled ? 'opacity-60' : ''}`}
-                >
-                  {plan.badge && (
-                    <div className={`absolute top-0 right-0 px-3 py-1 text-xs font-medium rounded-bl-lg ${
-                      plan.highlight ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'
-                    }`}>
-                      {plan.badge}
-                    </div>
-                  )}
-                  <CardHeader className="pb-2">
-                    <CardTitle className="text-xl sm:text-2xl">{plan.name}</CardTitle>
-                    <CardDescription className="text-xs sm:text-sm">{plan.description}</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="mb-4 sm:mb-6">
-                      <span className="text-3xl sm:text-4xl font-bold">{plan.price}</span>
-                      <span className="text-muted-foreground text-sm">{plan.period}</span>
-                    </div>
-                    <ul className="space-y-2 sm:space-y-3 mb-4 sm:mb-6">
-                      {plan.features.map((feature, i) => (
-                        <li key={i} className="flex items-start gap-2 text-xs sm:text-sm">
-                          <Check className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
-                          <span>{feature}</span>
-                        </li>
-                      ))}
-                    </ul>
-                    <Button 
-                      className="w-full text-sm sm:text-base"
-                      variant={plan.variant}
-                      disabled={plan.disabled}
-                      onClick={() => !plan.disabled && handlePlanClick(plan.name)}
-                    >
-                      {plan.cta}
-                    </Button>
-                  </CardContent>
-                </Card>
-              ))}
+      {/* Flash Promotion Banner */}
+      <section id="planos" className="py-12 sm:py-16 px-4 bg-muted/30">
+        <div className="container mx-auto max-w-4xl">
+          <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-amber-500 via-orange-500 to-red-500 p-[2px]">
+            <div className="relative bg-background rounded-2xl p-6 sm:p-8 text-center">
+              <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-amber-500 via-orange-500 to-red-500 animate-pulse" />
+              <h3 className="text-xl sm:text-2xl md:text-3xl font-bold mb-2 bg-gradient-to-r from-amber-600 via-orange-500 to-red-500 bg-clip-text text-transparent">
+                Plano Gratuito com TODAS as funções liberadas!
+              </h3>
+              <p className="text-muted-foreground text-sm sm:text-base max-w-2xl mx-auto mb-4">
+                Para os <strong className="text-foreground">primeiros 100 usuários</strong>, liberamos acesso completo por <strong className="text-foreground">1 ano</strong> a todas as ferramentas, 
+                PDI ilimitado e recursos premium. Aproveite antes que acabe!
+              </p>
+              <Button 
+                size="lg"
+                onClick={() => handlePlanClick('gratuito')}
+                className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-semibold text-sm sm:text-base"
+              >
+                Começar grátis agora
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Button>
             </div>
           </div>
+        </div>
+      </section>
 
-          {/* Flash Promotion Banner */}
-          <div className="mb-12 sm:mb-16">
-            <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-amber-500 via-orange-500 to-red-500 p-[2px]">
-              <div className="relative bg-background rounded-2xl p-6 sm:p-8 text-center">
-                <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-amber-500 via-orange-500 to-red-500 animate-pulse" />
-                <div className="flex items-center justify-center gap-2 mb-3">
-                  <Zap className="h-6 w-6 sm:h-8 sm:w-8 text-amber-500 animate-pulse" />
-                  <Badge className="bg-gradient-to-r from-amber-500 to-orange-500 text-white border-0 text-sm sm:text-base px-3 py-1">
-                    ⚡ PROMOÇÃO RELÂMPAGO ⚡
-                  </Badge>
-                  <Zap className="h-6 w-6 sm:h-8 sm:w-8 text-amber-500 animate-pulse" />
-                </div>
-                <h3 className="text-xl sm:text-2xl md:text-3xl font-bold mb-2 bg-gradient-to-r from-amber-600 via-orange-500 to-red-500 bg-clip-text text-transparent">
-                  Plano Gratuito com TODAS as funções liberadas!
-                </h3>
-                <p className="text-muted-foreground text-sm sm:text-base max-w-2xl mx-auto mb-4">
-                  Para os <strong className="text-foreground">primeiros 100 usuários</strong>, liberamos acesso completo por <strong className="text-foreground">1 ano</strong> a todas as ferramentas, 
-                  PDI ilimitado e recursos premium. Aproveite antes que acabe!
-                </p>
-                <Button 
-                  size="lg"
-                  onClick={() => handlePlanClick('gratuito')}
-                  className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-semibold text-sm sm:text-base"
-                >
-                  Começar grátis agora
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </Button>
-              </div>
-            </div>
-          </div>
-
-          {/* CTA Empresas */}
-          <div className="mt-12 sm:mt-16 relative overflow-hidden rounded-2xl bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-700 p-6 sm:p-10">
+      {/* CTA Empresas */}
+      <section className="py-12 sm:py-16 px-4 bg-muted/20">
+        <div className="container mx-auto max-w-4xl">
+          <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-700 p-6 sm:p-10">
             <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC4wNSI+PHBhdGggZD0iTTM2IDM0djItSDI0di0yaDEyek0zNiAzMHYySDI0di0yaDEyek0zNiAyNnYySDI0di0yaDEyeiIvPjwvZz48L2c+PC9zdmc+')] opacity-30" />
             <div className="relative z-10 text-center text-white">
               <div className="flex items-center justify-center gap-2 mb-4">
