@@ -399,64 +399,50 @@ const Signup = () => {
 
             {/* Plano Básico */}
             <Card 
-              className="border-2 border-primary hover:shadow-lg transition-all cursor-pointer group relative overflow-hidden"
-              onClick={!isCheckoutLoading ? handleSelectBasicPlan : undefined}
+              className="border-2 border-muted opacity-70 relative overflow-hidden"
             >
-              <div className="absolute top-0 right-0 bg-green-500 text-white text-xs px-3 py-1 rounded-bl-lg font-medium animate-pulse">
-                🎉 Promoção de lançamento!
-              </div>
               <CardHeader className="pb-3">
                 <div className="flex items-center gap-2">
-                  <Sparkles className="h-5 w-5 text-primary" />
-                  <CardTitle className="text-lg">Básico</CardTitle>
+                  <Sparkles className="h-5 w-5 text-muted-foreground" />
+                  <CardTitle className="text-lg text-muted-foreground">Básico</CardTitle>
                 </div>
-                <div className="text-2xl font-bold">
-                  R$ 14,90<span className="text-sm font-normal text-muted-foreground">/mês</span>
+                <div className="text-2xl font-bold text-muted-foreground">
+                  R$ 14,90<span className="text-sm font-normal">/mês</span>
                 </div>
               </CardHeader>
-              <CardContent className="space-y-2 text-sm">
+              <CardContent className="space-y-2 text-sm text-muted-foreground">
                 <div className="space-y-1.5">
                   <div className="flex items-start gap-2">
-                    <Check className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
+                    <Check className="h-4 w-4 mt-0.5 flex-shrink-0" />
                     <span>Dashboard "Seu Progresso"</span>
                   </div>
                   <div className="flex items-start gap-2">
-                    <Check className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
+                    <Check className="h-4 w-4 mt-0.5 flex-shrink-0" />
                     <span>1 insight por mês</span>
                   </div>
                   <div className="flex items-start gap-2">
-                    <Check className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
+                    <Check className="h-4 w-4 mt-0.5 flex-shrink-0" />
                     <span>Diário completo</span>
                   </div>
                   <div className="flex items-start gap-2">
-                    <Check className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
+                    <Check className="h-4 w-4 mt-0.5 flex-shrink-0" />
                     <span>Plano de Vida ilimitado</span>
                   </div>
                   <div className="flex items-start gap-2">
-                    <Check className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
+                    <Check className="h-4 w-4 mt-0.5 flex-shrink-0" />
                     <span>Todas as ferramentas ilimitadas</span>
                   </div>
                   <div className="flex items-start gap-2">
-                    <Check className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
+                    <Check className="h-4 w-4 mt-0.5 flex-shrink-0" />
                     <span>Integração Google Calendar</span>
                   </div>
                   <div className="flex items-start gap-2">
-                    <Check className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
+                    <Check className="h-4 w-4 mt-0.5 flex-shrink-0" />
                     <span>Construção Guiada</span>
                   </div>
                 </div>
-                <Button 
-                  className="w-full mt-4 bg-green-500 hover:bg-green-600 group-hover:bg-green-600"
-                  disabled={isCheckoutLoading}
-                >
-                  {isCheckoutLoading ? (
-                    <>
-                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                      Processando...
-                    </>
-                  ) : (
-                    "Assinar agora"
-                  )}
+                <Button variant="outline" className="w-full mt-4" disabled>
+                  Em breve
                 </Button>
                 <p className="text-xs text-center text-muted-foreground mt-2">
                   acesso ilimitado* a todas funcionalidades
@@ -526,7 +512,7 @@ const Signup = () => {
           </div>
           <div className="bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-800 rounded-lg p-3 text-center">
             <p className="text-sm font-medium text-green-700 dark:text-green-300">
-              🚀 Promoção de lançamento: acesso do plano completo liberado no Plano Básico por apenas R$ 14,90/mês!
+              🚀 Promoção de lançamento: acesso do plano completo liberado no Plano Gratuito para os primeiros 100 assinantes, por 1 ano!
             </p>
           </div>
         </DialogContent>
