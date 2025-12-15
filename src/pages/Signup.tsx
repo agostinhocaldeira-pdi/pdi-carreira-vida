@@ -364,7 +364,7 @@ const Signup = () => {
                 <div className="space-y-1.5">
                   <div className="flex items-start gap-2">
                     <Check className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
-                    <span>Acesso por 30 dias</span>
+                    <span><span className="line-through text-muted-foreground">30 dias</span> <strong className="text-primary">1 ANO</strong></span>
                   </div>
                   <div className="flex items-start gap-2">
                     <Check className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
