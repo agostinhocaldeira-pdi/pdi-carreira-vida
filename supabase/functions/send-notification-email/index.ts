@@ -105,7 +105,38 @@ const generateGoalDeadlineHtml = (name: string, goals: any[], isExpired: boolean
 </html>
 `;
 
-const generateWeeklySummaryHtml = (name: string, data: any): string => `
+const generateWeeklySummaryHtml = (name: string, data: any): string => {
+  const progress = data.progress || { objectives: { total: 0, completed: 0 }, goals: { total: 0, completed: 0 }, actions: { total: 0, completed: 0 } };
+  const moodSummary = data.moodSummary || { feliz: 0, neutro: 0, triste: 0 };
+  const totalMoodEntries = data.totalMoodEntries || 0;
+  const newObjectives = data.newObjectivesThisWeek || [];
+  const newGoals = data.newGoalsThisWeek || [];
+
+  // Calculate percentages
+  const objPercent = progress.objectives.total > 0 ? Math.round((progress.objectives.completed / progress.objectives.total) * 100) : 0;
+  const goalPercent = progress.goals.total > 0 ? Math.round((progress.goals.completed / progress.goals.total) * 100) : 0;
+  const actionPercent = progress.actions.total > 0 ? Math.round((progress.actions.completed / progress.actions.total) * 100) : 0;
+
+  // Mood percentages
+  const moodFelizPercent = totalMoodEntries > 0 ? Math.round((moodSummary.feliz / totalMoodEntries) * 100) : 0;
+  const moodNeutroPercent = totalMoodEntries > 0 ? Math.round((moodSummary.neutro / totalMoodEntries) * 100) : 0;
+  const moodTristePercent = totalMoodEntries > 0 ? Math.round((moodSummary.triste / totalMoodEntries) * 100) : 0;
+
+  // Mood message
+  let moodMessage = '';
+  if (totalMoodEntries === 0) {
+    moodMessage = 'Nenhum registro de humor esta semana. Que tal começar a registrar?';
+  } else if (moodFelizPercent >= 60) {
+    moodMessage = '🌟 Excelente semana! Você esteve predominantemente feliz. Continue cultivando o que te faz bem!';
+  } else if (moodFelizPercent >= 40) {
+    moodMessage = '👍 Semana equilibrada! Bons momentos intercalados com desafios. Faz parte da jornada!';
+  } else if (moodTristePercent >= 50) {
+    moodMessage = '💪 Semana desafiadora. Lembre-se: dias difíceis passam. Cuide-se e busque apoio se precisar.';
+  } else {
+    moodMessage = '📊 Semana com variações de humor. Observe os padrões para entender o que influencia seu bem-estar.';
+  }
+
+  return `
 <!DOCTYPE html>
 <html>
 <head>
@@ -117,28 +148,56 @@ const generateWeeklySummaryHtml = (name: string, data: any): string => `
     .header h1 { margin: 0; font-size: 24px; }
     .content { padding: 30px; }
     .content p { color: #333; line-height: 1.6; margin-bottom: 15px; }
-    .stat-box { display: inline-block; background: #f0fff4; border: 1px solid #38ef7d; padding: 15px 20px; margin: 5px; border-radius: 8px; text-align: center; }
+    .section-title { font-size: 18px; font-weight: bold; color: #11998e; margin: 25px 0 15px 0; border-bottom: 2px solid #38ef7d; padding-bottom: 8px; }
+    .stat-box { display: inline-block; background: #f0fff4; border: 1px solid #38ef7d; padding: 15px 20px; margin: 5px; border-radius: 8px; text-align: center; min-width: 100px; }
     .stat-number { font-size: 28px; font-weight: bold; color: #11998e; }
     .stat-label { font-size: 12px; color: #666; }
+    .progress-section { background: #f8fffe; border-radius: 8px; padding: 20px; margin: 15px 0; }
+    .progress-row { display: flex; justify-content: space-between; align-items: center; margin: 12px 0; }
+    .progress-label { font-weight: 500; color: #333; flex: 1; }
+    .progress-bar-container { flex: 2; background: #e0e0e0; border-radius: 10px; height: 20px; margin: 0 15px; overflow: hidden; }
+    .progress-bar { height: 100%; border-radius: 10px; transition: width 0.3s; }
+    .progress-bar.objectives { background: linear-gradient(90deg, #667eea, #764ba2); }
+    .progress-bar.goals { background: linear-gradient(90deg, #f093fb, #f5576c); }
+    .progress-bar.actions { background: linear-gradient(90deg, #11998e, #38ef7d); }
+    .progress-value { font-weight: bold; color: #333; min-width: 80px; text-align: right; }
+    .mood-section { background: #fff9f0; border-radius: 8px; padding: 20px; margin: 15px 0; }
+    .mood-bar-container { display: flex; height: 30px; border-radius: 8px; overflow: hidden; margin: 15px 0; }
+    .mood-bar { display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 12px; }
+    .mood-feliz { background: #4ade80; }
+    .mood-neutro { background: #facc15; }
+    .mood-triste { background: #f87171; }
+    .mood-legend { display: flex; justify-content: center; gap: 20px; margin-top: 10px; }
+    .mood-legend-item { display: flex; align-items: center; gap: 5px; font-size: 12px; color: #666; }
+    .mood-dot { width: 12px; height: 12px; border-radius: 50%; }
+    .mood-message { background: #fffbeb; border-left: 4px solid #facc15; padding: 12px 15px; margin: 15px 0; border-radius: 0 8px 8px 0; font-style: italic; color: #666; }
+    .new-items-section { background: #f0f7ff; border-radius: 8px; padding: 20px; margin: 15px 0; }
+    .new-item { background: white; border-left: 4px solid #667eea; padding: 10px 15px; margin: 8px 0; border-radius: 0 8px 8px 0; }
+    .new-item strong { color: #667eea; }
+    .new-item small { color: #888; }
     .cta-button { display: inline-block; background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); color: white; padding: 14px 28px; text-decoration: none; border-radius: 8px; font-weight: bold; margin-top: 20px; }
     .footer { background: #f8f8f8; padding: 20px; text-align: center; color: #888; font-size: 12px; }
+    .streak-badge { display: inline-block; background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; padding: 5px 12px; border-radius: 20px; font-size: 14px; margin: 5px; }
   </style>
 </head>
 <body>
   <div class="container">
     <div class="header">
       <h1>📊 Resumo Semanal</h1>
+      <p style="margin: 10px 0 0 0; opacity: 0.9;">Semana de ${new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toLocaleDateString('pt-BR')} a ${new Date().toLocaleDateString('pt-BR')}</p>
     </div>
     <div class="content">
       <p>Olá, <strong>${name}</strong>!</p>
-      <p>Aqui está seu resumo da semana:</p>
+      <p>Aqui está o resumo completo da sua semana no PDI - Carreira & Vida:</p>
+      
+      <!-- Resumo Rápido -->
       <center>
         <div class="stat-box">
           <div class="stat-number">${data.diaryEntries || 0}</div>
           <div class="stat-label">Dias registrados</div>
         </div>
         <div class="stat-box">
-          <div class="stat-number">${data.actionsCompleted || 0}</div>
+          <div class="stat-number">${data.actionsCompletedThisWeek || 0}</div>
           <div class="stat-label">Ações concluídas</div>
         </div>
         <div class="stat-box">
@@ -146,18 +205,103 @@ const generateWeeklySummaryHtml = (name: string, data: any): string => `
           <div class="stat-label">Dias de streak</div>
         </div>
       </center>
-      <p style="margin-top: 25px;">Continue assim! Cada pequeno passo conta para alcançar seus objetivos.</p>
+
+      ${data.currentStreak >= 7 ? `
+      <center style="margin-top: 15px;">
+        <span class="streak-badge">🔥 ${data.currentStreak} dias consecutivos!</span>
+        ${data.longestStreak > data.currentStreak ? `<span class="streak-badge">🏆 Recorde: ${data.longestStreak} dias</span>` : ''}
+      </center>
+      ` : ''}
+
+      <!-- Seu Progresso -->
+      <div class="section-title">📈 Seu Progresso</div>
+      <div class="progress-section">
+        <div class="progress-row">
+          <span class="progress-label">🎯 Objetivos</span>
+          <div class="progress-bar-container">
+            <div class="progress-bar objectives" style="width: ${objPercent}%"></div>
+          </div>
+          <span class="progress-value">${progress.objectives.completed}/${progress.objectives.total} (${objPercent}%)</span>
+        </div>
+        <div class="progress-row">
+          <span class="progress-label">📊 Metas</span>
+          <div class="progress-bar-container">
+            <div class="progress-bar goals" style="width: ${goalPercent}%"></div>
+          </div>
+          <span class="progress-value">${progress.goals.completed}/${progress.goals.total} (${goalPercent}%)</span>
+        </div>
+        <div class="progress-row">
+          <span class="progress-label">⚡ Ações</span>
+          <div class="progress-bar-container">
+            <div class="progress-bar actions" style="width: ${actionPercent}%"></div>
+          </div>
+          <span class="progress-value">${progress.actions.completed}/${progress.actions.total} (${actionPercent}%)</span>
+        </div>
+      </div>
+
+      <!-- Resumo de Humor -->
+      <div class="section-title">😊 Resumo de Humor da Semana</div>
+      <div class="mood-section">
+        ${totalMoodEntries > 0 ? `
+        <div class="mood-bar-container">
+          ${moodFelizPercent > 0 ? `<div class="mood-bar mood-feliz" style="width: ${moodFelizPercent}%">${moodFelizPercent}%</div>` : ''}
+          ${moodNeutroPercent > 0 ? `<div class="mood-bar mood-neutro" style="width: ${moodNeutroPercent}%">${moodNeutroPercent}%</div>` : ''}
+          ${moodTristePercent > 0 ? `<div class="mood-bar mood-triste" style="width: ${moodTristePercent}%">${moodTristePercent}%</div>` : ''}
+        </div>
+        <div class="mood-legend">
+          <div class="mood-legend-item"><div class="mood-dot" style="background: #4ade80;"></div> Feliz (${moodSummary.feliz})</div>
+          <div class="mood-legend-item"><div class="mood-dot" style="background: #facc15;"></div> Neutro (${moodSummary.neutro})</div>
+          <div class="mood-legend-item"><div class="mood-dot" style="background: #f87171;"></div> Triste (${moodSummary.triste})</div>
+        </div>
+        ` : '<p style="text-align: center; color: #888;">Nenhum registro de humor esta semana</p>'}
+        <div class="mood-message">${moodMessage}</div>
+      </div>
+
+      <!-- Novos Cadastros da Semana -->
+      ${(newObjectives.length > 0 || newGoals.length > 0) ? `
+      <div class="section-title">✨ Novos Cadastros da Semana</div>
+      <div class="new-items-section">
+        ${newObjectives.length > 0 ? `
+        <p style="margin: 0 0 10px 0; font-weight: bold; color: #667eea;">🎯 Novos Objetivos (${newObjectives.length})</p>
+        ${newObjectives.map((o: any) => `
+          <div class="new-item">
+            <strong>${o.texto}</strong><br>
+            <small>Prazo: ${o.data_alvo ? new Date(o.data_alvo).toLocaleDateString('pt-BR') : 'Não definido'}</small>
+          </div>
+        `).join('')}
+        ` : ''}
+        ${newGoals.length > 0 ? `
+        <p style="margin: ${newObjectives.length > 0 ? '20px' : '0'} 0 10px 0; font-weight: bold; color: #f5576c;">📊 Novas Metas (${newGoals.length})</p>
+        ${newGoals.map((g: any) => `
+          <div class="new-item" style="border-color: #f5576c;">
+            <strong style="color: #f5576c;">${g.texto}</strong><br>
+            <small>Prazo: ${g.data_alvo ? new Date(g.data_alvo).toLocaleDateString('pt-BR') : 'Não definido'}</small>
+          </div>
+        `).join('')}
+        ` : ''}
+      </div>
+      ` : ''}
+
+      <!-- Mensagem Motivacional -->
+      <div style="background: linear-gradient(135deg, #f0fff4 0%, #f0f7ff 100%); border-radius: 8px; padding: 20px; margin: 20px 0; text-align: center;">
+        <p style="margin: 0; font-size: 16px; color: #333;">
+          ${progress.actions.completed > 0 ? '🎉 Parabéns pelas ações concluídas! Cada passo conta para alcançar seus objetivos.' : '💡 Que tal começar a semana definindo pequenas ações para seus objetivos?'}
+        </p>
+      </div>
+
       <center>
-        <a href="https://www.pdicarreiraevida.com.br/home" class="cta-button">Ver meu Progresso</a>
+        <a href="https://www.pdicarreiraevida.com.br/home" class="cta-button">Ver meu Progresso Completo</a>
       </center>
     </div>
     <div class="footer">
       <p>Este email foi enviado automaticamente pelo PDI - Carreira & Vida.</p>
+      <p>Nível ${data.level || 1} • ${data.totalPoints || 0} pontos acumulados</p>
     </div>
   </div>
 </body>
 </html>
 `;
+};
 
 const handler = async (req: Request): Promise<Response> => {
   if (req.method === "OPTIONS") {
