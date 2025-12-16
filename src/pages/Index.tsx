@@ -221,29 +221,27 @@ const Index = () => {
 
       {/* Hero Section */}
       <section className="pt-28 sm:pt-32 pb-12 sm:pb-16 px-4">
-        <div className="container mx-auto max-w-6xl">
-          <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
-            <div className="text-center lg:text-left">
-              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-5xl font-bold mb-4 sm:mb-6 bg-gradient-to-r from-primary via-purple-500 to-pink-500 bg-clip-text text-transparent leading-tight">
-                Transforme seus objetivos em ações práticas e evolução contínua.
-              </h1>
-              <p className="text-base sm:text-lg md:text-xl text-muted-foreground mb-6 sm:mb-8">
-                O sistema PDI - Carreira e Vida conta com o Método SEPP para você organizar sua vida e carreira com clareza, decisão e consistência — sem atalhos ou promessas vazias.
-              </p>
-              <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center lg:justify-start">
-                <Button 
-                  size="lg" 
-                  onClick={() => handlePlanClick('gratuito')}
-                  className="text-base sm:text-lg px-6 sm:px-8 py-5 sm:py-6 bg-primary hover:bg-primary/90"
-                >
-                  Comece sua evolução hoje
-                  <ArrowRight className="ml-2 h-5 w-5" />
-                </Button>
-              </div>
-              <p className="text-xs sm:text-sm text-muted-foreground mt-4">
-                Comece grátis. Sem cartão de crédito.
-              </p>
+        <div className="container mx-auto max-w-4xl">
+          <div className="text-center">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-5xl font-bold mb-4 sm:mb-6 bg-gradient-to-r from-primary via-purple-500 to-pink-500 bg-clip-text text-transparent leading-tight">
+              Transforme seus objetivos em ações práticas e evolução contínua.
+            </h1>
+            <p className="text-base sm:text-lg md:text-xl text-muted-foreground mb-6 sm:mb-8 max-w-3xl mx-auto">
+              O sistema PDI - Carreira e Vida conta com o Método SEPP para você organizar sua vida e carreira com clareza, decisão e consistência — sem atalhos ou promessas vazias.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center">
+              <Button 
+                size="lg" 
+                onClick={() => handlePlanClick('gratuito')}
+                className="text-base sm:text-lg px-6 sm:px-8 py-5 sm:py-6 bg-primary hover:bg-primary/90"
+              >
+                Comece sua evolução hoje
+                <ArrowRight className="ml-2 h-5 w-5" />
+              </Button>
             </div>
+            <p className="text-xs sm:text-sm text-muted-foreground mt-4">
+              Comece grátis. Sem cartão de crédito.
+            </p>
           </div>
         </div>
       </section>
