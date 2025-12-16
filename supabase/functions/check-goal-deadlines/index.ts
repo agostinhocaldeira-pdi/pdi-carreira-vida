@@ -98,9 +98,19 @@ serve(async (req) => {
 
     console.log(`Sending expired deadline notifications to ${notificationsToSend.length} users`);
 
-    // Send notifications
+    // Helper function to add delay between requests
+    const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+
+    // Send notifications with delay to avoid rate limiting
     const results = [];
-    for (const notification of notificationsToSend) {
+    for (let i = 0; i < notificationsToSend.length; i++) {
+      const notification = notificationsToSend[i];
+      
+      // Add 600ms delay between requests (Resend allows 2/sec)
+      if (i > 0) {
+        await delay(600);
+      }
+      
       try {
         const response = await fetch(`${supabaseUrl}/functions/v1/send-notification-email`, {
           method: "POST",
