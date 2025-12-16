@@ -102,9 +102,19 @@ serve(async (req) => {
 
     console.log(`Sending reminders to ${remindersToSend.length} users`);
 
-    // Send reminders
+    // Helper function to add delay between requests
+    const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+
+    // Send reminders with delay to avoid rate limiting
     const results = [];
-    for (const reminder of remindersToSend) {
+    for (let i = 0; i < remindersToSend.length; i++) {
+      const reminder = remindersToSend[i];
+      
+      // Add 600ms delay between requests (Resend allows 2/sec)
+      if (i > 0) {
+        await delay(600);
+      }
+      
       try {
         const response = await fetch(`${supabaseUrl}/functions/v1/send-notification-email`, {
           method: "POST",
