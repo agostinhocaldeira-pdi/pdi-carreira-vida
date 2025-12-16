@@ -16,57 +16,87 @@ serve(async (req) => {
     const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const supabase = createClient(supabaseUrl, supabaseKey);
 
-    console.log("Checking for users who need diary reminders...");
+    console.log("Checking for users who need diary reminders (2+ days inactive)...");
 
-    // Get all users with notification preferences enabled
-    const { data: preferences, error: prefError } = await supabase
+    // Get ALL users from auth.users
+    const { data: authData, error: authError } = await supabase.auth.admin.listUsers();
+
+    if (authError) {
+      console.error("Error fetching users:", authError);
+      throw authError;
+    }
+
+    const allUsers = authData?.users || [];
+    console.log(`Found ${allUsers.length} total users`);
+
+    // Check which users have opted OUT of diary reminders
+    const { data: optedOutPrefs, error: prefError } = await supabase
       .from("user_notification_preferences")
-      .select("user_id, diary_reminder_enabled, email_enabled")
-      .eq("diary_reminder_enabled", true)
-      .eq("email_enabled", true);
+      .select("user_id")
+      .eq("diary_reminder_enabled", false);
 
     if (prefError) {
       console.error("Error fetching preferences:", prefError);
-      throw prefError;
     }
 
-    console.log(`Found ${preferences?.length || 0} users with diary reminders enabled`);
+    const optedOutUserIds = new Set((optedOutPrefs || []).map(p => p.user_id));
+    console.log(`${optedOutUserIds.size} users have opted out of diary reminders`);
 
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-    const threeDaysAgo = new Date(today);
-    threeDaysAgo.setDate(threeDaysAgo.getDate() - 3);
+    const twoDaysAgo = new Date(today);
+    twoDaysAgo.setDate(twoDaysAgo.getDate() - 2);
 
-    const remindersToSend: { userId: string; daysInactive: number }[] = [];
+    const remindersToSend: { userId: string; email: string; daysInactive: number }[] = [];
 
-    for (const pref of preferences || []) {
+    for (const user of allUsers) {
+      // Skip users who opted out
+      if (optedOutUserIds.has(user.id)) {
+        console.log(`User ${user.email} opted out of diary reminders, skipping`);
+        continue;
+      }
+
       // Check last diary entry for this user
       const { data: lastEntry, error: entryError } = await supabase
         .from("diary_entries")
         .select("entry_date")
-        .eq("user_id", pref.user_id)
+        .eq("user_id", user.id)
         .order("entry_date", { ascending: false })
         .limit(1)
         .single();
 
       if (entryError && entryError.code !== "PGRST116") {
-        console.error(`Error fetching diary for user ${pref.user_id}:`, entryError);
+        console.error(`Error fetching diary for user ${user.email}:`, entryError);
         continue;
       }
 
       let daysInactive = 0;
 
       if (!lastEntry) {
-        // User never wrote a diary entry
-        daysInactive = 999;
+        // User never wrote a diary entry - check account creation date
+        const createdAt = new Date(user.created_at);
+        createdAt.setHours(0, 0, 0, 0);
+        daysInactive = Math.floor((today.getTime() - createdAt.getTime()) / (1000 * 60 * 60 * 24));
+        
+        // Only remind if account is at least 2 days old
+        if (daysInactive < 2) {
+          console.log(`User ${user.email} is new (${daysInactive} days), skipping`);
+          continue;
+        }
       } else {
         const lastEntryDate = new Date(lastEntry.entry_date);
         lastEntryDate.setHours(0, 0, 0, 0);
         daysInactive = Math.floor((today.getTime() - lastEntryDate.getTime()) / (1000 * 60 * 60 * 24));
       }
 
-      if (daysInactive >= 3) {
-        remindersToSend.push({ userId: pref.user_id, daysInactive });
+      // Send reminder if inactive for 2+ days
+      if (daysInactive >= 2) {
+        remindersToSend.push({ 
+          userId: user.id, 
+          email: user.email || '',
+          daysInactive 
+        });
+        console.log(`User ${user.email} inactive for ${daysInactive} days, will send reminder`);
       }
     }
 
@@ -85,23 +115,25 @@ serve(async (req) => {
           body: JSON.stringify({
             type: "diary_reminder",
             userId: reminder.userId,
+            email: reminder.email,
             data: { daysInactive: reminder.daysInactive },
           }),
         });
 
         const result = await response.json();
-        results.push({ userId: reminder.userId, success: result.success });
-        console.log(`Reminder sent to ${reminder.userId}:`, result.success);
+        results.push({ userId: reminder.userId, email: reminder.email, success: result.success });
+        console.log(`Reminder sent to ${reminder.email}:`, result.success);
       } catch (error) {
-        console.error(`Error sending reminder to ${reminder.userId}:`, error);
-        results.push({ userId: reminder.userId, success: false, error: String(error) });
+        console.error(`Error sending reminder to ${reminder.email}:`, error);
+        results.push({ userId: reminder.userId, email: reminder.email, success: false, error: String(error) });
       }
     }
 
     return new Response(
       JSON.stringify({
         success: true,
-        checked: preferences?.length || 0,
+        totalUsers: allUsers.length,
+        optedOut: optedOutUserIds.size,
         remindersSent: remindersToSend.length,
         results,
       }),

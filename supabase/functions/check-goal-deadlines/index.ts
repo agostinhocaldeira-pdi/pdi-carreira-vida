@@ -16,72 +16,87 @@ serve(async (req) => {
     const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const supabase = createClient(supabaseUrl, supabaseKey);
 
-    console.log("Checking for users with upcoming goal deadlines...");
+    console.log("Checking for users with EXPIRED goals and objectives...");
 
-    // Get all users with goal deadline notifications enabled
-    const { data: preferences, error: prefError } = await supabase
+    // Get ALL users from auth.users
+    const { data: authData, error: authError } = await supabase.auth.admin.listUsers();
+
+    if (authError) {
+      console.error("Error fetching users:", authError);
+      throw authError;
+    }
+
+    const allUsers = authData?.users || [];
+    console.log(`Found ${allUsers.length} total users`);
+
+    // Check which users have opted OUT of goal deadline reminders
+    const { data: optedOutPrefs, error: prefError } = await supabase
       .from("user_notification_preferences")
-      .select("user_id, goal_deadline_reminder, goal_deadline_days_before, email_enabled")
-      .eq("goal_deadline_reminder", true)
-      .eq("email_enabled", true);
+      .select("user_id")
+      .eq("goal_deadline_reminder", false);
 
     if (prefError) {
       console.error("Error fetching preferences:", prefError);
-      throw prefError;
     }
 
-    console.log(`Found ${preferences?.length || 0} users with goal deadline reminders enabled`);
+    const optedOutUserIds = new Set((optedOutPrefs || []).map(p => p.user_id));
+    console.log(`${optedOutUserIds.size} users have opted out of deadline reminders`);
 
     const today = new Date();
     today.setHours(0, 0, 0, 0);
+    const todayStr = today.toISOString().split('T')[0];
 
-    const notificationsToSend: { userId: string; goals: any[] }[] = [];
+    const notificationsToSend: { userId: string; email: string; expiredItems: any[] }[] = [];
 
-    for (const pref of preferences || []) {
-      const daysBefore = pref.goal_deadline_days_before || 3;
-      const targetDate = new Date(today);
-      targetDate.setDate(targetDate.getDate() + daysBefore);
-      const targetDateStr = targetDate.toISOString().split('T')[0];
+    for (const user of allUsers) {
+      // Skip users who opted out
+      if (optedOutUserIds.has(user.id)) {
+        console.log(`User ${user.email} opted out of deadline reminders, skipping`);
+        continue;
+      }
 
-      // Check goals (metas) with upcoming deadlines
-      const { data: upcomingGoals, error: goalsError } = await supabase
+      // Check goals (metas) with EXPIRED deadlines (past due and not completed)
+      const { data: expiredGoals, error: goalsError } = await supabase
         .from("user_goals")
         .select("id, texto, data_alvo, status")
-        .eq("user_id", pref.user_id)
+        .eq("user_id", user.id)
         .neq("status", "concluído")
-        .lte("data_alvo", targetDateStr)
-        .gte("data_alvo", today.toISOString().split('T')[0]);
+        .lt("data_alvo", todayStr);
 
       if (goalsError) {
-        console.error(`Error fetching goals for user ${pref.user_id}:`, goalsError);
+        console.error(`Error fetching goals for user ${user.email}:`, goalsError);
         continue;
       }
 
-      // Also check objectives with upcoming deadlines
-      const { data: upcomingObjectives, error: objError } = await supabase
+      // Also check objectives with EXPIRED deadlines
+      const { data: expiredObjectives, error: objError } = await supabase
         .from("user_objectives")
         .select("id, texto, data_alvo, status")
-        .eq("user_id", pref.user_id)
+        .eq("user_id", user.id)
         .neq("status", "concluído")
-        .lte("data_alvo", targetDateStr)
-        .gte("data_alvo", today.toISOString().split('T')[0]);
+        .lt("data_alvo", todayStr);
 
       if (objError) {
-        console.error(`Error fetching objectives for user ${pref.user_id}:`, objError);
+        console.error(`Error fetching objectives for user ${user.email}:`, objError);
         continue;
       }
 
-      const allUpcoming = [
-        ...(upcomingGoals || []).map(g => ({ ...g, type: 'meta' })),
-        ...(upcomingObjectives || []).map(o => ({ ...o, type: 'objetivo' }))
+      const allExpired = [
+        ...(expiredGoals || []).map(g => ({ ...g, type: 'meta' })),
+        ...(expiredObjectives || []).map(o => ({ ...o, type: 'objetivo' }))
       ];
 
-      if (allUpcoming.length > 0) {
-        notificationsToSend.push({ userId: pref.user_id, goals: allUpcoming });
+      if (allExpired.length > 0) {
+        notificationsToSend.push({ 
+          userId: user.id, 
+          email: user.email || '',
+          expiredItems: allExpired 
+        });
+        console.log(`User ${user.email} has ${allExpired.length} expired items`);
       }
     }
 
-    console.log(`Sending deadline notifications to ${notificationsToSend.length} users`);
+    console.log(`Sending expired deadline notifications to ${notificationsToSend.length} users`);
 
     // Send notifications
     const results = [];
@@ -96,23 +111,33 @@ serve(async (req) => {
           body: JSON.stringify({
             type: "goal_deadline",
             userId: notification.userId,
-            data: { goals: notification.goals },
+            email: notification.email,
+            data: { 
+              goals: notification.expiredItems,
+              isExpired: true 
+            },
           }),
         });
 
         const result = await response.json();
-        results.push({ userId: notification.userId, goalsCount: notification.goals.length, success: result.success });
-        console.log(`Deadline notification sent to ${notification.userId}:`, result.success);
+        results.push({ 
+          userId: notification.userId, 
+          email: notification.email,
+          itemsCount: notification.expiredItems.length, 
+          success: result.success 
+        });
+        console.log(`Expired deadline notification sent to ${notification.email}:`, result.success);
       } catch (error) {
-        console.error(`Error sending notification to ${notification.userId}:`, error);
-        results.push({ userId: notification.userId, success: false, error: String(error) });
+        console.error(`Error sending notification to ${notification.email}:`, error);
+        results.push({ userId: notification.userId, email: notification.email, success: false, error: String(error) });
       }
     }
 
     return new Response(
       JSON.stringify({
         success: true,
-        checked: preferences?.length || 0,
+        totalUsers: allUsers.length,
+        optedOut: optedOutUserIds.size,
         notificationsSent: notificationsToSend.length,
         results,
       }),
