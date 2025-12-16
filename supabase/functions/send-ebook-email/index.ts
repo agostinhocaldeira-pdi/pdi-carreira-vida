@@ -53,7 +53,7 @@ const handler = async (req: Request): Promise<Response> => {
 
     const config = ebookConfigs[ebookType || 'default'] || ebookConfigs.default;
 
-    const baseUrl = Deno.env.get("BASE_URL") || "https://pdicarreiraevida.com.br";
+    const baseUrl = Deno.env.get("BASE_URL") || "https://www.pdicarreiraevida.com.br";
     const downloadLink = `${baseUrl}${config.downloadPath}?token=${confirmationToken}`;
 
     const emailResponse = await resend.emails.send({
