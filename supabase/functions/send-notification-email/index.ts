@@ -46,7 +46,7 @@ const generateDiaryReminderHtml = (name: string, daysInactive: number): string =
       </div>
       <p>Que tal registrar como foi seu dia hoje? Suas reflexões, conquistas e aprendizados são valiosos para sua jornada de desenvolvimento.</p>
       <center>
-        <a href="https://pdicarreiraevida.com.br/home" class="cta-button">Acessar meu Diário</a>
+        <a href="https://www.pdicarreiraevida.com.br/home" class="cta-button">Acessar meu Diário</a>
       </center>
     </div>
     <div class="footer">
@@ -58,7 +58,7 @@ const generateDiaryReminderHtml = (name: string, daysInactive: number): string =
 </html>
 `;
 
-const generateGoalDeadlineHtml = (name: string, goals: any[]): string => `
+const generateGoalDeadlineHtml = (name: string, goals: any[], isExpired: boolean = false): string => `
 <!DOCTYPE html>
 <html>
 <head>
@@ -66,37 +66,39 @@ const generateGoalDeadlineHtml = (name: string, goals: any[]): string => `
   <style>
     body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f4f4; margin: 0; padding: 20px; }
     .container { max-width: 600px; margin: 0 auto; background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-    .header { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; padding: 30px; text-align: center; }
+    .header { background: ${isExpired ? 'linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%)' : 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)'}; color: white; padding: 30px; text-align: center; }
     .header h1 { margin: 0; font-size: 24px; }
     .content { padding: 30px; }
     .content p { color: #333; line-height: 1.6; margin-bottom: 15px; }
-    .goal-item { background: #fff5f5; border-left: 4px solid #f5576c; padding: 12px 15px; margin: 10px 0; border-radius: 0 8px 8px 0; }
-    .goal-item strong { color: #f5576c; }
-    .cta-button { display: inline-block; background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; padding: 14px 28px; text-decoration: none; border-radius: 8px; font-weight: bold; margin-top: 20px; }
+    .goal-item { background: ${isExpired ? '#fff0f0' : '#fff5f5'}; border-left: 4px solid ${isExpired ? '#ff4b2b' : '#f5576c'}; padding: 12px 15px; margin: 10px 0; border-radius: 0 8px 8px 0; }
+    .goal-item strong { color: ${isExpired ? '#ff4b2b' : '#f5576c'}; }
+    .expired-badge { display: inline-block; background: #ff4b2b; color: white; font-size: 10px; padding: 2px 8px; border-radius: 4px; margin-left: 8px; }
+    .cta-button { display: inline-block; background: ${isExpired ? 'linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%)' : 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)'}; color: white; padding: 14px 28px; text-decoration: none; border-radius: 8px; font-weight: bold; margin-top: 20px; }
     .footer { background: #f8f8f8; padding: 20px; text-align: center; color: #888; font-size: 12px; }
   </style>
 </head>
 <body>
   <div class="container">
     <div class="header">
-      <h1>⏰ Prazos Próximos!</h1>
+      <h1>${isExpired ? '🚨 Prazos Vencidos!' : '⏰ Prazos Próximos!'}</h1>
     </div>
     <div class="content">
       <p>Olá, <strong>${name}</strong>!</p>
-      <p>Você tem metas com prazo se aproximando:</p>
+      <p>${isExpired ? 'Você tem objetivos e metas com <strong>prazo vencido</strong>:' : 'Você tem metas com prazo se aproximando:'}</p>
       ${goals.map(g => `
         <div class="goal-item">
-          <strong>${g.texto}</strong><br>
-          <small>Prazo: ${new Date(g.data_alvo).toLocaleDateString('pt-BR')}</small>
+          <strong>${g.type === 'objetivo' ? '🎯' : '📊'} ${g.texto}</strong>${isExpired ? '<span class="expired-badge">VENCIDO</span>' : ''}<br>
+          <small>Prazo: ${new Date(g.data_alvo).toLocaleDateString('pt-BR')} ${isExpired ? '(vencido)' : ''}</small>
         </div>
       `).join('')}
-      <p>Não deixe para a última hora! Revise seu progresso e ajuste suas ações se necessário.</p>
+      <p>${isExpired ? '<strong>⚠️ Atenção:</strong> Revise esses itens e atualize seus prazos ou marque como concluídos!' : 'Não deixe para a última hora! Revise seu progresso e ajuste suas ações se necessário.'}</p>
       <center>
-        <a href="https://pdicarreiraevida.com.br/home" class="cta-button">Ver minhas Metas</a>
+        <a href="https://www.pdicarreiraevida.com.br/home" class="cta-button">${isExpired ? 'Revisar meus Prazos' : 'Ver minhas Metas'}</a>
       </center>
     </div>
     <div class="footer">
       <p>Este email foi enviado automaticamente pelo PDI - Carreira & Vida.</p>
+      <p>Se não deseja mais receber lembretes, acesse suas configurações de notificação no aplicativo.</p>
     </div>
   </div>
 </body>
@@ -146,7 +148,7 @@ const generateWeeklySummaryHtml = (name: string, data: any): string => `
       </center>
       <p style="margin-top: 25px;">Continue assim! Cada pequeno passo conta para alcançar seus objetivos.</p>
       <center>
-        <a href="https://pdicarreiraevida.com.br/home" class="cta-button">Ver meu Progresso</a>
+        <a href="https://www.pdicarreiraevida.com.br/home" class="cta-button">Ver meu Progresso</a>
       </center>
     </div>
     <div class="footer">
@@ -198,8 +200,9 @@ const handler = async (req: Request): Promise<Response> => {
         htmlContent = generateDiaryReminderHtml(finalName, data?.daysInactive || 3);
         break;
       case "goal_deadline":
-        finalSubject = finalSubject || "⏰ Você tem metas com prazo próximo!";
-        htmlContent = generateGoalDeadlineHtml(finalName, data?.goals || []);
+        const isExpired = data?.isExpired || false;
+        finalSubject = finalSubject || (isExpired ? "🚨 Você tem objetivos e metas vencidos!" : "⏰ Você tem metas com prazo próximo!");
+        htmlContent = generateGoalDeadlineHtml(finalName, data?.goals || [], isExpired);
         break;
       case "weekly_summary":
         finalSubject = finalSubject || "📊 Seu resumo semanal do PDI";
