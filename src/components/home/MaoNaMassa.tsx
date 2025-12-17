@@ -278,8 +278,17 @@ const MaoNaMassa = () => {
         const novaMeta = { ...meta, objetivoId: objetivoSelecionado, acoes, passos, id: Date.now(), concluida: false };
         metas.push(novaMeta);
         await storage.saveMetas(metas);
-        localStorage.setItem("metas", JSON.stringify(metas));
-        setMetasCadastradas(metas);
+        
+        // Reload metas from Supabase to get proper UUIDs and prevent duplicates
+        const updatedMetas = await storage.getMetas();
+        if (updatedMetas && updatedMetas.length > 0) {
+          localStorage.setItem("metas", JSON.stringify(updatedMetas));
+          setMetasCadastradas(updatedMetas);
+        } else {
+          localStorage.setItem("metas", JSON.stringify(metas));
+          setMetasCadastradas(metas);
+        }
+        
         setShowSuggestionModal(true);
         setIsFormOpen(false);
         

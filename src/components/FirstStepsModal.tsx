@@ -76,46 +76,46 @@ export const FirstStepsModal = () => {
     <Dialog open={open} onOpenChange={(isOpen) => {
       if (!isOpen) handleClose();
     }}>
-      <DialogContent className="sm:max-w-[500px]">
+      <DialogContent className="sm:max-w-[500px] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <div className="flex items-center gap-3 mb-2">
-            <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
-              <Sparkles className="w-6 h-6 text-primary" />
+            <div className="w-10 h-10 sm:w-12 sm:h-12 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0">
+              <Sparkles className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
             </div>
-            <DialogTitle className="text-xl">Bem-vindo ao PDI! 🎯</DialogTitle>
+            <DialogTitle className="text-lg sm:text-xl">Bem-vindo ao PDI! 🎯</DialogTitle>
           </div>
-          <DialogDescription className="text-base">
-            Siga esta ordem para construir seu Plano de Desenvolvimento Individual de forma eficaz:
+          <DialogDescription className="text-sm sm:text-base">
+            Siga esta ordem para construir seu PDI de forma eficaz:
           </DialogDescription>
         </DialogHeader>
 
-        <div className="space-y-3 py-4">
+        <div className="space-y-2 sm:space-y-3 py-2 sm:py-4">
           {steps.map((step, index) => (
             <div 
               key={step.number}
-              className="flex items-start gap-4 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors"
+              className="flex items-start gap-3 sm:gap-4 p-2 sm:p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors"
             >
-              <div className="flex-shrink-0 w-8 h-8 bg-primary rounded-full flex items-center justify-center text-primary-foreground font-bold text-sm">
+              <div className="flex-shrink-0 w-7 h-7 sm:w-8 sm:h-8 bg-primary rounded-full flex items-center justify-center text-primary-foreground font-bold text-xs sm:text-sm">
                 {step.number}
               </div>
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2">
                   <span className="text-primary">{step.icon}</span>
-                  <h4 className="font-semibold text-foreground">{step.title}</h4>
+                  <h4 className="font-semibold text-foreground text-sm sm:text-base">{step.title}</h4>
                 </div>
-                <p className="text-sm text-muted-foreground mt-1">
+                <p className="text-xs sm:text-sm text-muted-foreground mt-0.5 sm:mt-1">
                   {step.description}
                 </p>
               </div>
               {index < steps.length - 1 && (
-                <ArrowRight className="w-4 h-4 text-muted-foreground/50 flex-shrink-0 mt-2" />
+                <ArrowRight className="w-4 h-4 text-muted-foreground/50 flex-shrink-0 mt-1.5 sm:mt-2 hidden sm:block" />
               )}
             </div>
           ))}
         </div>
 
-        <div className="flex justify-end pt-2">
-          <Button onClick={handleClose} className="gap-2">
+        <div className="flex justify-end pt-2 sticky bottom-0 bg-background pb-1">
+          <Button onClick={handleClose} className="gap-2 text-sm sm:text-base">
             Começar minha jornada
             <ArrowRight className="w-4 h-4" />
           </Button>
