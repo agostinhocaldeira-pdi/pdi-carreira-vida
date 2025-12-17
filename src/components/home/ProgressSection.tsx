@@ -151,8 +151,9 @@ const ProgressSection = () => {
   }, [storage]);
 
   const handleGenerateInsight = async () => {
-    if (!canGenerateInsight && !isAdmin) {
-      toast.error("Você já gerou um insight este mês. Tente novamente em 30 dias.");
+    // Administradores não têm limite
+    if (!isAdmin && !canGenerateInsight) {
+      toast.error("Você já gerou seu insight mensal. Contrate o plano Premium para gerar mais insights!");
       return;
     }
 
@@ -208,40 +209,36 @@ const ProgressSection = () => {
     setIsGenerating(true);
     
     try {
-      const valores = valoresPreenchidos.join(", ");
-      const areasVida = areasPreenchidas.map((a: any) => 
-        `${a.area}: Nota Atual ${a.notaAtual}, Nota Desejada ${a.notaDesejada}`
-      ).join("; ");
-
-      const prompt = `Com base nos seguintes dados de desenvolvimento pessoal, gere um insight correlacional profundo sobre quem é esta pessoa. IMPORTANTE: Limite a resposta a NO MÁXIMO 2 parágrafos concisos.
-
-Visão de Vida Desejada (VVD): ${vvd}
-
-Valores Pessoais: ${valores}
-
-Áreas da Vida: ${areasVida}
-
-Analise as correlações entre estes elementos e forneça um insight sobre a essência e direcionamento desta pessoa. Seja conciso e direto.`;
+      // Buscar dados da pesquisa e onboarding
+      const surveyData = JSON.parse(localStorage.getItem("userSurvey") || "{}");
+      const onboardingData = JSON.parse(localStorage.getItem("onboarding") || "{}");
 
       const { data, error } = await supabase.functions.invoke('generate-insight', {
-        body: { prompt }
+        body: { vvd, valores: valoresPreenchidos, areasVida: areasPreenchidas, surveyData, onboardingData }
       });
 
-      if (error) throw error;
-
-      const generatedInsight = data.insight;
-      setInsight(generatedInsight);
-      localStorage.setItem("userInsight", generatedInsight);
-      
-      // Disparar evento para sincronizar na mesma aba
-      window.dispatchEvent(new Event("insightUpdated"));
-      
-      if (!isAdmin) {
-        localStorage.setItem("lastInsightDate", new Date().toISOString());
-        setCanGenerateInsight(false);
+      if (error) {
+        console.error("Error generating insight:", error);
+        toast.error(error.message || "Erro ao gerar insight");
+        return;
       }
-      
-      toast.success("Insight gerado com sucesso!");
+
+      if (data?.insight) {
+        setInsight(data.insight);
+        localStorage.setItem("userInsight", data.insight);
+        
+        // Disparar evento para sincronizar na mesma aba
+        window.dispatchEvent(new Event("insightUpdated"));
+        
+        // Salvar data da geração apenas para não-admins
+        if (!isAdmin) {
+          const today = new Date().toISOString();
+          localStorage.setItem("lastInsightDate", today);
+          setCanGenerateInsight(false);
+        }
+        
+        toast.success("Insight gerado com sucesso!");
+      }
     } catch (error) {
       console.error("Error generating insight:", error);
       toast.error("Erro ao gerar insight. Tente novamente.");
