@@ -231,19 +231,27 @@ class SupabaseStorageService {
         status: action.status?.replace(' ', '-') as any || 'a-fazer',
       }));
 
-      // Get steps for each action
-      const passos: any[] = [];
+      // Get steps for each action (de-duplicated by text to avoid UI multiplication)
+      const passosMap = new Map<string, { passo: string }>();
       for (const action of actions || []) {
         const { data: steps } = await supabase
           .from('user_steps')
-          .select('*')
-          .eq('action_id', action.id);
+          .select('texto')
+          .eq('action_id', action.id)
+          .eq('user_id', userId);
 
-        passos.push(...(steps || []).map((step, idx) => ({
-          id: idx + 1,
-          passo: step.texto,
-        })));
+        for (const step of steps || []) {
+          const texto = (step as any).texto?.trim();
+          if (!texto) continue;
+          const key = texto.toLowerCase();
+          if (!passosMap.has(key)) passosMap.set(key, { passo: texto });
+        }
       }
+
+      const passos = Array.from(passosMap.values()).map((p, idx) => ({
+        id: idx + 1,
+        passo: p.passo,
+      }));
 
       metas.push({
         id: goal.id, // Preserve the actual UUID from database
@@ -316,12 +324,41 @@ class SupabaseStorageService {
         goalId = newGoal.id;
       }
 
-      // Delete existing actions for this goal before re-inserting
-      await supabase.from('user_actions').delete().eq('goal_id', goalId);
+      // Delete existing steps/actions for this goal before re-inserting
+      const { data: existingActions, error: existingActionsError } = await supabase
+        .from('user_actions')
+        .select('id')
+        .eq('goal_id', goalId)
+        .eq('user_id', userId);
 
-      // Save actions
+      if (existingActionsError) {
+        console.error('Error fetching existing actions for goal:', existingActionsError);
+      }
+
+      const existingActionIds = (existingActions || []).map((a) => a.id).filter(Boolean);
+
+      if (existingActionIds.length > 0) {
+        const { error: deleteStepsError } = await supabase
+          .from('user_steps')
+          .delete()
+          .in('action_id', existingActionIds);
+
+        if (deleteStepsError) console.error('Error deleting steps for goal:', deleteStepsError);
+      }
+
+      const { error: deleteActionsError } = await supabase
+        .from('user_actions')
+        .delete()
+        .eq('goal_id', goalId)
+        .eq('user_id', userId);
+
+      if (deleteActionsError) console.error('Error deleting actions for goal:', deleteActionsError);
+
+      // Save actions (keep the first action id to associate the meta steps, avoiding multiplication)
+      let firstActionId: string | null = null;
+
       for (const acao of meta.acoes || []) {
-        const { data: action } = await supabase
+        const { data: action, error: actionError } = await supabase
           .from('user_actions')
           .insert({
             user_id: userId,
@@ -333,18 +370,37 @@ class SupabaseStorageService {
           .select()
           .single();
 
-        // Save steps linked to this action
-        if (action && meta.passos) {
-          for (const passo of meta.passos) {
-            await supabase
-              .from('user_steps')
-              .insert({
-                user_id: userId,
-                action_id: action.id,
-                texto: passo.passo,
-              });
-          }
+        if (actionError || !action) {
+          console.error('Error inserting action:', actionError);
+          continue;
         }
+
+        if (!firstActionId) firstActionId = action.id;
+      }
+
+      // Save steps once (associated to the first action) to prevent duplicating steps per action
+      const metaPassos = Array.isArray((meta as any).passos) ? ((meta as any).passos as any[]) : [];
+      if (firstActionId && metaPassos.length > 0) {
+        const uniquePassos = Array.from(
+          new Map(
+            metaPassos
+              .map((p) => ({ passo: String(p?.passo ?? '').trim() }))
+              .filter((p) => p.passo.length > 0)
+              .map((p) => [p.passo.toLowerCase(), p] as const)
+          ).values()
+        );
+
+        const { error: insertStepsError } = await supabase
+          .from('user_steps')
+          .insert(
+            uniquePassos.map((p) => ({
+              user_id: userId,
+              action_id: firstActionId,
+              texto: p.passo,
+            }))
+          );
+
+        if (insertStepsError) console.error('Error inserting steps:', insertStepsError);
       }
     }
   }
