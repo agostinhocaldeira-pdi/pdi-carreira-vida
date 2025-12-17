@@ -152,6 +152,15 @@ export function usePDIStorage() {
     }
   }, []);
 
+  const deleteMeta = useCallback(async (metaId: string | number): Promise<void> => {
+    const { isAuthenticated: isAuth } = await checkAuthStatus();
+    if (isAuth) {
+      await supabaseStorageService.deleteMeta(metaId);
+    } else {
+      storageService.deleteMeta(metaId);
+    }
+  }, []);
+
   // ============================================
   // DIÁRIO
   // ============================================
@@ -327,6 +336,7 @@ export function usePDIStorage() {
     // Metas
     getMetas,
     saveMetas,
+    deleteMeta,
     // Diário
     getDiario,
     getDiarioByDate,

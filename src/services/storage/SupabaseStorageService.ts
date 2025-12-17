@@ -405,6 +405,48 @@ class SupabaseStorageService {
     }
   }
 
+  async deleteMeta(metaId: string | number): Promise<void> {
+    const userId = await this.getUserId();
+    if (!userId) return;
+
+    const id = String(metaId);
+    
+    // First, get all actions for this goal to delete their steps
+    const { data: actions } = await supabase
+      .from('user_actions')
+      .select('id')
+      .eq('goal_id', id)
+      .eq('user_id', userId);
+
+    // Delete steps for all actions
+    if (actions && actions.length > 0) {
+      const actionIds = actions.map(a => a.id);
+      await supabase
+        .from('user_steps')
+        .delete()
+        .in('action_id', actionIds);
+    }
+
+    // Delete actions
+    await supabase
+      .from('user_actions')
+      .delete()
+      .eq('goal_id', id)
+      .eq('user_id', userId);
+
+    // Delete the goal itself
+    const { error } = await supabase
+      .from('user_goals')
+      .delete()
+      .eq('id', id)
+      .eq('user_id', userId);
+
+    if (error) {
+      console.error('Error deleting meta:', error);
+      throw error;
+    }
+  }
+
   // ============================================
   // DIÁRIO
   // ============================================

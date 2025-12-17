@@ -153,6 +153,12 @@ class StorageService {
     this.setItem(STORAGE_KEYS.METAS, metas);
   }
 
+  deleteMeta(metaId: string | number): void {
+    const metas = this.getMetas();
+    const filteredMetas = metas.filter(m => String(m.id) !== String(metaId));
+    this.saveMetas(filteredMetas);
+  }
+
   // ============================================
   // VVD (Visão de Vida Desejada)
   // Future: SELECT vvd FROM user_vvd WHERE user_id = auth.uid()
