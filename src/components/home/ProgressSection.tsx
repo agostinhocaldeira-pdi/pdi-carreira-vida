@@ -303,6 +303,9 @@ Analise as correlações entre estes elementos e forneça um insight sobre a ess
               </Button>
             </CollapsibleTrigger>
           </div>
+          <div className="mt-3">
+            <ExportPDFButton label="Exportar relatórios" />
+          </div>
         </CardHeader>
         <CollapsibleContent>
           <CardContent>
@@ -404,10 +407,6 @@ Analise as correlações entre estes elementos e forneça um insight sobre a ess
                 </TooltipProvider>
               </div>
 
-              {/* Export PDF Button */}
-              <div className="pt-2 border-t border-amber-500/20">
-                <ExportPDFButton />
-              </div>
             </div>
 
             {/* Pending Items Cards */}
