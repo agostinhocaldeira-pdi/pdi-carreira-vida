@@ -131,20 +131,29 @@ const MetodoSmart = () => {
   };
 
   const handleImportar = async () => {
-    // Construir texto da meta SMART completo
-    const metaTexto = `${metaSmart.especifico}. ${metaSmart.mensuravel}. ${metaSmart.atingivel}`;
+    // Texto da meta = resposta de "O que exatamente você quer alcançar?" (Específico)
+    const metaTexto = metaSmart.especifico;
+    
+    // Ação = resposta de "Como você vai tornar essa meta alcançável?" (Atingível)
+    const acaoTexto = metaSmart.atingivel;
     
     const novaMeta = {
       id: Date.now(),
-      objetivo_id: metaSmart.objetivoId, // Use snake_case for Supabase compatibility
-      objetivoId: metaSmart.objetivoId, // Keep camelCase for localStorage compatibility
+      objetivo_id: metaSmart.objetivoId,
+      objetivoId: metaSmart.objetivoId,
       texto: metaTexto,
       data_alvo: metaSmart.dataAlvo,
       dataAlvo: metaSmart.dataAlvo,
       medicao: metaSmart.mensuravel,
       inicio: new Date().toISOString().split('T')[0],
       concluida: false,
-      acoes: [],
+      // Criar ação a partir do campo "Atingível"
+      acoes: acaoTexto ? [{
+        id: Date.now(),
+        acao: acaoTexto,
+        periodicidade: '',
+        status: 'a-fazer' as const,
+      }] : [],
       passos: [],
       from_smart: true,
     };
@@ -156,12 +165,15 @@ const MetodoSmart = () => {
       
       // Salvar usando o storage service (Supabase ou localStorage)
       await storage.saveMetas(metasAtualizadas);
+      
+      // Também salvar no localStorage para garantir que aparece imediatamente
+      localStorage.setItem("metas", JSON.stringify(metasAtualizadas));
 
       // Salvar temporariamente para destacar na home
       localStorage.setItem("metaImportadaSmart", JSON.stringify(novaMeta));
 
       toast.success("🎯 Meta SMART importada com sucesso!", {
-        description: "Agora vá até 'Metas Cadastradas' no Plano de Vida e complete o cadastro com as ações e passos necessários",
+        description: "Agora vá até 'Metas Cadastradas' no Plano de Vida e complete o cadastro.",
         duration: 5000,
       });
 

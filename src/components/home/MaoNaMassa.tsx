@@ -97,25 +97,42 @@ const MaoNaMassa = () => {
         ]);
 
         if (isMounted && savedObjetivos && savedObjetivos.length > 0) {
-          setObjetivosDisponiveis(savedObjetivos.map((obj: any) => ({
+          const mappedObjetivos = savedObjetivos.map((obj: any) => ({
             id: obj.id,
             texto: obj.texto,
-          })));
+          }));
+          setObjetivosDisponiveis(mappedObjetivos);
+          // Atualizar localStorage com dados do Supabase
+          localStorage.setItem("objetivos", JSON.stringify(savedObjetivos));
         }
 
-        if (isMounted && savedMetas && savedMetas.length > 0) {
-          setMetasCadastradas(savedMetas.map((meta: any) => ({
+        if (isMounted && savedMetas) {
+          const mappedMetas = savedMetas.map((meta: any) => ({
             id: meta.id,
             objetivoId: meta.objetivo_id || meta.objetivoId,
+            objetivo_id: meta.objetivo_id || meta.objetivoId,
             texto: meta.texto,
             dataAlvo: meta.data_alvo || meta.dataAlvo,
+            data_alvo: meta.data_alvo || meta.dataAlvo,
             medicao: meta.medicao,
             inicio: meta.inicio,
             concluida: meta.concluida,
             acoes: meta.acoes || [],
             passos: meta.passos || [],
             from_smart: meta.from_smart,
-          })));
+          }));
+          
+          // Mesclar metas do localStorage que ainda não estão no Supabase (por timestamp ID)
+          const supabaseMetaIds = new Set(mappedMetas.map((m: any) => String(m.id)));
+          const localOnlyMetas = localMetas.filter((m: any) => {
+            // Metas com ID numérico (timestamp) que não existem no Supabase
+            const metaId = String(m.id);
+            return !metaId.includes('-') && !supabaseMetaIds.has(metaId);
+          });
+          
+          const mergedMetas = [...mappedMetas, ...localOnlyMetas];
+          setMetasCadastradas(mergedMetas);
+          localStorage.setItem("metas", JSON.stringify(mergedMetas));
         }
       } catch (error) {
         console.error("Error syncing with Supabase:", error);
@@ -390,8 +407,10 @@ const MaoNaMassa = () => {
                   </TableHeader>
                   <TableBody>
                     {metasCadastradas.map((metaCadastrada) => {
+                      // Normalizar ID para comparação (suporta UUID e numeric IDs)
+                      const objetivoIdMeta = String(metaCadastrada.objetivoId || metaCadastrada.objetivo_id || '');
                       const objetivo = objetivosDisponiveis.find(
-                        (obj) => obj.id?.toString() === metaCadastrada.objetivoId
+                        (obj) => String(obj.id) === objetivoIdMeta
                       );
                       
                       return (
@@ -464,8 +483,10 @@ const MaoNaMassa = () => {
               {/* Versão Mobile - Cards */}
               <div className="md:hidden space-y-4">
                 {metasCadastradas.map((metaCadastrada) => {
+                  // Normalizar ID para comparação (suporta UUID e numeric IDs)
+                  const objetivoIdMeta = String(metaCadastrada.objetivoId || metaCadastrada.objetivo_id || '');
                   const objetivo = objetivosDisponiveis.find(
-                    (obj) => obj.id?.toString() === metaCadastrada.objetivoId
+                    (obj) => String(obj.id) === objetivoIdMeta
                   );
                   
                   return (
