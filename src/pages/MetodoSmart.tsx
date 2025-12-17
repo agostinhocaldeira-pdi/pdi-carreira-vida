@@ -22,9 +22,10 @@ import {
   Sparkles
 } from "lucide-react";
 import { toast } from "sonner";
+import { usePDIStorage } from "@/hooks/usePDIStorage";
 
 interface Objetivo {
-  id: number;
+  id: number | string;
   texto: string;
 }
 
@@ -41,6 +42,7 @@ interface MetaSmart {
 
 const MetodoSmart = () => {
   const navigate = useNavigate();
+  const storage = usePDIStorage();
   const [etapa, setEtapa] = useState(0); // 0=intro, 1=selecao objetivo, 2-6=SMART, 7=preview
   const [objetivos, setObjetivos] = useState<Objetivo[]>([]);
   const [objetivoSelecionado, setObjetivoSelecionado] = useState<Objetivo | null>(null);
@@ -59,12 +61,25 @@ const MetodoSmart = () => {
   useEffect(() => {
     window.scrollTo(0, 0);
     
-    // Carregar objetivos do localStorage
-    const savedObjetivos = localStorage.getItem("objetivos");
-    if (savedObjetivos) {
-      setObjetivos(JSON.parse(savedObjetivos));
-    }
-  }, []);
+    const loadObjetivos = async () => {
+      // Carregar objetivos do Supabase
+      const savedObjetivos = await storage.getObjetivos();
+      if (savedObjetivos && savedObjetivos.length > 0) {
+        setObjetivos(savedObjetivos.map((obj: any) => ({
+          id: obj.id,
+          texto: obj.texto
+        })));
+      } else {
+        // Fallback para localStorage
+        const localObjetivos = localStorage.getItem("objetivos");
+        if (localObjetivos) {
+          setObjetivos(JSON.parse(localObjetivos));
+        }
+      }
+    };
+
+    loadObjetivos();
+  }, [storage.isAuthenticated]);
 
   const handleSelecionarObjetivo = (objId: string) => {
     const obj = objetivos.find(o => o.id.toString() === objId);
