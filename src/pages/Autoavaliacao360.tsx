@@ -613,13 +613,13 @@ Agora, com base em todas essas respostas acima, faça a análise profunda solici
               </div>
 
               <div className="space-y-3">
-                <div className="flex items-center justify-between">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                   <h4 className="font-semibold">PROMPT COMPLETO COM TODAS AS RESPOSTAS</h4>
                   <Button
                     onClick={() => copyToClipboard(generateCompletePrompt(), "Prompt completo")}
                     variant="default"
                     size="sm"
-                    className="gap-2"
+                    className="gap-2 w-full sm:w-auto"
                   >
                     <Copy className="w-4 h-4" />
                     Copiar Prompt Completo
