@@ -328,21 +328,22 @@ Analise as correlações entre estes elementos e forneça um insight sobre a ess
               </Button>
             </CollapsibleTrigger>
           </div>
-          <div className="mt-3 flex flex-col sm:flex-row gap-2">
-            <ExportPDFButton label="Exportar relatórios" className="w-full sm:w-auto" />
-            <Button 
-              variant="outline" 
-              size="sm"
-              onClick={() => setIsJourneyModalOpen(true)}
-              className="gap-1.5 w-full sm:w-auto"
-            >
-              <Trophy className="w-4 h-4 text-amber-500" />
-              Sua Jornada
-            </Button>
-          </div>
         </CardHeader>
         <CollapsibleContent>
           <CardContent>
+            {/* Action buttons - only visible when expanded */}
+            <div className="mb-4 flex flex-col sm:flex-row gap-2">
+              <ExportPDFButton label="Exportar relatórios" className="w-full sm:w-auto" />
+              <Button 
+                variant="outline" 
+                size="sm"
+                onClick={() => setIsJourneyModalOpen(true)}
+                className="gap-1.5 w-full sm:w-auto"
+              >
+                <Trophy className="w-4 h-4 text-amber-500" />
+                Sua Jornada
+              </Button>
+            </div>
             {/* Sua Jornada Modal */}
             <Dialog open={isJourneyModalOpen} onOpenChange={setIsJourneyModalOpen}>
               <DialogContent className="max-w-lg">
