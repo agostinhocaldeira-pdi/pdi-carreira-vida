@@ -403,8 +403,46 @@ const PlanoDeVida = ({ onTabChange, onOpenChange, forcedTab, forcedOpen }: Plano
       return;
     }
 
-    if (!vvd && !isValoresComplete && !isAreasComplete) {
-      toast.error("Preencha pelo menos uma seção para gerar insights");
+    // Validar requisitos mínimos para gerar insight
+    const missingItems: string[] = [];
+    
+    if (!vvd || vvd.trim() === "") {
+      missingItems.push("VVD (Visão de Vida Desejada)");
+    }
+    
+    if (!isValoresComplete) {
+      missingItems.push("Valores pessoais");
+    }
+    
+    if (!isAreasComplete) {
+      missingItems.push("Roda da Vida (Áreas da Vida)");
+    }
+    
+    if (objetivos.length === 0) {
+      missingItems.push("Ao menos 1 objetivo");
+    }
+    
+    // Verificar metas e ações
+    try {
+      const metas = await storage.getMetas();
+      if (metas.length === 0) {
+        missingItems.push("Ao menos 1 meta");
+      }
+      
+      // Verificar se há ao menos uma ação em alguma meta
+      const hasAcoes = metas.some(meta => meta.acoes && meta.acoes.length > 0);
+      if (!hasAcoes) {
+        missingItems.push("Ao menos 1 ação");
+      }
+    } catch (error) {
+      console.error("Error checking metas/acoes:", error);
+    }
+    
+    if (missingItems.length > 0) {
+      toast.error(
+        `Para gerar insights, preencha: ${missingItems.join(", ")}`,
+        { duration: 6000 }
+      );
       return;
     }
 
@@ -921,11 +959,12 @@ const PlanoDeVida = ({ onTabChange, onOpenChange, forcedTab, forcedOpen }: Plano
                           </Button>
                         </div>
                       </TooltipTrigger>
-                      {(!vvd && !isValoresComplete && !isAreasComplete) && (
+                      {(!vvd || !isValoresComplete || !isAreasComplete || objetivos.length === 0) && (
                         <TooltipContent>
                           <p className="text-sm">
-                            Preencha pelo menos uma seção acima<br />
-                            (VVD, Valores ou Áreas da Vida)
+                            Para gerar insights, preencha:<br />
+                            VVD, Valores, Roda da Vida,<br />
+                            ao menos 1 objetivo, 1 meta e 1 ação
                           </p>
                         </TooltipContent>
                       )}
