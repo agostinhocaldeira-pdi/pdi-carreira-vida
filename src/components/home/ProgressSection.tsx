@@ -153,15 +153,60 @@ const ProgressSection = () => {
       return;
     }
 
+    // Validar requisitos mínimos para gerar insight
+    const missingItems: string[] = [];
+    
+    const vvd = localStorage.getItem("vvd") || "";
+    const valoresData = JSON.parse(localStorage.getItem("valores") || "[]");
+    const areasVidaData = JSON.parse(localStorage.getItem("areasVida") || "[]");
+    
+    if (!vvd || vvd.trim() === "") {
+      missingItems.push("VVD (Visão de Vida Desejada)");
+    }
+    
+    const valoresPreenchidos = valoresData.filter((v: string) => v && v.trim() !== "");
+    if (valoresPreenchidos.length === 0) {
+      missingItems.push("Valores pessoais");
+    }
+    
+    const areasPreenchidas = areasVidaData.filter((a: any) => a.notaAtual && a.notaDesejada);
+    if (areasPreenchidas.length === 0) {
+      missingItems.push("Roda da Vida (Áreas da Vida)");
+    }
+    
+    // Verificar objetivos, metas e ações
+    try {
+      const objetivos = await storage.getObjetivos();
+      if (objetivos.length === 0) {
+        missingItems.push("Ao menos 1 objetivo");
+      }
+      
+      const metas = await storage.getMetas();
+      if (metas.length === 0) {
+        missingItems.push("Ao menos 1 meta");
+      }
+      
+      const hasAcoes = metas.some(meta => meta.acoes && meta.acoes.length > 0);
+      if (!hasAcoes) {
+        missingItems.push("Ao menos 1 ação");
+      }
+    } catch (error) {
+      console.error("Error checking objetivos/metas/acoes:", error);
+    }
+    
+    if (missingItems.length > 0) {
+      toast.error(
+        `Para gerar insights, preencha: ${missingItems.join(", ")}`,
+        { duration: 6000 }
+      );
+      return;
+    }
+
     setIsGenerating(true);
     
     try {
-      const vvd = localStorage.getItem("vvd") || "";
-      const valoresData = JSON.parse(localStorage.getItem("valores") || "[]");
-      const areasVidaData = JSON.parse(localStorage.getItem("areasVida") || "[]");
-
-      const valores = valoresData.filter((v: string) => v.trim()).join(", ");
-      const areasVida = areasVidaData.map((a: any) => 
+      const valores = valoresPreenchidos.join(", ");
+      const areasVida = areasPreenchidas.map((a: any) => 
         `${a.area}: Nota Atual ${a.notaAtual}, Nota Desejada ${a.notaDesejada}`
       ).join("; ");
 
