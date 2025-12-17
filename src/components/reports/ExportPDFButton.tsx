@@ -8,9 +8,10 @@ import { toast } from "sonner";
 interface ExportPDFButtonProps {
   variant?: "default" | "outline" | "ghost";
   size?: "default" | "sm" | "lg" | "icon";
+  label?: string;
 }
 
-export function ExportPDFButton({ variant = "outline", size = "sm" }: ExportPDFButtonProps) {
+export function ExportPDFButton({ variant = "outline", size = "sm", label = "Exportar PDF" }: ExportPDFButtonProps) {
   const [isExporting, setIsExporting] = useState(false);
 
   const handleExportPDI = async () => {
@@ -237,7 +238,7 @@ export function ExportPDFButton({ variant = "outline", size = "sm" }: ExportPDFB
           ) : (
             <FileDown className="w-4 h-4 mr-2" />
           )}
-          Exportar PDF
+          {label}
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
