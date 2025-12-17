@@ -14,20 +14,31 @@ import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import ConfirmDeleteDialog from "@/components/ConfirmDeleteDialog";
 import { usePDIStorage } from "@/hooks/usePDIStorage";
+import { usePDIData, useDeleteMeta, useSaveMeta } from "@/hooks/usePDIQueries";
 
 const MaoNaMassa = () => {
   const storage = usePDIStorage();
   const formRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
+  
+  // React Query hooks for optimized data fetching
+  const { data: pdiData, isLoading: isQueryLoading } = usePDIData();
+  const deleteMetaMutation = useDeleteMeta();
+  const saveMetaMutation = useSaveMeta();
+  
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [showSuggestionModal, setShowSuggestionModal] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [objetivoSelecionado, setObjetivoSelecionado] = useState("");
-  const [objetivosDisponiveis, setObjetivosDisponiveis] = useState<Array<{
-    id: number;
-    texto: string;
-  }>>([]);
+  
+  // Derive objetivos from React Query cache
+  const objetivosDisponiveis = (pdiData?.objetivos || JSON.parse(localStorage.getItem("objetivos") || "[]")).map((obj: any) => ({
+    id: obj.id,
+    texto: obj.texto,
+  }));
+  
+  // Derive metas from React Query cache
+  const [metasCadastradas, setMetasCadastradas] = useState<Array<any>>([]);
 
   const [meta, setMeta] = useState({
     objetivoId: "",
@@ -67,7 +78,6 @@ const MaoNaMassa = () => {
   const [editandoPassoId, setEditandoPassoId] = useState<number | null>(null);
   const [passoEditado, setPassoEditado] = useState("");
 
-  const [metasCadastradas, setMetasCadastradas] = useState<Array<any>>([]);
   const [editandoMetaId, setEditandoMetaId] = useState<number | null>(null);
 
   // Estados para confirmação de exclusão
@@ -75,88 +85,29 @@ const MaoNaMassa = () => {
   const [deletePassoId, setDeletePassoId] = useState<number | null>(null);
   const [deleteMetaId, setDeleteMetaId] = useState<number | null>(null);
 
-  // Carregar dados - apenas uma vez no mount
+  // Sync metas from React Query cache to local state (for editing)
   useEffect(() => {
-    let isMounted = true;
-    
-    const loadData = async () => {
-      // Carregar do localStorage primeiro (instantâneo) para preview
-      const localObjetivos = JSON.parse(localStorage.getItem("objetivos") || "[]");
-      const localMetas = JSON.parse(localStorage.getItem("metas") || "[]");
-      
-      if (isMounted) {
-        setObjetivosDisponiveis(localObjetivos);
-        setMetasCadastradas(localMetas);
-      }
-      
-      // Sincronizar com Supabase (mantém loading até completar)
-      try {
-        const [savedObjetivos, savedMetas] = await Promise.all([
-          storage.getObjetivos().catch(() => null),
-          storage.getMetas().catch(() => null)
-        ]);
-
-        if (isMounted && savedObjetivos && savedObjetivos.length > 0) {
-          const mappedObjetivos = savedObjetivos.map((obj: any) => ({
-            id: obj.id,
-            texto: obj.texto,
-          }));
-          setObjetivosDisponiveis(mappedObjetivos);
-          // Atualizar localStorage com dados do Supabase
-          localStorage.setItem("objetivos", JSON.stringify(savedObjetivos));
-        }
-
-        if (isMounted && savedMetas) {
-          const mappedMetas = savedMetas.map((meta: any) => ({
-            id: meta.id,
-            objetivoId: meta.objetivo_id || meta.objetivoId,
-            objetivo_id: meta.objetivo_id || meta.objetivoId,
-            texto: meta.texto,
-            dataAlvo: meta.data_alvo || meta.dataAlvo,
-            data_alvo: meta.data_alvo || meta.dataAlvo,
-            medicao: meta.medicao,
-            inicio: meta.inicio,
-            concluida: meta.concluida,
-            acoes: meta.acoes || [],
-            passos: meta.passos || [],
-            from_smart: meta.from_smart,
-          }));
-          
-          // Mesclar metas do localStorage que ainda não estão no Supabase (por timestamp ID)
-          const supabaseMetaIds = new Set(mappedMetas.map((m: any) => String(m.id)));
-          const localOnlyMetas = localMetas.filter((m: any) => {
-            // Metas com ID numérico (timestamp) que não existem no Supabase
-            const metaId = String(m.id);
-            return !metaId.includes('-') && !supabaseMetaIds.has(metaId);
-          });
-          
-          const mergedMetas = [...mappedMetas, ...localOnlyMetas];
-          setMetasCadastradas(mergedMetas);
-          localStorage.setItem("metas", JSON.stringify(mergedMetas));
-        }
-      } catch (error) {
-        console.error("Error syncing with Supabase:", error);
-      } finally {
-        if (isMounted) {
-          setIsLoading(false);
-        }
-      }
-    };
-
-    loadData();
-    
-    return () => {
-      isMounted = false;
-    };
-  }, []); // Sem dependências - carrega apenas uma vez
+    const metas = pdiData?.metas || JSON.parse(localStorage.getItem("metas") || "[]");
+    const mappedMetas = metas.map((meta: any) => ({
+      id: meta.id,
+      objetivoId: meta.objetivo_id || meta.objetivoId,
+      objetivo_id: meta.objetivo_id || meta.objetivoId,
+      texto: meta.texto,
+      dataAlvo: meta.data_alvo || meta.dataAlvo,
+      data_alvo: meta.data_alvo || meta.dataAlvo,
+      medicao: meta.medicao,
+      inicio: meta.inicio,
+      concluida: meta.concluida,
+      acoes: meta.acoes || [],
+      passos: meta.passos || [],
+      from_smart: meta.from_smart,
+    }));
+    setMetasCadastradas(mappedMetas);
+  }, [pdiData?.metas]);
 
   // Escutar evento para abrir formulário de meta com objetivo pré-selecionado
   useEffect(() => {
     const handleOpenMetaForm = (event: CustomEvent<{ objetivoId: string }>) => {
-      // Recarregar objetivos para incluir o recém criado
-      const objetivosSalvos = JSON.parse(localStorage.getItem("objetivos") || "[]");
-      setObjetivosDisponiveis(objetivosSalvos);
-      
       const objetivoId = event.detail.objetivoId;
       
       // Selecionar o objetivo e preencher o formulário
@@ -373,12 +324,11 @@ const MaoNaMassa = () => {
   const confirmDeleteMeta = async () => {
     if (deleteMetaId) {
       try {
-        // Delete from Supabase first
-        await storage.deleteMeta(deleteMetaId);
+        // Use React Query mutation (handles Supabase and localStorage)
+        await deleteMetaMutation.mutateAsync(deleteMetaId);
         
-        // Then update local state
+        // Update local state for immediate UI feedback
         const metasAtualizadas = metasCadastradas.filter((m) => m.id !== deleteMetaId);
-        localStorage.setItem("metas", JSON.stringify(metasAtualizadas));
         setMetasCadastradas(metasAtualizadas);
         toast.success("Meta removida!");
       } catch (error) {
@@ -402,7 +352,7 @@ const MaoNaMassa = () => {
       <CardContent>
         <div className="space-y-6">
           {/* Loading State - sempre visível enquanto carrega */}
-          {isLoading && (
+          {isQueryLoading && metasCadastradas.length === 0 && (
             <div className="py-8">
               <PDILoader 
                 text="Carregando suas metas..." 
