@@ -343,33 +343,36 @@ export const DailyCheckout = () => {
 
       {/* Success Modal */}
       <Dialog open={showSuccessModal} onOpenChange={setShowSuccessModal}>
-        <DialogContent className="max-w-sm">
+        <DialogContent className="max-w-md w-[95vw] sm:w-full">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2 text-green-600">
-              <PartyPopper className="w-6 h-6" />
+              <PartyPopper className="w-6 h-6 flex-shrink-0" />
               Parabéns!
             </DialogTitle>
-            <DialogDescription className="pt-2">
-              Você completou todas as atividades do dia! Continue assim e alcance seus objetivos.
+            <DialogDescription className="pt-2 text-sm">
+              Você completou todas as atividades do dia! Continue assim.
             </DialogDescription>
           </DialogHeader>
           <div className="bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 rounded-lg p-3 mt-2">
             <p className="text-sm text-amber-800 dark:text-amber-200 flex items-start gap-2">
               <AlertCircle className="w-4 h-4 mt-0.5 flex-shrink-0" />
-              Lembre-se de atualizar o status das atividades no "Plano de Vida" para manter seu progresso sincronizado.
+              <span>Atualize o status das atividades no "Plano de Vida".</span>
             </p>
           </div>
-          <DialogFooter className="mt-4 sm:justify-end gap-2">
-            <Button variant="outline" onClick={() => setShowSuccessModal(false)}>
+          <DialogFooter className="mt-4 flex-col sm:flex-row gap-2">
+            <Button variant="outline" onClick={() => setShowSuccessModal(false)} className="w-full sm:w-auto">
               Fechar
             </Button>
-            <Button onClick={() => {
-              setShowSuccessModal(false);
-              window.dispatchEvent(new CustomEvent("navigateToPlanoDeVida", { 
-                detail: { tab: "como-chegar" } 
-              }));
-            }}>
-              Ir para Plano de Vida
+            <Button 
+              onClick={() => {
+                setShowSuccessModal(false);
+                window.dispatchEvent(new CustomEvent("navigateToPlanoDeVida", { 
+                  detail: { tab: "como-chegar" } 
+                }));
+              }}
+              className="w-full sm:w-auto"
+            >
+              Plano de Vida
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -377,13 +380,13 @@ export const DailyCheckout = () => {
 
       {/* Help Modal */}
       <Dialog open={showHelpModal} onOpenChange={setShowHelpModal}>
-        <DialogContent className="max-w-sm">
+        <DialogContent className="max-w-md w-[95vw] sm:w-full">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
-              <HeadphonesIcon className="w-6 h-6 text-primary" />
+              <HeadphonesIcon className="w-6 h-6 text-primary flex-shrink-0" />
               Precisa de ajuda?
             </DialogTitle>
-            <DialogDescription className="pt-2">
+            <DialogDescription className="pt-2 text-sm">
               Algumas atividades não foram concluídas. Isso é normal! O importante é manter o foco e continuar tentando.
             </DialogDescription>
           </DialogHeader>
@@ -391,43 +394,42 @@ export const DailyCheckout = () => {
             <div className="bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800 rounded-lg p-3">
               <p className="text-sm text-blue-800 dark:text-blue-200 flex items-start gap-2">
                 <HeadphonesIcon className="w-4 h-4 mt-0.5 flex-shrink-0" />
-                Se precisar de apoio, entre em contato com nosso suporte. Estamos aqui para ajudar você a alcançar seus objetivos.
+                <span>Se precisar de apoio, entre em contato com nosso suporte.</span>
               </p>
             </div>
             <div className="bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 rounded-lg p-3">
               <p className="text-sm text-amber-800 dark:text-amber-200 flex items-start gap-2">
                 <AlertCircle className="w-4 h-4 mt-0.5 flex-shrink-0" />
-                Lembre-se de atualizar o status das atividades no "Plano de Vida" para manter seu progresso sincronizado.
+                <span>Atualize o status das atividades no "Plano de Vida".</span>
               </p>
             </div>
           </div>
-          <DialogFooter className="mt-4 sm:justify-end">
-            <div className="flex flex-col-reverse sm:flex-row gap-2 w-full sm:w-auto">
-              <Button variant="outline" onClick={() => setShowHelpModal(false)}>
-                Fechar
-              </Button>
-              <Button 
-                variant="secondary"
-                onClick={() => {
-                  setShowHelpModal(false);
-                  navigate('/suporte');
-                }}
-                className="gap-2"
-              >
-                <HeadphonesIcon className="w-4 h-4" />
-                Ir para Suporte
-              </Button>
-              <Button 
-                onClick={() => {
-                  setShowHelpModal(false);
-                  window.dispatchEvent(new CustomEvent("navigateToPlanoDeVida", { 
-                    detail: { tab: "como-chegar" } 
-                  }));
-                }}
-              >
-                Ir para Plano de Vida
-              </Button>
-            </div>
+          <DialogFooter className="mt-4 flex-col sm:flex-row gap-2">
+            <Button variant="outline" onClick={() => setShowHelpModal(false)} className="w-full sm:w-auto">
+              Fechar
+            </Button>
+            <Button 
+              variant="secondary"
+              onClick={() => {
+                setShowHelpModal(false);
+                navigate('/suporte');
+              }}
+              className="w-full sm:w-auto gap-2"
+            >
+              <HeadphonesIcon className="w-4 h-4" />
+              Suporte
+            </Button>
+            <Button 
+              onClick={() => {
+                setShowHelpModal(false);
+                window.dispatchEvent(new CustomEvent("navigateToPlanoDeVida", { 
+                  detail: { tab: "como-chegar" } 
+                }));
+              }}
+              className="w-full sm:w-auto"
+            >
+              Plano de Vida
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
