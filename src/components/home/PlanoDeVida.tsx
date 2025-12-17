@@ -32,7 +32,7 @@ const PlanoDeVida = ({ onTabChange, onOpenChange, forcedTab, forcedOpen }: Plano
   const [activeTab, setActiveTab] = useState("quem-sou");
   const [vvd, setVvd] = useState("");
   const [isEditingVvd, setIsEditingVvd] = useState(true);
-  const [valores, setValores] = useState<string[]>(Array(12).fill(""));
+  const [valores, setValores] = useState<string[]>(Array(6).fill(""));
   const [isEditingValores, setIsEditingValores] = useState(true);
   const [areasVida, setAreasVida] = useState<Array<{
     area: string;
@@ -126,8 +126,8 @@ const PlanoDeVida = ({ onTabChange, onOpenChange, forcedTab, forcedOpen }: Plano
       const savedMeusValores = localStorage.getItem("meus_valores");
       if (savedMeusValores) {
         const meusValores = JSON.parse(savedMeusValores);
-        // Preencher com os 6 valores + 6 vazios para manter compatibilidade
-        const valoresCompletos = [...meusValores, ...Array(12 - meusValores.length).fill("")];
+        // Preencher com os 6 valores
+        const valoresCompletos = [...meusValores.slice(0, 6), ...Array(Math.max(0, 6 - meusValores.length)).fill("")];
         setValores(valoresCompletos);
       }
     };
@@ -761,7 +761,7 @@ const PlanoDeVida = ({ onTabChange, onOpenChange, forcedTab, forcedOpen }: Plano
                 <Label htmlFor="vvd">Minha Visão de Vida Desejada</Label>
                 <Textarea
                   id="vvd"
-                  placeholder="Descreva como você imagina sua vida ideal em todos os aspectos..."
+                  placeholder="Clique no link abaixo para fazer seu VVD"
                   value={vvd}
                   onChange={(e) => setVvd(e.target.value)}
                   rows={4}

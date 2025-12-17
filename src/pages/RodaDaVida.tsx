@@ -18,16 +18,16 @@ interface LifeArea {
 }
 
 const defaultAreas: LifeArea[] = [
-  { area: "Saúde e Bem-estar", notaAtual: 5, notaDesejada: 9 },
-  { area: "Carreira e Profissão", notaAtual: 6, notaDesejada: 9 },
-  { area: "Finanças", notaAtual: 5, notaDesejada: 8 },
-  { area: "Relacionamentos", notaAtual: 7, notaDesejada: 9 },
-  { area: "Família", notaAtual: 8, notaDesejada: 10 },
-  { area: "Desenvolvimento Pessoal", notaAtual: 6, notaDesejada: 9 },
-  { area: "Lazer e Diversão", notaAtual: 4, notaDesejada: 8 },
-  { area: "Espiritualidade", notaAtual: 5, notaDesejada: 8 },
-  { area: "Ambiente Físico", notaAtual: 6, notaDesejada: 9 },
-  { area: "Contribuição Social", notaAtual: 4, notaDesejada: 7 },
+  { area: "Saúde e Bem-estar", notaAtual: 0, notaDesejada: 0 },
+  { area: "Carreira e Profissão", notaAtual: 0, notaDesejada: 0 },
+  { area: "Finanças", notaAtual: 0, notaDesejada: 0 },
+  { area: "Relacionamentos", notaAtual: 0, notaDesejada: 0 },
+  { area: "Família", notaAtual: 0, notaDesejada: 0 },
+  { area: "Desenvolvimento Pessoal", notaAtual: 0, notaDesejada: 0 },
+  { area: "Lazer e Diversão", notaAtual: 0, notaDesejada: 0 },
+  { area: "Espiritualidade", notaAtual: 0, notaDesejada: 0 },
+  { area: "Ambiente Físico", notaAtual: 0, notaDesejada: 0 },
+  { area: "Contribuição Social", notaAtual: 0, notaDesejada: 0 },
 ];
 
 export default function RodaDaVida() {
@@ -63,15 +63,8 @@ export default function RodaDaVida() {
 
   const saveAreas = useCallback(async (newAreas: LifeArea[]) => {
     setAreas(newAreas);
-    // Salvar no Supabase em background
-    const areasVida: AreaVida[] = newAreas.map((a, idx) => ({
-      id: idx + 1,
-      area: a.area,
-      nota_atual: a.notaAtual,
-      nota_desejada: a.notaDesejada
-    }));
-    await saveAreasVida(areasVida);
-  }, [saveAreasVida]);
+    // Não salva automaticamente - usuário precisa clicar em "Salvar no Plano de Vida"
+  }, []);
 
   const handleSaveToPlanoDeVida = async () => {
     setIsSaving(true);
