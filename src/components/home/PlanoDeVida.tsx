@@ -217,16 +217,20 @@ const PlanoDeVida = ({ onTabChange, onOpenChange, forcedTab, forcedOpen }: Plano
           }
         }
 
-        // Valores
+        // Valores - limitado a 6 campos
         const savedValores = await storage.getValores();
         if (savedValores && savedValores.length > 0) {
-          const valoresCompletos = [...savedValores, ...Array(12 - savedValores.length).fill("")];
+          const limitedValores = savedValores.slice(0, 6);
+          const valoresCompletos = [...limitedValores, ...Array(Math.max(0, 6 - limitedValores.length)).fill("")];
           setValores(valoresCompletos);
           setIsEditingValores(false);
         } else {
           const localValores = localStorage.getItem("valores");
           if (localValores) {
-            setValores(JSON.parse(localValores));
+            const parsed = JSON.parse(localValores);
+            const limitedValores = parsed.slice(0, 6);
+            const valoresCompletos = [...limitedValores, ...Array(Math.max(0, 6 - limitedValores.length)).fill("")];
+            setValores(valoresCompletos);
             setIsEditingValores(false);
           }
         }
