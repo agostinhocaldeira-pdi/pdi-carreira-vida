@@ -10,6 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Compass, Heart, Target, Lightbulb, ChevronDown, ArrowRight, Edit, Sparkles, Loader2, ExternalLink, Plus, Trash2, Pencil, Check, X, Building2 } from "lucide-react";
+import { PDILoader } from "@/components/ui/pdi-loader";
 import { toast } from "sonner";
 import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -1064,7 +1065,15 @@ const PlanoDeVida = ({ onTabChange, onOpenChange, forcedTab, forcedOpen }: Plano
               </div>
 
               {/* Lista de objetivos cadastrados */}
-              {objetivos.length > 0 && (
+              {isLoading ? (
+                <div className="py-6">
+                  <PDILoader 
+                    text="Carregando seus objetivos..." 
+                    size="md" 
+                    variant="target" 
+                  />
+                </div>
+              ) : objetivos.length > 0 ? (
                 <div className="space-y-3">
                   <h4 className="font-medium text-sm">Objetivos Cadastrados</h4>
                   <div className="rounded-lg border overflow-x-auto">
@@ -1220,7 +1229,7 @@ const PlanoDeVida = ({ onTabChange, onOpenChange, forcedTab, forcedOpen }: Plano
                     </Table>
                   </div>
                 </div>
-              )}
+              ) : null}
             </div>
           </TabsContent>
 

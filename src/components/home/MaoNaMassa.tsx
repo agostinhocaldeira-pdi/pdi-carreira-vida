@@ -370,13 +370,23 @@ const MaoNaMassa = () => {
     setDeleteMetaId(metaId);
   };
 
-  const confirmDeleteMeta = () => {
+  const confirmDeleteMeta = async () => {
     if (deleteMetaId) {
-      const metasAtualizadas = metasCadastradas.filter((m) => m.id !== deleteMetaId);
-      localStorage.setItem("metas", JSON.stringify(metasAtualizadas));
-      setMetasCadastradas(metasAtualizadas);
-      toast.success("Meta removida!");
-      setDeleteMetaId(null);
+      try {
+        // Delete from Supabase first
+        await storage.deleteMeta(deleteMetaId);
+        
+        // Then update local state
+        const metasAtualizadas = metasCadastradas.filter((m) => m.id !== deleteMetaId);
+        localStorage.setItem("metas", JSON.stringify(metasAtualizadas));
+        setMetasCadastradas(metasAtualizadas);
+        toast.success("Meta removida!");
+      } catch (error) {
+        console.error("Error deleting meta:", error);
+        toast.error("Erro ao remover meta. Tente novamente.");
+      } finally {
+        setDeleteMetaId(null);
+      }
     }
   };
 
