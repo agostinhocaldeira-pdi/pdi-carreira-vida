@@ -6,6 +6,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogD
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Check, X, AlertCircle, PartyPopper, HeadphonesIcon, ClipboardCheck, Zap, Target, ListTodo, Footprints, Save } from "lucide-react";
+import { PDILoader } from "@/components/ui/pdi-loader";
 import { usePDIStorage } from "@/hooks/usePDIStorage";
 import { useNavigate } from "react-router-dom";
 
@@ -237,9 +238,11 @@ export const DailyCheckout = () => {
     return (
       <Card className="border-dashed">
         <CardContent className="py-6">
-          <div className="flex items-center justify-center">
-            <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary"></div>
-          </div>
+          <PDILoader 
+            text="Preparando suas tarefas..." 
+            size="sm" 
+            variant="target" 
+          />
         </CardContent>
       </Card>
     );
