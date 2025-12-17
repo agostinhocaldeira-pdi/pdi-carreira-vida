@@ -93,14 +93,17 @@ const ProgressSection = () => {
       let objetivos = JSON.parse(localStorage.getItem("objetivos") || "[]");
       let metas = JSON.parse(localStorage.getItem("metas") || "[]");
       
-      // Then try to sync with Supabase in background
+      // Then try to sync with Supabase in background (parallel)
       try {
-        const savedObjetivos = await storage.getObjetivos();
+        const [savedObjetivos, savedMetas] = await Promise.all([
+          storage.getObjetivos().catch(() => null),
+          storage.getMetas().catch(() => null)
+        ]);
+
         if (savedObjetivos && savedObjetivos.length > 0) {
           objetivos = savedObjetivos;
         }
         
-        const savedMetas = await storage.getMetas();
         if (savedMetas && savedMetas.length > 0) {
           metas = savedMetas;
         }

@@ -89,9 +89,13 @@ const MaoNaMassa = () => {
         setIsLoading(false);
       }
       
-      // Depois tentar sincronizar com Supabase em background
+      // Depois tentar sincronizar com Supabase em background (em paralelo)
       try {
-        const savedObjetivos = await storage.getObjetivos();
+        const [savedObjetivos, savedMetas] = await Promise.all([
+          storage.getObjetivos().catch(() => null),
+          storage.getMetas().catch(() => null)
+        ]);
+
         if (isMounted && savedObjetivos && savedObjetivos.length > 0) {
           setObjetivosDisponiveis(savedObjetivos.map((obj: any) => ({
             id: obj.id,
@@ -99,7 +103,6 @@ const MaoNaMassa = () => {
           })));
         }
 
-        const savedMetas = await storage.getMetas();
         if (isMounted && savedMetas && savedMetas.length > 0) {
           setMetasCadastradas(savedMetas.map((meta: any) => ({
             id: meta.id,
