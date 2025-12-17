@@ -16,7 +16,8 @@ import { ExportPDFButton } from "@/components/reports/ExportPDFButton";
 import { usePDIStorage } from "@/hooks/usePDIStorage";
 
 const ProgressSection = () => {
-  const { getEisenhowerTasks } = usePDIStorage();
+  const storage = usePDIStorage();
+  const { getEisenhowerTasks } = storage;
   const { 
     streak, 
     getUnlockedAchievements, 
@@ -104,82 +105,104 @@ const ProgressSection = () => {
   }, []);
 
   useEffect(() => {
-    // Load data from localStorage
-    let objetivos = JSON.parse(localStorage.getItem("objetivos") || "[]");
-    let metas = JSON.parse(localStorage.getItem("metas") || "[]");
-    
-    // Calculate real progress data
-    const totalObjetivos = objetivos.length;
-    const completedObjetivos = objetivos.filter((obj: any) => 
-      obj.status?.toLowerCase() === "concluido" || obj.status?.toLowerCase() === "concluído"
-    ).length;
-    const objetivosPercentage = totalObjetivos > 0 ? Math.round((completedObjetivos / totalObjetivos) * 100) : 0;
-
-    const totalMetas = metas.length;
-    const completedMetas = metas.filter((meta: any) => 
-      meta.status?.toLowerCase() === "concluido" || meta.status?.toLowerCase() === "concluído" || meta.concluida === true
-    ).length;
-    const metasPercentage = totalMetas > 0 ? Math.round((completedMetas / totalMetas) * 100) : 0;
-
-    // Count all actions from all metas
-    let totalActions = 0;
-    let completedActions = 0;
-    metas.forEach((meta: any) => {
-      if (meta.acoes && Array.isArray(meta.acoes)) {
-        totalActions += meta.acoes.length;
-        completedActions += meta.acoes.filter((acao: any) => 
-          acao.status?.toLowerCase() === "concluido" || acao.status?.toLowerCase() === "concluído"
-        ).length;
+    const loadProgressData = async () => {
+      // Load from localStorage first (instant)
+      let objetivos = JSON.parse(localStorage.getItem("objetivos") || "[]");
+      let metas = JSON.parse(localStorage.getItem("metas") || "[]");
+      
+      // Then try to sync with Supabase in background
+      try {
+        const savedObjetivos = await storage.getObjetivos();
+        if (savedObjetivos && savedObjetivos.length > 0) {
+          objetivos = savedObjetivos;
+        }
+        
+        const savedMetas = await storage.getMetas();
+        if (savedMetas && savedMetas.length > 0) {
+          metas = savedMetas;
+        }
+      } catch (error) {
+        console.error("Error syncing progress data with Supabase:", error);
       }
-    });
-    const actionsPercentage = totalActions > 0 ? Math.round((completedActions / totalActions) * 100) : 0;
+      
+      // Calculate real progress data
+      const totalObjetivos = objetivos.length;
+      const completedObjetivos = objetivos.filter((obj: any) => {
+        const status = obj.status?.toLowerCase()?.replace(/\s+/g, '-') || "";
+        return status === "concluido" || status === "concluído";
+      }).length;
+      const objetivosPercentage = totalObjetivos > 0 ? Math.round((completedObjetivos / totalObjetivos) * 100) : 0;
 
-    setProgressData({
-      objectives: { percentage: objetivosPercentage, completed: completedObjetivos, total: totalObjetivos },
-      goals: { percentage: metasPercentage, completed: completedMetas, total: totalMetas },
-      actions: { percentage: actionsPercentage, completed: completedActions, total: totalActions },
-    });
-    
-    // Load pending items - handle both data structures
-    // Check for "pendente" status or items with expired dates
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    
-    const isDateExpired = (dateStr: string | undefined): boolean => {
-      if (!dateStr) return false;
-      // Parse the date string and compare only the date part (not time)
-      const [year, month, day] = dateStr.split('-').map(Number);
-      if (!year || !month || !day) return false;
-      const targetDate = new Date(year, month - 1, day);
-      targetDate.setHours(0, 0, 0, 0);
-      return targetDate < today;
+      const totalMetas = metas.length;
+      const completedMetas = metas.filter((meta: any) => {
+        const status = meta.status?.toLowerCase()?.replace(/\s+/g, '-') || "";
+        return status === "concluido" || status === "concluído" || meta.concluida === true;
+      }).length;
+      const metasPercentage = totalMetas > 0 ? Math.round((completedMetas / totalMetas) * 100) : 0;
+
+      // Count all actions from all metas
+      let totalActions = 0;
+      let completedActions = 0;
+      metas.forEach((meta: any) => {
+        if (meta.acoes && Array.isArray(meta.acoes)) {
+          totalActions += meta.acoes.length;
+          completedActions += meta.acoes.filter((acao: any) => {
+            const status = acao.status?.toLowerCase()?.replace(/\s+/g, '-') || "";
+            return status === "concluido" || status === "concluído";
+          }).length;
+        }
+      });
+      const actionsPercentage = totalActions > 0 ? Math.round((completedActions / totalActions) * 100) : 0;
+
+      setProgressData({
+        objectives: { percentage: objetivosPercentage, completed: completedObjetivos, total: totalObjetivos },
+        goals: { percentage: metasPercentage, completed: completedMetas, total: totalMetas },
+        actions: { percentage: actionsPercentage, completed: completedActions, total: totalActions },
+      });
+      
+      // Load pending items - handle both data structures
+      // Check for "pendente" status or items with expired dates
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      
+      const isDateExpired = (dateStr: string | undefined): boolean => {
+        if (!dateStr) return false;
+        // Parse the date string and compare only the date part (not time)
+        const [year, month, day] = dateStr.split('-').map(Number);
+        if (!year || !month || !day) return false;
+        const targetDate = new Date(year, month - 1, day);
+        targetDate.setHours(0, 0, 0, 0);
+        return targetDate < today;
+      };
+      
+      const pendingObjetivos = objetivos.filter((obj: any) => {
+        const status = obj.status?.toLowerCase()?.replace(/\s+/g, '-') || "";
+        const dataAlvo = obj.dataAlvo || obj.data_alvo;
+        const isPending = status === "pendente" || status === "a-fazer";
+        const isCompleted = status === "concluido" || status === "concluído";
+        const isExpired = !isCompleted && isDateExpired(dataAlvo);
+        return isPending || isExpired;
+      });
+      
+      const pendingMetas = metas.filter((meta: any) => {
+        const status = meta.status?.toLowerCase()?.replace(/\s+/g, '-') || "";
+        const dataAlvo = meta.dataAlvo || meta.data_alvo;
+        const isPending = status === "pendente" || status === "a-fazer";
+        const isCompleted = status === "concluido" || status === "concluído" || meta.concluida === true;
+        const isExpired = !isCompleted && isDateExpired(dataAlvo);
+        return isPending || isExpired;
+      });
+      
+      // Ações não são consideradas para prazo expirado - apenas por status "pendente"
+      setPendingItems({
+        objectives: pendingObjetivos,
+        goals: pendingMetas,
+        actions: [] // Ações removidas da verificação de prazos expirados
+      });
     };
     
-    const pendingObjetivos = objetivos.filter((obj: any) => {
-      const status = obj.status?.toLowerCase() || "";
-      const dataAlvo = obj.dataAlvo || obj.data_alvo;
-      const isPending = status === "pendente" || status === "a-fazer";
-      const isCompleted = status === "concluido" || status === "concluído";
-      const isExpired = !isCompleted && isDateExpired(dataAlvo);
-      return isPending || isExpired;
-    });
-    
-    const pendingMetas = metas.filter((meta: any) => {
-      const status = meta.status?.toLowerCase() || "";
-      const dataAlvo = meta.dataAlvo || meta.data_alvo;
-      const isPending = status === "pendente" || status === "a-fazer";
-      const isCompleted = status === "concluido" || status === "concluído" || meta.concluida === true;
-      const isExpired = !isCompleted && isDateExpired(dataAlvo);
-      return isPending || isExpired;
-    });
-    
-    // Ações não são consideradas para prazo expirado - apenas por status "pendente"
-    setPendingItems({
-      objectives: pendingObjetivos,
-      goals: pendingMetas,
-      actions: [] // Ações removidas da verificação de prazos expirados
-    });
-  }, []);
+    loadProgressData();
+  }, [storage]);
 
   useEffect(() => {
     const loadEisenhowerTasks = async () => {
