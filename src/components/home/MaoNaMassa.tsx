@@ -9,6 +9,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Rocket, Plus, Trash2, Pencil, Check, X, ChevronDown, Lightbulb, Loader2 } from "lucide-react";
+import { PDILoader } from "@/components/ui/pdi-loader";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import ConfirmDeleteDialog from "@/components/ConfirmDeleteDialog";
@@ -387,7 +388,16 @@ const MaoNaMassa = () => {
       </CardHeader>
       <CardContent>
         <div className="space-y-6">
-          {/* Tabela de Metas Cadastradas - SEMPRE VISÍVEL */}
+          {/* Loading State */}
+          {isLoading && metasCadastradas.length === 0 && (
+            <PDILoader 
+              text="Carregando suas metas..." 
+              size="md" 
+              variant="rocket" 
+            />
+          )}
+
+          {/* Tabela de Metas Cadastradas - SEMPRE VISÍVEL quando há metas */}
           {metasCadastradas.length > 0 && (
             <div className="space-y-4">
               <h3 className="text-lg font-semibold">Metas Cadastradas</h3>
