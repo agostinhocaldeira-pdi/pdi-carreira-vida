@@ -269,65 +269,67 @@ export const DailyCheckout = () => {
             </div>
           ) : (
             <>
-              <ScrollArea className="max-h-[280px] sm:max-h-[320px]">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead className="w-[50%] text-xs">Atividade</TableHead>
-                      <TableHead className="text-xs hidden sm:table-cell">Tipo</TableHead>
-                      <TableHead className="text-right text-xs w-[80px]">Status</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {items.map((item) => (
-                      <TableRow key={item.id} className="group">
-                        <TableCell className="py-2">
-                          <div className="flex items-start gap-2">
-                            <span className="mt-0.5 flex-shrink-0 sm:hidden">
-                              {getTypeIcon(item.type)}
-                            </span>
-                            <div className="min-w-0">
-                              <p className="text-sm font-medium truncate max-w-[180px] sm:max-w-[220px]">
-                                {item.text}
-                              </p>
-                              <p className="text-xs text-muted-foreground sm:hidden">
-                                {item.category}
-                              </p>
-                            </div>
-                          </div>
-                        </TableCell>
-                        <TableCell className="py-2 hidden sm:table-cell">
-                          <Badge variant="outline" className={`text-xs ${getTypeBadgeColor(item.type)}`}>
-                            {getTypeIcon(item.type)}
-                            <span className="ml-1">{item.category}</span>
-                          </Badge>
-                        </TableCell>
-                        <TableCell className="py-2 text-right">
-                          <div className="flex items-center justify-end gap-1">
-                            <Button
-                              variant={item.done === true ? "default" : "outline"}
-                              size="icon"
-                              className={`h-7 w-7 ${item.done === true ? 'bg-green-500 hover:bg-green-600' : 'hover:bg-green-500/10 hover:border-green-500'}`}
-                              onClick={() => toggleItemStatus(item.id, true)}
-                              title="Feito"
-                            >
-                              <Check className={`w-4 h-4 ${item.done === true ? 'text-white' : 'text-green-600'}`} />
-                            </Button>
-                            <Button
-                              variant={item.done === false ? "default" : "outline"}
-                              size="icon"
-                              className={`h-7 w-7 ${item.done === false ? 'bg-destructive hover:bg-destructive/90' : 'hover:bg-destructive/10 hover:border-destructive'}`}
-                              onClick={() => toggleItemStatus(item.id, false)}
-                              title="Não feito"
-                            >
-                              <X className={`w-4 h-4 ${item.done === false ? 'text-white' : 'text-destructive'}`} />
-                            </Button>
-                          </div>
-                        </TableCell>
+              <ScrollArea className="h-[280px] sm:h-[320px]">
+                <div className="min-w-0">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead className="text-xs">Atividade</TableHead>
+                        <TableHead className="text-xs hidden sm:table-cell">Tipo</TableHead>
+                        <TableHead className="text-right text-xs whitespace-nowrap">Status</TableHead>
                       </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
+                    </TableHeader>
+                    <TableBody>
+                      {items.map((item) => (
+                        <TableRow key={item.id} className="group">
+                          <TableCell className="py-2 pr-2">
+                            <div className="flex items-start gap-2">
+                              <span className="mt-0.5 flex-shrink-0 sm:hidden">
+                                {getTypeIcon(item.type)}
+                              </span>
+                              <div className="min-w-0 flex-1">
+                                <p className="text-sm font-medium line-clamp-2">
+                                  {item.text}
+                                </p>
+                                <p className="text-xs text-muted-foreground sm:hidden">
+                                  {item.category}
+                                </p>
+                              </div>
+                            </div>
+                          </TableCell>
+                          <TableCell className="py-2 hidden sm:table-cell">
+                            <Badge variant="outline" className={`text-xs ${getTypeBadgeColor(item.type)}`}>
+                              {getTypeIcon(item.type)}
+                              <span className="ml-1">{item.category}</span>
+                            </Badge>
+                          </TableCell>
+                          <TableCell className="py-2 pl-2">
+                            <div className="flex items-center justify-end gap-1.5">
+                              <Button
+                                variant={item.done === true ? "default" : "outline"}
+                                size="icon"
+                                className={`h-8 w-8 flex-shrink-0 ${item.done === true ? 'bg-green-500 hover:bg-green-600' : 'hover:bg-green-500/10 hover:border-green-500'}`}
+                                onClick={() => toggleItemStatus(item.id, true)}
+                                title="Feito"
+                              >
+                                <Check className={`w-4 h-4 ${item.done === true ? 'text-white' : 'text-green-600'}`} />
+                              </Button>
+                              <Button
+                                variant={item.done === false ? "default" : "outline"}
+                                size="icon"
+                                className={`h-8 w-8 flex-shrink-0 ${item.done === false ? 'bg-destructive hover:bg-destructive/90' : 'hover:bg-destructive/10 hover:border-destructive'}`}
+                                onClick={() => toggleItemStatus(item.id, false)}
+                                title="Não feito"
+                              >
+                                <X className={`w-4 h-4 ${item.done === false ? 'text-white' : 'text-destructive'}`} />
+                              </Button>
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
               </ScrollArea>
               
               <Button 
