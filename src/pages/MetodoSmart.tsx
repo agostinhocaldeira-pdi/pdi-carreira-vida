@@ -130,41 +130,49 @@ const MetodoSmart = () => {
     }
   };
 
-  const handleImportar = () => {
+  const handleImportar = async () => {
     // Construir texto da meta SMART completo
     const metaTexto = `${metaSmart.especifico}. ${metaSmart.mensuravel}. ${metaSmart.atingivel}`;
     
     const novaMeta = {
       id: Date.now(),
-      objetivoId: metaSmart.objetivoId,
+      objetivo_id: metaSmart.objetivoId, // Use snake_case for Supabase compatibility
+      objetivoId: metaSmart.objetivoId, // Keep camelCase for localStorage compatibility
       texto: metaTexto,
+      data_alvo: metaSmart.dataAlvo,
       dataAlvo: metaSmart.dataAlvo,
       medicao: metaSmart.mensuravel,
       inicio: new Date().toISOString().split('T')[0],
-      periodicidade: "mensalmente",
       concluida: false,
       acoes: [],
       passos: [],
-      fromSmart: true, // Flag para identificar origem
+      from_smart: true,
     };
 
-    // Salvar no localStorage
-    const metasExistentes = JSON.parse(localStorage.getItem("metas") || "[]");
-    const metasAtualizadas = [...metasExistentes, novaMeta];
-    localStorage.setItem("metas", JSON.stringify(metasAtualizadas));
+    try {
+      // Buscar metas existentes e adicionar a nova
+      const metasExistentes = await storage.getMetas();
+      const metasAtualizadas = [...metasExistentes, novaMeta];
+      
+      // Salvar usando o storage service (Supabase ou localStorage)
+      await storage.saveMetas(metasAtualizadas);
 
-    // Salvar temporariamente para destacar na home
-    localStorage.setItem("metaImportadaSmart", JSON.stringify(novaMeta));
+      // Salvar temporariamente para destacar na home
+      localStorage.setItem("metaImportadaSmart", JSON.stringify(novaMeta));
 
-    toast.success("🎯 Meta SMART importada com sucesso!", {
-      description: "Agora vá até 'Metas Cadastradas' no Plano de Vida e complete o cadastro com as ações e passos necessários",
-      duration: 5000,
-    });
+      toast.success("🎯 Meta SMART importada com sucesso!", {
+        description: "Agora vá até 'Metas Cadastradas' no Plano de Vida e complete o cadastro com as ações e passos necessários",
+        duration: 5000,
+      });
 
-    // Redirecionar para home
-    setTimeout(() => {
-      navigate("/home");
-    }, 2000);
+      // Redirecionar para home
+      setTimeout(() => {
+        navigate("/home");
+      }, 2000);
+    } catch (error) {
+      console.error('Erro ao salvar meta SMART:', error);
+      toast.error("Erro ao salvar a meta. Tente novamente.");
+    }
   };
 
   const getProgress = () => {
