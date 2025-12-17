@@ -8,12 +8,14 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { TrendingUp, Target, CheckCircle2, ChevronDown, Sparkles, Loader2, AlertCircle, Clock, ExternalLink, Flame, Trophy, Star } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Link } from "react-router-dom";
 import { useGamification } from "@/hooks/useGamification";
 import { ExportPDFButton } from "@/components/reports/ExportPDFButton";
 import { usePDIStorage } from "@/hooks/usePDIStorage";
+import { DailyCheckout } from "@/components/gamification/DailyCheckout";
 
 const ProgressSection = () => {
   const storage = usePDIStorage();
@@ -346,8 +348,8 @@ Analise as correlações entre estes elementos e forneça um insight sobre a ess
             </div>
             {/* Sua Jornada Modal */}
             <Dialog open={isJourneyModalOpen} onOpenChange={setIsJourneyModalOpen}>
-              <DialogContent className="max-w-lg">
-                <DialogHeader>
+              <DialogContent className="max-w-lg max-h-[90vh] flex flex-col">
+                <DialogHeader className="flex-shrink-0">
                   <DialogTitle className="flex items-center gap-2">
                     <div className="w-10 h-10 bg-gradient-to-br from-amber-400 to-yellow-500 rounded-full flex items-center justify-center shadow-glow">
                       <Trophy className="w-5 h-5 text-white" />
@@ -363,87 +365,92 @@ Analise as correlações entre estes elementos e forneça um insight sobre a ess
                   </DialogTitle>
                 </DialogHeader>
                 
-                <div className="space-y-4">
-                  {/* Level Progress */}
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between text-sm">
-                      <span className="text-muted-foreground">Progresso para nível {streak.level + 1}</span>
-                      <span className="font-medium">{streak.total_points} pts</span>
-                    </div>
-                    <Progress value={levelProgress.percentage} className="h-2 bg-amber-100" />
-                    <p className="text-xs text-muted-foreground text-right">
-                      {levelProgress.current}/{levelProgress.next} pontos
-                    </p>
-                  </div>
+                <ScrollArea className="flex-1 pr-4 -mr-4">
+                  <div className="space-y-4 pb-4">
+                    {/* Daily Checkout Section */}
+                    <DailyCheckout />
 
-                  {/* Stats Row */}
-                  <div className="grid grid-cols-3 gap-3">
-                    <div className="text-center p-3 bg-muted/50 rounded-lg border">
-                      <div className="flex items-center justify-center gap-1 mb-1">
-                        <Flame className="w-4 h-4 text-orange-500" />
-                        <span className="text-xl font-bold">{streak.current_streak}</span>
+                    {/* Level Progress */}
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between text-sm">
+                        <span className="text-muted-foreground">Progresso para nível {streak.level + 1}</span>
+                        <span className="font-medium">{streak.total_points} pts</span>
                       </div>
-                      <span className="text-xs text-muted-foreground">Dias seguidos</span>
+                      <Progress value={levelProgress.percentage} className="h-2 bg-amber-100" />
+                      <p className="text-xs text-muted-foreground text-right">
+                        {levelProgress.current}/{levelProgress.next} pontos
+                      </p>
                     </div>
-                    <div className="text-center p-3 bg-muted/50 rounded-lg border">
-                      <div className="flex items-center justify-center gap-1 mb-1">
-                        <Target className="w-4 h-4 text-blue-500" />
-                        <span className="text-xl font-bold">{streak.longest_streak}</span>
-                      </div>
-                      <span className="text-xs text-muted-foreground">Maior streak</span>
-                    </div>
-                    <div className="text-center p-3 bg-muted/50 rounded-lg border">
-                      <div className="flex items-center justify-center gap-1 mb-1">
-                        <Sparkles className="w-4 h-4 text-purple-500" />
-                        <span className="text-xl font-bold">{unlockedAchievements.length}</span>
-                      </div>
-                      <span className="text-xs text-muted-foreground">Conquistas</span>
-                    </div>
-                  </div>
 
-                  {/* Achievements Grid */}
-                  <div className="space-y-2">
-                    <h4 className="text-sm font-medium flex items-center gap-2">
-                      <Trophy className="w-4 h-4 text-amber-500" />
-                      Conquistas ({unlockedAchievements.length}/{unlockedAchievements.length + lockedAchievements.length})
-                    </h4>
-                    <TooltipProvider>
-                      <div className="flex flex-wrap gap-2">
-                        {unlockedAchievements.slice(0, 8).map((achievement) => (
-                          <Tooltip key={achievement.code}>
-                            <TooltipTrigger>
-                              <div className="w-10 h-10 bg-gradient-to-br from-amber-100 to-yellow-100 rounded-full flex items-center justify-center border-2 border-amber-300 shadow-sm hover:scale-110 transition-transform cursor-pointer">
-                                <span className="text-lg">{achievement.icon}</span>
-                              </div>
-                            </TooltipTrigger>
-                            <TooltipContent>
-                              <p className="font-medium">{achievement.name}</p>
-                              <p className="text-xs text-muted-foreground">{achievement.description}</p>
-                            </TooltipContent>
-                          </Tooltip>
-                        ))}
-                        {lockedAchievements.slice(0, 4).map((achievement) => (
-                          <Tooltip key={achievement.code}>
-                            <TooltipTrigger>
-                              <div className="w-10 h-10 bg-muted rounded-full flex items-center justify-center border border-border opacity-50 cursor-pointer">
-                                <span className="text-lg grayscale">🔒</span>
-                              </div>
-                            </TooltipTrigger>
-                            <TooltipContent>
-                              <p className="font-medium">{achievement.name}</p>
-                              <p className="text-xs text-muted-foreground">{achievement.description}</p>
-                            </TooltipContent>
-                          </Tooltip>
-                        ))}
-                        {(unlockedAchievements.length + lockedAchievements.length) > 12 && (
-                          <div className="w-10 h-10 bg-muted rounded-full flex items-center justify-center border border-border text-xs font-medium">
-                            +{(unlockedAchievements.length + lockedAchievements.length) - 12}
-                          </div>
-                        )}
+                    {/* Stats Row */}
+                    <div className="grid grid-cols-3 gap-3">
+                      <div className="text-center p-3 bg-muted/50 rounded-lg border">
+                        <div className="flex items-center justify-center gap-1 mb-1">
+                          <Flame className="w-4 h-4 text-orange-500" />
+                          <span className="text-xl font-bold">{streak.current_streak}</span>
+                        </div>
+                        <span className="text-xs text-muted-foreground">Dias seguidos</span>
                       </div>
-                    </TooltipProvider>
+                      <div className="text-center p-3 bg-muted/50 rounded-lg border">
+                        <div className="flex items-center justify-center gap-1 mb-1">
+                          <Target className="w-4 h-4 text-blue-500" />
+                          <span className="text-xl font-bold">{streak.longest_streak}</span>
+                        </div>
+                        <span className="text-xs text-muted-foreground">Maior streak</span>
+                      </div>
+                      <div className="text-center p-3 bg-muted/50 rounded-lg border">
+                        <div className="flex items-center justify-center gap-1 mb-1">
+                          <Sparkles className="w-4 h-4 text-purple-500" />
+                          <span className="text-xl font-bold">{unlockedAchievements.length}</span>
+                        </div>
+                        <span className="text-xs text-muted-foreground">Conquistas</span>
+                      </div>
+                    </div>
+
+                    {/* Achievements Grid */}
+                    <div className="space-y-2">
+                      <h4 className="text-sm font-medium flex items-center gap-2">
+                        <Trophy className="w-4 h-4 text-amber-500" />
+                        Conquistas ({unlockedAchievements.length}/{unlockedAchievements.length + lockedAchievements.length})
+                      </h4>
+                      <TooltipProvider>
+                        <div className="flex flex-wrap gap-2">
+                          {unlockedAchievements.slice(0, 8).map((achievement) => (
+                            <Tooltip key={achievement.code}>
+                              <TooltipTrigger>
+                                <div className="w-10 h-10 bg-gradient-to-br from-amber-100 to-yellow-100 rounded-full flex items-center justify-center border-2 border-amber-300 shadow-sm hover:scale-110 transition-transform cursor-pointer">
+                                  <span className="text-lg">{achievement.icon}</span>
+                                </div>
+                              </TooltipTrigger>
+                              <TooltipContent>
+                                <p className="font-medium">{achievement.name}</p>
+                                <p className="text-xs text-muted-foreground">{achievement.description}</p>
+                              </TooltipContent>
+                            </Tooltip>
+                          ))}
+                          {lockedAchievements.slice(0, 4).map((achievement) => (
+                            <Tooltip key={achievement.code}>
+                              <TooltipTrigger>
+                                <div className="w-10 h-10 bg-muted rounded-full flex items-center justify-center border border-border opacity-50 cursor-pointer">
+                                  <span className="text-lg grayscale">🔒</span>
+                                </div>
+                              </TooltipTrigger>
+                              <TooltipContent>
+                                <p className="font-medium">{achievement.name}</p>
+                                <p className="text-xs text-muted-foreground">{achievement.description}</p>
+                              </TooltipContent>
+                            </Tooltip>
+                          ))}
+                          {(unlockedAchievements.length + lockedAchievements.length) > 12 && (
+                            <div className="w-10 h-10 bg-muted rounded-full flex items-center justify-center border border-border text-xs font-medium">
+                              +{(unlockedAchievements.length + lockedAchievements.length) - 12}
+                            </div>
+                          )}
+                        </div>
+                      </TooltipProvider>
+                    </div>
                   </div>
-                </div>
+                </ScrollArea>
               </DialogContent>
             </Dialog>
 
