@@ -28,6 +28,112 @@ class SupabaseStorageService {
   }
 
   // ============================================
+  // BATCH QUERY - Get all PDI data in one call
+  // ============================================
+  
+  async getPDIData(): Promise<{
+    objetivos: Objetivo[];
+    metas: Meta[];
+    vvd: string;
+    valores: string[];
+    areasVida: AreaVida[];
+  }> {
+    const userId = await this.getUserId();
+    if (!userId) {
+      return { objetivos: [], metas: [], vvd: '', valores: [], areasVida: [] };
+    }
+
+    // Execute all queries in parallel
+    const [objetivosRes, goalsRes, actionsRes, stepsRes, vvdRes, valoresRes, areasRes] = await Promise.all([
+      supabase.from('user_objectives').select('*').eq('user_id', userId).order('created_at'),
+      supabase.from('user_goals').select('*').eq('user_id', userId).order('created_at'),
+      supabase.from('user_actions').select('*').eq('user_id', userId),
+      supabase.from('user_steps').select('*').eq('user_id', userId),
+      supabase.from('user_vvd').select('vvd_text').eq('user_id', userId).maybeSingle(),
+      supabase.from('user_valores').select('valores').eq('user_id', userId).maybeSingle(),
+      supabase.from('user_life_areas').select('*').eq('user_id', userId).order('position'),
+    ]);
+
+    // Map objetivos
+    const objetivos: Objetivo[] = (objetivosRes.data || []).map((obj: any) => ({
+      id: obj.id,
+      texto: obj.texto,
+      data_alvo: obj.data_alvo || '',
+      conexao_vvd: obj.conexao_vvd || '',
+      status: obj.status || 'em-andamento',
+    }));
+
+    // Build actions map and steps map for efficient lookup
+    const actionsMap = new Map<string, any[]>();
+    for (const action of actionsRes.data || []) {
+      const goalId = action.goal_id;
+      if (!actionsMap.has(goalId)) actionsMap.set(goalId, []);
+      actionsMap.get(goalId)!.push(action);
+    }
+
+    const stepsMap = new Map<string, any[]>();
+    for (const step of stepsRes.data || []) {
+      const actionId = step.action_id;
+      if (!stepsMap.has(actionId)) stepsMap.set(actionId, []);
+      stepsMap.get(actionId)!.push(step);
+    }
+
+    // Map metas with their actions and steps
+    const metas: Meta[] = (goalsRes.data || []).map((goal: any) => {
+      const goalActions = actionsMap.get(goal.id) || [];
+      const acoes = goalActions.map((action: any, idx: number) => ({
+        id: idx + 1,
+        acao: action.texto,
+        periodicidade: action.periodicidade || '',
+        status: action.status?.replace(' ', '-') || 'a-fazer',
+      }));
+
+      // Collect unique steps from all actions
+      const passosSet = new Map<string, string>();
+      for (const action of goalActions) {
+        const actionSteps = stepsMap.get(action.id) || [];
+        for (const step of actionSteps) {
+          const texto = step.texto?.trim();
+          if (texto) passosSet.set(texto.toLowerCase(), texto);
+        }
+      }
+      const passos = Array.from(passosSet.values()).map((passo, idx) => ({
+        id: idx + 1,
+        passo,
+      }));
+
+      return {
+        id: goal.id,
+        objetivo_id: goal.objective_id || '',
+        objetivoId: goal.objective_id || '',
+        texto: goal.texto,
+        data_alvo: goal.data_alvo || '',
+        dataAlvo: goal.data_alvo || '',
+        concluida: goal.status === 'concluido',
+        from_smart: goal.from_smart || false,
+        acoes,
+        passos,
+      };
+    });
+
+    // Map areas da vida
+    const areasVida: AreaVida[] = (areasRes.data || []).map((area: any, idx: number) => ({
+      id: idx + 1,
+      area: area.area_name,
+      nota_atual: area.current_score || 0,
+      nota_desejada: area.desired_score || 0,
+    }));
+
+    return {
+      objetivos,
+      metas,
+      vvd: vvdRes.data?.vvd_text || '',
+      valores: valoresRes.data?.valores || [],
+      areasVida,
+    };
+  }
+
+  // ============================================
   // VVD (Visão de Vida Desejada)
   // ============================================
   

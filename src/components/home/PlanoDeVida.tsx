@@ -18,6 +18,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import ConfirmDeleteDialog from "@/components/ConfirmDeleteDialog";
 import { OKRLinkSection, CompanyOKRsOverview } from "@/components/home/OKRLinkSection";
 import { usePDIStorage } from "@/hooks/usePDIStorage";
+import { usePDIData } from "@/hooks/usePDIQueries";
 import { RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, Legend, ResponsiveContainer } from "recharts";
 
 interface PlanoDeVidaProps {
@@ -29,6 +30,10 @@ interface PlanoDeVidaProps {
 
 const PlanoDeVida = ({ onTabChange, onOpenChange, forcedTab, forcedOpen }: PlanoDeVidaProps) => {
   const storage = usePDIStorage();
+  
+  // React Query hook for cached data with localStorage-first pattern
+  const { data: pdiData, isLoading: isQueryLoading } = usePDIData();
+  
   const [isOpen, setIsOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("quem-sou");
   const [vvd, setVvd] = useState("");
@@ -312,6 +317,19 @@ const PlanoDeVida = ({ onTabChange, onOpenChange, forcedTab, forcedOpen }: Plano
 
     loadData();
   }, [storage.isAuthenticated]);
+
+  // Sync objetivos from React Query cache (for instant loading)
+  useEffect(() => {
+    if (pdiData?.objetivos && pdiData.objetivos.length > 0) {
+      setObjetivos(pdiData.objetivos.map((obj: any) => ({
+        id: obj.id,
+        texto: obj.texto,
+        dataAlvo: obj.data_alvo || obj.dataAlvo || "",
+        conexaoVvd: obj.conexao_vvd || obj.conexaoVvd || "",
+        status: obj.status || "em-andamento",
+      })));
+    }
+  }, [pdiData?.objetivos]);
 
   const handleSaveVvd = async () => {
     try {
