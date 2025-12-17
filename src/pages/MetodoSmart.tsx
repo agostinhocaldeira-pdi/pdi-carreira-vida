@@ -57,6 +57,7 @@ const MetodoSmart = () => {
     temporal: "",
     dataAlvo: "",
   });
+  const [isImporting, setIsImporting] = useState(false);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -131,6 +132,10 @@ const MetodoSmart = () => {
   };
 
   const handleImportar = async () => {
+    if (isImporting) return; // Previne cliques duplicados
+    
+    setIsImporting(true);
+    
     // Texto da meta = resposta de "O que exatamente você quer alcançar?" (Específico)
     const metaTexto = metaSmart.especifico;
     
@@ -184,6 +189,7 @@ const MetodoSmart = () => {
     } catch (error) {
       console.error('Erro ao salvar meta SMART:', error);
       toast.error("Erro ao salvar a meta. Tente novamente.");
+      setIsImporting(false); // Permite tentar novamente em caso de erro
     }
   };
 
@@ -536,9 +542,23 @@ const MetodoSmart = () => {
                 </div>
 
                 <div className="flex justify-center">
-                  <Button onClick={handleImportar} size="lg" className="gap-2 shadow-lg">
-                    <CheckCircle2 className="w-5 h-5" />
-                    Importar para Plano de Vida
+                  <Button 
+                    onClick={handleImportar} 
+                    size="lg" 
+                    className="gap-2 shadow-lg"
+                    disabled={isImporting}
+                  >
+                    {isImporting ? (
+                      <>
+                        <div className="w-5 h-5 border-2 border-current border-t-transparent rounded-full animate-spin" />
+                        Importando...
+                      </>
+                    ) : (
+                      <>
+                        <CheckCircle2 className="w-5 h-5" />
+                        Importar para Plano de Vida
+                      </>
+                    )}
                   </Button>
                 </div>
               </CardContent>
