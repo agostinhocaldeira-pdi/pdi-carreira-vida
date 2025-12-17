@@ -15,6 +15,7 @@ import {
   ArrowRight,
   Sparkles
 } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 
 const FIRST_STEPS_KEY = "pdi_first_steps_shown";
 
@@ -54,21 +55,68 @@ const steps: Step[] = [
 
 export const FirstStepsModal = () => {
   const [open, setOpen] = useState(false);
+  const [userId, setUserId] = useState<string | null>(null);
 
   useEffect(() => {
-    // Verificar se é o primeiro acesso
-    const hasSeenFirstSteps = localStorage.getItem(FIRST_STEPS_KEY);
-    if (!hasSeenFirstSteps) {
-      // Pequeno delay para não competir com outras animações
-      const timer = setTimeout(() => {
-        setOpen(true);
-      }, 500);
-      return () => clearTimeout(timer);
-    }
+    const checkFirstAccess = async () => {
+      // Verificar se há usuário autenticado
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      if (user) {
+        setUserId(user.id);
+        
+        // Verificar no Supabase se o usuário já viu o modal (usando user_onboarding)
+        const { data: onboarding } = await supabase
+          .from('user_onboarding')
+          .select('current_phase')
+          .eq('user_id', user.id)
+          .maybeSingle();
+        
+        // Se o usuário tem registro de onboarding, já viu o modal
+        if (onboarding) {
+          localStorage.setItem(FIRST_STEPS_KEY, "true");
+          return;
+        }
+        
+        // Se não tem registro, mostrar o modal
+        const timer = setTimeout(() => {
+          setOpen(true);
+        }, 500);
+        return () => clearTimeout(timer);
+      } else {
+        // Para usuários não autenticados, usar localStorage
+        const hasSeenFirstSteps = localStorage.getItem(FIRST_STEPS_KEY);
+        if (!hasSeenFirstSteps) {
+          const timer = setTimeout(() => {
+            setOpen(true);
+          }, 500);
+          return () => clearTimeout(timer);
+        }
+      }
+    };
+
+    checkFirstAccess();
   }, []);
 
-  const handleClose = () => {
+  const handleClose = async () => {
+    // Salvar no localStorage
     localStorage.setItem(FIRST_STEPS_KEY, "true");
+    
+    // Se usuário autenticado, salvar no Supabase
+    if (userId) {
+      try {
+        await supabase
+          .from('user_onboarding')
+          .upsert({
+            user_id: userId,
+            current_phase: 'first_steps_completed',
+            updated_at: new Date().toISOString(),
+          }, { onConflict: 'user_id' });
+      } catch (error) {
+        console.error('Error saving onboarding status:', error);
+      }
+    }
+    
     setOpen(false);
   };
 
