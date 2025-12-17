@@ -22,6 +22,7 @@ import { useRoleProtection } from "@/hooks/useRoleProtection";
 import { supabase } from "@/integrations/supabase/client";
 import { TrialStatusBanner } from "@/components/subscription/TrialStatusBanner";
 import Logo from "@/components/Logo";
+import { FirstStepsModal } from "@/components/FirstStepsModal";
 
 const Home = () => {
   const navigate = useNavigate();
@@ -216,6 +217,9 @@ const Home = () => {
 
   return (
     <div className="min-h-screen bg-gradient-subtle">
+      {/* Modal de Primeiros Passos */}
+      <FirstStepsModal />
+
       {/* Achievement Notification */}
       {newAchievement && (
         <AchievementNotification achievement={newAchievement} onDismiss={dismissNewAchievement} />
