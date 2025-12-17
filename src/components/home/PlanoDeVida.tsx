@@ -17,6 +17,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import ConfirmDeleteDialog from "@/components/ConfirmDeleteDialog";
 import { OKRLinkSection, CompanyOKRsOverview } from "@/components/home/OKRLinkSection";
 import { usePDIStorage } from "@/hooks/usePDIStorage";
+import { RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, Legend, ResponsiveContainer } from "recharts";
 
 interface PlanoDeVidaProps {
   onTabChange?: (tab: string) => void;
@@ -786,75 +787,50 @@ const PlanoDeVida = ({ onTabChange, onOpenChange, forcedTab, forcedOpen }: Plano
               <div className="space-y-3">
                 <Label>Áreas da Vida</Label>
                 
-                {/* Visualização Desktop - Tabela */}
-                <div className="hidden md:block rounded-lg border overflow-x-auto">
-                  <table className="w-full">
-                    <thead className="bg-muted/50">
-                      <tr>
-                        <th className="p-3 text-left text-sm font-medium">Área</th>
-                        <th className="p-3 text-left text-sm font-medium">Nota Atual</th>
-                        <th className="p-3 text-left text-sm font-medium">Nota Desejada</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {areasVida.map((area, index) => (
-                        <tr key={area.area} className="border-t">
-                          <td className="p-3 text-sm">{area.area}</td>
-                          <td className="p-3">
-                            <Input 
-                              type="number" 
-                              min="0" 
-                              max="10" 
-                              className="w-20 text-sm" 
-                              placeholder="0-10"
-                              value={area.notaAtual}
-                              disabled
-                              readOnly
-                            />
-                          </td>
-                          <td className="p-3">
-                            <Input 
-                              type="number" 
-                              min="0" 
-                              max="10" 
-                              className="w-20 text-sm" 
-                              placeholder="0-10"
-                              value={area.notaDesejada}
-                              disabled
-                              readOnly
-                            />
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-
-                {/* Visualização Mobile - Cards */}
-                <div className="md:hidden space-y-3">
-                  {areasVida.map((area, index) => (
-                    <div 
-                      key={area.area} 
-                      className="p-4 rounded-lg border bg-card space-y-3"
-                    >
-                      <h4 className="font-semibold text-foreground">{area.area}</h4>
-                      <div className="grid grid-cols-2 gap-3">
-                        <div className="space-y-1">
-                          <Label className="text-xs text-muted-foreground">Nota Atual</Label>
-                          <div className="text-2xl font-bold text-primary">
-                            {area.notaAtual || "-"}
-                          </div>
-                        </div>
-                        <div className="space-y-1">
-                          <Label className="text-xs text-muted-foreground">Nota Desejada</Label>
-                          <div className="text-2xl font-bold text-accent">
-                            {area.notaDesejada || "-"}
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
+                {/* Gráfico Radar - Roda da Vida */}
+                {areasVida.length > 0 ? (
+                  <div className="rounded-lg border p-4 bg-card">
+                    <ResponsiveContainer width="100%" height={300}>
+                      <RadarChart data={areasVida.map(area => ({
+                        area: area.area,
+                        atual: Number(area.notaAtual) || 0,
+                        desejada: Number(area.notaDesejada) || 0
+                      }))}>
+                        <PolarGrid stroke="hsl(var(--border))" />
+                        <PolarAngleAxis
+                          dataKey="area"
+                          tick={{ fill: "hsl(var(--foreground))", fontSize: 10 }}
+                        />
+                        <PolarRadiusAxis
+                          angle={90}
+                          domain={[0, 10]}
+                          tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 10 }}
+                        />
+                        <Radar
+                          name="Nota Atual"
+                          dataKey="atual"
+                          stroke="hsl(var(--primary))"
+                          fill="hsl(var(--primary))"
+                          fillOpacity={0.3}
+                        />
+                        <Radar
+                          name="Nota Desejada"
+                          dataKey="desejada"
+                          stroke="hsl(var(--accent))"
+                          fill="hsl(var(--accent))"
+                          fillOpacity={0.3}
+                        />
+                        <Legend />
+                      </RadarChart>
+                    </ResponsiveContainer>
+                  </div>
+                ) : (
+                  <div className="rounded-lg border p-6 bg-muted/20 text-center">
+                    <p className="text-sm text-muted-foreground">
+                      Nenhuma área da vida cadastrada. Acesse a Roda da Vida para configurar.
+                    </p>
+                  </div>
+                )}
 
                 <div className="flex items-center justify-start gap-4">
                   <Link 
