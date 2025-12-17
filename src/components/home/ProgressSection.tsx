@@ -4,14 +4,12 @@ import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { TrendingUp, Target, CheckCircle2, ChevronDown, Sparkles, Loader2, AlertCircle, Clock, ExternalLink, Flame, Trophy, Star } from "lucide-react";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { TrendingUp, Target, CheckCircle2, ChevronDown, Sparkles, Loader2, Flame, Trophy, Star } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Link } from "react-router-dom";
 import { useGamification } from "@/hooks/useGamification";
 import { ExportPDFButton } from "@/components/reports/ExportPDFButton";
 import { usePDIStorage } from "@/hooks/usePDIStorage";
@@ -19,7 +17,6 @@ import { DailyCheckout } from "@/components/gamification/DailyCheckout";
 
 const ProgressSection = () => {
   const storage = usePDIStorage();
-  const { getEisenhowerTasks } = storage;
   const { 
     streak, 
     getUnlockedAchievements, 
@@ -36,22 +33,6 @@ const ProgressSection = () => {
   const [isGenerating, setIsGenerating] = useState(false);
   const [canGenerateInsight, setCanGenerateInsight] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
-  const [pendingItems, setPendingItems] = useState<{
-    objectives: any[];
-    goals: any[];
-    actions: any[];
-  }>({
-    objectives: [],
-    goals: [],
-    actions: []
-  });
-  const [eisenhowerTasks, setEisenhowerTasks] = useState<{
-    q1: any[];
-    q2: any[];
-  }>({
-    q1: [],
-    q2: []
-  });
   
   // Real progress data calculated from user data
   const [progressData, setProgressData] = useState({
@@ -161,94 +142,10 @@ const ProgressSection = () => {
         goals: { percentage: metasPercentage, completed: completedMetas, total: totalMetas },
         actions: { percentage: actionsPercentage, completed: completedActions, total: totalActions },
       });
-      
-      // Load pending items - handle both data structures
-      // Check for "pendente" status or items with expired dates
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
-      
-      const isDateExpired = (dateStr: string | undefined): boolean => {
-        if (!dateStr) return false;
-        // Parse the date string and compare only the date part (not time)
-        const [year, month, day] = dateStr.split('-').map(Number);
-        if (!year || !month || !day) return false;
-        const targetDate = new Date(year, month - 1, day);
-        targetDate.setHours(0, 0, 0, 0);
-        return targetDate < today;
-      };
-      
-      const pendingObjetivos = objetivos.filter((obj: any) => {
-        const status = obj.status?.toLowerCase()?.replace(/\s+/g, '-') || "";
-        const dataAlvo = obj.dataAlvo || obj.data_alvo;
-        const isPending = status === "pendente" || status === "a-fazer";
-        const isCompleted = status === "concluido" || status === "concluído";
-        const isExpired = !isCompleted && isDateExpired(dataAlvo);
-        return isPending || isExpired;
-      });
-      
-      const pendingMetas = metas.filter((meta: any) => {
-        const status = meta.status?.toLowerCase()?.replace(/\s+/g, '-') || "";
-        const dataAlvo = meta.dataAlvo || meta.data_alvo;
-        const isPending = status === "pendente" || status === "a-fazer";
-        const isCompleted = status === "concluido" || status === "concluído" || meta.concluida === true;
-        const isExpired = !isCompleted && isDateExpired(dataAlvo);
-        return isPending || isExpired;
-      });
-      
-      // Ações não são consideradas para prazo expirado - apenas por status "pendente"
-      setPendingItems({
-        objectives: pendingObjetivos,
-        goals: pendingMetas,
-        actions: [] // Ações removidas da verificação de prazos expirados
-      });
     };
     
     loadProgressData();
   }, [storage]);
-
-  useEffect(() => {
-    const loadEisenhowerTasks = async () => {
-      try {
-        const tasks = await getEisenhowerTasks();
-        if (tasks) {
-          setEisenhowerTasks({
-            q1: tasks.urgente_importante || [],
-            q2: tasks.nao_urgente_importante || []
-          });
-        } else {
-          // Fallback para localStorage
-          const localTasks = JSON.parse(localStorage.getItem("eisenhowerTasks") || "{}");
-          setEisenhowerTasks({
-            q1: localTasks.urgente_importante || localTasks.q1 || [],
-            q2: localTasks.nao_urgente_importante || localTasks.q2 || []
-          });
-        }
-      } catch (error) {
-        console.error("Erro ao carregar tarefas Eisenhower:", error);
-        // Fallback para localStorage
-        const localTasks = JSON.parse(localStorage.getItem("eisenhowerTasks") || "{}");
-        setEisenhowerTasks({
-          q1: localTasks.urgente_importante || localTasks.q1 || [],
-          q2: localTasks.nao_urgente_importante || localTasks.q2 || []
-        });
-      }
-    };
-
-    loadEisenhowerTasks();
-
-    // Escutar mudanças no localStorage
-    const handleStorageChange = () => {
-      loadEisenhowerTasks();
-    };
-
-    window.addEventListener("storage", handleStorageChange);
-    window.addEventListener("eisenhowerUpdated", handleStorageChange);
-
-    return () => {
-      window.removeEventListener("storage", handleStorageChange);
-      window.removeEventListener("eisenhowerUpdated", handleStorageChange);
-    };
-  }, [getEisenhowerTasks]);
 
   const handleGenerateInsight = async () => {
     if (!canGenerateInsight && !isAdmin) {
@@ -346,6 +243,12 @@ Analise as correlações entre estes elementos e forneça um insight sobre a ess
                 Sua Jornada
               </Button>
             </div>
+
+            {/* Daily Checkout Section - Now inside Seu Progresso */}
+            <div className="mb-6">
+              <DailyCheckout />
+            </div>
+
             {/* Sua Jornada Modal */}
             <Dialog open={isJourneyModalOpen} onOpenChange={setIsJourneyModalOpen}>
               <DialogContent className="max-w-lg max-h-[90vh] flex flex-col">
@@ -367,9 +270,6 @@ Analise as correlações entre estes elementos e forneça um insight sobre a ess
                 
                 <ScrollArea className="flex-1 pr-4 -mr-4">
                   <div className="space-y-4 pb-4">
-                    {/* Daily Checkout Section */}
-                    <DailyCheckout />
-
                     {/* Level Progress */}
                     <div className="space-y-2">
                       <div className="flex items-center justify-between text-sm">
@@ -453,223 +353,6 @@ Analise as correlações entre estes elementos e forneça um insight sobre a ess
                 </ScrollArea>
               </DialogContent>
             </Dialog>
-
-            {/* Pending Items Cards */}
-            {(pendingItems.objectives.length > 0 || pendingItems.goals.length > 0 || pendingItems.actions.length > 0) && (
-              <div className="mb-8 space-y-4">
-                <div className="flex items-center gap-2 mb-4">
-                  <Clock className="w-5 h-5 text-destructive" />
-                  <h3 className="text-lg font-semibold text-destructive">Itens com Prazo Expirado</h3>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  {/* Objetivos Pendentes */}
-                  {pendingItems.objectives.length > 0 && (
-                    <Card className="border-destructive/50 bg-destructive/5">
-                      <CardHeader className="pb-3">
-                        <CardTitle className="text-base flex items-center gap-2">
-                          <span className="text-2xl">🎯</span>
-                          <span>Objetivos ({pendingItems.objectives.length})</span>
-                        </CardTitle>
-                      </CardHeader>
-                      <CardContent className="space-y-2">
-                        {pendingItems.objectives.map((obj: any, idx: number) => {
-                          const titulo = obj.objetivo || obj.texto || "Objetivo sem título";
-                          const dataAlvo = obj.dataAlvo || obj.data_alvo;
-                          const dataFormatada = dataAlvo ? new Date(dataAlvo).toLocaleDateString('pt-BR') : "Sem prazo";
-                          
-                          return (
-                            <div 
-                              key={obj.id || idx}
-                              className="p-3 bg-background rounded-lg border border-border hover:border-primary/50 transition-colors cursor-pointer group"
-                              onClick={() => {
-                                window.dispatchEvent(new CustomEvent("navigateToPlanoDeVida", { 
-                                  detail: { tab: "para-onde" } 
-                                }));
-                              }}
-                            >
-                              <div className="flex items-start justify-between gap-2">
-                                <div className="flex-1 min-w-0">
-                                  <p className="text-sm font-medium text-foreground truncate">
-                                    {titulo}
-                                  </p>
-                                  <p className="text-xs text-muted-foreground mt-1">
-                                    Prazo: {dataFormatada}
-                                  </p>
-                                </div>
-                                <ExternalLink className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors flex-shrink-0" />
-                              </div>
-                            </div>
-                          );
-                        })}
-                      </CardContent>
-                    </Card>
-                  )}
-
-                  {/* Metas Pendentes */}
-                  {pendingItems.goals.length > 0 && (
-                    <Card className="border-destructive/50 bg-destructive/5">
-                      <CardHeader className="pb-3">
-                        <CardTitle className="text-base flex items-center gap-2">
-                          <span className="text-2xl">📊</span>
-                          <span>Metas ({pendingItems.goals.length})</span>
-                        </CardTitle>
-                      </CardHeader>
-                      <CardContent className="space-y-2">
-                        {pendingItems.goals.map((meta: any, idx: number) => {
-                          const titulo = meta.meta || meta.texto || "Meta sem título";
-                          const dataAlvo = meta.dataAlvo || meta.data_alvo;
-                          const dataFormatada = dataAlvo ? new Date(dataAlvo).toLocaleDateString('pt-BR') : "Sem prazo";
-                          
-                          return (
-                            <div 
-                              key={meta.id || idx}
-                              className="p-3 bg-background rounded-lg border border-border hover:border-primary/50 transition-colors cursor-pointer group"
-                              onClick={() => {
-                                window.dispatchEvent(new CustomEvent("navigateToPlanoDeVida", { 
-                                  detail: { tab: "como-chegar" } 
-                                }));
-                              }}
-                            >
-                              <div className="flex items-start justify-between gap-2">
-                                <div className="flex-1 min-w-0">
-                                  <p className="text-sm font-medium text-foreground truncate">
-                                    {titulo}
-                                  </p>
-                                  <p className="text-xs text-muted-foreground mt-1">
-                                    Prazo: {dataFormatada}
-                                  </p>
-                                </div>
-                                <ExternalLink className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors flex-shrink-0" />
-                              </div>
-                            </div>
-                          );
-                        })}
-                      </CardContent>
-                    </Card>
-                  )}
-
-                  {/* Ações Pendentes */}
-                  {pendingItems.actions.length > 0 && (
-                    <Card className="border-destructive/50 bg-destructive/5">
-                      <CardHeader className="pb-3">
-                        <CardTitle className="text-base flex items-center gap-2">
-                          <span className="text-2xl">⚡</span>
-                          <span>Ações ({pendingItems.actions.length})</span>
-                        </CardTitle>
-                      </CardHeader>
-                      <CardContent className="space-y-2">
-                        {pendingItems.actions.map((acao: any, idx: number) => {
-                          const titulo = acao.acao || "Ação sem título";
-                          const metaTitulo = acao.metaTitulo || acao.meta || "";
-                          
-                          return (
-                            <div 
-                              key={acao.id || idx}
-                              className="p-3 bg-background rounded-lg border border-border hover:border-primary/50 transition-colors cursor-pointer group"
-                              onClick={() => {
-                                window.dispatchEvent(new CustomEvent("navigateToPlanoDeVida", { 
-                                  detail: { tab: "como-chegar" } 
-                                }));
-                              }}
-                            >
-                              <div className="flex items-start justify-between gap-2">
-                                <div className="flex-1 min-w-0">
-                                  <p className="text-sm font-medium text-foreground truncate">
-                                    {titulo}
-                                  </p>
-                                  {metaTitulo && (
-                                    <p className="text-xs text-muted-foreground mt-1">
-                                      Meta: {metaTitulo}
-                                    </p>
-                                  )}
-                                  {acao.periodicidade && (
-                                    <p className="text-xs text-muted-foreground">
-                                      {acao.periodicidade}
-                                    </p>
-                                  )}
-                                </div>
-                                <ExternalLink className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors flex-shrink-0" />
-                              </div>
-                            </div>
-                          );
-                        })}
-                      </CardContent>
-                    </Card>
-                  )}
-                </div>
-              </div>
-            )}
-
-            {/* Matriz de Eisenhower Priority Tasks */}
-            {(eisenhowerTasks.q1.length > 0 || eisenhowerTasks.q2.length > 0) && (
-              <div className="mb-8 space-y-4">
-                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 sm:gap-0">
-                  <h3 className="text-base sm:text-lg font-semibold flex items-center gap-2">
-                    <Flame className="w-4 h-4 sm:w-5 sm:h-5 text-destructive flex-shrink-0" />
-                    <span className="break-words">Tarefas Prioritárias</span>
-                  </h3>
-                  <Link to="/ferramentas/eisenhower">
-                    <Button variant="ghost" size="sm" className="gap-2 hover:text-primary">
-                      <span className="text-xs">Ver Ferramenta</span>
-                      <ExternalLink className="w-3 h-3" />
-                    </Button>
-                  </Link>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {/* Urgente e Importante */}
-                  {eisenhowerTasks.q1.length > 0 && (
-                    <Card className="border-red-500/50 bg-gradient-to-br from-red-500/5 to-orange-500/5">
-                      <CardHeader className="pb-3">
-                        <CardTitle className="text-base flex items-center gap-2">
-                          <Flame className="w-5 h-5 text-red-500" />
-                          <span>Urgente e Importante ({eisenhowerTasks.q1.length})</span>
-                        </CardTitle>
-                        <CardDescription className="text-xs">Faça primeiro - Máxima prioridade</CardDescription>
-                      </CardHeader>
-                      <CardContent className="space-y-2">
-                        {eisenhowerTasks.q1.map((task: string, idx: number) => (
-                          <div 
-                            key={idx}
-                            className="p-3 bg-background rounded-lg border border-red-500/20 hover:border-red-500/50 transition-colors"
-                          >
-                            <p className="text-sm font-medium text-foreground">
-                              {task}
-                            </p>
-                          </div>
-                        ))}
-                      </CardContent>
-                    </Card>
-                  )}
-
-                  {/* Importante, não urgente */}
-                  {eisenhowerTasks.q2.length > 0 && (
-                    <Card className="border-primary/50 bg-gradient-to-br from-primary/5 to-blue-500/5">
-                      <CardHeader className="pb-3">
-                        <CardTitle className="text-base flex items-center gap-2">
-                          <Target className="w-5 h-5 text-primary" />
-                          <span>Importante, não urgente ({eisenhowerTasks.q2.length})</span>
-                        </CardTitle>
-                        <CardDescription className="text-xs">Planeje e agende - Foco estratégico</CardDescription>
-                      </CardHeader>
-                      <CardContent className="space-y-2">
-                        {eisenhowerTasks.q2.map((task: string, idx: number) => (
-                          <div 
-                            key={idx}
-                            className="p-3 bg-background rounded-lg border border-primary/20 hover:border-primary/50 transition-colors"
-                          >
-                            <p className="text-sm font-medium text-foreground">
-                              {task}
-                            </p>
-                          </div>
-                        ))}
-                      </CardContent>
-                    </Card>
-                  )}
-                </div>
-              </div>
-            )}
 
             {/* Título da seção de progresso */}
             <div className="mb-6">
