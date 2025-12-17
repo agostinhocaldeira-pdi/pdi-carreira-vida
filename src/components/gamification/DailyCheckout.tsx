@@ -359,7 +359,7 @@ export const DailyCheckout = () => {
               Lembre-se de atualizar o status das atividades no "Plano de Vida" para manter seu progresso sincronizado.
             </p>
           </div>
-          <DialogFooter className="mt-4">
+          <DialogFooter className="mt-4 sm:justify-end gap-2">
             <Button variant="outline" onClick={() => setShowSuccessModal(false)}>
               Fechar
             </Button>
@@ -401,32 +401,33 @@ export const DailyCheckout = () => {
               </p>
             </div>
           </div>
-          <DialogFooter className="mt-4 flex-col sm:flex-row gap-2">
-            <Button variant="outline" onClick={() => setShowHelpModal(false)} className="w-full sm:w-auto">
-              Fechar
-            </Button>
-            <Button 
-              variant="secondary"
-              onClick={() => {
-                setShowHelpModal(false);
-                navigate('/suporte');
-              }}
-              className="w-full sm:w-auto gap-2"
-            >
-              <HeadphonesIcon className="w-4 h-4" />
-              Ir para Suporte
-            </Button>
-            <Button 
-              onClick={() => {
-                setShowHelpModal(false);
-                window.dispatchEvent(new CustomEvent("navigateToPlanoDeVida", { 
-                  detail: { tab: "como-chegar" } 
-                }));
-              }}
-              className="w-full sm:w-auto"
-            >
-              Ir para Plano de Vida
-            </Button>
+          <DialogFooter className="mt-4 sm:justify-end">
+            <div className="flex flex-col-reverse sm:flex-row gap-2 w-full sm:w-auto">
+              <Button variant="outline" onClick={() => setShowHelpModal(false)}>
+                Fechar
+              </Button>
+              <Button 
+                variant="secondary"
+                onClick={() => {
+                  setShowHelpModal(false);
+                  navigate('/suporte');
+                }}
+                className="gap-2"
+              >
+                <HeadphonesIcon className="w-4 h-4" />
+                Ir para Suporte
+              </Button>
+              <Button 
+                onClick={() => {
+                  setShowHelpModal(false);
+                  window.dispatchEvent(new CustomEvent("navigateToPlanoDeVida", { 
+                    detail: { tab: "como-chegar" } 
+                  }));
+                }}
+              >
+                Ir para Plano de Vida
+              </Button>
+            </div>
           </DialogFooter>
         </DialogContent>
       </Dialog>
