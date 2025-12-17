@@ -9,9 +9,10 @@ interface ExportPDFButtonProps {
   variant?: "default" | "outline" | "ghost";
   size?: "default" | "sm" | "lg" | "icon";
   label?: string;
+  className?: string;
 }
 
-export function ExportPDFButton({ variant = "outline", size = "sm", label = "Exportar PDF" }: ExportPDFButtonProps) {
+export function ExportPDFButton({ variant = "outline", size = "sm", label = "Exportar PDF", className }: ExportPDFButtonProps) {
   const [isExporting, setIsExporting] = useState(false);
 
   const handleExportPDI = async () => {
@@ -232,7 +233,7 @@ export function ExportPDFButton({ variant = "outline", size = "sm", label = "Exp
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant={variant} size={size} disabled={isExporting}>
+        <Button variant={variant} size={size} disabled={isExporting} className={className}>
           {isExporting ? (
             <Loader2 className="w-4 h-4 mr-2 animate-spin" />
           ) : (
