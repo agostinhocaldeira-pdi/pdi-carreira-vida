@@ -80,17 +80,16 @@ const MaoNaMassa = () => {
     let isMounted = true;
     
     const loadData = async () => {
-      // Carregar do localStorage primeiro (instantâneo)
+      // Carregar do localStorage primeiro (instantâneo) para preview
       const localObjetivos = JSON.parse(localStorage.getItem("objetivos") || "[]");
       const localMetas = JSON.parse(localStorage.getItem("metas") || "[]");
       
       if (isMounted) {
         setObjetivosDisponiveis(localObjetivos);
         setMetasCadastradas(localMetas);
-        setIsLoading(false);
       }
       
-      // Depois tentar sincronizar com Supabase em background (em paralelo)
+      // Sincronizar com Supabase (mantém loading até completar)
       try {
         const [savedObjetivos, savedMetas] = await Promise.all([
           storage.getObjetivos().catch(() => null),
@@ -137,6 +136,10 @@ const MaoNaMassa = () => {
         }
       } catch (error) {
         console.error("Error syncing with Supabase:", error);
+      } finally {
+        if (isMounted) {
+          setIsLoading(false);
+        }
       }
     };
 
@@ -388,13 +391,15 @@ const MaoNaMassa = () => {
       </CardHeader>
       <CardContent>
         <div className="space-y-6">
-          {/* Loading State */}
-          {isLoading && metasCadastradas.length === 0 && (
-            <PDILoader 
-              text="Carregando suas metas..." 
-              size="md" 
-              variant="rocket" 
-            />
+          {/* Loading State - sempre visível enquanto carrega */}
+          {isLoading && (
+            <div className="py-8">
+              <PDILoader 
+                text="Carregando suas metas..." 
+                size="md" 
+                variant="rocket" 
+              />
+            </div>
           )}
 
           {/* Tabela de Metas Cadastradas - SEMPRE VISÍVEL quando há metas */}
