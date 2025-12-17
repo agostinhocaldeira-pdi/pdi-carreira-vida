@@ -363,7 +363,7 @@ const Valores = () => {
         </div>
 
         {/* Botões de Navegação */}
-        <Card className="shadow-medium sticky bottom-4">
+        <Card className="shadow-medium mt-6">
           <CardContent className="pt-6">
             <div className="flex flex-col sm:flex-row gap-3 justify-between">
               <Button
