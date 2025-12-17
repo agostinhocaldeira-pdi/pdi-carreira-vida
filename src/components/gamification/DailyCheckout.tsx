@@ -72,9 +72,9 @@ export const DailyCheckout = () => {
       };
 
       // 1. Daily actions (periodicidade = "diária" or "diario")
-      metas.forEach((meta: any) => {
+      metas.forEach((meta: any, metaIdx: number) => {
         if (meta.acoes && Array.isArray(meta.acoes)) {
-          meta.acoes.forEach((acao: any) => {
+          meta.acoes.forEach((acao: any, acaoIdx: number) => {
             const periodicidade = acao.periodicidade?.toLowerCase() || "";
             const status = acao.status?.toLowerCase()?.replace(/\s+/g, '-') || "";
             const isCompleted = status === "concluido" || status === "concluído";
@@ -82,7 +82,7 @@ export const DailyCheckout = () => {
             // Daily actions that are not completed
             if ((periodicidade.includes("diária") || periodicidade.includes("diario") || periodicidade.includes("diariamente")) && !isCompleted) {
               checkoutItems.push({
-                id: `action-${acao.id || Math.random()}`,
+                id: `action-${meta.id || metaIdx}-${acao.id || acaoIdx}`,
                 text: acao.acao || acao.texto || "Ação sem título",
                 type: 'action',
                 category: 'Ação Diária',
@@ -94,23 +94,19 @@ export const DailyCheckout = () => {
         }
       });
 
-      // 2. Steps from actions (passos)
-      metas.forEach((meta: any) => {
-        if (meta.acoes && Array.isArray(meta.acoes)) {
-          meta.acoes.forEach((acao: any) => {
-            if (meta.passos && Array.isArray(meta.passos)) {
-              meta.passos.forEach((passo: any) => {
-                const isCompleted = passo.concluido === true;
-                if (!isCompleted) {
-                  checkoutItems.push({
-                    id: `step-${passo.id || Math.random()}`,
-                    text: passo.passo || passo.texto || "Passo sem título",
-                    type: 'step',
-                    category: 'Passo',
-                    done: null,
-                    originalData: passo
-                  });
-                }
+      // 2. Steps from metas (passos) - Fix: iterate passos directly from meta, not nested in acoes
+      metas.forEach((meta: any, metaIdx: number) => {
+        if (meta.passos && Array.isArray(meta.passos)) {
+          meta.passos.forEach((passo: any, passoIdx: number) => {
+            const isCompleted = passo.concluido === true;
+            if (!isCompleted) {
+              checkoutItems.push({
+                id: `step-${meta.id || metaIdx}-${passo.id || passoIdx}`,
+                text: passo.passo || passo.texto || "Passo sem título",
+                type: 'step',
+                category: 'Passo',
+                done: null,
+                originalData: passo
               });
             }
           });
@@ -118,14 +114,14 @@ export const DailyCheckout = () => {
       });
 
       // 3. Expired objectives (not future dates, not completed)
-      objetivos.forEach((obj: any) => {
+      objetivos.forEach((obj: any, objIdx: number) => {
         const dataAlvo = obj.dataAlvo || obj.data_alvo;
         const status = obj.status?.toLowerCase()?.replace(/\s+/g, '-') || "";
         const isCompleted = status === "concluido" || status === "concluído";
         
         if (!isCompleted && isDateExpired(dataAlvo)) {
           checkoutItems.push({
-            id: `expired-obj-${obj.id || Math.random()}`,
+            id: `expired-obj-${obj.id || objIdx}`,
             text: obj.texto || obj.objetivo || "Objetivo sem título",
             type: 'expired',
             category: 'Objetivo Expirado',
@@ -136,14 +132,14 @@ export const DailyCheckout = () => {
       });
 
       // 4. Expired goals (not future dates, not completed)
-      metas.forEach((meta: any) => {
+      metas.forEach((meta: any, metaIdx: number) => {
         const dataAlvo = meta.dataAlvo || meta.data_alvo;
         const status = meta.status?.toLowerCase()?.replace(/\s+/g, '-') || "";
         const isCompleted = status === "concluido" || status === "concluído" || meta.concluida === true;
         
         if (!isCompleted && isDateExpired(dataAlvo)) {
           checkoutItems.push({
-            id: `expired-goal-${meta.id || Math.random()}`,
+            id: `expired-goal-${meta.id || metaIdx}`,
             text: meta.texto || "Meta sem título",
             type: 'expired',
             category: 'Meta Expirada',
