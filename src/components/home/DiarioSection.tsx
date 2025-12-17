@@ -701,14 +701,6 @@ const DiarioSection = () => {
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                   <h3 className="text-base sm:text-lg font-semibold">Histórico de Humor</h3>
                   <div className="flex flex-col sm:flex-row gap-2">
-                    <Button 
-                      variant="outline" 
-                      size="sm" 
-                      onClick={generateMockData}
-                      className="text-xs sm:text-sm"
-                    >
-                      Gerar Dados Teste
-                    </Button>
                     <Select value={selectedPeriod} onValueChange={setSelectedPeriod}>
                       <SelectTrigger className="w-full sm:w-[180px]">
                         <SelectValue />
