@@ -38,14 +38,16 @@ export const DailyCheckout = () => {
     today.setHours(0, 0, 0, 0);
 
     try {
-      // Load metas and their actions/steps
-      const metas = await storage.getMetas() || JSON.parse(localStorage.getItem("metas") || "[]");
-      
-      // Load objectives
-      const objetivos = await storage.getObjetivos() || JSON.parse(localStorage.getItem("objetivos") || "[]");
-      
-      // Load Eisenhower tasks
-      const eisenhowerData = await storage.getEisenhowerTasks() || {
+      // Load all data in parallel for better performance
+      const [metasResult, objetivosResult, eisenhowerResult] = await Promise.all([
+        storage.getMetas().catch(() => null),
+        storage.getObjetivos().catch(() => null),
+        storage.getEisenhowerTasks().catch(() => null)
+      ]);
+
+      const metas = metasResult || JSON.parse(localStorage.getItem("metas") || "[]");
+      const objetivos = objetivosResult || JSON.parse(localStorage.getItem("objetivos") || "[]");
+      const eisenhowerData = eisenhowerResult || {
         urgente_importante: [],
         nao_urgente_importante: [],
         urgente_nao_importante: [],
