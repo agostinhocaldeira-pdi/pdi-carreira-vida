@@ -6,10 +6,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Link } from "react-router-dom";
-import { ArrowLeft, Home, TrendingUp, AlertTriangle, Target, Shield, Plus, Trash2, CheckCircle2, Lightbulb } from "lucide-react";
+import { ArrowLeft, Home, TrendingUp, AlertTriangle, Target, Shield, Plus, Trash2, CheckCircle2, Lightbulb, HelpCircle } from "lucide-react";
 import { toast } from "sonner";
 import LogoutButton from "@/components/LogoutButton";
 import ConfirmDeleteDialog from "@/components/ConfirmDeleteDialog";
+import SwotScientificModal from "@/components/SwotScientificModal";
 
 interface SwotItem {
   id: number;
@@ -32,6 +33,8 @@ const AnaliseSwot = () => {
     ameacas: [],
     habilidadesADesenvolver: [],
   });
+
+  const [isSwotModalOpen, setIsSwotModalOpen] = useState(false);
 
   const [novoItem, setNovoItem] = useState({
     forca: "",
@@ -230,6 +233,13 @@ const AnaliseSwot = () => {
               <p className="text-muted-foreground">
                 Identifique suas Forças, Fraquezas, Oportunidades e Ameaças
               </p>
+              <button
+                onClick={() => setIsSwotModalOpen(true)}
+                className="flex items-center gap-1 text-sm text-primary hover:text-primary/80 hover:underline transition-colors mt-2"
+              >
+                <HelpCircle className="w-4 h-4" />
+                Entenda a importância de saber claramente sobre suas forças e fraquezas
+              </button>
             </div>
           </div>
 
@@ -432,6 +442,11 @@ const AnaliseSwot = () => {
         onConfirm={confirmRemoverHabilidade}
         title="Excluir Habilidade"
         description="Tem certeza que deseja excluir esta habilidade?"
+      />
+
+      <SwotScientificModal 
+        open={isSwotModalOpen} 
+        onOpenChange={setIsSwotModalOpen} 
       />
     </div>
   );
