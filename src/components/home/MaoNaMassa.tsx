@@ -84,6 +84,7 @@ const MaoNaMassa = () => {
   const [deleteAcaoId, setDeleteAcaoId] = useState<number | null>(null);
   const [deletePassoId, setDeletePassoId] = useState<number | null>(null);
   const [deleteMetaId, setDeleteMetaId] = useState<number | null>(null);
+  const [deletingMetaId, setDeletingMetaId] = useState<number | null>(null);
 
   // Sync metas from React Query cache to local state (for editing)
   useEffect(() => {
@@ -323,6 +324,7 @@ const MaoNaMassa = () => {
 
   const confirmDeleteMeta = async () => {
     if (deleteMetaId) {
+      setDeletingMetaId(deleteMetaId);
       try {
         // Use React Query mutation (handles Supabase and localStorage)
         await deleteMetaMutation.mutateAsync(deleteMetaId);
@@ -336,6 +338,7 @@ const MaoNaMassa = () => {
         toast.error("Erro ao remover meta. Tente novamente.");
       } finally {
         setDeleteMetaId(null);
+        setDeletingMetaId(null);
       }
     }
   };
@@ -442,9 +445,14 @@ const MaoNaMassa = () => {
                                 variant="ghost"
                                 size="sm"
                                 onClick={() => handleDeleteMeta(metaCadastrada.id)}
+                                disabled={deletingMetaId === metaCadastrada.id}
                                 title="Excluir meta"
                               >
-                                <Trash2 className="w-4 h-4 text-destructive" />
+                                {deletingMetaId === metaCadastrada.id ? (
+                                  <Loader2 className="w-4 h-4 animate-spin text-destructive" />
+                                ) : (
+                                  <Trash2 className="w-4 h-4 text-destructive" />
+                                )}
                               </Button>
                             </div>
                           </TableCell>
@@ -533,10 +541,15 @@ const MaoNaMassa = () => {
                             variant="outline"
                             size="sm"
                             onClick={() => handleDeleteMeta(metaCadastrada.id)}
+                            disabled={deletingMetaId === metaCadastrada.id}
                             className="flex-1"
                           >
-                            <Trash2 className="w-4 h-4 mr-2 text-destructive" />
-                            Excluir
+                            {deletingMetaId === metaCadastrada.id ? (
+                              <Loader2 className="w-4 h-4 mr-2 animate-spin text-destructive" />
+                            ) : (
+                              <Trash2 className="w-4 h-4 mr-2 text-destructive" />
+                            )}
+                            {deletingMetaId === metaCadastrada.id ? "Excluindo..." : "Excluir"}
                           </Button>
                         </div>
                       </CardContent>
