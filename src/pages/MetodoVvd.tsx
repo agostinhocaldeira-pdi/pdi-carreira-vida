@@ -2,12 +2,13 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowLeft, Sparkles, Heart, Star, Loader2, Edit, Check, ExternalLink } from "lucide-react";
+import { ArrowLeft, Sparkles, Heart, Star, Loader2, Edit, Check, ExternalLink, HelpCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import LogoutButton from "@/components/LogoutButton";
 import { usePDIStorage } from "@/hooks/usePDIStorage";
+import VvdScientificModal from "@/components/VvdScientificModal";
 
 const MetodoVvd = () => {
   const navigate = useNavigate();
@@ -20,6 +21,7 @@ const MetodoVvd = () => {
   const [isEditingParagraph, setIsEditingParagraph] = useState(false);
   const [isEditingSentence, setIsEditingSentence] = useState(false);
   const [hasUsedAI, setHasUsedAI] = useState(false);
+  const [isVvdModalOpen, setIsVvdModalOpen] = useState(false);
 
   // Verificar se o usuário já usou a IA
   useEffect(() => {
@@ -171,6 +173,13 @@ const MetodoVvd = () => {
             <p className="text-muted-foreground mt-1">
               Visão de Vida Desejada - Descubra sua essência
             </p>
+            <button 
+              onClick={() => setIsVvdModalOpen(true)}
+              className="text-sm text-primary hover:text-primary/80 flex items-center gap-1 mt-2 transition-colors"
+            >
+              <HelpCircle className="h-4 w-4" />
+              Entenda a importância de saber claramente o que você quer para sua vida
+            </button>
           </div>
           <div className="flex gap-2">
             <button
@@ -521,6 +530,12 @@ const MetodoVvd = () => {
           </Card>
         )}
       </div>
+
+      {/* VVD Scientific Modal */}
+      <VvdScientificModal 
+        open={isVvdModalOpen} 
+        onOpenChange={setIsVvdModalOpen} 
+      />
     </div>
   );
 };
