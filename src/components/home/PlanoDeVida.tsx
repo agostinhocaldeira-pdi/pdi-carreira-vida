@@ -17,8 +17,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import ConfirmDeleteDialog from "@/components/ConfirmDeleteDialog";
 import { OKRLinkSection, CompanyOKRsOverview } from "@/components/home/OKRLinkSection";
+import { useQueryClient } from "@tanstack/react-query";
 import { usePDIStorage } from "@/hooks/usePDIStorage";
-import { usePDIData } from "@/hooks/usePDIQueries";
+import { PDI_QUERY_KEYS, usePDIData } from "@/hooks/usePDIQueries";
 import { RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, Legend, ResponsiveContainer } from "recharts";
 
 interface PlanoDeVidaProps {
@@ -30,6 +31,7 @@ interface PlanoDeVidaProps {
 
 const PlanoDeVida = ({ onTabChange, onOpenChange, forcedTab, forcedOpen }: PlanoDeVidaProps) => {
   const storage = usePDIStorage();
+  const queryClient = useQueryClient();
   
   // React Query hook for cached data with localStorage-first pattern
   const { data: pdiData, isLoading: isQueryLoading } = usePDIData();
@@ -80,7 +82,7 @@ const PlanoDeVida = ({ onTabChange, onOpenChange, forcedTab, forcedOpen }: Plano
   const [objetivoRecemCriado, setObjetivoRecemCriado] = useState<number | null>(null);
 
   // Estados para confirmação de exclusão
-  const [deleteObjetivoId, setDeleteObjetivoId] = useState<number | null>(null);
+  const [deleteObjetivoId, setDeleteObjetivoId] = useState<string | number | null>(null);
   const [deleteHabilidadeId, setDeleteHabilidadeId] = useState<number | null>(null);
 
   // Estados para Habilidades
@@ -320,14 +322,16 @@ const PlanoDeVida = ({ onTabChange, onOpenChange, forcedTab, forcedOpen }: Plano
 
   // Sync objetivos from React Query cache (for instant loading)
   useEffect(() => {
-    if (pdiData?.objetivos && pdiData.objetivos.length > 0) {
-      setObjetivos(pdiData.objetivos.map((obj: any) => ({
-        id: obj.id,
-        texto: obj.texto,
-        dataAlvo: obj.data_alvo || obj.dataAlvo || "",
-        conexaoVvd: obj.conexao_vvd || obj.conexaoVvd || "",
-        status: obj.status || "em-andamento",
-      })));
+    if (pdiData?.objetivos) {
+      setObjetivos(
+        pdiData.objetivos.map((obj: any) => ({
+          id: obj.id,
+          texto: obj.texto,
+          dataAlvo: obj.data_alvo || obj.dataAlvo || "",
+          conexaoVvd: obj.conexao_vvd || obj.conexaoVvd || "",
+          status: obj.status || "em-andamento",
+        }))
+      );
     }
   }, [pdiData?.objetivos]);
 
@@ -584,29 +588,38 @@ const PlanoDeVida = ({ onTabChange, onOpenChange, forcedTab, forcedOpen }: Plano
     setObjetivoRecemCriado(null);
   };
 
-  const handleRemoveObjetivo = (id: number) => {
+  const handleRemoveObjetivo = (id: string | number) => {
     setDeleteObjetivoId(id);
   };
 
   const confirmRemoveObjetivo = async () => {
-    if (deleteObjetivoId) {
-      const novosObjetivos = objetivos.filter((obj) => obj.id !== deleteObjetivoId);
-      setObjetivos(novosObjetivos);
-      
-      try {
-        const objetivosToSave = novosObjetivos.map(obj => ({
-          id: obj.id,
-          texto: obj.texto,
-          data_alvo: obj.dataAlvo,
-          conexao_vvd: obj.conexaoVvd,
-          status: obj.status?.replace('-', ' ') || 'a fazer',
-        }));
-        await storage.saveObjetivos(objetivosToSave as any);
-      } catch (error) {
-        console.error("Error saving objetivos:", error);
-      }
+    if (deleteObjetivoId == null) return;
+
+    const prevObjetivos = objetivos;
+    const novosObjetivos = prevObjetivos.filter((obj) => String(obj.id) !== String(deleteObjetivoId));
+    setObjetivos(novosObjetivos);
+
+    try {
+      const objetivosToSave = novosObjetivos.map((obj) => ({
+        id: obj.id,
+        texto: obj.texto,
+        data_alvo: obj.dataAlvo,
+        conexao_vvd: obj.conexaoVvd,
+        status: obj.status || 'a fazer',
+      }));
+
+      await storage.saveObjetivos(objetivosToSave as any);
       localStorage.setItem("objetivos", JSON.stringify(novosObjetivos));
+
+      // Mantém o cache global consistente para não reaparecer em outras telas (ex: SMART)
+      await queryClient.invalidateQueries({ queryKey: PDI_QUERY_KEYS.pdiData() });
+
       toast.success("Objetivo removido!");
+    } catch (error) {
+      console.error("Error saving objetivos:", error);
+      setObjetivos(prevObjetivos);
+      toast.error("Erro ao remover objetivo. Tente novamente.");
+    } finally {
       setDeleteObjetivoId(null);
     }
   };
