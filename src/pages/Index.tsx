@@ -692,6 +692,9 @@ const Index = () => {
               );
             })}
           </div>
+          <p className="text-center text-muted-foreground text-xs sm:text-sm mt-6">
+            Clique sobre as ferramentas para conhecer mais sobre elas
+          </p>
         </div>
       </section>
 
