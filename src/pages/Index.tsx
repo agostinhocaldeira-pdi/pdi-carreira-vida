@@ -50,6 +50,7 @@ import { LifeWheelScientificModal } from "@/components/LifeWheelScientificModal"
 import SwotScientificModal from "@/components/SwotScientificModal";
 import VvdScientificModal from "@/components/VvdScientificModal";
 import SmartScientificModal from "@/components/SmartScientificModal";
+import EisenhowerScientificModal from "@/components/EisenhowerScientificModal";
 import heroPdiTarget from "@/assets/hero-pdi-target.png";
 import journeyPath from "@/assets/journey-path.jpg";
 import selfDiscovery from "@/assets/self-discovery.jpg";
@@ -76,6 +77,7 @@ const Index = () => {
   const [isSwotModalOpen, setIsSwotModalOpen] = useState(false);
   const [isVvdModalOpen, setIsVvdModalOpen] = useState(false);
   const [isSmartModalOpen, setIsSmartModalOpen] = useState(false);
+  const [isEisenhowerModalOpen, setIsEisenhowerModalOpen] = useState(false);
   const journeySteps = [
     {
       icon: Rocket,
@@ -684,7 +686,8 @@ const Index = () => {
               const isSwotCard = tool.name === "Análise SWOT";
               const isVvdCard = tool.name === "Método VVD";
               const isSmartCard = tool.name === "Metas SMART";
-              const isClickable = isValoresCard || isRodaDaVidaCard || isSwotCard || isVvdCard || isSmartCard;
+              const isEisenhowerCard = tool.name === "Matriz de Eisenhower";
+              const isClickable = isValoresCard || isRodaDaVidaCard || isSwotCard || isVvdCard || isSmartCard || isEisenhowerCard;
               
               const handleClick = () => {
                 if (isValoresCard) setIsValuesModalOpen(true);
@@ -692,6 +695,7 @@ const Index = () => {
                 if (isSwotCard) setIsSwotModalOpen(true);
                 if (isVvdCard) setIsVvdModalOpen(true);
                 if (isSmartCard) setIsSmartModalOpen(true);
+                if (isEisenhowerCard) setIsEisenhowerModalOpen(true);
               };
               
               return (
@@ -1423,6 +1427,12 @@ const Index = () => {
       <SmartScientificModal 
         open={isSmartModalOpen} 
         onOpenChange={setIsSmartModalOpen} 
+      />
+
+      {/* Eisenhower Scientific Modal */}
+      <EisenhowerScientificModal 
+        open={isEisenhowerModalOpen} 
+        onOpenChange={setIsEisenhowerModalOpen} 
       />
     </div>
   );

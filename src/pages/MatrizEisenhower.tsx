@@ -15,7 +15,8 @@ import {
   Zap,
   X,
   GripVertical,
-  Loader2
+  Loader2,
+  HelpCircle
 } from "lucide-react";
 import { toast } from "sonner";
 import {
@@ -39,6 +40,7 @@ import {
 import LogoutButton from "@/components/LogoutButton";
 import { usePDIStorage } from "@/hooks/usePDIStorage";
 import type { EisenhowerTasks } from "@/types/pdi";
+import EisenhowerScientificModal from "@/components/EisenhowerScientificModal";
 
 type Quadrante = "urgente-importante" | "importante" | "urgente" | "eliminar";
 
@@ -66,6 +68,7 @@ const MatrizEisenhower = () => {
   const [tarefaParaDeletar, setTarefaParaDeletar] = useState<string | null>(null);
   const [tarefaParaMover, setTarefaParaMover] = useState<Tarefa | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isEisenhowerModalOpen, setIsEisenhowerModalOpen] = useState(false);
 
   useEffect(() => {
     // Scroll para o topo ao montar o componente
@@ -342,6 +345,17 @@ const MatrizEisenhower = () => {
       </header>
 
       <main className="container mx-auto px-4 py-8 max-w-7xl">
+        {/* Link para modal científico */}
+        <div className="mb-4">
+          <button
+            onClick={() => setIsEisenhowerModalOpen(true)}
+            className="inline-flex items-center gap-2 text-sm text-primary hover:text-primary/80 hover:underline transition-colors"
+          >
+            <HelpCircle className="w-4 h-4" />
+            Entenda a importância de priorizar suas tarefas com critério
+          </button>
+        </div>
+
         {/* Introdução */}
         <Card className="mb-8 shadow-large border-primary/20 animate-fade-in">
           <CardContent className="pt-6 space-y-4">
@@ -519,6 +533,12 @@ const MatrizEisenhower = () => {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* Modal Científico */}
+      <EisenhowerScientificModal 
+        open={isEisenhowerModalOpen} 
+        onOpenChange={setIsEisenhowerModalOpen} 
+      />
     </div>
   );
 };
