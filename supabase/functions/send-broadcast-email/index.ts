@@ -34,6 +34,9 @@ const generateBroadcastHtml = (message: string, recipientName: string): string =
     .greeting { font-size: 16px; margin-bottom: 20px; }
     .cta-button { display: inline-block; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 14px 28px; text-decoration: none; border-radius: 8px; font-weight: bold; margin-top: 20px; }
     .footer { background: #f8f8f8; padding: 20px; text-align: center; color: #888; font-size: 12px; }
+    .signature { margin-top: 30px; padding-top: 20px; border-top: 1px solid #eee; text-align: center; }
+    .signature img { max-width: 150px; height: auto; margin-bottom: 10px; }
+    .signature-domain { color: #667eea; font-weight: 600; font-size: 14px; text-decoration: none; }
   </style>
 </head>
 <body>
@@ -47,6 +50,11 @@ const generateBroadcastHtml = (message: string, recipientName: string): string =
       <center>
         <a href="https://www.pdicarreiraevida.com.br/home" class="cta-button">Acessar o PDI</a>
       </center>
+      <div class="signature">
+        <img src="https://www.pdicarreiraevida.com.br/logo_pdi.png" alt="PDI - Carreira & Vida" />
+        <br />
+        <a href="https://www.pdicarreiraevida.com.br" class="signature-domain">www.pdicarreiraevida.com.br</a>
+      </div>
     </div>
     <div class="footer">
       <p>Este email foi enviado pelo PDI - Carreira & Vida.</p>
