@@ -186,7 +186,7 @@ const handler = async (req: Request): Promise<Response> => {
     console.log(`Sending welcome email to ${email} for user ${name}`);
 
     const emailResponse = await resend.emails.send({
-      from: "PDI - Carreira e Vida <onboarding@resend.dev>",
+      from: "PDI - Carreira e Vida <contato@pdicarreiraevida.com.br>",
       to: [email],
       subject: "🎯 Bem-vindo ao PDI - Carreira e Vida!",
       html: generateWelcomeHtml(name),
