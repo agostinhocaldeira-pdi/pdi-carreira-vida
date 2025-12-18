@@ -51,6 +51,7 @@ import SwotScientificModal from "@/components/SwotScientificModal";
 import VvdScientificModal from "@/components/VvdScientificModal";
 import SmartScientificModal from "@/components/SmartScientificModal";
 import EisenhowerScientificModal from "@/components/EisenhowerScientificModal";
+import BeliefsScientificModal from "@/components/BeliefsScientificModal";
 import heroPdiTarget from "@/assets/hero-pdi-target.png";
 import journeyPath from "@/assets/journey-path.jpg";
 import selfDiscovery from "@/assets/self-discovery.jpg";
@@ -78,6 +79,7 @@ const Index = () => {
   const [isVvdModalOpen, setIsVvdModalOpen] = useState(false);
   const [isSmartModalOpen, setIsSmartModalOpen] = useState(false);
   const [isEisenhowerModalOpen, setIsEisenhowerModalOpen] = useState(false);
+  const [isBeliefsModalOpen, setIsBeliefsModalOpen] = useState(false);
   const journeySteps = [
     {
       icon: Rocket,
@@ -687,7 +689,8 @@ const Index = () => {
               const isVvdCard = tool.name === "Método VVD";
               const isSmartCard = tool.name === "Metas SMART";
               const isEisenhowerCard = tool.name === "Matriz de Eisenhower";
-              const isClickable = isValoresCard || isRodaDaVidaCard || isSwotCard || isVvdCard || isSmartCard || isEisenhowerCard;
+              const isBeliefsCard = tool.name === "Transformação de Crenças";
+              const isClickable = isValoresCard || isRodaDaVidaCard || isSwotCard || isVvdCard || isSmartCard || isEisenhowerCard || isBeliefsCard;
               
               const handleClick = () => {
                 if (isValoresCard) setIsValuesModalOpen(true);
@@ -696,6 +699,7 @@ const Index = () => {
                 if (isVvdCard) setIsVvdModalOpen(true);
                 if (isSmartCard) setIsSmartModalOpen(true);
                 if (isEisenhowerCard) setIsEisenhowerModalOpen(true);
+                if (isBeliefsCard) setIsBeliefsModalOpen(true);
               };
               
               return (
@@ -1433,6 +1437,12 @@ const Index = () => {
       <EisenhowerScientificModal 
         open={isEisenhowerModalOpen} 
         onOpenChange={setIsEisenhowerModalOpen} 
+      />
+
+      {/* Beliefs Scientific Modal */}
+      <BeliefsScientificModal 
+        open={isBeliefsModalOpen} 
+        onOpenChange={setIsBeliefsModalOpen} 
       />
     </div>
   );

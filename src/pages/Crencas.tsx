@@ -17,7 +17,8 @@ import {
   Target,
   TrendingUp,
   ChevronRight,
-  Check
+  Check,
+  HelpCircle
 } from "lucide-react";
 import { toast } from "sonner";
 import {
@@ -28,6 +29,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import LogoutButton from "@/components/LogoutButton";
+import BeliefsScientificModal from "@/components/BeliefsScientificModal";
 
 interface CrencaData {
   crencaLimitante: string;
@@ -52,6 +54,7 @@ const Crencas = () => {
   });
   const [showSuccessDialog, setShowSuccessDialog] = useState(false);
   const [crencasSalvas, setCrencasSalvas] = useState<CrencaData[]>([]);
+  const [isBeliefsModalOpen, setIsBeliefsModalOpen] = useState(false);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -580,6 +583,17 @@ const Crencas = () => {
       </header>
 
       <main className="container mx-auto px-4 py-8 max-w-4xl">
+        {/* Link para modal científico */}
+        <div className="mb-4">
+          <button
+            onClick={() => setIsBeliefsModalOpen(true)}
+            className="inline-flex items-center gap-2 text-sm text-primary hover:text-primary/80 hover:underline transition-colors"
+          >
+            <HelpCircle className="w-4 h-4" />
+            Entenda a importância de transformar suas crenças limitantes
+          </button>
+        </div>
+
         {/* Progress Bar */}
         <Card className="mb-6 shadow-medium">
           <CardContent className="pt-6">
@@ -751,6 +765,12 @@ const Crencas = () => {
           </div>
         </DialogContent>
       </Dialog>
+
+      {/* Modal Científico */}
+      <BeliefsScientificModal 
+        open={isBeliefsModalOpen} 
+        onOpenChange={setIsBeliefsModalOpen} 
+      />
     </div>
   );
 };
