@@ -19,12 +19,14 @@ import {
   BarChart3,
   TrendingUp,
   Clock,
-  Sparkles
+  Sparkles,
+  HelpCircle
 } from "lucide-react";
 import { toast } from "sonner";
 import { usePDIStorage } from "@/hooks/usePDIStorage";
 import { useQueryClient } from "@tanstack/react-query";
 import { PDI_QUERY_KEYS } from "@/hooks/usePDIQueries";
+import SmartScientificModal from "@/components/SmartScientificModal";
 
 interface Objetivo {
   id: number | string;
@@ -61,6 +63,7 @@ const MetodoSmart = () => {
     dataAlvo: "",
   });
   const [isImporting, setIsImporting] = useState(false);
+  const [isSmartModalOpen, setIsSmartModalOpen] = useState(false);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -269,6 +272,13 @@ const MetodoSmart = () => {
           <p className="text-muted-foreground">
             Transforme seus objetivos em metas claras e alcançáveis
           </p>
+          <button 
+            onClick={() => setIsSmartModalOpen(true)}
+            className="text-sm text-primary hover:text-primary/80 flex items-center gap-1 mt-2 transition-colors"
+          >
+            <HelpCircle className="h-4 w-4" />
+            Entenda a importância de utilizar o método SMART para criar suas metas
+          </button>
         </div>
 
         {/* Progress Bar */}
@@ -605,6 +615,12 @@ const MetodoSmart = () => {
           </div>
         )}
       </div>
+
+      {/* SMART Scientific Modal */}
+      <SmartScientificModal 
+        open={isSmartModalOpen} 
+        onOpenChange={setIsSmartModalOpen} 
+      />
     </div>
   );
 };

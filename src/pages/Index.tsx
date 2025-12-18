@@ -49,6 +49,7 @@ import ValuesScientificModal from "@/components/ValuesScientificModal";
 import { LifeWheelScientificModal } from "@/components/LifeWheelScientificModal";
 import SwotScientificModal from "@/components/SwotScientificModal";
 import VvdScientificModal from "@/components/VvdScientificModal";
+import SmartScientificModal from "@/components/SmartScientificModal";
 import heroPdiTarget from "@/assets/hero-pdi-target.png";
 import journeyPath from "@/assets/journey-path.jpg";
 import selfDiscovery from "@/assets/self-discovery.jpg";
@@ -74,6 +75,7 @@ const Index = () => {
   const [isLifeWheelModalOpen, setIsLifeWheelModalOpen] = useState(false);
   const [isSwotModalOpen, setIsSwotModalOpen] = useState(false);
   const [isVvdModalOpen, setIsVvdModalOpen] = useState(false);
+  const [isSmartModalOpen, setIsSmartModalOpen] = useState(false);
   const journeySteps = [
     {
       icon: Rocket,
@@ -681,13 +683,15 @@ const Index = () => {
               const isRodaDaVidaCard = tool.name === "Roda da Vida";
               const isSwotCard = tool.name === "Análise SWOT";
               const isVvdCard = tool.name === "Método VVD";
-              const isClickable = isValoresCard || isRodaDaVidaCard || isSwotCard || isVvdCard;
+              const isSmartCard = tool.name === "Metas SMART";
+              const isClickable = isValoresCard || isRodaDaVidaCard || isSwotCard || isVvdCard || isSmartCard;
               
               const handleClick = () => {
                 if (isValoresCard) setIsValuesModalOpen(true);
                 if (isRodaDaVidaCard) setIsLifeWheelModalOpen(true);
                 if (isSwotCard) setIsSwotModalOpen(true);
                 if (isVvdCard) setIsVvdModalOpen(true);
+                if (isSmartCard) setIsSmartModalOpen(true);
               };
               
               return (
@@ -1413,6 +1417,12 @@ const Index = () => {
       <VvdScientificModal 
         open={isVvdModalOpen} 
         onOpenChange={setIsVvdModalOpen} 
+      />
+
+      {/* SMART Scientific Modal */}
+      <SmartScientificModal 
+        open={isSmartModalOpen} 
+        onOpenChange={setIsSmartModalOpen} 
       />
     </div>
   );
