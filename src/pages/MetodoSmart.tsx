@@ -23,6 +23,8 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { usePDIStorage } from "@/hooks/usePDIStorage";
+import { useQueryClient } from "@tanstack/react-query";
+import { PDI_QUERY_KEYS } from "@/hooks/usePDIQueries";
 
 interface Objetivo {
   id: number | string;
@@ -43,6 +45,7 @@ interface MetaSmart {
 const MetodoSmart = () => {
   const navigate = useNavigate();
   const storage = usePDIStorage();
+  const queryClient = useQueryClient();
   const [etapa, setEtapa] = useState(0); // 0=intro, 1=selecao objetivo, 2-6=SMART, 7=preview
   const [objetivos, setObjetivos] = useState<Objetivo[]>([]);
   const [objetivoSelecionado, setObjetivoSelecionado] = useState<Objetivo | null>(null);
@@ -173,6 +176,9 @@ const MetodoSmart = () => {
       
       // Também salvar no localStorage para garantir que aparece imediatamente
       localStorage.setItem("metas", JSON.stringify(metasAtualizadas));
+
+      // Invalidar cache do React Query para atualizar Metas Cadastradas automaticamente
+      await queryClient.invalidateQueries({ queryKey: PDI_QUERY_KEYS.pdiData() });
 
       // Salvar temporariamente para destacar na home
       localStorage.setItem("metaImportadaSmart", JSON.stringify(novaMeta));
