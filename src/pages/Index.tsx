@@ -48,6 +48,7 @@ import DiaryScientificModal from "@/components/DiaryScientificModal";
 import ValuesScientificModal from "@/components/ValuesScientificModal";
 import { LifeWheelScientificModal } from "@/components/LifeWheelScientificModal";
 import SwotScientificModal from "@/components/SwotScientificModal";
+import VvdScientificModal from "@/components/VvdScientificModal";
 import heroPdiTarget from "@/assets/hero-pdi-target.png";
 import journeyPath from "@/assets/journey-path.jpg";
 import selfDiscovery from "@/assets/self-discovery.jpg";
@@ -72,6 +73,7 @@ const Index = () => {
   const [isValuesModalOpen, setIsValuesModalOpen] = useState(false);
   const [isLifeWheelModalOpen, setIsLifeWheelModalOpen] = useState(false);
   const [isSwotModalOpen, setIsSwotModalOpen] = useState(false);
+  const [isVvdModalOpen, setIsVvdModalOpen] = useState(false);
   const journeySteps = [
     {
       icon: Rocket,
@@ -678,12 +680,14 @@ const Index = () => {
               const isValoresCard = tool.name === "Exercício de Valores";
               const isRodaDaVidaCard = tool.name === "Roda da Vida";
               const isSwotCard = tool.name === "Análise SWOT";
-              const isClickable = isValoresCard || isRodaDaVidaCard || isSwotCard;
+              const isVvdCard = tool.name === "Método VVD";
+              const isClickable = isValoresCard || isRodaDaVidaCard || isSwotCard || isVvdCard;
               
               const handleClick = () => {
                 if (isValoresCard) setIsValuesModalOpen(true);
                 if (isRodaDaVidaCard) setIsLifeWheelModalOpen(true);
                 if (isSwotCard) setIsSwotModalOpen(true);
+                if (isVvdCard) setIsVvdModalOpen(true);
               };
               
               return (
@@ -1403,6 +1407,12 @@ const Index = () => {
       <SwotScientificModal 
         open={isSwotModalOpen} 
         onOpenChange={setIsSwotModalOpen} 
+      />
+
+      {/* VVD Scientific Modal */}
+      <VvdScientificModal 
+        open={isVvdModalOpen} 
+        onOpenChange={setIsVvdModalOpen} 
       />
     </div>
   );
