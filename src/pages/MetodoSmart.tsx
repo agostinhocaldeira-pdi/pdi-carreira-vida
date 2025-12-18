@@ -66,19 +66,20 @@ const MetodoSmart = () => {
     window.scrollTo(0, 0);
     
     const loadObjetivos = async () => {
-      // Carregar objetivos do Supabase
-      const savedObjetivos = await storage.getObjetivos();
-      if (savedObjetivos && savedObjetivos.length > 0) {
-        setObjetivos(savedObjetivos.map((obj: any) => ({
-          id: obj.id,
-          texto: obj.texto
-        })));
-      } else {
-        // Fallback para localStorage
+      try {
+        // Sempre prioriza a fonte "oficial" (backend ou storage local via usePDIStorage).
+        // NÃO fazer fallback por "length > 0" para evitar ressuscitar objetivos excluídos.
+        const savedObjetivos = await storage.getObjetivos();
+        setObjetivos(
+          (savedObjetivos || []).map((obj: any) => ({
+            id: obj.id,
+            texto: obj.texto,
+          }))
+        );
+      } catch (error) {
+        console.error("Erro ao carregar objetivos (SMART):", error);
         const localObjetivos = localStorage.getItem("objetivos");
-        if (localObjetivos) {
-          setObjetivos(JSON.parse(localObjetivos));
-        }
+        if (localObjetivos) setObjetivos(JSON.parse(localObjetivos));
       }
     };
 
