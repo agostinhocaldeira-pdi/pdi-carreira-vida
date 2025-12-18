@@ -52,6 +52,7 @@ import VvdScientificModal from "@/components/VvdScientificModal";
 import SmartScientificModal from "@/components/SmartScientificModal";
 import EisenhowerScientificModal from "@/components/EisenhowerScientificModal";
 import BeliefsScientificModal from "@/components/BeliefsScientificModal";
+import Autoavaliacao360ScientificModal from "@/components/Autoavaliacao360ScientificModal";
 import heroPdiTarget from "@/assets/hero-pdi-target.png";
 import journeyPath from "@/assets/journey-path.jpg";
 import selfDiscovery from "@/assets/self-discovery.jpg";
@@ -80,6 +81,7 @@ const Index = () => {
   const [isSmartModalOpen, setIsSmartModalOpen] = useState(false);
   const [isEisenhowerModalOpen, setIsEisenhowerModalOpen] = useState(false);
   const [isBeliefsModalOpen, setIsBeliefsModalOpen] = useState(false);
+  const [isAutoavaliacaoModalOpen, setIsAutoavaliacaoModalOpen] = useState(false);
   const journeySteps = [
     {
       icon: Rocket,
@@ -690,7 +692,8 @@ const Index = () => {
               const isSmartCard = tool.name === "Metas SMART";
               const isEisenhowerCard = tool.name === "Matriz de Eisenhower";
               const isBeliefsCard = tool.name === "Transformação de Crenças";
-              const isClickable = isValoresCard || isRodaDaVidaCard || isSwotCard || isVvdCard || isSmartCard || isEisenhowerCard || isBeliefsCard;
+              const isAutoavaliacaoCard = tool.name === "Autoavaliação 360º";
+              const isClickable = isValoresCard || isRodaDaVidaCard || isSwotCard || isVvdCard || isSmartCard || isEisenhowerCard || isBeliefsCard || isAutoavaliacaoCard;
               
               const handleClick = () => {
                 if (isValoresCard) setIsValuesModalOpen(true);
@@ -700,6 +703,7 @@ const Index = () => {
                 if (isSmartCard) setIsSmartModalOpen(true);
                 if (isEisenhowerCard) setIsEisenhowerModalOpen(true);
                 if (isBeliefsCard) setIsBeliefsModalOpen(true);
+                if (isAutoavaliacaoCard) setIsAutoavaliacaoModalOpen(true);
               };
               
               return (
@@ -1443,6 +1447,12 @@ const Index = () => {
       <BeliefsScientificModal 
         open={isBeliefsModalOpen} 
         onOpenChange={setIsBeliefsModalOpen} 
+      />
+
+      {/* Autoavaliacao 360 Scientific Modal */}
+      <Autoavaliacao360ScientificModal 
+        open={isAutoavaliacaoModalOpen} 
+        onOpenChange={setIsAutoavaliacaoModalOpen} 
       />
     </div>
   );
