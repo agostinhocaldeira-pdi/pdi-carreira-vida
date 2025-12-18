@@ -47,6 +47,7 @@ import Logo from "@/components/Logo";
 import DiaryScientificModal from "@/components/DiaryScientificModal";
 import ValuesScientificModal from "@/components/ValuesScientificModal";
 import { LifeWheelScientificModal } from "@/components/LifeWheelScientificModal";
+import SwotScientificModal from "@/components/SwotScientificModal";
 import heroPdiTarget from "@/assets/hero-pdi-target.png";
 import journeyPath from "@/assets/journey-path.jpg";
 import selfDiscovery from "@/assets/self-discovery.jpg";
@@ -70,6 +71,7 @@ const Index = () => {
   const [isDiaryModalOpen, setIsDiaryModalOpen] = useState(false);
   const [isValuesModalOpen, setIsValuesModalOpen] = useState(false);
   const [isLifeWheelModalOpen, setIsLifeWheelModalOpen] = useState(false);
+  const [isSwotModalOpen, setIsSwotModalOpen] = useState(false);
   const journeySteps = [
     {
       icon: Rocket,
@@ -675,11 +677,13 @@ const Index = () => {
             {tools.map((tool, index) => {
               const isValoresCard = tool.name === "Exercício de Valores";
               const isRodaDaVidaCard = tool.name === "Roda da Vida";
-              const isClickable = isValoresCard || isRodaDaVidaCard;
+              const isSwotCard = tool.name === "Análise SWOT";
+              const isClickable = isValoresCard || isRodaDaVidaCard || isSwotCard;
               
               const handleClick = () => {
                 if (isValoresCard) setIsValuesModalOpen(true);
                 if (isRodaDaVidaCard) setIsLifeWheelModalOpen(true);
+                if (isSwotCard) setIsSwotModalOpen(true);
               };
               
               return (
@@ -1393,6 +1397,12 @@ const Index = () => {
       <LifeWheelScientificModal 
         open={isLifeWheelModalOpen} 
         onOpenChange={setIsLifeWheelModalOpen} 
+      />
+
+      {/* SWOT Scientific Modal */}
+      <SwotScientificModal 
+        open={isSwotModalOpen} 
+        onOpenChange={setIsSwotModalOpen} 
       />
     </div>
   );
