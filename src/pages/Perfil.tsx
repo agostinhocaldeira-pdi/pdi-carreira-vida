@@ -505,9 +505,9 @@ const Perfil = () => {
                 </Card>
               </div>
 
-              <div className="bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-800 rounded-lg p-3 text-center mt-4">
-                <p className="text-sm font-medium text-green-700 dark:text-green-300">
-                  🚀 Promoção de lançamento: acesso do plano completo liberado no Plano Básico por apenas R$ 14,90/mês!
+              <div className="bg-primary/5 border border-primary/20 rounded-lg p-3 text-center mt-4">
+                <p className="text-sm font-medium text-primary">
+                  Você tem acesso gratuito a todas as funções do PDI - Carreira e Vida durante 1 ano. Ao vencer esse prazo, escolha um novo plano.
                 </p>
               </div>
             </CardContent>
