@@ -2,13 +2,14 @@ import { useState, useEffect, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowLeft, Edit2, Save, X, Check, Loader2 } from "lucide-react";
+import { ArrowLeft, Edit2, Save, X, Check, Loader2, HelpCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer, Legend } from "recharts";
 import { toast } from "sonner";
 import LogoutButton from "@/components/LogoutButton";
 import { useRoleProtection } from "@/hooks/useRoleProtection";
 import { usePDIStorage } from "@/hooks/usePDIStorage";
+import { LifeWheelScientificModal } from "@/components/LifeWheelScientificModal";
 import type { AreaVida } from "@/types/pdi";
 
 interface LifeArea {
@@ -39,6 +40,7 @@ export default function RodaDaVida() {
   const [tempArea, setTempArea] = useState<LifeArea | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
+  const [isLifeWheelModalOpen, setIsLifeWheelModalOpen] = useState(false);
 
   // Carregar áreas do Supabase
   useEffect(() => {
@@ -142,8 +144,20 @@ export default function RodaDaVida() {
               total insatisfação e 10 representa plena realização. Compare seu estado atual com onde você
               deseja chegar e identifique as áreas que precisam de mais atenção no seu desenvolvimento pessoal.
             </CardDescription>
+            <button
+              onClick={() => setIsLifeWheelModalOpen(true)}
+              className="flex items-center gap-2 text-primary hover:text-primary/80 text-sm mt-3 transition-colors"
+            >
+              <HelpCircle className="h-4 w-4" />
+              Entenda a importância de saber claramente sobre suas áreas da vida
+            </button>
           </CardHeader>
         </Card>
+
+        <LifeWheelScientificModal 
+          open={isLifeWheelModalOpen} 
+          onOpenChange={setIsLifeWheelModalOpen} 
+        />
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Mandala/Radar Chart */}
