@@ -45,8 +45,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import Logo from "@/components/Logo";
 import DiaryScientificModal from "@/components/DiaryScientificModal";
-
-// Import marketing images
+import ValuesScientificModal from "@/components/ValuesScientificModal";
 import heroPdiTarget from "@/assets/hero-pdi-target.png";
 import journeyPath from "@/assets/journey-path.jpg";
 import selfDiscovery from "@/assets/self-discovery.jpg";
@@ -68,6 +67,7 @@ const Index = () => {
   const [isJourneyExpanded, setIsJourneyExpanded] = useState(true);
   const [videoModalUrl, setVideoModalUrl] = useState<string | null>(null);
   const [isDiaryModalOpen, setIsDiaryModalOpen] = useState(false);
+  const [isValuesModalOpen, setIsValuesModalOpen] = useState(false);
 
   const journeySteps = [
     {
@@ -671,15 +671,26 @@ const Index = () => {
             Metodologias usadas por coaches, terapeutas e líderes de alta performance — agora na palma da sua mão.
           </p>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-            {tools.map((tool, index) => (
-              <div 
-                key={index}
-                className="p-3 sm:p-4 bg-background border border-border rounded-xl hover:border-primary/50 hover:shadow-md transition-all"
-              >
-                <p className="font-medium text-sm sm:text-base mb-1">{tool.name}</p>
-                <p className="text-xs sm:text-sm text-muted-foreground">{tool.desc}</p>
-              </div>
-            ))}
+            {tools.map((tool, index) => {
+              const isValoresCard = tool.name === "Exercício de Valores";
+              return (
+                <div 
+                  key={index}
+                  onClick={isValoresCard ? () => setIsValuesModalOpen(true) : undefined}
+                  className={`p-3 sm:p-4 bg-background border border-border rounded-xl hover:border-primary/50 hover:shadow-md transition-all ${isValoresCard ? 'cursor-pointer' : ''}`}
+                >
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="flex-1">
+                      <p className="font-medium text-sm sm:text-base mb-1">{tool.name}</p>
+                      <p className="text-xs sm:text-sm text-muted-foreground">{tool.desc}</p>
+                    </div>
+                    {isValoresCard && (
+                      <Lightbulb className="w-4 h-4 text-primary flex-shrink-0 mt-0.5" />
+                    )}
+                  </div>
+                </div>
+              );
+            })}
           </div>
         </div>
       </section>
@@ -1358,6 +1369,12 @@ const Index = () => {
       <DiaryScientificModal 
         open={isDiaryModalOpen} 
         onOpenChange={setIsDiaryModalOpen} 
+      />
+
+      {/* Values Scientific Modal */}
+      <ValuesScientificModal 
+        open={isValuesModalOpen} 
+        onOpenChange={setIsValuesModalOpen} 
       />
     </div>
   );
