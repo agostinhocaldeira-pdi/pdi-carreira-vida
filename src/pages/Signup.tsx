@@ -113,6 +113,20 @@ const Signup = () => {
         localStorage.setItem('lgpd_consent_accepted', 'true');
         localStorage.setItem('lgpd_consent_date', new Date().toISOString());
 
+        // Enviar e-mail de boas-vindas
+        try {
+          await supabase.functions.invoke('send-welcome-email', {
+            body: {
+              name: formData.name,
+              email: formData.email,
+            },
+          });
+          console.log('Welcome email sent successfully');
+        } catch (emailError) {
+          console.error('Error sending welcome email:', emailError);
+          // Não bloqueia o fluxo se o e-mail falhar
+        }
+
         toast.success("Perfil criado com sucesso!");
         
         // If user came with basico plan intent, go directly to checkout
