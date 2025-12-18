@@ -4,7 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Link, useNavigate } from "react-router-dom";
-import { ArrowLeft, ArrowRight, Heart, CheckCircle2, Sparkles, Loader2 } from "lucide-react";
+import { ArrowLeft, ArrowRight, Heart, CheckCircle2, Sparkles, Loader2, HelpCircle } from "lucide-react";
+import ValuesScientificModal from "@/components/ValuesScientificModal";
 import { toast } from "sonner";
 import {
   AlertDialog,
@@ -50,6 +51,7 @@ const Valores = () => {
   const [exercicioConcluido, setExercicioConcluido] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
+  const [isValuesModalOpen, setIsValuesModalOpen] = useState(false);
 
   useEffect(() => {
     // Verificar se o exercício já foi concluído (do Supabase)
@@ -286,8 +288,22 @@ const Valores = () => {
               <LogoutButton />
             </div>
           </div>
+          
+          {/* Link para modal explicativo */}
+          <button
+            onClick={() => setIsValuesModalOpen(true)}
+            className="mt-2 inline-flex items-center gap-1.5 text-xs sm:text-sm text-primary hover:text-primary/80 transition-colors underline underline-offset-4"
+          >
+            <HelpCircle className="w-3.5 h-3.5" />
+            Entenda a importância de saber claramente seus valores
+          </button>
         </div>
       </header>
+
+      <ValuesScientificModal 
+        open={isValuesModalOpen} 
+        onOpenChange={setIsValuesModalOpen} 
+      />
 
       <main className="container mx-auto px-4 py-8 max-w-6xl">
         {/* Progress Indicator */}
