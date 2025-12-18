@@ -64,6 +64,16 @@ serve(async (req) => {
       throw usersError;
     }
 
+    // Fetch user roles
+    const { data: rolesData } = await supabaseAdmin
+      .from("user_roles")
+      .select("user_id, role");
+
+    const rolesMap = new Map();
+    rolesData?.forEach((r: any) => {
+      rolesMap.set(r.user_id, r.role);
+    });
+
     // Map users to return only needed fields
     const users = authUsers.users.map((u) => ({
       id: u.id,
@@ -72,6 +82,8 @@ serve(async (req) => {
       name: u.user_metadata?.name || u.user_metadata?.full_name || "-",
       created_at: u.created_at,
       last_sign_in_at: u.last_sign_in_at,
+      role: rolesMap.get(u.id) || "user",
+      has_subscription: false // Placeholder - can be enhanced later
     }));
 
     return new Response(JSON.stringify({ users }), {

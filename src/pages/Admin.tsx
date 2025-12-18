@@ -10,6 +10,7 @@ import { Shield, Home, Users, Trash2, UserPlus, Building2, UserCog, UserCheck, M
 import FinancialDashboard from "@/components/admin/FinancialDashboard";
 import AdminMetricsPanel from "@/components/admin/AdminMetricsPanel";
 import LeadsManagement from "@/components/admin/LeadsManagement";
+import AdminBroadcastPanel from "@/components/admin/AdminBroadcastPanel";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { toast } from "sonner";
 
@@ -438,6 +439,9 @@ const Admin = () => {
 
         {/* Painel de Métricas Real */}
         <AdminMetricsPanel />
+
+        {/* Comunicados em Massa */}
+        <AdminBroadcastPanel />
 
         {/* Gestão de Leads */}
         <LeadsManagement />
