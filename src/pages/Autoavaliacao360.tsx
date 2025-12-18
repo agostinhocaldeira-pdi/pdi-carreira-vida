@@ -3,10 +3,11 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Link } from "react-router-dom";
-import { ArrowLeft, ArrowRight, Copy, CheckCircle, Clock, Sparkles, History, Save } from "lucide-react";
+import { ArrowLeft, ArrowRight, Copy, CheckCircle, Clock, Sparkles, History, Save, HelpCircle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/contexts/LanguageContext";
 import LogoutButton from "@/components/LogoutButton";
+import Autoavaliacao360ScientificModal from "@/components/Autoavaliacao360ScientificModal";
 
 interface HistoryEntry {
   id: string;
@@ -23,6 +24,7 @@ const Autoavaliacao360 = () => {
   const [aiAnalysis, setAiAnalysis] = useState("");
   const [history, setHistory] = useState<HistoryEntry[]>([]);
   const [showHistory, setShowHistory] = useState(false);
+  const [isScientificModalOpen, setIsScientificModalOpen] = useState(false);
   const { toast } = useToast();
   const { t } = useLanguage();
 
@@ -363,7 +365,16 @@ Agora, com base em todas essas respostas acima, faça a análise profunda solici
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <Sparkles className="w-6 h-6 text-primary" />
-              <h1 className="text-2xl font-bold">Autoavaliação + 360º</h1>
+              <div>
+                <h1 className="text-2xl font-bold">Autoavaliação + 360º</h1>
+                <button
+                  onClick={() => setIsScientificModalOpen(true)}
+                  className="text-sm text-primary hover:text-primary/80 flex items-center gap-1 mt-1"
+                >
+                  <HelpCircle className="w-4 h-4" />
+                  Entenda a importância de uma visão completa de si mesmo
+                </button>
+              </div>
             </div>
             <div className="flex items-center gap-2">
               <Link to="/ferramentas">
@@ -377,6 +388,11 @@ Agora, com base em todas essas respostas acima, faça a análise profunda solici
           </div>
         </div>
       </header>
+
+      <Autoavaliacao360ScientificModal
+        open={isScientificModalOpen}
+        onOpenChange={setIsScientificModalOpen}
+      />
 
       <main className="container mx-auto px-4 py-8 space-y-6">
         {/* Progress Indicator */}
