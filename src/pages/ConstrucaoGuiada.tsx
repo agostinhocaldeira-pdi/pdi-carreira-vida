@@ -1,13 +1,22 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
-import { BookOpen, Home, PlayCircle, FileText, GraduationCap } from "lucide-react";
+import { BookOpen, Home, GraduationCap } from "lucide-react";
 import { Link } from "react-router-dom";
 import LogoutButton from "@/components/LogoutButton";
 import { useRoleProtection } from "@/hooks/useRoleProtection";
+import VvdLessonContent from "@/components/construcao-guiada/VvdLessonContent";
+import ValoresLessonContent from "@/components/construcao-guiada/ValoresLessonContent";
+import RodaDaVidaLessonContent from "@/components/construcao-guiada/RodaDaVidaLessonContent";
+import CrencasLessonContent from "@/components/construcao-guiada/CrencasLessonContent";
+import AutoavaliacaoLessonContent from "@/components/construcao-guiada/AutoavaliacaoLessonContent";
+import SwotLessonContent from "@/components/construcao-guiada/SwotLessonContent";
+import SmartLessonContent from "@/components/construcao-guiada/SmartLessonContent";
+import EisenhowerLessonContent from "@/components/construcao-guiada/EisenhowerLessonContent";
 
 const ConstrucaoGuiada = () => {
   useRoleProtection({ allowedRoles: ["user", "gestor"] });
+  
   const modulos = [
     {
       id: "modulo-1",
@@ -19,19 +28,30 @@ const ConstrucaoGuiada = () => {
       id: "modulo-2",
       titulo: "Quem sou eu",
       descricao: "Descubra seus valores, propósito e identidade através de ferramentas de autoconhecimento",
-      aulas: []
+      aulas: [
+        { id: "aula-2-1", titulo: "Método VVD", component: VvdLessonContent },
+        { id: "aula-2-2", titulo: "Valores", component: ValoresLessonContent },
+        { id: "aula-2-3", titulo: "Roda da Vida", component: RodaDaVidaLessonContent },
+        { id: "aula-2-4", titulo: "Transformação de Crenças", component: CrencasLessonContent },
+      ]
     },
     {
       id: "modulo-3",
       titulo: "Para onde vou",
       descricao: "Defina seus objetivos e visualize o futuro que você deseja construir",
-      aulas: []
+      aulas: [
+        { id: "aula-3-1", titulo: "Autoavaliação + 360º", component: AutoavaliacaoLessonContent },
+        { id: "aula-3-2", titulo: "Análise SWOT", component: SwotLessonContent },
+      ]
     },
     {
       id: "modulo-4",
       titulo: "Como vou chegar lá",
       descricao: "Planeje suas metas, ações e estratégias para alcançar seus objetivos",
-      aulas: []
+      aulas: [
+        { id: "aula-4-1", titulo: "Metas SMART", component: SmartLessonContent },
+        { id: "aula-4-2", titulo: "Matriz de Eisenhower", component: EisenhowerLessonContent },
+      ]
     },
     {
       id: "modulo-5",
@@ -56,7 +76,6 @@ const ConstrucaoGuiada = () => {
       </header>
 
       <main className="container mx-auto px-4 py-6 sm:py-8 space-y-6 sm:space-y-8">
-        {/* Seção Introdutória */}
         <Card className="shadow-large border-primary/20 animate-slide-up">
           <CardHeader className="space-y-4">
             <div className="flex items-start gap-3 sm:gap-4">
@@ -81,7 +100,6 @@ const ConstrucaoGuiada = () => {
           </CardContent>
         </Card>
 
-        {/* Módulos da Trilha */}
         <Card className="shadow-large">
           <CardHeader>
             <CardTitle className="text-xl sm:text-2xl">Módulos da Trilha</CardTitle>
@@ -108,35 +126,31 @@ const ConstrucaoGuiada = () => {
                     <div className="pl-11 pt-4 space-y-4">
                       {modulo.aulas.length === 0 ? (
                         <div className="bg-muted/30 rounded-lg p-6 text-center">
-                          <PlayCircle className="w-12 h-12 text-muted-foreground mx-auto mb-3" />
+                          <BookOpen className="w-12 h-12 text-muted-foreground mx-auto mb-3" />
                           <p className="text-muted-foreground text-sm">
                             As aulas deste módulo serão adicionadas em breve
                           </p>
                         </div>
                       ) : (
-                        <div className="space-y-3">
-                          {modulo.aulas.map((aula: any, aulaIndex: number) => (
-                            <div key={aulaIndex} className="border rounded-lg p-4 hover:bg-accent/50 transition-colors">
-                              <div className="flex items-start gap-3">
-                                <PlayCircle className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
-                                <div className="flex-1">
-                                  <h4 className="font-medium mb-1">{aula.titulo}</h4>
-                                  <p className="text-sm text-muted-foreground mb-2">{aula.descricao}</p>
-                                  {aula.materiais && aula.materiais.length > 0 && (
-                                    <div className="flex flex-wrap gap-2 mt-2">
-                                      {aula.materiais.map((material: string, matIndex: number) => (
-                                        <Button key={matIndex} variant="outline" size="sm" className="gap-2">
-                                          <FileText className="w-3 h-3" />
-                                          Material {matIndex + 1}
-                                        </Button>
-                                      ))}
-                                    </div>
-                                  )}
+                        <Accordion type="single" collapsible className="w-full">
+                          {modulo.aulas.map((aula, aulaIndex) => (
+                            <AccordionItem key={aula.id} value={aula.id}>
+                              <AccordionTrigger className="hover:no-underline py-3">
+                                <div className="flex items-center gap-3 text-left">
+                                  <div className="w-6 h-6 bg-primary/20 rounded-full flex items-center justify-center flex-shrink-0">
+                                    <span className="text-primary font-medium text-xs">{aulaIndex + 1}</span>
+                                  </div>
+                                  <span className="font-medium">{aula.titulo}</span>
                                 </div>
-                              </div>
-                            </div>
+                              </AccordionTrigger>
+                              <AccordionContent>
+                                <div className="pt-2">
+                                  <aula.component />
+                                </div>
+                              </AccordionContent>
+                            </AccordionItem>
                           ))}
-                        </div>
+                        </Accordion>
                       )}
                     </div>
                   </AccordionContent>
@@ -146,7 +160,6 @@ const ConstrucaoGuiada = () => {
           </CardContent>
         </Card>
 
-        {/* Botões de ação */}
         <Card className="shadow-large">
           <CardContent className="pt-6">
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
