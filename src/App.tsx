@@ -20,6 +20,7 @@ import Ferramentas from "./pages/Ferramentas";
 import Suporte from "./pages/Suporte";
 import Admin from "./pages/Admin";
 import AdminUsuarios from "./pages/AdminUsuarios";
+import AdminViewPDI from "./pages/AdminViewPDI";
 import RodaDaVida from "./pages/RodaDaVida";
 import Valores from "./pages/Valores";
 import MatrizEisenhower from "./pages/MatrizEisenhower";
@@ -77,6 +78,7 @@ const App = () => (
               <Route path="/suporte" element={<Suporte />} />
               <Route path="/admin" element={<Admin />} />
               <Route path="/admin/usuarios" element={<AdminUsuarios />} />
+              <Route path="/admin/pdi/:userId" element={<AdminViewPDI />} />
               <Route path="/roda-da-vida" element={<RodaDaVida />} />
               <Route path="/ferramentas/valores" element={<Valores />} />
               <Route path="/ferramentas/eisenhower" element={<MatrizEisenhower />} />

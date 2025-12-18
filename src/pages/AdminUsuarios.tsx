@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Progress } from "@/components/ui/progress";
 import { useNavigate } from "react-router-dom";
-import { Shield, ArrowLeft, Users, Search, UserCheck, UserX, RefreshCw } from "lucide-react";
+import { Shield, ArrowLeft, Users, Search, UserCheck, UserX, RefreshCw, Eye } from "lucide-react";
 import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
 import LogoutButton from "@/components/LogoutButton";
@@ -43,6 +43,26 @@ const AdminUsuarios = () => {
   const fetchUsers = async () => {
     setIsLoading(true);
     try {
+      // Fetch auth users via edge function
+      const { data: session } = await supabase.auth.getSession();
+      let authUsersMap: Record<string, { name: string; email: string; phone: string }> = {};
+      
+      if (session.session) {
+        const response = await supabase.functions.invoke("get-admin-users", {
+          headers: { Authorization: `Bearer ${session.session.access_token}` }
+        });
+        
+        if (response.data?.users) {
+          response.data.users.forEach((u: any) => {
+            authUsersMap[u.id] = {
+              name: u.name || "-",
+              email: u.email || "-",
+              phone: u.phone || "-"
+            };
+          });
+        }
+      }
+
       // Buscar todos os usuários com roles
       const { data: rolesData, error: rolesError } = await supabase
         .from("user_roles")
@@ -54,6 +74,7 @@ const AdminUsuarios = () => {
       const usersWithData: UserData[] = await Promise.all(
         (rolesData || []).map(async (roleEntry) => {
           const userId = roleEntry.user_id;
+          const authUser = authUsersMap[userId] || { name: "-", email: "-", phone: "-" };
 
           // Buscar objetivos
           const { data: objetivos } = await supabase
@@ -78,20 +99,6 @@ const AdminUsuarios = () => {
             .from("diary_entries")
             .select("id, entry_date")
             .eq("user_id", userId);
-
-          // Buscar onboarding para nome
-          const { data: onboarding } = await supabase
-            .from("user_onboarding")
-            .select("expectations")
-            .eq("user_id", userId)
-            .maybeSingle();
-
-          // Buscar endereço para dados adicionais
-          const { data: address } = await supabase
-            .from("user_addresses")
-            .select("*")
-            .eq("user_id", userId)
-            .maybeSingle();
 
           // Buscar streaks para último acesso
           const { data: streaks } = await supabase
@@ -134,9 +141,9 @@ const AdminUsuarios = () => {
 
           return {
             id: userId,
-            name: `Usuário ${userId.slice(0, 8)}`, // Placeholder - sem acesso direto ao auth.users
-            email: "-", // Protegido por RLS
-            phone: "-",
+            name: authUser.name,
+            email: authUser.email,
+            phone: authUser.phone,
             dataCadastro: roleEntry.created_at,
             ultimoAcesso: lastActivity || roleEntry.created_at,
             status: status as "ativo" | "inativo",
@@ -180,7 +187,8 @@ const AdminUsuarios = () => {
   const filteredUsers = users.filter(user =>
     user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    user.role.toLowerCase().includes(searchTerm.toLowerCase())
+    user.role.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    user.phone.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const formatDate = (dateString: string) => {
@@ -285,7 +293,7 @@ const AdminUsuarios = () => {
             <div className="flex items-center gap-2">
               <Search className="w-4 h-4 text-muted-foreground" />
               <Input
-                placeholder="Buscar por nome, e-mail ou role..."
+                placeholder="Buscar por nome, e-mail, telefone ou role..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="max-w-sm"
@@ -306,29 +314,36 @@ const AdminUsuarios = () => {
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead>ID</TableHead>
+                      <TableHead>Nome</TableHead>
+                      <TableHead>E-mail</TableHead>
+                      <TableHead className="hidden md:table-cell">Telefone</TableHead>
                       <TableHead>Role</TableHead>
-                      <TableHead className="hidden lg:table-cell">Data Cadastro</TableHead>
                       <TableHead>Status</TableHead>
-                      <TableHead className="text-center">Dias sem Acesso</TableHead>
-                      <TableHead className="min-w-[200px]">Atividades</TableHead>
+                      <TableHead className="text-center hidden lg:table-cell">Dias sem Acesso</TableHead>
+                      <TableHead className="min-w-[150px] hidden xl:table-cell">Atividades</TableHead>
+                      <TableHead className="text-center">Ações</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
                     {filteredUsers.length === 0 ? (
                       <TableRow>
-                        <TableCell colSpan={6} className="text-center text-muted-foreground py-8">
+                        <TableCell colSpan={8} className="text-center text-muted-foreground py-8">
                           Nenhum usuário encontrado
                         </TableCell>
                       </TableRow>
                     ) : (
                       filteredUsers.map((user) => (
                         <TableRow key={user.id}>
-                          <TableCell className="font-mono text-xs">{user.id.slice(0, 8)}...</TableCell>
-                          <TableCell>{getRoleBadge(user.role)}</TableCell>
-                          <TableCell className="hidden lg:table-cell text-muted-foreground">
-                            {formatDate(user.dataCadastro)}
+                          <TableCell className="font-medium">
+                            {user.name !== "-" ? user.name : (
+                              <span className="text-muted-foreground text-xs">{user.id.slice(0, 8)}...</span>
+                            )}
                           </TableCell>
+                          <TableCell className="text-sm">{user.email}</TableCell>
+                          <TableCell className="hidden md:table-cell text-sm text-muted-foreground">
+                            {user.phone}
+                          </TableCell>
+                          <TableCell>{getRoleBadge(user.role)}</TableCell>
                           <TableCell>
                             {user.status === "ativo" ? (
                               <Badge variant="default" className="gap-1 bg-green-600 hover:bg-green-700">
@@ -342,7 +357,7 @@ const AdminUsuarios = () => {
                               </Badge>
                             )}
                           </TableCell>
-                          <TableCell className="text-center">
+                          <TableCell className="text-center hidden lg:table-cell">
                             {(() => {
                               const days = getDaysSinceLastAccess(user.ultimoAcesso);
                               if (days === 0) {
@@ -356,20 +371,25 @@ const AdminUsuarios = () => {
                               }
                             })()}
                           </TableCell>
-                          <TableCell>
-                            <div className="space-y-2">
+                          <TableCell className="hidden xl:table-cell">
+                            <div className="space-y-1">
                               <div className="flex items-center justify-between text-xs">
-                                <span className="text-muted-foreground">Progresso geral</span>
+                                <span className="text-muted-foreground">Progresso</span>
                                 <span className="font-medium">{getProgressAverage(user.atividades)}%</span>
                               </div>
-                              <Progress value={getProgressAverage(user.atividades)} className="h-2" />
-                              <div className="grid grid-cols-2 gap-1 text-xs text-muted-foreground">
-                                <span>Obj: {user.atividades.objetivos}%</span>
-                                <span>Metas: {user.atividades.metas}%</span>
-                                <span>Ações: {user.atividades.acoes}%</span>
-                                <span>Diário: {user.atividades.diario}%</span>
-                              </div>
+                              <Progress value={getProgressAverage(user.atividades)} className="h-1.5" />
                             </div>
+                          </TableCell>
+                          <TableCell className="text-center">
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              className="gap-1"
+                              onClick={() => navigate(`/admin/pdi/${user.id}`)}
+                            >
+                              <Eye className="w-3.5 h-3.5" />
+                              <span className="hidden sm:inline">Ver PDI</span>
+                            </Button>
                           </TableCell>
                         </TableRow>
                       ))
