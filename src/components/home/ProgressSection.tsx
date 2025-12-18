@@ -393,6 +393,11 @@ const ProgressSection = () => {
                           )}
                         </div>
                       </TooltipProvider>
+                      
+                      {/* Informative text about gamification */}
+                      <p className="text-xs text-muted-foreground mt-3 pt-3 border-t">
+                        Suas conquistas geram pontos e prêmios. Em Recursos, acesse a FAQ e entenda como funciona na seção "Gamificação e Badges".
+                      </p>
                     </div>
                   </div>
                 </ScrollArea>
