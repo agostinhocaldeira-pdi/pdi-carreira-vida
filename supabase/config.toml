@@ -47,3 +47,9 @@ verify_jwt = false
 
 [functions.confirm-ebook-download]
 verify_jwt = false
+
+[functions.get-admin-users]
+verify_jwt = false
+
+[functions.send-broadcast-email]
+verify_jwt = false
