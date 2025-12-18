@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
@@ -12,92 +11,113 @@ import { Send, Mail, MessageSquare, Users, Eye, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 
-interface User {
+interface Recipient {
   id: string;
   email: string;
   name: string;
-  role: string;
-  hasSubscription: boolean;
+  type: "user" | "lead";
+  role?: string;
 }
 
-type UserFilter = "all" | "user" | "gestor" | "empresa" | "admin" | "with_subscription" | "without_subscription";
+type ProfileFilter = "user" | "gestor" | "empresa" | "admin" | "leads";
+
+const FILTER_OPTIONS: { value: ProfileFilter; label: string }[] = [
+  { value: "user", label: "Usuários" },
+  { value: "gestor", label: "Gestores" },
+  { value: "empresa", label: "Empresas" },
+  { value: "admin", label: "Administradores" },
+  { value: "leads", label: "Leads (confirmados)" },
+];
 
 const AdminBroadcastPanel = () => {
   const [subject, setSubject] = useState("");
   const [message, setMessage] = useState("");
-  const [userFilter, setUserFilter] = useState<UserFilter>("all");
+  const [selectedFilters, setSelectedFilters] = useState<ProfileFilter[]>(["user"]);
   const [sendViaEmail, setSendViaEmail] = useState(true);
   const [sendViaWhatsapp, setSendViaWhatsapp] = useState(false);
-  const [users, setUsers] = useState<User[]>([]);
-  const [filteredUsers, setFilteredUsers] = useState<User[]>([]);
+  const [allRecipients, setAllRecipients] = useState<Recipient[]>([]);
+  const [filteredRecipients, setFilteredRecipients] = useState<Recipient[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isSending, setIsSending] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
 
-  // Fetch users on mount
   useEffect(() => {
-    fetchUsers();
+    fetchAllData();
   }, []);
 
-  // Update filtered users when filter changes
   useEffect(() => {
-    filterUsers();
-  }, [userFilter, users]);
+    filterRecipients();
+  }, [selectedFilters, allRecipients]);
 
-  const fetchUsers = async () => {
+  const fetchAllData = async () => {
     setIsLoading(true);
     try {
-      // Get users via edge function
-      const { data, error } = await supabase.functions.invoke('get-admin-users');
-      
-      if (error) throw error;
+      const [usersResult, leadsResult] = await Promise.all([
+        supabase.functions.invoke('get-admin-users'),
+        supabase.from('leads').select('id, name, email').eq('email_confirmed', true)
+      ]);
 
-      if (data?.users) {
-        // Map users with roles
-        const usersWithRoles: User[] = data.users.map((u: any) => ({
-          id: u.id,
-          email: u.email || '',
-          name: u.name || 'Usuário',
-          role: u.role || 'user',
-          hasSubscription: u.has_subscription || false
-        }));
-        setUsers(usersWithRoles);
+      const recipients: Recipient[] = [];
+
+      if (usersResult.data?.users) {
+        usersResult.data.users.forEach((u: any) => {
+          if (u.email && u.email !== '-') {
+            recipients.push({
+              id: u.id,
+              email: u.email,
+              name: u.name || 'Usuário',
+              type: "user",
+              role: u.role || 'user'
+            });
+          }
+        });
       }
+
+      if (leadsResult.data) {
+        const existingEmails = new Set(recipients.map(r => r.email.toLowerCase()));
+        leadsResult.data.forEach((lead: any) => {
+          if (lead.email && !existingEmails.has(lead.email.toLowerCase())) {
+            recipients.push({
+              id: lead.id,
+              email: lead.email,
+              name: lead.name || 'Lead',
+              type: "lead"
+            });
+          }
+        });
+      }
+
+      setAllRecipients(recipients);
     } catch (error: any) {
-      console.error("Error fetching users:", error);
-      toast.error("Erro ao carregar usuários");
+      console.error("Error fetching data:", error);
+      toast.error("Erro ao carregar destinatários");
     } finally {
       setIsLoading(false);
     }
   };
 
-  const filterUsers = () => {
-    let filtered = [...users];
-
-    switch (userFilter) {
-      case "user":
-        filtered = users.filter(u => u.role === "user");
-        break;
-      case "gestor":
-        filtered = users.filter(u => u.role === "gestor");
-        break;
-      case "empresa":
-        filtered = users.filter(u => u.role === "empresa");
-        break;
-      case "admin":
-        filtered = users.filter(u => u.role === "admin");
-        break;
-      case "with_subscription":
-        filtered = users.filter(u => u.hasSubscription);
-        break;
-      case "without_subscription":
-        filtered = users.filter(u => !u.hasSubscription);
-        break;
-      default:
-        filtered = users;
+  const filterRecipients = () => {
+    if (selectedFilters.length === 0) {
+      setFilteredRecipients([]);
+      return;
     }
 
-    setFilteredUsers(filtered);
+    const filtered = allRecipients.filter(r => {
+      if (r.type === "lead") {
+        return selectedFilters.includes("leads");
+      }
+      return selectedFilters.includes(r.role as ProfileFilter);
+    });
+
+    setFilteredRecipients(filtered);
+  };
+
+  const toggleFilter = (filter: ProfileFilter) => {
+    setSelectedFilters(prev => 
+      prev.includes(filter) 
+        ? prev.filter(f => f !== filter)
+        : [...prev, filter]
+    );
   };
 
   const handleOpenPreview = () => {
@@ -113,8 +133,8 @@ const AdminBroadcastPanel = () => {
       toast.error("Selecione pelo menos um canal de envio");
       return;
     }
-    if (filteredUsers.length === 0) {
-      toast.error("Não há usuários para enviar com o filtro selecionado");
+    if (filteredRecipients.length === 0) {
+      toast.error("Não há destinatários para enviar com os filtros selecionados");
       return;
     }
     setShowPreview(true);
@@ -123,9 +143,9 @@ const AdminBroadcastPanel = () => {
   const handleSendBroadcast = async () => {
     setIsSending(true);
     try {
-      const recipients = filteredUsers.map(u => ({
-        email: u.email,
-        name: u.name
+      const recipients = filteredRecipients.map(r => ({
+        email: r.email,
+        name: r.name
       }));
 
       const { data, error } = await supabase.functions.invoke('send-broadcast-email', {
@@ -152,17 +172,10 @@ const AdminBroadcastPanel = () => {
     }
   };
 
-  const getFilterLabel = (filter: UserFilter) => {
-    switch (filter) {
-      case "all": return "Todos os usuários";
-      case "user": return "Usuários (perfil comum)";
-      case "gestor": return "Gestores";
-      case "empresa": return "Empresas";
-      case "admin": return "Administradores";
-      case "with_subscription": return "Com assinatura ativa";
-      case "without_subscription": return "Sem assinatura";
-      default: return "Todos";
-    }
+  const getSelectedFiltersLabel = () => {
+    if (selectedFilters.length === 0) return "Nenhum selecionado";
+    if (selectedFilters.length === FILTER_OPTIONS.length) return "Todos";
+    return selectedFilters.map(f => FILTER_OPTIONS.find(o => o.value === f)?.label).join(", ");
   };
 
   const generatePreviewHtml = () => {
@@ -195,7 +208,6 @@ const AdminBroadcastPanel = () => {
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          {/* Subject */}
           <div className="space-y-2">
             <Label htmlFor="broadcast-subject">Assunto do E-mail</Label>
             <Input
@@ -206,7 +218,6 @@ const AdminBroadcastPanel = () => {
             />
           </div>
 
-          {/* Message */}
           <div className="space-y-2">
             <Label htmlFor="broadcast-message">Mensagem</Label>
             <Textarea
@@ -219,29 +230,30 @@ const AdminBroadcastPanel = () => {
             />
           </div>
 
-          {/* User Filter */}
-          <div className="space-y-2">
-            <Label>Destinatários</Label>
-            <Select value={userFilter} onValueChange={(v) => setUserFilter(v as UserFilter)}>
-              <SelectTrigger>
-                <SelectValue placeholder="Selecione o filtro" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">Todos os usuários</SelectItem>
-                <SelectItem value="user">Usuários (perfil comum)</SelectItem>
-                <SelectItem value="gestor">Gestores</SelectItem>
-                <SelectItem value="empresa">Empresas</SelectItem>
-                <SelectItem value="admin">Administradores</SelectItem>
-                <SelectItem value="with_subscription">Com assinatura ativa</SelectItem>
-                <SelectItem value="without_subscription">Sem assinatura</SelectItem>
-              </SelectContent>
-            </Select>
+          <div className="space-y-3">
+            <Label>Destinatários (selecione um ou mais perfis)</Label>
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+              {FILTER_OPTIONS.map(option => (
+                <div key={option.value} className="flex items-center space-x-2">
+                  <Checkbox
+                    id={`filter-${option.value}`}
+                    checked={selectedFilters.includes(option.value)}
+                    onCheckedChange={() => toggleFilter(option.value)}
+                  />
+                  <label
+                    htmlFor={`filter-${option.value}`}
+                    className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                  >
+                    {option.label}
+                  </label>
+                </div>
+              ))}
+            </div>
             <p className="text-sm text-muted-foreground">
-              {isLoading ? "Carregando..." : `${filteredUsers.length} usuário(s) selecionado(s)`}
+              {isLoading ? "Carregando..." : `${filteredRecipients.length} destinatário(s) selecionado(s)`}
             </p>
           </div>
 
-          {/* Send Channels */}
           <div className="space-y-3">
             <Label>Canais de Envio</Label>
             <div className="flex flex-col gap-3">
@@ -278,7 +290,6 @@ const AdminBroadcastPanel = () => {
             </div>
           </div>
 
-          {/* Send Button */}
           <div className="flex justify-end pt-4">
             <Button onClick={handleOpenPreview} className="gap-2" disabled={isLoading}>
               <Eye className="w-4 h-4" />
@@ -288,7 +299,6 @@ const AdminBroadcastPanel = () => {
         </CardContent>
       </Card>
 
-      {/* Preview Modal */}
       <Dialog open={showPreview} onOpenChange={setShowPreview}>
         <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
@@ -302,12 +312,11 @@ const AdminBroadcastPanel = () => {
           </DialogHeader>
 
           <div className="space-y-4">
-            {/* Summary */}
             <div className="bg-muted/50 rounded-lg p-4 space-y-2">
               <div className="flex items-center gap-2">
                 <Users className="w-4 h-4 text-muted-foreground" />
                 <span className="text-sm">
-                  <strong>Destinatários:</strong> {filteredUsers.length} usuário(s) - {getFilterLabel(userFilter)}
+                  <strong>Destinatários:</strong> {filteredRecipients.length} - {getSelectedFiltersLabel()}
                 </span>
               </div>
               <div className="flex items-center gap-2">
@@ -323,7 +332,6 @@ const AdminBroadcastPanel = () => {
               </div>
             </div>
 
-            {/* Email Preview */}
             <div className="border rounded-lg overflow-hidden">
               <div className="bg-muted px-4 py-2 border-b">
                 <span className="text-sm font-medium">Prévia do E-mail</span>
@@ -334,17 +342,19 @@ const AdminBroadcastPanel = () => {
               />
             </div>
 
-            {/* Recipients List */}
-            {filteredUsers.length <= 10 && (
+            {filteredRecipients.length <= 10 && (
               <div className="border rounded-lg">
                 <div className="bg-muted px-4 py-2 border-b">
                   <span className="text-sm font-medium">Lista de Destinatários</span>
                 </div>
                 <div className="p-4 max-h-[200px] overflow-y-auto">
                   <ul className="text-sm space-y-1">
-                    {filteredUsers.map(u => (
-                      <li key={u.id} className="text-muted-foreground">
-                        {u.name} ({u.email})
+                    {filteredRecipients.map(r => (
+                      <li key={r.id} className="text-muted-foreground flex items-center gap-2">
+                        <Badge variant="outline" className="text-xs">
+                          {r.type === "lead" ? "Lead" : r.role}
+                        </Badge>
+                        {r.name} ({r.email})
                       </li>
                     ))}
                   </ul>
