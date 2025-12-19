@@ -399,7 +399,8 @@ const ProgressSection = () => {
               </h3>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {/* Desktop view */}
+            <div className="hidden md:grid md:grid-cols-3 gap-6">
               {/* Objetivos */}
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
@@ -461,6 +462,66 @@ const ProgressSection = () => {
                     ? `${progressData.actions.completed} de ${progressData.actions.total} ações realizadas`
                     : "Nenhuma ação cadastrada"}
                 </p>
+              </div>
+            </div>
+
+            {/* Mobile view - formato compacto */}
+            <div className="md:hidden space-y-3">
+              {/* Objetivos - compacto */}
+              <div className="flex items-center gap-3 p-3 bg-muted/30 rounded-lg">
+                <div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0">
+                  <Target className="w-4 h-4 text-primary" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center justify-between mb-1">
+                    <p className="text-xs font-medium">Objetivos</p>
+                    <p className="text-sm font-bold">{progressData.objectives.percentage}%</p>
+                  </div>
+                  <Progress value={progressData.objectives.percentage} className="h-1.5" />
+                  <p className="text-[10px] text-muted-foreground mt-1">
+                    {progressData.objectives.total > 0 
+                      ? `${progressData.objectives.completed}/${progressData.objectives.total} concluídos`
+                      : "Nenhum cadastrado"}
+                  </p>
+                </div>
+              </div>
+
+              {/* Metas - compacto */}
+              <div className="flex items-center gap-3 p-3 bg-muted/30 rounded-lg">
+                <div className="w-8 h-8 bg-accent/10 rounded-full flex items-center justify-center flex-shrink-0">
+                  <CheckCircle2 className="w-4 h-4 text-accent" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center justify-between mb-1">
+                    <p className="text-xs font-medium">Metas</p>
+                    <p className="text-sm font-bold">{progressData.goals.percentage}%</p>
+                  </div>
+                  <Progress value={progressData.goals.percentage} className="h-1.5" />
+                  <p className="text-[10px] text-muted-foreground mt-1">
+                    {progressData.goals.total > 0 
+                      ? `${progressData.goals.completed}/${progressData.goals.total} concluídas`
+                      : "Nenhuma cadastrada"}
+                  </p>
+                </div>
+              </div>
+
+              {/* Ações - compacto */}
+              <div className="flex items-center gap-3 p-3 bg-muted/30 rounded-lg">
+                <div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0">
+                  <TrendingUp className="w-4 h-4 text-primary" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center justify-between mb-1">
+                    <p className="text-xs font-medium">Ações</p>
+                    <p className="text-sm font-bold">{progressData.actions.percentage}%</p>
+                  </div>
+                  <Progress value={progressData.actions.percentage} className="h-1.5" />
+                  <p className="text-[10px] text-muted-foreground mt-1">
+                    {progressData.actions.total > 0 
+                      ? `${progressData.actions.completed}/${progressData.actions.total} realizadas`
+                      : "Nenhuma cadastrada"}
+                  </p>
+                </div>
               </div>
             </div>
 
