@@ -9,7 +9,8 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Compass, Heart, Target, Lightbulb, ChevronDown, ArrowRight, Edit, Sparkles, Loader2, ExternalLink, Plus, Trash2, Pencil, Check, X, Building2 } from "lucide-react";
+import { Compass, Heart, Target, Lightbulb, ChevronDown, ArrowRight, Edit, Sparkles, Loader2, ExternalLink, Plus, Trash2, Pencil, Check, X, Building2, Monitor, Smartphone } from "lucide-react";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { PDILoader } from "@/components/ui/pdi-loader";
 import { toast } from "sonner";
 import { Link } from "react-router-dom";
@@ -32,11 +33,13 @@ interface PlanoDeVidaProps {
 const PlanoDeVida = ({ onTabChange, onOpenChange, forcedTab, forcedOpen }: PlanoDeVidaProps) => {
   const storage = usePDIStorage();
   const queryClient = useQueryClient();
+  const isMobile = useIsMobile();
   
   // React Query hook for cached data with localStorage-first pattern
   const { data: pdiData, isLoading: isQueryLoading } = usePDIData();
   
   const [isOpen, setIsOpen] = useState(false);
+  const [showMobileWarning, setShowMobileWarning] = useState(false);
   const [activeTab, setActiveTab] = useState("quem-sou");
   const [vvd, setVvd] = useState("");
   const [isEditingVvd, setIsEditingVvd] = useState(true);
@@ -736,36 +739,80 @@ const PlanoDeVida = ({ onTabChange, onOpenChange, forcedTab, forcedOpen }: Plano
   };
 
   const handleOpenChange = (open: boolean) => {
+    // Se estiver abrindo no mobile, mostrar aviso primeiro
+    if (open && isMobile && !isOpen) {
+      setShowMobileWarning(true);
+      return;
+    }
     setIsOpen(open);
     onOpenChange?.(open);
   };
 
+  const handleConfirmMobileOpen = () => {
+    setShowMobileWarning(false);
+    setIsOpen(true);
+    onOpenChange?.(true);
+  };
+
   return (
-    <Collapsible open={isOpen} onOpenChange={handleOpenChange}>
-      <Card className="shadow-medium">
-        <CardHeader>
-          <div className="flex items-center justify-between">
-            <div className="space-y-1">
-              <CardTitle className="text-2xl flex items-center gap-2">
-                <Compass className="w-6 h-6 text-primary" />
-                Plano de Vida
-              </CardTitle>
-              <CardDescription>Construa sua visão e defina seus objetivos</CardDescription>
+    <>
+      {/* Modal de aviso para usuários mobile */}
+      <Dialog open={showMobileWarning} onOpenChange={setShowMobileWarning}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Monitor className="w-5 h-5 text-primary" />
+              Dica de Experiência
+            </DialogTitle>
+            <DialogDescription className="text-left pt-2">
+              <div className="flex items-start gap-3 mb-4">
+                <Smartphone className="w-8 h-8 text-muted-foreground flex-shrink-0 mt-1" />
+                <p className="text-sm">
+                  O <strong>Plano de Vida</strong> possui muitas informações e funcionalidades. 
+                  Para uma <strong>melhor experiência de preenchimento</strong>, recomendamos utilizar um <strong>computador</strong>.
+                </p>
+              </div>
+              <p className="text-xs text-muted-foreground">
+                Você ainda pode continuar no celular, mas algumas funcionalidades podem ser mais difíceis de usar.
+              </p>
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="flex-col gap-2 sm:flex-row">
+            <Button variant="outline" onClick={() => setShowMobileWarning(false)} className="w-full sm:w-auto">
+              Voltar
+            </Button>
+            <Button onClick={handleConfirmMobileOpen} className="w-full sm:w-auto">
+              Continuar mesmo assim
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Collapsible open={isOpen} onOpenChange={handleOpenChange}>
+        <Card className="shadow-medium">
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <div className="space-y-1">
+                <CardTitle className="text-2xl flex items-center gap-2">
+                  <Compass className="w-6 h-6 text-primary" />
+                  Plano de Vida
+                </CardTitle>
+                <CardDescription>Construa sua visão e defina seus objetivos</CardDescription>
+              </div>
+              <CollapsibleTrigger asChild>
+                <Button 
+                  variant="secondary" 
+                  size="sm" 
+                  className="gap-1.5 hover:bg-primary hover:text-primary-foreground transition-all shadow-sm min-w-[44px] border border-border"
+                >
+                  {!isOpen && (
+                    <span className="text-xs font-medium">Expandir</span>
+                  )}
+                  <ChevronDown className={`w-4 h-4 transition-transform duration-300 ${isOpen ? "rotate-180" : ""}`} />
+                </Button>
+              </CollapsibleTrigger>
             </div>
-            <CollapsibleTrigger asChild>
-              <Button 
-                variant="secondary" 
-                size="sm" 
-                className="gap-1.5 hover:bg-primary hover:text-primary-foreground transition-all shadow-sm min-w-[44px] border border-border"
-              >
-                {!isOpen && (
-                  <span className="text-xs font-medium">Expandir</span>
-                )}
-                <ChevronDown className={`w-4 h-4 transition-transform duration-300 ${isOpen ? "rotate-180" : ""}`} />
-              </Button>
-            </CollapsibleTrigger>
-          </div>
-        </CardHeader>
+          </CardHeader>
         <CollapsibleContent>
           <CardContent>
         <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
@@ -1424,7 +1471,8 @@ const PlanoDeVida = ({ onTabChange, onOpenChange, forcedTab, forcedOpen }: Plano
         title="Excluir Habilidade"
         description="Tem certeza que deseja excluir esta habilidade?"
       />
-    </Collapsible>
+      </Collapsible>
+    </>
   );
 };
 
