@@ -541,6 +541,11 @@ const Home = () => {
             </Card>
           </section>
         )}
+
+        {/* Botão flutuante de Exportar Relatórios */}
+        <div className="fixed bottom-6 right-6 z-50">
+          <ExportPDFButton label="Exportar Relatórios" variant="default" className="shadow-lg" />
+        </div>
       </main>
     </div>
   );

@@ -11,7 +11,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useGamification } from "@/hooks/useGamification";
-import { ExportPDFButton } from "@/components/reports/ExportPDFButton";
+
 import { usePDIStorage } from "@/hooks/usePDIStorage";
 import { DailyCheckout } from "@/components/gamification/DailyCheckout";
 
@@ -275,19 +275,6 @@ const ProgressSection = () => {
         </CardHeader>
         <CollapsibleContent>
           <CardContent>
-            {/* Action buttons - only visible when expanded */}
-            <div className="mb-4 flex flex-col sm:flex-row gap-2">
-              <ExportPDFButton label="Exportar relatórios" className="w-full sm:w-auto" />
-              <Button 
-                variant="outline" 
-                size="sm"
-                onClick={() => setIsJourneyModalOpen(true)}
-                className="gap-1.5 w-full sm:w-auto"
-              >
-                <Trophy className="w-4 h-4 text-amber-500" />
-                Sua Jornada
-              </Button>
-            </div>
 
             {/* Daily Checkout Section - Now inside Seu Progresso */}
             <div className="mb-6">
@@ -475,6 +462,19 @@ const ProgressSection = () => {
                     : "Nenhuma ação cadastrada"}
                 </p>
               </div>
+            </div>
+
+            {/* Botão Sua Jornada - após a seção Evolução */}
+            <div className="mt-6 flex justify-center">
+              <Button 
+                variant="outline" 
+                size="sm"
+                onClick={() => setIsJourneyModalOpen(true)}
+                className="gap-2"
+              >
+                <Trophy className="w-4 h-4 text-amber-500" />
+                Sua Jornada
+              </Button>
             </div>
 
             {/* Insights Section */}
