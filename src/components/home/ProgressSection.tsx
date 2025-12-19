@@ -477,65 +477,6 @@ const ProgressSection = () => {
               </Button>
             </div>
 
-            {/* Insights Section */}
-            <div className="mt-8 space-y-4">
-              <div className="flex items-center justify-between">
-                <h3 className="text-lg font-semibold flex items-center gap-2">
-                  <Sparkles className="w-5 h-5 text-primary" />
-                  Insights sobre você
-                </h3>
-                <Button
-                  onClick={handleGenerateInsight}
-                  disabled={isGenerating || (!canGenerateInsight && !isAdmin)}
-                  size="sm"
-                  variant="outline"
-                >
-                  {isGenerating ? (
-                    <>
-                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                      Gerando...
-                    </>
-                  ) : (
-                    <>
-                      <Sparkles className="w-4 h-4 mr-2" />
-                      Gerar Insight
-                    </>
-                  )}
-                </Button>
-              </div>
-
-              {!canGenerateInsight && !isAdmin && (
-                <p className="text-xs text-muted-foreground">
-                  Você atingiu o limite mensal de geração de insights. Próxima geração disponível em 30 dias.
-                </p>
-              )}
-
-              {isAdmin && (
-                <p className="text-xs text-primary font-medium">
-                  Acesso Admin: Você tem insights ilimitados como administrador.
-                </p>
-              )}
-
-              {insight && (
-                <Card className="bg-primary/5 border-primary/20">
-                  <CardContent className="pt-6">
-                    <p className="text-sm text-foreground/90 leading-relaxed whitespace-pre-wrap">
-                      {insight}
-                    </p>
-                  </CardContent>
-                </Card>
-              )}
-
-              {!insight && (
-                <Card className="bg-muted/30">
-                  <CardContent className="pt-6">
-                    <p className="text-sm text-muted-foreground text-center">
-                      Clique em "Gerar Insight" para receber uma análise correlacional profunda sobre seu desenvolvimento pessoal.
-                    </p>
-                  </CardContent>
-                </Card>
-              )}
-            </div>
           </CardContent>
         </CollapsibleContent>
       </Card>
