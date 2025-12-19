@@ -24,6 +24,7 @@ import { TrialStatusBanner } from "@/components/subscription/TrialStatusBanner";
 import Logo from "@/components/Logo";
 import { FirstStepsModal } from "@/components/FirstStepsModal";
 import StoicReflectionSection from "@/components/home/StoicReflectionSection";
+import { getTodayReflection } from "@/data/stoicReflections";
 
 const Home = () => {
   const navigate = useNavigate();
@@ -111,10 +112,10 @@ const Home = () => {
     }
   }, [roleLoading, userRole]);
 
-  // Seleciona uma frase motivacional baseada no dia
+  // Usa o título da reflexão estoica do dia como frase motivacional
   useEffect(() => {
-    const today = new Date().getDate();
-    setMotivationalQuote(quotes[today % quotes.length]);
+    const { reflection } = getTodayReflection();
+    setMotivationalQuote(reflection.title);
 
     // Escutar evento de navegação para Plano de Vida
     const handleNavigateToPlanoDeVida = (event: CustomEvent) => {
