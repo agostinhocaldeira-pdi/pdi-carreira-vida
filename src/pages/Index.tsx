@@ -247,7 +247,7 @@ const Index = () => {
               <div className="relative w-full rounded-xl overflow-hidden shadow-2xl border border-border/50" style={{ paddingBottom: '56.25%' }}>
                 <iframe
                   className="absolute top-0 left-0 w-full h-full"
-                  src="https://www.youtube.com/embed/F50nE1vYjaY?autoplay=1&mute=1&loop=1&playlist=F50nE1vYjaY&controls=1&rel=0"
+                  src="https://www.youtube.com/embed/F50nE1vYjaY?rel=0&controls=1"
                   title="PDI - Carreira e Vida"
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                   allowFullScreen
