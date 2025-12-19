@@ -2,20 +2,26 @@ import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
-import { BookOpen, Calendar } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { BookOpen, Calendar, Save, Check } from "lucide-react";
 import { getTodayReflection } from "@/data/stoicReflections";
 import { supabase } from "@/integrations/supabase/client";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
+import { toast } from "@/hooks/use-toast";
 
 const StoicReflectionSection = () => {
   const [response, setResponse] = useState("");
+  const [originalResponse, setOriginalResponse] = useState("");
   const [isSaving, setIsSaving] = useState(false);
-  const [lastSaved, setLastSaved] = useState<Date | null>(null);
+  const [isSaved, setIsSaved] = useState(false);
   
   const { date, reflection } = getTodayReflection();
   const formattedDate = format(date, "EEEE, d 'de' MMMM", { locale: ptBR });
   const capitalizedDate = formattedDate.charAt(0).toUpperCase() + formattedDate.slice(1);
+
+  const hasChanges = response.trim() !== originalResponse.trim();
+  const canSave = response.trim().length > 0 && hasChanges;
 
   // Load existing response
   useEffect(() => {
@@ -26,45 +32,53 @@ const StoicReflectionSection = () => {
       const today = format(date, "yyyy-MM-dd");
       const { data } = await supabase
         .from("user_stoic_reflections")
-        .select("response, updated_at")
+        .select("response")
         .eq("user_id", session.user.id)
         .eq("reflection_date", today)
         .maybeSingle();
 
       if (data) {
         setResponse(data.response || "");
-        setLastSaved(new Date(data.updated_at));
+        setOriginalResponse(data.response || "");
       }
     };
     loadResponse();
   }, [date]);
 
-  // Auto-save with debounce
-  useEffect(() => {
-    if (!response) return;
+  const handleSave = async () => {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session?.user) return;
+
+    setIsSaving(true);
+    const today = format(date, "yyyy-MM-dd");
     
-    const timer = setTimeout(async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session?.user) return;
+    const { error } = await supabase
+      .from("user_stoic_reflections")
+      .upsert({
+        user_id: session.user.id,
+        reflection_date: today,
+        response: response,
+        updated_at: new Date().toISOString()
+      }, { onConflict: "user_id,reflection_date" });
 
-      setIsSaving(true);
-      const today = format(date, "yyyy-MM-dd");
-      
-      await supabase
-        .from("user_stoic_reflections")
-        .upsert({
-          user_id: session.user.id,
-          reflection_date: today,
-          response: response,
-          updated_at: new Date().toISOString()
-        }, { onConflict: "user_id,reflection_date" });
+    setIsSaving(false);
 
-      setLastSaved(new Date());
-      setIsSaving(false);
-    }, 1000);
-
-    return () => clearTimeout(timer);
-  }, [response, date]);
+    if (error) {
+      toast({
+        title: "Erro ao salvar",
+        description: "Não foi possível salvar sua reflexão.",
+        variant: "destructive"
+      });
+    } else {
+      setOriginalResponse(response);
+      setIsSaved(true);
+      setTimeout(() => setIsSaved(false), 2000);
+      toast({
+        title: "Reflexão salva",
+        description: "Sua reflexão foi salva com sucesso."
+      });
+    }
+  };
 
   return (
     <Card className="shadow-medium border-primary/20 bg-gradient-to-br from-card to-primary/5">
@@ -101,18 +115,33 @@ const StoicReflectionSection = () => {
         </Card>
 
         {/* Response Field */}
-        <div className="space-y-2">
+        <div className="space-y-3">
           <Textarea
             placeholder="Escreva sua reflexão aqui..."
             value={response}
             onChange={(e) => setResponse(e.target.value)}
             className="min-h-[100px] resize-none"
           />
-          <div className="flex items-center justify-end gap-2 text-xs text-muted-foreground">
-            {isSaving && <span>Salvando...</span>}
-            {lastSaved && !isSaving && (
-              <span>Salvo às {format(lastSaved, "HH:mm")}</span>
-            )}
+          <div className="flex items-center justify-end">
+            <Button
+              onClick={handleSave}
+              disabled={!canSave || isSaving}
+              className="gap-2"
+            >
+              {isSaving ? (
+                <>Salvando...</>
+              ) : isSaved ? (
+                <>
+                  <Check className="w-4 h-4" />
+                  Salvo
+                </>
+              ) : (
+                <>
+                  <Save className="w-4 h-4" />
+                  Salvar
+                </>
+              )}
+            </Button>
           </div>
         </div>
       </CardContent>
