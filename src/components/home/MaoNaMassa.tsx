@@ -30,6 +30,7 @@ const MaoNaMassa = () => {
   
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [showSuggestionModal, setShowSuggestionModal] = useState(false);
+  const [showActionCreatedModal, setShowActionCreatedModal] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [objetivoSelecionado, setObjetivoSelecionado] = useState("");
   
@@ -141,7 +142,8 @@ const MaoNaMassa = () => {
 
     setAcoes([...acoes, { ...novaAcao, id: Date.now() }]);
     setNovaAcao({ acao: "", periodicidade: "", status: "a-fazer" });
-    toast.success("Ação adicionada!");
+    setShowActionCreatedModal(true);
+    celebrateAction('action', novaAcao.acao);
   };
 
   const handleRemoveAcao = (id: number) => {
@@ -1009,6 +1011,37 @@ const MaoNaMassa = () => {
               className="w-full sm:w-auto"
             >
               Ir para Matriz de Eisenhower
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Modal de Ação Criada */}
+      <Dialog open={showActionCreatedModal} onOpenChange={setShowActionCreatedModal}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-xl">
+              <Rocket className="w-6 h-6 text-primary" />
+              Ação Registrada! 🎉
+            </DialogTitle>
+            <DialogDescription className="text-base space-y-4 pt-4">
+              <p className="text-foreground leading-relaxed">
+                Você deu um passo muito importante. Lembre-se: é na consistência e constância das execuções das ações que você alcança suas metas e objetivos.
+              </p>
+              <p className="italic text-muted-foreground border-l-4 border-primary/50 pl-4 py-2 bg-muted/30 rounded-r-md">
+                "Quem não aprende a respeitar o processo desiste antes do resultado."
+              </p>
+              <p className="font-bold text-primary text-lg">
+                Continue firme! 💪
+              </p>
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button 
+              onClick={() => setShowActionCreatedModal(false)}
+              className="w-full"
+            >
+              Vamos lá!
             </Button>
           </DialogFooter>
         </DialogContent>
