@@ -23,6 +23,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { TrialStatusBanner } from "@/components/subscription/TrialStatusBanner";
 import Logo from "@/components/Logo";
 import { FirstStepsModal } from "@/components/FirstStepsModal";
+import StoicReflectionSection from "@/components/home/StoicReflectionSection";
 
 const Home = () => {
   const navigate = useNavigate();
@@ -350,8 +351,13 @@ const Home = () => {
         {/* Trial Status Banner */}
         <TrialStatusBanner />
 
-        {/* Progresso Section */}
+        {/* Stoic Reflection Section */}
         <section className="animate-slide-up">
+          <StoicReflectionSection />
+        </section>
+
+        {/* Progresso Section */}
+        <section className="animate-slide-up" style={{ animationDelay: "0.05s" }}>
           <ProgressSection />
         </section>
 
