@@ -15,11 +15,13 @@ import { useNavigate } from "react-router-dom";
 import ConfirmDeleteDialog from "@/components/ConfirmDeleteDialog";
 import { usePDIStorage } from "@/hooks/usePDIStorage";
 import { usePDIData, useDeleteMeta, useSaveMeta } from "@/hooks/usePDIQueries";
+import { useActionCelebration } from "@/contexts/ActionCelebrationContext";
 
 const MaoNaMassa = () => {
   const storage = usePDIStorage();
   const formRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
+  const { celebrateAction } = useActionCelebration();
   
   // React Query hooks for optimized data fetching
   const { data: pdiData, isLoading: isQueryLoading } = usePDIData();
@@ -247,6 +249,7 @@ const MaoNaMassa = () => {
         await storage.saveMetas(metasAtualizadas);
         localStorage.setItem("metas", JSON.stringify(metasAtualizadas));
         setMetasCadastradas(metasAtualizadas);
+        celebrateAction('goal', 'Meta');
         toast.success("Meta atualizada com sucesso!");
         setEditandoMetaId(null);
         setIsFormOpen(false);
@@ -265,6 +268,7 @@ const MaoNaMassa = () => {
           setMetasCadastradas(metas);
         }
         
+        celebrateAction('goal', 'Meta');
         setShowSuggestionModal(true);
         setIsFormOpen(false);
         

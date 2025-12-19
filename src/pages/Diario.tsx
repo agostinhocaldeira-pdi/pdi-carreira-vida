@@ -10,10 +10,12 @@ import LogoutButton from "@/components/LogoutButton";
 import { useRoleProtection } from "@/hooks/useRoleProtection";
 import { usePDIStorage } from "@/hooks/usePDIStorage";
 import DiaryScientificModal from "@/components/DiaryScientificModal";
+import { useActionCelebration } from "@/contexts/ActionCelebrationContext";
 
 const Diario = () => {
   useRoleProtection({ allowedRoles: ["user", "gestor"] });
   const { saveDiarioEntry, getDiarioByDate } = usePDIStorage();
+  const { celebrateAction } = useActionCelebration();
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [isScientificModalOpen, setIsScientificModalOpen] = useState(false);
@@ -81,6 +83,7 @@ const Diario = () => {
       }
       localStorage.setItem("diario", JSON.stringify(entradas));
       
+      celebrateAction('diary', 'Registro no Diário');
       toast.success("Entrada do diário salva!");
     } catch (error) {
       console.error("Error saving diary:", error);
