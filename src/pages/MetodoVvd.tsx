@@ -1,14 +1,28 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowLeft, Sparkles, Heart, Star, Loader2, Edit, Check, ExternalLink, HelpCircle } from "lucide-react";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { ArrowLeft, Sparkles, Heart, Star, Loader2, Edit, Check, ExternalLink, HelpCircle, ClipboardList, Lightbulb } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import LogoutButton from "@/components/LogoutButton";
 import { usePDIStorage } from "@/hooks/usePDIStorage";
 import VvdScientificModal from "@/components/VvdScientificModal";
+
+interface SurveyData {
+  currentPhase: string;
+  expectations: string;
+  wakeUpTime: string;
+  exerciseFrequency: string;
+  mainGoal: string;
+  learningStyle: string;
+  biggestChallenge: string;
+  motivationSource: string;
+}
 
 const MetodoVvd = () => {
   const navigate = useNavigate();
@@ -22,13 +36,66 @@ const MetodoVvd = () => {
   const [isEditingSentence, setIsEditingSentence] = useState(false);
   const [hasUsedAI, setHasUsedAI] = useState(false);
   const [isVvdModalOpen, setIsVvdModalOpen] = useState(false);
+  const [showSurveySection, setShowSurveySection] = useState(false);
+  const [userId, setUserId] = useState<string | null>(null);
 
-  // Verificar se o usuário já usou a IA
+  const [surveyData, setSurveyData] = useState<SurveyData>({
+    currentPhase: "",
+    expectations: "",
+    wakeUpTime: "",
+    exerciseFrequency: "",
+    mainGoal: "",
+    learningStyle: "",
+    biggestChallenge: "",
+    motivationSource: "",
+  });
+
+  // Verificar se o usuário já usou a IA e obter ID
   useEffect(() => {
     const vvdAIUsed = localStorage.getItem("vvd_ai_used");
     if (vvdAIUsed === "true") {
       setHasUsedAI(true);
     }
+
+    const getUser = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        setUserId(user.id);
+        // Load existing survey data if available
+        const { data: surveyDataDb } = await supabase
+          .from("user_surveys")
+          .select("*")
+          .eq("user_id", user.id)
+          .single();
+        
+        if (surveyDataDb) {
+          setSurveyData(prev => ({
+            ...prev,
+            wakeUpTime: surveyDataDb.wake_up_time || "",
+            exerciseFrequency: surveyDataDb.exercise_frequency || "",
+            mainGoal: surveyDataDb.main_goal || "",
+            learningStyle: surveyDataDb.learning_style || "",
+            biggestChallenge: surveyDataDb.biggest_challenge || "",
+            motivationSource: surveyDataDb.motivation_source || "",
+          }));
+        }
+
+        const { data: onboardingData } = await supabase
+          .from("user_onboarding")
+          .select("*")
+          .eq("user_id", user.id)
+          .single();
+        
+        if (onboardingData) {
+          setSurveyData(prev => ({
+            ...prev,
+            currentPhase: onboardingData.current_phase || "",
+            expectations: onboardingData.expectations || "",
+          }));
+        }
+      }
+    };
+    getUser();
   }, []);
 
   const processVvd = async (text: string, stepType: "paragraph" | "sentence") => {
@@ -72,6 +139,7 @@ const MetodoVvd = () => {
     if (result) {
       setParagraphText(result);
       setStep(2);
+      setShowSurveySection(true); // Show survey questions
       // Marcar que a IA foi usada
       localStorage.setItem("vvd_ai_used", "true");
       setHasUsedAI(true);
@@ -88,6 +156,7 @@ const MetodoVvd = () => {
     }
     setParagraphText(freeText);
     setStep(2);
+    setShowSurveySection(true); // Show survey questions
     toast.success("Texto salvo!", {
       description: "Agora você pode prosseguir para a próxima etapa."
     });
@@ -128,6 +197,43 @@ const MetodoVvd = () => {
     });
   };
 
+  const saveSurveyData = async () => {
+    if (!userId) return;
+
+    try {
+      // Save onboarding data
+      await supabase
+        .from("user_onboarding")
+        .upsert({
+          user_id: userId,
+          current_phase: surveyData.currentPhase,
+          expectations: surveyData.expectations,
+        }, { onConflict: "user_id" });
+
+      // Save survey data
+      await supabase
+        .from("user_surveys")
+        .upsert({
+          user_id: userId,
+          wake_up_time: surveyData.wakeUpTime,
+          exercise_frequency: surveyData.exerciseFrequency,
+          main_goal: surveyData.mainGoal,
+          learning_style: surveyData.learningStyle,
+          biggest_challenge: surveyData.biggestChallenge,
+          motivation_source: surveyData.motivationSource,
+        }, { onConflict: "user_id" });
+
+      // Save locally too
+      localStorage.setItem("onboarding", JSON.stringify({
+        currentPhase: surveyData.currentPhase,
+        expectations: surveyData.expectations,
+      }));
+      localStorage.setItem("userSurvey", JSON.stringify(surveyData));
+    } catch (error) {
+      console.error("Erro ao salvar dados complementares:", error);
+    }
+  };
+
   const handleFinalSave = async () => {
     if (!sentenceText.trim()) {
       toast.error("A frase não pode estar vazia.");
@@ -135,6 +241,9 @@ const MetodoVvd = () => {
     }
 
     try {
+      // Salvar dados do survey junto com o VVD
+      await saveSurveyData();
+
       // Salvar via usePDIStorage (Supabase ou localStorage)
       await saveVvd(sentenceText);
       
@@ -314,123 +423,319 @@ const MetodoVvd = () => {
           </Card>
         )}
 
-        {/* Step 2: Paragraph */}
+        {/* Step 2: Paragraph + Survey Questions */}
         {step >= 2 && (
-          <Card className={`border-2 shadow-xl animate-fade-in mb-6 ${step === 2 ? 'border-primary/20' : 'border-muted/20'}`}>
-            <CardHeader className="space-y-4">
-              <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center">
-                  <Sparkles className="h-6 w-6 text-white" />
+          <>
+            <Card className={`border-2 shadow-xl animate-fade-in mb-6 ${step === 2 ? 'border-primary/20' : 'border-muted/20'}`}>
+              <CardHeader className="space-y-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center">
+                    <Sparkles className="h-6 w-6 text-white" />
+                  </div>
+                  <div>
+                    <CardTitle className="text-2xl">Sua Visão em um Parágrafo</CardTitle>
+                    <CardDescription className="text-base mt-1">
+                      Aqui está a essência do que você realmente quer para sua vida. Revise e edite se desejar.
+                    </CardDescription>
+                  </div>
                 </div>
-                <div>
-                  <CardTitle className="text-2xl">Sua Visão em um Parágrafo</CardTitle>
-                  <CardDescription className="text-base mt-1">
-                    Aqui está a essência do que você realmente quer para sua vida. Revise e edite se desejar.
-                  </CardDescription>
-                </div>
-              </div>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              {step === 2 && (
-                <>
-                  <div className="space-y-3">
-                    {!isEditingParagraph && (
-                      <div className="flex justify-end">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => setIsEditingParagraph(true)}
-                        >
-                          <Edit className="h-4 w-4 mr-2" />
-                          Editar
-                        </Button>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                {step === 2 && (
+                  <>
+                    <div className="space-y-3">
+                      {!isEditingParagraph && (
+                        <div className="flex justify-end">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setIsEditingParagraph(true)}
+                          >
+                            <Edit className="h-4 w-4 mr-2" />
+                            Editar
+                          </Button>
+                        </div>
+                      )}
+                      <Textarea
+                        value={paragraphText}
+                        onChange={(e) => setParagraphText(e.target.value)}
+                        disabled={!isEditingParagraph}
+                        className={`min-h-[200px] text-lg font-medium leading-relaxed ${
+                          !isEditingParagraph ? 'bg-muted/30' : 'bg-background'
+                        }`}
+                        spellCheck
+                      />
+                    </div>
+
+                    {hasUsedAI && (
+                      <div className="bg-accent/10 border border-accent/20 rounded-lg p-4">
+                        <p className="text-sm text-muted-foreground text-center">
+                          ℹ️ Você já utilizou a IA. Para continuar, edite manualmente o texto acima ou prossiga para a próxima etapa.
+                        </p>
                       </div>
                     )}
-                    <Textarea
-                      value={paragraphText}
-                      onChange={(e) => setParagraphText(e.target.value)}
-                      disabled={!isEditingParagraph}
-                      className={`min-h-[200px] text-lg font-medium leading-relaxed ${
-                        !isEditingParagraph ? 'bg-muted/30' : 'bg-background'
-                      }`}
+
+                    <div className="flex flex-col sm:flex-row justify-between gap-3 sm:gap-4">
+                      <Button
+                        variant="outline"
+                        onClick={() => setStep(1)}
+                        disabled={isProcessing}
+                        className="w-full sm:w-auto"
+                      >
+                        <ArrowLeft className="h-4 w-4 mr-2" />
+                        Voltar
+                      </Button>
+                      <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+                        <Button
+                          onClick={handleStep2ManualSave}
+                          disabled={!paragraphText.trim()}
+                          size="lg"
+                          variant="outline"
+                          className="w-full sm:w-auto"
+                        >
+                          Salvar
+                        </Button>
+                        <Button
+                          onClick={handleStep2Save}
+                          disabled={!paragraphText.trim() || isProcessing || hasUsedAI}
+                          size="lg"
+                          className="w-full sm:w-auto bg-gradient-to-r from-primary to-accent hover:opacity-90 transition-opacity"
+                        >
+                          {isProcessing ? (
+                            <>
+                              <Loader2 className="h-5 w-5 animate-spin mr-2" />
+                              Processando...
+                            </>
+                          ) : hasUsedAI ? (
+                            <>
+                              <Sparkles className="h-5 w-5 mr-2" />
+                              IA já utilizada
+                            </>
+                          ) : (
+                            <>
+                              <Sparkles className="h-5 w-5 mr-2" />
+                              Resumir para uma Frase
+                            </>
+                          )}
+                        </Button>
+                      </div>
+                    </div>
+
+                    <div className="pt-4 border-t border-muted">
+                      <Button
+                        variant="ghost"
+                        className="w-full justify-center gap-2 text-muted-foreground hover:text-primary"
+                        onClick={() => navigate("/home")}
+                      >
+                        <ExternalLink className="h-4 w-4" />
+                        Voltar Dashboard
+                      </Button>
+                    </div>
+                  </>
+                )}
+
+                {step > 2 && (
+                  <div className="bg-muted/30 rounded-lg p-4 border border-muted">
+                    <p className="text-base font-medium text-muted-foreground whitespace-pre-wrap">{paragraphText}</p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+
+            {/* Survey Questions Section - appears after paragraph generation */}
+            {showSurveySection && step === 2 && (
+              <Card className="border-2 border-accent/30 shadow-xl animate-fade-in mb-6">
+                <CardHeader className="space-y-4">
+                  <div className="flex items-center gap-3">
+                    <div className="w-12 h-12 rounded-full bg-gradient-to-br from-accent to-primary flex items-center justify-center">
+                      <Lightbulb className="h-6 w-6 text-white" />
+                    </div>
+                    <div>
+                      <CardTitle className="text-xl">Complemente seu VVD</CardTitle>
+                      <CardDescription className="text-base mt-1">
+                        Complete estas informações para extrair um insight mais profundo da IA
+                      </CardDescription>
+                    </div>
+                  </div>
+                  <div className="p-4 bg-accent/5 border border-accent/20 rounded-lg">
+                    <p className="text-sm text-muted-foreground">
+                      ✨ <strong>Estas informações nos ajudarão a criar uma experiência personalizada para você.</strong> 
+                      Conhecer seus hábitos e preferências nos permite oferecer insights mais relevantes e 
+                      sugestões alinhadas com seu estilo de vida.
+                    </p>
+                  </div>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  {/* Fase Atual */}
+                  <div className="space-y-2">
+                    <Label htmlFor="currentPhase" className="font-semibold">Como você descreveria o momento que está vivendo agora?</Label>
+                    <Input
+                      id="currentPhase"
+                      placeholder="Ex: Em transição de carreira, buscando propósito..."
+                      value={surveyData.currentPhase}
+                      onChange={(e) => setSurveyData(prev => ({ ...prev, currentPhase: e.target.value }))}
                       spellCheck
                     />
                   </div>
 
-                  {hasUsedAI && (
-                    <div className="bg-accent/10 border border-accent/20 rounded-lg p-4">
-                      <p className="text-sm text-muted-foreground text-center">
-                        ℹ️ Você já utilizou a IA. Para continuar, edite manualmente o texto acima ou prossiga para a próxima etapa.
-                      </p>
-                    </div>
-                  )}
-
-                  <div className="flex flex-col sm:flex-row justify-between gap-3 sm:gap-4">
-                    <Button
-                      variant="outline"
-                      onClick={() => setStep(1)}
-                      disabled={isProcessing}
-                      className="w-full sm:w-auto"
-                    >
-                      <ArrowLeft className="h-4 w-4 mr-2" />
-                      Voltar
-                    </Button>
-                    <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
-                      <Button
-                        onClick={handleStep2ManualSave}
-                        disabled={!paragraphText.trim()}
-                        size="lg"
-                        variant="outline"
-                        className="w-full sm:w-auto"
-                      >
-                        Salvar
-                      </Button>
-                      <Button
-                        onClick={handleStep2Save}
-                        disabled={!paragraphText.trim() || isProcessing || hasUsedAI}
-                        size="lg"
-                        className="w-full sm:w-auto bg-gradient-to-r from-primary to-accent hover:opacity-90 transition-opacity"
-                      >
-                        {isProcessing ? (
-                          <>
-                            <Loader2 className="h-5 w-5 animate-spin mr-2" />
-                            Processando...
-                          </>
-                        ) : hasUsedAI ? (
-                          <>
-                            <Sparkles className="h-5 w-5 mr-2" />
-                            IA já utilizada
-                          </>
-                        ) : (
-                          <>
-                            <Sparkles className="h-5 w-5 mr-2" />
-                            Resumir para uma Frase
-                          </>
-                        )}
-                      </Button>
-                    </div>
+                  {/* Expectativas */}
+                  <div className="space-y-2">
+                    <Label htmlFor="expectations" className="font-semibold">O que você espera alcançar com o PDI?</Label>
+                    <Textarea
+                      id="expectations"
+                      placeholder="Compartilhe suas expectativas, sonhos e o que deseja conquistar..."
+                      value={surveyData.expectations}
+                      onChange={(e) => setSurveyData(prev => ({ ...prev, expectations: e.target.value }))}
+                      rows={3}
+                      spellCheck
+                    />
                   </div>
 
-                  <div className="pt-4 border-t border-muted">
-                    <Button
-                      variant="ghost"
-                      className="w-full justify-center gap-2 text-muted-foreground hover:text-primary"
-                      onClick={() => navigate("/home")}
+                  {/* Horário de acordar */}
+                  <div className="space-y-3">
+                    <Label className="font-semibold">Que horas você costuma acordar?</Label>
+                    <RadioGroup
+                      value={surveyData.wakeUpTime}
+                      onValueChange={(value) => setSurveyData(prev => ({ ...prev, wakeUpTime: value }))}
+                      className="grid grid-cols-2 gap-2"
                     >
-                      <ExternalLink className="h-4 w-4" />
-                      Voltar Dashboard
-                    </Button>
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="antes-6h" id="vvd-antes-6h" />
+                        <Label htmlFor="vvd-antes-6h" className="font-normal cursor-pointer">Antes das 6h</Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="6h-8h" id="vvd-6h-8h" />
+                        <Label htmlFor="vvd-6h-8h" className="font-normal cursor-pointer">Entre 6h e 8h</Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="8h-10h" id="vvd-8h-10h" />
+                        <Label htmlFor="vvd-8h-10h" className="font-normal cursor-pointer">Entre 8h e 10h</Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="depois-10h" id="vvd-depois-10h" />
+                        <Label htmlFor="vvd-depois-10h" className="font-normal cursor-pointer">Depois das 10h</Label>
+                      </div>
+                    </RadioGroup>
                   </div>
-                </>
-              )}
 
-              {step > 2 && (
-                <div className="bg-muted/30 rounded-lg p-4 border border-muted">
-                  <p className="text-base font-medium text-muted-foreground whitespace-pre-wrap">{paragraphText}</p>
-                </div>
-              )}
-            </CardContent>
-          </Card>
+                  {/* Frequência de exercícios */}
+                  <div className="space-y-3">
+                    <Label className="font-semibold">Com que frequência você pratica exercícios físicos?</Label>
+                    <RadioGroup
+                      value={surveyData.exerciseFrequency}
+                      onValueChange={(value) => setSurveyData(prev => ({ ...prev, exerciseFrequency: value }))}
+                      className="grid grid-cols-2 gap-2"
+                    >
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="nunca" id="vvd-nunca" />
+                        <Label htmlFor="vvd-nunca" className="font-normal cursor-pointer">Raramente/Nunca</Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="1-2x" id="vvd-1-2x" />
+                        <Label htmlFor="vvd-1-2x" className="font-normal cursor-pointer">1-2x por semana</Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="3-4x" id="vvd-3-4x" />
+                        <Label htmlFor="vvd-3-4x" className="font-normal cursor-pointer">3-4x por semana</Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="5+x" id="vvd-5+x" />
+                        <Label htmlFor="vvd-5+x" className="font-normal cursor-pointer">5x ou mais</Label>
+                      </div>
+                    </RadioGroup>
+                  </div>
+
+                  {/* Principal objetivo */}
+                  <div className="space-y-3">
+                    <Label className="font-semibold">Qual seu principal objetivo agora?</Label>
+                    <RadioGroup
+                      value={surveyData.mainGoal}
+                      onValueChange={(value) => setSurveyData(prev => ({ ...prev, mainGoal: value }))}
+                      className="grid grid-cols-1 sm:grid-cols-2 gap-2"
+                    >
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="carreira" id="vvd-carreira" />
+                        <Label htmlFor="vvd-carreira" className="font-normal cursor-pointer">Crescer na carreira</Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="saude" id="vvd-saude" />
+                        <Label htmlFor="vvd-saude" className="font-normal cursor-pointer">Melhorar a saúde</Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="financeiro" id="vvd-financeiro" />
+                        <Label htmlFor="vvd-financeiro" className="font-normal cursor-pointer">Estabilidade financeira</Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="relacionamentos" id="vvd-relacionamentos" />
+                        <Label htmlFor="vvd-relacionamentos" className="font-normal cursor-pointer">Melhorar relacionamentos</Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="equilibrio" id="vvd-equilibrio" />
+                        <Label htmlFor="vvd-equilibrio" className="font-normal cursor-pointer">Equilíbrio vida/trabalho</Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="autoconhecimento" id="vvd-autoconhecimento" />
+                        <Label htmlFor="vvd-autoconhecimento" className="font-normal cursor-pointer">Autoconhecimento</Label>
+                      </div>
+                    </RadioGroup>
+                  </div>
+
+                  {/* Estilo de aprendizado */}
+                  <div className="space-y-3">
+                    <Label className="font-semibold">Como você prefere aprender coisas novas?</Label>
+                    <RadioGroup
+                      value={surveyData.learningStyle}
+                      onValueChange={(value) => setSurveyData(prev => ({ ...prev, learningStyle: value }))}
+                      className="grid grid-cols-1 sm:grid-cols-2 gap-2"
+                    >
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="lendo" id="vvd-lendo" />
+                        <Label htmlFor="vvd-lendo" className="font-normal cursor-pointer">Lendo livros/artigos</Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="videos" id="vvd-videos" />
+                        <Label htmlFor="vvd-videos" className="font-normal cursor-pointer">Assistindo vídeos</Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="praticando" id="vvd-praticando" />
+                        <Label htmlFor="vvd-praticando" className="font-normal cursor-pointer">Praticando/Fazendo</Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="conversando" id="vvd-conversando" />
+                        <Label htmlFor="vvd-conversando" className="font-normal cursor-pointer">Conversando com pessoas</Label>
+                      </div>
+                    </RadioGroup>
+                  </div>
+
+                  {/* Maior desafio */}
+                  <div className="space-y-2">
+                    <Label htmlFor="biggestChallenge" className="font-semibold">Qual seu maior desafio no momento?</Label>
+                    <Textarea
+                      id="biggestChallenge"
+                      placeholder="Descreva brevemente seu maior desafio atual..."
+                      value={surveyData.biggestChallenge}
+                      onChange={(e) => setSurveyData(prev => ({ ...prev, biggestChallenge: e.target.value }))}
+                      rows={3}
+                      spellCheck
+                    />
+                  </div>
+
+                  {/* Fonte de motivação */}
+                  <div className="space-y-2">
+                    <Label htmlFor="motivationSource" className="font-semibold">O que mais te motiva?</Label>
+                    <Textarea
+                      id="motivationSource"
+                      placeholder="O que te faz levantar da cama todos os dias?"
+                      value={surveyData.motivationSource}
+                      onChange={(e) => setSurveyData(prev => ({ ...prev, motivationSource: e.target.value }))}
+                      rows={3}
+                      spellCheck
+                    />
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+          </>
         )}
 
         {/* Step 3: Sentence */}
