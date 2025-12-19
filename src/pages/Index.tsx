@@ -242,6 +242,19 @@ const Index = () => {
             <p className="text-base sm:text-lg md:text-xl text-muted-foreground mb-6 sm:mb-8 max-w-3xl mx-auto">
               O sistema PDI - Carreira e Vida conta com o Método SEPP para você organizar sua vida e carreira com clareza, decisão e consistência — sem atalhos ou promessas vazias.
             </p>
+            {/* Video Section */}
+            <div className="w-full max-w-3xl mx-auto mb-6 sm:mb-8">
+              <div className="relative w-full rounded-xl overflow-hidden shadow-2xl border border-border/50" style={{ paddingBottom: '56.25%' }}>
+                <iframe
+                  className="absolute top-0 left-0 w-full h-full"
+                  src="https://www.youtube.com/embed/F50nE1vYjaY?autoplay=1&mute=1&loop=1&playlist=F50nE1vYjaY&controls=1&rel=0"
+                  title="PDI - Carreira e Vida"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                />
+              </div>
+            </div>
+
             <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center">
               <Button 
                 size="lg" 
