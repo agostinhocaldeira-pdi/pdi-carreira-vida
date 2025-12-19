@@ -10,6 +10,7 @@ import LogoutButton from "@/components/LogoutButton";
 import { useRoleProtection } from "@/hooks/useRoleProtection";
 import { usePDIStorage } from "@/hooks/usePDIStorage";
 import { LifeWheelScientificModal } from "@/components/LifeWheelScientificModal";
+import { useActionCelebration } from "@/contexts/ActionCelebrationContext";
 import type { AreaVida } from "@/types/pdi";
 
 interface LifeArea {
@@ -35,6 +36,7 @@ export default function RodaDaVida() {
   useRoleProtection({ allowedRoles: ["user", "gestor"] });
   const navigate = useNavigate();
   const { getAreasVida, saveAreasVida, loading: storageLoading } = usePDIStorage();
+  const { celebrateAction } = useActionCelebration();
   const [areas, setAreas] = useState<LifeArea[]>(defaultAreas);
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
   const [tempArea, setTempArea] = useState<LifeArea | null>(null);
@@ -78,6 +80,7 @@ export default function RodaDaVida() {
         nota_desejada: a.notaDesejada
       }));
       await saveAreasVida(areasVida);
+      celebrateAction('tool_roda', 'Roda da Vida');
       toast.success("Áreas da Vida atualizadas no Plano de Vida com sucesso!");
     } catch (error) {
       console.error('Erro ao salvar:', error);

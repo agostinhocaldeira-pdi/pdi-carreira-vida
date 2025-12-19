@@ -15,11 +15,13 @@ import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { cn } from "@/lib/utils";
 import { usePDIStorage } from "@/hooks/usePDIStorage";
+import { useActionCelebration } from "@/contexts/ActionCelebrationContext";
 
 type ViewMode = "registro" | "historico";
 
 const DiarioSection = () => {
   const { getDiario, getDiarioByDate, saveDiarioEntry, isAuthenticated } = usePDIStorage();
+  const { celebrateAction } = useActionCelebration();
   const [isOpen, setIsOpen] = useState(false);
   const [viewMode, setViewMode] = useState<ViewMode>("registro");
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
@@ -206,9 +208,11 @@ const DiarioSection = () => {
       
       if (existingIndex >= 0) {
         updatedEntradas[existingIndex] = { ...updatedEntradas[existingIndex], ...entrada };
+        celebrateAction('diary', 'Registro no Diário');
         toast.success("Entrada do diário atualizada!");
       } else {
         updatedEntradas.push({ ...entrada, id: Date.now() });
+        celebrateAction('diary', 'Registro no Diário');
         toast.success("Entrada do diário salva!");
         
         if (typeof window !== 'undefined' && (window as any).markSectionCompleted) {

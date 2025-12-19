@@ -9,12 +9,14 @@ import { supabase } from "@/integrations/supabase/client";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { toast } from "@/hooks/use-toast";
+import { useActionCelebration } from "@/contexts/ActionCelebrationContext";
 
 const StoicReflectionSection = () => {
   const [response, setResponse] = useState("");
   const [originalResponse, setOriginalResponse] = useState("");
   const [isSaving, setIsSaving] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
+  const { celebrateAction } = useActionCelebration();
   
   const { date, reflection } = getTodayReflection();
   const formattedDate = format(date, "EEEE, d 'de' MMMM", { locale: ptBR });
@@ -73,6 +75,7 @@ const StoicReflectionSection = () => {
       setOriginalResponse(response);
       setIsSaved(true);
       setTimeout(() => setIsSaved(false), 2000);
+      celebrateAction('stoic_reflection', 'Reflexão Estóica');
       toast({
         title: "Reflexão salva",
         description: "Sua reflexão foi salva com sucesso."
