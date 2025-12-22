@@ -266,7 +266,7 @@ const ProgressSection = () => {
                 className="gap-1.5 hover:bg-primary hover:text-primary-foreground transition-all shadow-sm min-w-[44px] border border-border"
               >
                 {!isOpen && (
-                  <span className="text-xs font-medium">Expandir</span>
+                  <span className="text-xs font-medium">Abrir</span>
                 )}
                 <ChevronDown className={`w-4 h-4 transition-transform duration-300 ${isOpen ? "rotate-180" : ""}`} />
               </Button>
