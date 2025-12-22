@@ -8,7 +8,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 import { Link, useNavigate } from "react-router-dom";
 import { Target, TrendingUp, BookOpen, MessagesSquare, Book, Sparkles, User, Zap, Star, Shield, Lock, ChevronDown, AlertCircle, Link2, Users, Bell, HelpCircle } from "lucide-react";
 import ProgressSection from "@/components/home/ProgressSection";
-import DiarioSection from "@/components/home/DiarioSection";
+
 import PlanoDeVida from "@/components/home/PlanoDeVida";
 import MaoNaMassa from "@/components/home/MaoNaMassa";
 import LanguageSelector from "@/components/LanguageSelector";
@@ -360,11 +360,6 @@ const Home = () => {
         {/* Progresso Section */}
         <section className="animate-slide-up" style={{ animationDelay: "0.05s" }}>
           <ProgressSection />
-        </section>
-
-        {/* Diário Section */}
-        <section className="animate-slide-up" style={{ animationDelay: "0.1s" }}>
-          <DiarioSection />
         </section>
 
         {/* Plano de Vida Section */}
