@@ -71,8 +71,13 @@ const AdminUsuarios = () => {
       if (rolesError) throw rolesError;
 
       // Para cada usuário, buscar dados de atividades
+      // Filter out users that don't exist in auth (orphaned roles)
+      const validRolesData = (rolesData || []).filter(roleEntry => 
+        authUsersMap[roleEntry.user_id] && authUsersMap[roleEntry.user_id].email !== "-"
+      );
+
       const usersWithData: UserData[] = await Promise.all(
-        (rolesData || []).map(async (roleEntry) => {
+        validRolesData.map(async (roleEntry) => {
           const userId = roleEntry.user_id;
           const authUser = authUsersMap[userId] || { name: "-", email: "-", phone: "-" };
 
