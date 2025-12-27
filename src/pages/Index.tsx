@@ -240,7 +240,7 @@ const Index = () => {
               Transforme seus sonhos em objetivos. Objetivos em metas. Metas em ações. Ações em conquistas.
             </h1>
             <p className="text-base sm:text-lg md:text-xl text-muted-foreground mb-6 sm:mb-8 max-w-3xl mx-auto">
-              O sistema PDI - Carreira e Vida conta com o Método SEPP para você organizar sua vida e carreira com clareza, decisão e consistência — sem atalhos ou promessas vazias.
+              Sistema guiado por <span className="text-primary font-semibold">Inteligência Artificial</span> e <span className="text-primary font-semibold">Especialistas em Desenvolvimento Humano</span>, para você <span className="text-foreground font-semibold">conquistar seus objetivos</span>, <span className="text-primary font-bold">de verdade!</span>
             </p>
             {/* Video Section */}
             <div className="w-full max-w-3xl mx-auto mb-6 sm:mb-8">
