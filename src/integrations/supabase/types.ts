@@ -1156,6 +1156,33 @@ export type Database = {
         }
         Relationships: []
       }
+      user_smart_ai_usage: {
+        Row: {
+          created_at: string
+          free_usage_consumed: boolean
+          id: string
+          total_paid_usages: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          free_usage_consumed?: boolean
+          id?: string
+          total_paid_usages?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          free_usage_consumed?: boolean
+          id?: string
+          total_paid_usages?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_steps: {
         Row: {
           action_id: string | null
