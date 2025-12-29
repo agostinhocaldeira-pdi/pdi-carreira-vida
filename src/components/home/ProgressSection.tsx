@@ -414,7 +414,11 @@ const ProgressSection = () => {
                     </div>
                   </div>
                 </div>
-                <Progress value={progressData.objectives.percentage} className="h-2" />
+                <Progress 
+                  value={progressData.objectives.percentage} 
+                  className="h-2" 
+                  variant={progressData.objectives.percentage === 100 ? "success" : "secondary"}
+                />
                 <p className="text-xs text-muted-foreground">
                   {progressData.objectives.total > 0 
                     ? `${progressData.objectives.completed} de ${progressData.objectives.total} objetivos concluídos`
@@ -426,8 +430,8 @@ const ProgressSection = () => {
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <div className="w-10 h-10 bg-accent/10 rounded-full flex items-center justify-center">
-                      <CheckCircle2 className="w-5 h-5 text-accent" />
+                    <div className="w-10 h-10 bg-secondary/20 rounded-full flex items-center justify-center">
+                      <CheckCircle2 className="w-5 h-5 text-secondary" />
                     </div>
                     <div>
                       <p className="text-sm font-medium">Metas</p>
@@ -435,7 +439,11 @@ const ProgressSection = () => {
                     </div>
                   </div>
                 </div>
-                <Progress value={progressData.goals.percentage} className="h-2" />
+                <Progress 
+                  value={progressData.goals.percentage} 
+                  className="h-2" 
+                  variant={progressData.goals.percentage === 100 ? "success" : "secondary"}
+                />
                 <p className="text-xs text-muted-foreground">
                   {progressData.goals.total > 0 
                     ? `${progressData.goals.completed} de ${progressData.goals.total} metas concluídas`
@@ -447,8 +455,8 @@ const ProgressSection = () => {
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
-                      <TrendingUp className="w-5 h-5 text-primary" />
+                    <div className="w-10 h-10 bg-secondary/20 rounded-full flex items-center justify-center">
+                      <TrendingUp className="w-5 h-5 text-secondary" />
                     </div>
                     <div>
                       <p className="text-sm font-medium">Ações</p>
@@ -456,7 +464,11 @@ const ProgressSection = () => {
                     </div>
                   </div>
                 </div>
-                <Progress value={progressData.actions.percentage} className="h-2" />
+                <Progress 
+                  value={progressData.actions.percentage} 
+                  className="h-2" 
+                  variant={progressData.actions.percentage === 100 ? "success" : "secondary"}
+                />
                 <p className="text-xs text-muted-foreground">
                   {progressData.actions.total > 0 
                     ? `${progressData.actions.completed} de ${progressData.actions.total} ações realizadas`
@@ -477,7 +489,11 @@ const ProgressSection = () => {
                     <p className="text-xs font-medium">Objetivos</p>
                     <p className="text-sm font-bold">{progressData.objectives.percentage}%</p>
                   </div>
-                  <Progress value={progressData.objectives.percentage} className="h-1.5" />
+                  <Progress 
+                    value={progressData.objectives.percentage} 
+                    className="h-1.5" 
+                    variant={progressData.objectives.percentage === 100 ? "success" : "secondary"}
+                  />
                   <p className="text-[10px] text-muted-foreground mt-1">
                     {progressData.objectives.total > 0 
                       ? `${progressData.objectives.completed}/${progressData.objectives.total} concluídos`
@@ -488,15 +504,19 @@ const ProgressSection = () => {
 
               {/* Metas - compacto */}
               <div className="flex items-center gap-3 p-3 bg-muted/30 rounded-lg">
-                <div className="w-8 h-8 bg-accent/10 rounded-full flex items-center justify-center flex-shrink-0">
-                  <CheckCircle2 className="w-4 h-4 text-accent" />
+                <div className="w-8 h-8 bg-secondary/20 rounded-full flex items-center justify-center flex-shrink-0">
+                  <CheckCircle2 className="w-4 h-4 text-secondary" />
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between mb-1">
                     <p className="text-xs font-medium">Metas</p>
                     <p className="text-sm font-bold">{progressData.goals.percentage}%</p>
                   </div>
-                  <Progress value={progressData.goals.percentage} className="h-1.5" />
+                  <Progress 
+                    value={progressData.goals.percentage} 
+                    className="h-1.5" 
+                    variant={progressData.goals.percentage === 100 ? "success" : "secondary"}
+                  />
                   <p className="text-[10px] text-muted-foreground mt-1">
                     {progressData.goals.total > 0 
                       ? `${progressData.goals.completed}/${progressData.goals.total} concluídas`
@@ -507,15 +527,19 @@ const ProgressSection = () => {
 
               {/* Ações - compacto */}
               <div className="flex items-center gap-3 p-3 bg-muted/30 rounded-lg">
-                <div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0">
-                  <TrendingUp className="w-4 h-4 text-primary" />
+                <div className="w-8 h-8 bg-secondary/20 rounded-full flex items-center justify-center flex-shrink-0">
+                  <TrendingUp className="w-4 h-4 text-secondary" />
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between mb-1">
                     <p className="text-xs font-medium">Ações</p>
                     <p className="text-sm font-bold">{progressData.actions.percentage}%</p>
                   </div>
-                  <Progress value={progressData.actions.percentage} className="h-1.5" />
+                  <Progress 
+                    value={progressData.actions.percentage} 
+                    className="h-1.5" 
+                    variant={progressData.actions.percentage === 100 ? "success" : "secondary"}
+                  />
                   <p className="text-[10px] text-muted-foreground mt-1">
                     {progressData.actions.total > 0 
                       ? `${progressData.actions.completed}/${progressData.actions.total} realizadas`

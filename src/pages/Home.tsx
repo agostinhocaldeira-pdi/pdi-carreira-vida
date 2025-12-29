@@ -273,8 +273,8 @@ const Home = () => {
         </DialogContent>
       </Dialog>
 
-      {/* Header */}
-      <header className="bg-gradient-to-r from-card via-card to-primary/5 border-b shadow-elegant backdrop-blur-sm">
+      {/* Header - Azul petróleo estrutural */}
+      <header className="bg-primary border-b border-primary/80 shadow-elegant">
         <div className="container mx-auto px-3 sm:px-4 py-4 sm:py-6">
           {/* Top row - Logo, Quote and Actions */}
           <div className="flex items-start justify-between gap-2 sm:gap-4 mb-3 sm:mb-4">
@@ -282,11 +282,11 @@ const Home = () => {
               <div className="flex items-center gap-2 sm:gap-3 mb-2">
                 <Logo size="md" showText={false} />
                 <div className="min-w-0">
-                  <h1 className="text-lg sm:text-2xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent truncate">
+                  <h1 className="text-lg sm:text-2xl font-bold text-primary-foreground truncate">
                     PDI - Carreira & Vida
                   </h1>
-                  <p className="text-xs sm:text-sm text-muted-foreground flex items-center gap-1">
-                    <Star className="w-3 h-3 fill-primary text-primary flex-shrink-0" />
+                  <p className="text-xs sm:text-sm text-primary-foreground/80 flex items-center gap-1">
+                    <Star className="w-3 h-3 fill-warning text-warning flex-shrink-0" />
                     <span className="truncate">Olá, {userName || "Usuário"}!</span>
                   </p>
                 </div>
@@ -300,7 +300,7 @@ const Home = () => {
                 <Button 
                   variant="outline" 
                   size="sm" 
-                  className="relative px-2 sm:px-3"
+                  className="relative px-2 sm:px-3 bg-primary-foreground/10 border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/20"
                   onClick={() => {
                     if (unreadEmployeeMessages > 0) {
                       navigate("/gestao-pdis");
@@ -318,7 +318,12 @@ const Home = () => {
                   </Badge>
                 </Button>
               )}
-              <Button variant="outline" size="sm" className="gap-1 sm:gap-2 px-2 sm:px-3" onClick={() => navigate("/perfil")}>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                className="gap-1 sm:gap-2 px-2 sm:px-3 bg-primary-foreground/10 border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/20" 
+                onClick={() => navigate("/perfil")}
+              >
                 <User className="w-4 h-4" />
                 <span className="hidden sm:inline">Perfil</span>
               </Button>
@@ -327,17 +332,17 @@ const Home = () => {
           </div>
 
           {/* Bottom row - Motivational quote and progress */}
-          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4 p-3 sm:p-4 bg-primary/5 rounded-lg border border-primary/10">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4 p-3 sm:p-4 bg-primary-foreground/10 rounded-lg border border-primary-foreground/20">
             <div className="flex items-center gap-2 sm:gap-3 flex-1 w-full">
-              <div className="w-7 h-7 sm:w-8 sm:h-8 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0">
-                <Zap className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-primary" />
+              <div className="w-7 h-7 sm:w-8 sm:h-8 bg-warning/20 rounded-full flex items-center justify-center flex-shrink-0">
+                <Zap className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-warning" />
               </div>
-              <p className="text-xs sm:text-sm font-medium text-foreground/90 line-clamp-2">
+              <p className="text-xs sm:text-sm font-medium text-primary-foreground/90 line-clamp-2">
                 {motivationalQuote}
               </p>
             </div>
             
-            <Badge variant="secondary" className="gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1 whitespace-nowrap self-start sm:self-auto">
+            <Badge className="gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1 whitespace-nowrap self-start sm:self-auto bg-secondary text-secondary-foreground">
               <TrendingUp className="w-3 h-3" />
               <span className="text-xs">Em progresso</span>
             </Badge>
