@@ -237,7 +237,7 @@ const Index = () => {
         <div className="container mx-auto max-w-4xl">
           <div className="text-center">
             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-5xl font-bold mb-4 sm:mb-6 text-foreground leading-tight">
-              Tudo que você precisa para transformar seus <span className="bg-gradient-to-r from-primary via-purple-500 to-pink-500 bg-clip-text text-transparent">sonhos</span> em <span className="bg-gradient-to-r from-primary via-purple-500 to-pink-500 bg-clip-text text-transparent">realidade</span> - na <span className="text-primary">carreira</span> e na <span className="text-primary">vida</span>!
+              Tudo que você precisa para transformar seus <span className="text-primary/90 font-extrabold">sonhos</span> em <span className="text-primary/90 font-extrabold">realidade</span> - na <span className="text-muted-foreground font-semibold underline underline-offset-4 decoration-primary/50">carreira</span> e na <span className="text-muted-foreground font-semibold underline underline-offset-4 decoration-primary/50">vida</span>!
             </h1>
             <p className="text-base sm:text-lg md:text-xl text-muted-foreground mb-6 sm:mb-8 max-w-3xl mx-auto">
               Sistema guiado por <span className="text-primary font-semibold">Inteligência Artificial</span> e <span className="text-primary font-semibold">Especialistas em Desenvolvimento Humano</span>, para você <span className="text-foreground font-semibold">conquistar seus objetivos</span>, <span className="text-primary font-bold">de verdade!</span>
