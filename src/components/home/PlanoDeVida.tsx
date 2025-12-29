@@ -1351,7 +1351,7 @@ const PlanoDeVida = ({ onTabChange, onOpenChange, forcedTab, forcedOpen }: Plano
 
             {/* Passo 3 - Como chegar lá */}
             <Collapsible open={comoChegarOpen} onOpenChange={(open) => handleSectionOpen("como-chegar", open)}>
-              <div className={`rounded-xl border-2 transition-all duration-300 overflow-hidden max-w-full w-full box-border ${comoChegarOpen ? 'border-primary bg-primary/5' : 'border-border hover:border-primary/50 hover:bg-muted/30'}`}>
+              <div className={`relative rounded-xl border-2 transition-all duration-300 overflow-hidden max-w-full w-full box-border after:content-[''] after:absolute after:top-0 after:bottom-0 after:right-0 after:w-[2px] after:rounded-tr-xl after:rounded-br-xl sm:after:hidden ${comoChegarOpen ? 'border-primary bg-primary/5 after:bg-primary' : 'border-border hover:border-primary/50 hover:bg-muted/30 after:bg-border'}`}>
                 <CollapsibleTrigger asChild>
                   <button className="w-full p-4 flex items-center justify-between text-left group">
                     <div className="flex items-center gap-3 sm:gap-4 flex-1 min-w-0">
