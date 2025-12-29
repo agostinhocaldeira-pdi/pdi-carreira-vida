@@ -885,7 +885,7 @@ const PlanoDeVida = ({ onTabChange, onOpenChange, forcedTab, forcedOpen }: Plano
           <div className="grid gap-3 w-full overflow-hidden">
             {/* Passo 1 - Quem sou Eu */}
             <Collapsible open={quemSouOpen} onOpenChange={(open) => handleSectionOpen("quem-sou", open)}>
-              <div className={`rounded-xl border-2 transition-all duration-300 overflow-hidden ${quemSouOpen ? 'border-primary bg-primary/5' : 'border-border hover:border-primary/50 hover:bg-muted/30'}`}>
+              <div className={`rounded-xl border-2 transition-all duration-300 overflow-hidden max-w-full ${quemSouOpen ? 'border-primary bg-primary/5' : 'border-border hover:border-primary/50 hover:bg-muted/30'}`}>
                 <CollapsibleTrigger asChild>
                   <button className="w-full p-4 flex items-center justify-between text-left group">
                     <div className="flex items-center gap-3 sm:gap-4 flex-1 min-w-0">
@@ -921,7 +921,7 @@ const PlanoDeVida = ({ onTabChange, onOpenChange, forcedTab, forcedOpen }: Plano
                 </CollapsibleTrigger>
                 
                 <CollapsibleContent>
-                  <div className="px-4 pb-4 pt-2 space-y-6 border-t border-border/50">
+                  <div className="px-4 pb-4 pt-2 space-y-6 border-t border-border/50 overflow-hidden max-w-full">
                     {/* VVD */}
                     <div className="space-y-2">
                       <Label htmlFor="vvd">Minha Visão de Vida Desejada</Label>
