@@ -11,7 +11,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Rocket, Plus, Trash2, Pencil, Check, X, ChevronDown, Lightbulb, Loader2, Target } from "lucide-react";
 import { PDILoader } from "@/components/ui/pdi-loader";
 import { toast } from "sonner";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import ConfirmDeleteDialog from "@/components/ConfirmDeleteDialog";
 import { usePDIStorage } from "@/hooks/usePDIStorage";
 import { usePDIData, useDeleteMeta, useSaveMeta } from "@/hooks/usePDIQueries";
@@ -659,6 +659,13 @@ const MaoNaMassa = ({ embedded = false }: MaoNaMassaProps) => {
                 disabled={!objetivoSelecionado}
                 spellCheck="true"
               />
+              <Link 
+                to="/ferramentas/smart" 
+                className="text-xs text-primary hover:underline mt-1 inline-flex items-center gap-1"
+              >
+                <Target className="h-3 w-3" />
+                Criar utilizando a ferramenta SMART
+              </Link>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
