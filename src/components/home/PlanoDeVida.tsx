@@ -348,6 +348,26 @@ const PlanoDeVida = ({ onTabChange, onOpenChange, forcedTab, forcedOpen }: Plano
     loadData();
   }, [storage.isAuthenticated]);
 
+  // Listen for valores updates from the Valores tool
+  useEffect(() => {
+    const handleValoresUpdated = async () => {
+      try {
+        const savedValores = await storage.getValores();
+        if (savedValores && savedValores.length > 0) {
+          const limitedValores = savedValores.slice(0, 6);
+          const valoresCompletos = [...limitedValores, ...Array(Math.max(0, 6 - limitedValores.length)).fill("")];
+          setValores(valoresCompletos);
+          setIsEditingValores(false);
+        }
+      } catch (error) {
+        console.error("Error reloading valores:", error);
+      }
+    };
+
+    window.addEventListener("valoresUpdated", handleValoresUpdated);
+    return () => window.removeEventListener("valoresUpdated", handleValoresUpdated);
+  }, [storage]);
+
   // Sync objetivos from React Query cache (for instant loading)
   useEffect(() => {
     if (pdiData?.objetivos) {
