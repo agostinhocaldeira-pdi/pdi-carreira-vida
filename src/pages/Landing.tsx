@@ -90,40 +90,39 @@ const Landing = () => {
         <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-accent/5 to-transparent" />
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-primary/20 via-transparent to-transparent" />
         
-        <div className="container relative mx-auto px-4 py-10 sm:py-16 md:py-24">
-          <div className="mx-auto max-w-4xl text-center space-y-4 sm:space-y-6 md:space-y-8 animate-fade-in">
-            <Badge className="mx-auto bg-primary/10 text-primary border-primary/20 hover:bg-primary/20 px-3 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm">
-              <Sparkles className="w-3 h-3 sm:w-4 sm:h-4 mr-1.5 sm:mr-2 inline" />
-              Método Validado por +10.000 Pessoas
+        <div className="container relative mx-auto px-4 py-6 sm:py-12 md:py-20">
+          <div className="mx-auto max-w-4xl text-center space-y-2 sm:space-y-4 md:space-y-6 animate-fade-in">
+            <Badge className="mx-auto bg-primary/10 text-primary border-primary/20 hover:bg-primary/20 px-2 py-1 sm:px-4 sm:py-2 text-[10px] sm:text-sm">
+              <Sparkles className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2 inline" />
+              +10.000 Pessoas Transformadas
             </Badge>
             
-            <h1 className="text-2xl sm:text-3xl md:text-5xl lg:text-6xl font-bold leading-tight">
-              Você Está a Uma
+            <h1 className="text-xl sm:text-2xl md:text-5xl lg:text-6xl font-bold leading-snug">
+              Transforme Sua
               <span className="block text-transparent bg-clip-text bg-gradient-to-r from-primary via-accent to-primary animate-gradient">
-                Decisão de Transformar
+                Vida e Carreira
               </span>
-              Sua Vida e Carreira
+              Hoje
             </h1>
             
-            <p className="text-base sm:text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-              <span className="font-semibold text-foreground">89% das pessoas vivem no piloto automático</span>, 
-              perseguindo objetivos que não são seus, trabalhando sem propósito, sonhando com "um dia"... 
-              <span className="font-semibold text-foreground">Esse dia é hoje.</span>
+            <p className="text-sm sm:text-base md:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed hidden sm:block">
+              <span className="font-semibold text-foreground">89% das pessoas vivem no piloto automático</span>. 
+              <span className="font-semibold text-foreground"> Esse dia é hoje.</span>
             </p>
 
-            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center pt-4">
+            <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 justify-center items-center pt-2 sm:pt-4">
               <Button 
-                size="lg" 
-                className="text-lg px-8 py-6 bg-primary hover:bg-primary/90 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 group"
+                size="default" 
+                className="text-sm sm:text-lg px-4 sm:px-8 py-2 sm:py-6 bg-primary hover:bg-primary/90 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 group w-full sm:w-auto"
                 onClick={() => navigate("/signup")}
               >
-                Quero Transformar Minha Vida Agora
-                <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                Começar Agora
+                <ArrowRight className="ml-2 w-4 h-4 sm:w-5 sm:h-5 group-hover:translate-x-1 transition-transform" />
               </Button>
               <Button 
-                size="lg" 
+                size="default" 
                 variant="outline" 
-                className="text-lg px-8 py-6 border-2"
+                className="text-sm sm:text-lg px-4 sm:px-8 py-2 sm:py-6 border-2 w-full sm:w-auto"
                 onClick={() => {
                   document.getElementById("como-funciona")?.scrollIntoView({ behavior: "smooth" });
                 }}
@@ -132,9 +131,9 @@ const Landing = () => {
               </Button>
             </div>
 
-            <div className="flex items-center justify-center gap-2 text-sm text-muted-foreground pt-4">
+            <div className="hidden sm:flex items-center justify-center gap-2 text-sm text-muted-foreground pt-2">
               <CheckCircle2 className="w-4 h-4 text-primary" />
-              <span>7 dias de garantia total</span>
+              <span>7 dias de garantia</span>
               <span className="text-muted-foreground/50">•</span>
               <CheckCircle2 className="w-4 h-4 text-primary" />
               <span>Cancele quando quiser</span>
