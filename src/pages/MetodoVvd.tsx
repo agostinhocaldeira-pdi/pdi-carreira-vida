@@ -895,6 +895,7 @@ const MetodoVvd = () => {
         onOpenChange={setIsVvdModalOpen} 
       />
     </div>
+    </>
   );
 };
 
