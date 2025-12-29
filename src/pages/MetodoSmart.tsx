@@ -80,6 +80,13 @@ const MetodoSmart = () => {
   const [aiFeedback, setAiFeedback] = useState<string>("");
   const [isLoadingAI, setIsLoadingAI] = useState(false);
   const [hasRequestedAI, setHasRequestedAI] = useState(false);
+  const [aiUsedPerStep, setAiUsedPerStep] = useState<Record<string, boolean>>({
+    S: false,
+    M: false,
+    A: false,
+    R: false,
+    T: false,
+  });
   const [aiUsageStatus, setAiUsageStatus] = useState<AIUsageStatus>({
     freeUsageConsumed: false,
     totalPaidUsages: 0,
@@ -187,8 +194,9 @@ const MetodoSmart = () => {
 
   // AI Mentor function
   const requestAIFeedback = async (step: string) => {
-    if (aiUsageStatus.usagesRemaining <= 0) {
-      toast.error("Você já utilizou sua mentoria IA gratuita. Adquira um uso adicional para continuar.");
+    // Check if this specific step has already used AI
+    if (aiUsedPerStep[step]) {
+      toast.error(`Você já utilizou a IA neste passo (${step}). Continue para o próximo passo.`);
       return;
     }
 
@@ -244,37 +252,11 @@ const MetodoSmart = () => {
 
       setAiFeedback(data.feedback);
 
-      // Mark free usage as consumed if this was the first use
-      if (!aiUsageStatus.freeUsageConsumed) {
-        await supabase
-          .from("user_smart_ai_usage")
-          .upsert({
-            user_id: session.session.user.id,
-            free_usage_consumed: true,
-            updated_at: new Date().toISOString(),
-          }, { onConflict: "user_id" });
-        
-        setAiUsageStatus(prev => ({
-          ...prev,
-          freeUsageConsumed: true,
-          usagesRemaining: prev.totalPaidUsages > 0 ? prev.totalPaidUsages : 0,
-        }));
-      } else {
-        // Decrement paid usage
-        const newUsedCount = (aiUsageStatus.totalPaidUsages - aiUsageStatus.usagesRemaining) + 1;
-        await supabase
-          .from("user_smart_ai_usage")
-          .update({
-            total_paid_usages: newUsedCount,
-            updated_at: new Date().toISOString(),
-          })
-          .eq("user_id", session.session.user.id);
-        
-        setAiUsageStatus(prev => ({
-          ...prev,
-          usagesRemaining: prev.usagesRemaining - 1,
-        }));
-      }
+      // Mark this specific step as used
+      setAiUsedPerStep(prev => ({
+        ...prev,
+        [step]: true,
+      }));
 
     } catch (error) {
       console.error("Error getting AI feedback:", error);
@@ -466,88 +448,67 @@ const MetodoSmart = () => {
     return `${metaSmart.especifico}. Vou medir meu progresso através de: ${metaSmart.mensuravel}. Para tornar isso alcançável: ${metaSmart.atingivel}. Esta meta é relevante porque: ${metaSmart.relevante}. Prazo: ${metaSmart.temporal} (até ${new Date(metaSmart.dataAlvo).toLocaleDateString('pt-BR')}).`;
   };
 
-  const canUseAI = aiUsageStatus.usagesRemaining > 0;
-
-  // AI Feedback Component
-  const AIFeedbackSection = ({ step }: { step: string }) => (
-    <div className="mt-4 space-y-3">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <Bot className="w-5 h-5 text-primary" />
-          <span className="font-medium text-sm">Mentoria IA</span>
-          {!isCheckingUsage && (
-            <Badge variant={canUseAI ? "secondary" : "outline"} className="text-xs">
-              {canUseAI 
-                ? `${aiUsageStatus.usagesRemaining} uso${aiUsageStatus.usagesRemaining > 1 ? 's' : ''} disponível${aiUsageStatus.usagesRemaining > 1 ? 'is' : ''}`
-                : "Limite atingido"
+  // AI Feedback Component - now checks per-step usage
+  const AIFeedbackSection = ({ step }: { step: string }) => {
+    const hasUsedAIForStep = aiUsedPerStep[step] || false;
+    
+    return (
+      <div className="mt-4 space-y-3">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Bot className="w-5 h-5 text-primary" />
+            <span className="font-medium text-sm">Mentoria IA</span>
+            <Badge variant={hasUsedAIForStep ? "outline" : "secondary"} className="text-xs">
+              {hasUsedAIForStep 
+                ? "Já utilizado neste passo"
+                : "1 uso disponível"
               }
             </Badge>
-          )}
-        </div>
-      </div>
-
-      {canUseAI ? (
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => requestAIFeedback(step)}
-          disabled={isLoadingAI}
-          className="w-full gap-2 border-primary/30 hover:bg-primary/5"
-        >
-          {isLoadingAI ? (
-            <>
-              <Loader2 className="w-4 h-4 animate-spin" />
-              Analisando...
-            </>
-          ) : (
-            <>
-              <Sparkles className="w-4 h-4" />
-              Solicitar feedback do mentor IA
-            </>
-          )}
-        </Button>
-      ) : (
-        <div className="space-y-2">
-          <div className="p-3 bg-muted/50 rounded-lg border border-border flex items-center gap-2">
-            <Lock className="w-4 h-4 text-muted-foreground" />
-            <span className="text-sm text-muted-foreground">
-              Você já utilizou sua mentoria IA gratuita.
-            </span>
           </div>
+        </div>
+
+        {!hasUsedAIForStep ? (
           <Button
-            variant="default"
+            variant="outline"
             size="sm"
-            onClick={handlePurchaseUsage}
-            disabled={isCreatingPayment}
-            className="w-full gap-2"
+            onClick={() => requestAIFeedback(step)}
+            disabled={isLoadingAI}
+            className="w-full gap-2 border-primary/30 hover:bg-primary/5"
           >
-            {isCreatingPayment ? (
+            {isLoadingAI ? (
               <>
                 <Loader2 className="w-4 h-4 animate-spin" />
-                Processando...
+                Analisando...
               </>
             ) : (
               <>
-                <CreditCard className="w-4 h-4" />
-                Adquirir uso adicional (R$ 1,00)
+                <Sparkles className="w-4 h-4" />
+                Solicitar feedback do mentor IA
               </>
             )}
           </Button>
-        </div>
-      )}
+        ) : (
+          <div className="p-3 bg-muted/50 rounded-lg border border-border flex items-center gap-2">
+            <CheckCircle2 className="w-4 h-4 text-emerald-500" />
+            <span className="text-sm text-muted-foreground">
+              Você já utilizou a IA neste passo. Continue para o próximo.
+            </span>
+          </div>
+        )}
 
-      {aiFeedback && (
-        <div className="p-4 bg-gradient-to-r from-primary/5 via-primary/10 to-primary/5 rounded-lg border border-primary/20 animate-fade-in">
-          <div className="flex items-start gap-3">
-            <Bot className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
-            <div className="space-y-2 text-sm leading-relaxed whitespace-pre-wrap">
-              {aiFeedback}
+        {aiFeedback && (
+          <div className="p-4 bg-gradient-to-r from-primary/5 via-primary/10 to-primary/5 rounded-lg border border-primary/20 animate-fade-in">
+            <div className="flex items-start gap-3">
+              <Bot className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
+              <div className="space-y-2 text-sm leading-relaxed whitespace-pre-wrap">
+                {aiFeedback}
+              </div>
             </div>
           </div>
-        </div>
-      )}
-    </div>
-  );
+        )}
+      </div>
+    );
+  };
 
   return (
     <div className="min-h-screen bg-gradient-subtle py-8">
@@ -656,11 +617,11 @@ const MetodoSmart = () => {
                     Mentoria IA Integrada
                   </h4>
                   <p className="text-sm text-muted-foreground mb-2">
-                    A cada passo, você pode solicitar feedback de um mentor de IA que avalia a consistência, 
-                    profundidade e alinhamento do seu texto com o objetivo e sua Visão de Vida Desejada.
+                    Em cada passo do método SMART, você pode solicitar <strong>1 feedback gratuito</strong> do mentor IA 
+                    que avalia a consistência, profundidade e alinhamento do seu texto com o objetivo e sua Visão de Vida Desejada.
                   </p>
                   <p className="text-xs text-muted-foreground">
-                    <strong>1 uso gratuito</strong> • Usos adicionais disponíveis por R$ 1,00
+                    <strong>1 uso por passo</strong> • Aproveite para refinar cada etapa da sua meta
                   </p>
                 </div>
               </CardContent>
