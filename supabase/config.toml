@@ -68,3 +68,12 @@ verify_jwt = false
 
 [functions.cleanup-incomplete-signups]
 verify_jwt = false
+
+[functions.create-ai-purchase]
+verify_jwt = false
+
+[functions.verify-ai-purchase]
+verify_jwt = false
+
+[functions.consume-ai-purchase]
+verify_jwt = false
