@@ -276,8 +276,8 @@ const PlanoDeVida = ({ onTabChange, onOpenChange, forcedTab, forcedOpen }: Plano
         if (savedAreas && savedAreas.length > 0) {
           const normalizedAreas = savedAreas.map((area: any) => ({
             area: area.area,
-            notaAtual: String(area.nota_atual || area.notaAtual || ""),
-            notaDesejada: String(area.nota_desejada || area.notaDesejada || "")
+            notaAtual: String(area.nota_atual ?? area.notaAtual ?? ""),
+            notaDesejada: String(area.nota_desejada ?? area.notaDesejada ?? "")
           }));
           setAreasVida(normalizedAreas);
           setIsEditingAreas(false);
@@ -287,8 +287,8 @@ const PlanoDeVida = ({ onTabChange, onOpenChange, forcedTab, forcedOpen }: Plano
             const loadedAreas = JSON.parse(localAreas);
             const normalizedAreas = loadedAreas.map((area: any) => ({
               ...area,
-              notaAtual: String(area.notaAtual || ""),
-              notaDesejada: String(area.notaDesejada || "")
+              notaAtual: String(area.notaAtual ?? ""),
+              notaDesejada: String(area.notaDesejada ?? "")
             }));
             setAreasVida(normalizedAreas);
             setIsEditingAreas(false);
