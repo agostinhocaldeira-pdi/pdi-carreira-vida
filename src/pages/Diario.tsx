@@ -216,7 +216,7 @@ const Diario = () => {
               />
             </div>
 
-            <Button onClick={handleSave} className="w-full" size="lg" disabled={isSaving}>
+            <Button onClick={handleSave} variant="cta" className="w-full" size="lg" disabled={isSaving}>
               {isSaving ? (
                 <>
                   <Loader2 className="w-4 h-4 mr-2 animate-spin" />

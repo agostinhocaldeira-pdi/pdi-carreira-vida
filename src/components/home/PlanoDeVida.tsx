@@ -1257,11 +1257,11 @@ const PlanoDeVida = ({ onTabChange, onOpenChange, forcedTab, forcedOpen }: Plano
                                         </Select>
                                       ) : (
                                         <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
-                                          obj.status === "concluido" ? "bg-green-100 text-green-800" :
-                                          obj.status === "em-andamento" ? "bg-blue-100 text-blue-800" :
-                                          obj.status === "pausado" ? "bg-yellow-100 text-yellow-800" :
-                                          obj.status === "a-iniciar" ? "bg-purple-100 text-purple-800" :
-                                          "bg-gray-100 text-gray-800"
+                                          obj.status === "concluido" ? "bg-success/15 text-success" :
+                                          obj.status === "em-andamento" ? "bg-primary/15 text-primary" :
+                                          obj.status === "pausado" ? "bg-warning/15 text-warning" :
+                                          obj.status === "a-iniciar" ? "bg-secondary/20 text-secondary" :
+                                          "bg-muted text-muted-foreground"
                                         }`}>
                                           {obj.status === "em-andamento" ? "Em andamento" :
                                            obj.status === "concluido" ? "Concluído" :

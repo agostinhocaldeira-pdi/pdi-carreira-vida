@@ -334,6 +334,7 @@ const Relatorios = () => {
                 onClick={handleExportPDI}
                 disabled={isExportingPDI}
                 className="w-full mt-4 gap-2"
+                variant="cta"
                 size="lg"
               >
                 {isExportingPDI ? (
