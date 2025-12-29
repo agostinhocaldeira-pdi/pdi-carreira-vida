@@ -100,23 +100,27 @@ const PlanoDeVida = ({ onTabChange, onOpenChange, forcedTab, forcedOpen }: Plano
   const [habilidadeEditada, setHabilidadeEditada] = useState("");
 
   // Sincronizar com props externas (para navegação via eventos)
+  // Obs: não deve abrir automaticamente ao carregar a Home (mobile/desktop).
   useEffect(() => {
-    if (forcedTab !== undefined) {
-      if (forcedTab === "quem-sou") {
-        setQuemSouOpen(true);
-        setParaOndeOpen(false);
-        setComoChegarOpen(false);
-      } else if (forcedTab === "para-onde") {
-        setQuemSouOpen(false);
-        setParaOndeOpen(true);
-        setComoChegarOpen(false);
-      } else if (forcedTab === "como-chegar") {
-        setQuemSouOpen(false);
-        setParaOndeOpen(false);
-        setComoChegarOpen(true);
-      }
+    if (forcedTab === undefined) return;
+
+    // Se o pai controla a abertura, só forçar quando estiver explicitamente "aberto".
+    if (forcedOpen !== undefined && !forcedOpen) return;
+
+    if (forcedTab === "quem-sou") {
+      setQuemSouOpen(true);
+      setParaOndeOpen(false);
+      setComoChegarOpen(false);
+    } else if (forcedTab === "para-onde") {
+      setQuemSouOpen(false);
+      setParaOndeOpen(true);
+      setComoChegarOpen(false);
+    } else if (forcedTab === "como-chegar") {
+      setQuemSouOpen(false);
+      setParaOndeOpen(false);
+      setComoChegarOpen(true);
     }
-  }, [forcedTab]);
+  }, [forcedTab, forcedOpen]);
 
   useEffect(() => {
     if (forcedOpen !== undefined) {
@@ -1338,7 +1342,7 @@ const PlanoDeVida = ({ onTabChange, onOpenChange, forcedTab, forcedOpen }: Plano
 
             {/* Passo 3 - Como chegar lá */}
             <Collapsible open={comoChegarOpen} onOpenChange={(open) => handleSectionOpen("como-chegar", open)}>
-              <div className={`rounded-xl border-2 transition-all duration-300 overflow-hidden ${comoChegarOpen ? 'border-primary bg-primary/5' : 'border-border hover:border-primary/50 hover:bg-muted/30'}`}>
+              <div className={`rounded-xl border-2 transition-all duration-300 overflow-hidden max-w-full ${comoChegarOpen ? 'border-primary bg-primary/5' : 'border-border hover:border-primary/50 hover:bg-muted/30'}`}>
                 <CollapsibleTrigger asChild>
                   <button className="w-full p-4 flex items-center justify-between text-left group">
                     <div className="flex items-center gap-3 sm:gap-4 flex-1 min-w-0">
@@ -1374,7 +1378,7 @@ const PlanoDeVida = ({ onTabChange, onOpenChange, forcedTab, forcedOpen }: Plano
                 </CollapsibleTrigger>
                 
                 <CollapsibleContent>
-                  <div className="px-4 pb-4 pt-2 space-y-4 border-t border-border/50">
+                  <div className="px-4 pb-4 pt-2 space-y-4 border-t border-border/50 overflow-hidden max-w-full">
                     <div className="space-y-4">
                       <div className="flex items-center gap-2 mb-4">
                         <Lightbulb className="w-5 h-5 text-primary" />
@@ -1384,12 +1388,13 @@ const PlanoDeVida = ({ onTabChange, onOpenChange, forcedTab, forcedOpen }: Plano
                       <div className="space-y-3">
                         <Label>Habilidades a Desenvolver</Label>
 
-                        <div className="flex gap-2 p-3 sm:p-4 bg-muted/30 rounded-lg">
+                        <div className="flex gap-2 p-3 sm:p-4 bg-muted/30 rounded-lg min-w-0 max-w-full overflow-hidden">
                           <Input
                             placeholder="Digite uma habilidade"
                             value={novaHabilidade}
                             onChange={(e) => setNovaHabilidade(e.target.value)}
                             spellCheck="true"
+                            className="min-w-0"
                             onKeyPress={(e) => {
                               if (e.key === 'Enter') {
                                 handleAddHabilidade();
