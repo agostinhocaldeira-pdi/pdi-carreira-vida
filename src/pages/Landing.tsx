@@ -90,14 +90,14 @@ const Landing = () => {
         <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-accent/5 to-transparent" />
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-primary/20 via-transparent to-transparent" />
         
-        <div className="container relative mx-auto px-4 py-20 md:py-32">
-          <div className="mx-auto max-w-4xl text-center space-y-8 animate-fade-in">
-            <Badge className="mx-auto bg-primary/10 text-primary border-primary/20 hover:bg-primary/20 px-4 py-2 text-sm">
-              <Sparkles className="w-4 h-4 mr-2 inline" />
-              Método Validado por Mais de 10.000 Pessoas
+        <div className="container relative mx-auto px-4 py-10 sm:py-16 md:py-24">
+          <div className="mx-auto max-w-4xl text-center space-y-4 sm:space-y-6 md:space-y-8 animate-fade-in">
+            <Badge className="mx-auto bg-primary/10 text-primary border-primary/20 hover:bg-primary/20 px-3 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm">
+              <Sparkles className="w-3 h-3 sm:w-4 sm:h-4 mr-1.5 sm:mr-2 inline" />
+              Método Validado por +10.000 Pessoas
             </Badge>
             
-            <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold leading-tight">
+            <h1 className="text-2xl sm:text-3xl md:text-5xl lg:text-6xl font-bold leading-tight">
               Você Está a Uma
               <span className="block text-transparent bg-clip-text bg-gradient-to-r from-primary via-accent to-primary animate-gradient">
                 Decisão de Transformar
@@ -105,7 +105,7 @@ const Landing = () => {
               Sua Vida e Carreira
             </h1>
             
-            <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
+            <p className="text-base sm:text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
               <span className="font-semibold text-foreground">89% das pessoas vivem no piloto automático</span>, 
               perseguindo objetivos que não são seus, trabalhando sem propósito, sonhando com "um dia"... 
               <span className="font-semibold text-foreground">Esse dia é hoje.</span>
