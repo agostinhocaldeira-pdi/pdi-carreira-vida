@@ -17,6 +17,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import ConfirmDeleteDialog from "@/components/ConfirmDeleteDialog";
 import { OKRLinkSection, CompanyOKRsOverview } from "@/components/home/OKRLinkSection";
+import MaoNaMassa from "@/components/home/MaoNaMassa";
 import { useQueryClient } from "@tanstack/react-query";
 import { usePDIStorage } from "@/hooks/usePDIStorage";
 import { PDI_QUERY_KEYS, usePDIData } from "@/hooks/usePDIQueries";
@@ -881,7 +882,7 @@ const PlanoDeVida = ({ onTabChange, onOpenChange, forcedTab, forcedOpen }: Plano
 
         <CardContent className="space-y-4">
           {/* Step Cards */}
-          <div className="grid gap-3">
+          <div className="grid gap-3 w-full overflow-hidden">
             {/* Passo 1 - Quem sou Eu */}
             <Collapsible open={quemSouOpen} onOpenChange={(open) => handleSectionOpen("quem-sou", open)}>
               <div className={`rounded-xl border-2 transition-all duration-300 overflow-hidden ${quemSouOpen ? 'border-primary bg-primary/5' : 'border-border hover:border-primary/50 hover:bg-muted/30'}`}>
@@ -1052,7 +1053,7 @@ const PlanoDeVida = ({ onTabChange, onOpenChange, forcedTab, forcedOpen }: Plano
 
             {/* Passo 2 - Para onde vou */}
             <Collapsible open={paraOndeOpen} onOpenChange={(open) => handleSectionOpen("para-onde", open)}>
-              <div className={`rounded-xl border-2 transition-all duration-300 overflow-hidden ${paraOndeOpen ? 'border-primary bg-primary/5' : 'border-border hover:border-primary/50 hover:bg-muted/30'}`}>
+              <div className={`rounded-xl border-2 transition-all duration-300 overflow-hidden max-w-full ${paraOndeOpen ? 'border-primary bg-primary/5' : 'border-border hover:border-primary/50 hover:bg-muted/30'}`}>
                 <CollapsibleTrigger asChild>
                   <button className="w-full p-4 flex items-center justify-between text-left group">
                     <div className="flex items-center gap-3 sm:gap-4 flex-1 min-w-0">
@@ -1088,7 +1089,7 @@ const PlanoDeVida = ({ onTabChange, onOpenChange, forcedTab, forcedOpen }: Plano
                 </CollapsibleTrigger>
                 
                 <CollapsibleContent>
-                  <div className="px-4 pb-4 pt-2 space-y-4 border-t border-border/50">
+                  <div className="px-4 pb-4 pt-2 space-y-4 border-t border-border/50 overflow-hidden max-w-full">
                     {/* Overview de OKRs da empresa */}
                     <CompanyOKRsOverview />
                     
@@ -1173,9 +1174,9 @@ const PlanoDeVida = ({ onTabChange, onOpenChange, forcedTab, forcedOpen }: Plano
                           />
                         </div>
                       ) : objetivos.length > 0 ? (
-                        <div className="space-y-3">
+                        <div className="space-y-3 max-w-full overflow-hidden">
                           <h4 className="font-medium text-sm">Objetivos Cadastrados</h4>
-                          <div className="rounded-lg border overflow-x-auto">
+                          <div className="rounded-lg border overflow-x-auto max-w-full">
                             <Table>
                               <TableHeader>
                                 <TableRow>
@@ -1489,6 +1490,11 @@ const PlanoDeVida = ({ onTabChange, onOpenChange, forcedTab, forcedOpen }: Plano
                           <ExternalLink className="w-4 h-4" />
                         </Link>
                       </div>
+                    </div>
+
+                    {/* Mão na Massa - dentro de Como chegar lá */}
+                    <div className="pt-4 border-t border-border/50">
+                      <MaoNaMassa embedded />
                     </div>
                   </div>
                 </CollapsibleContent>

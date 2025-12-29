@@ -17,7 +17,11 @@ import { usePDIStorage } from "@/hooks/usePDIStorage";
 import { usePDIData, useDeleteMeta, useSaveMeta } from "@/hooks/usePDIQueries";
 import { useActionCelebration } from "@/contexts/ActionCelebrationContext";
 
-const MaoNaMassa = () => {
+interface MaoNaMassaProps {
+  embedded?: boolean;
+}
+
+const MaoNaMassa = ({ embedded = false }: MaoNaMassaProps) => {
   const storage = usePDIStorage();
   const formRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
@@ -349,17 +353,8 @@ const MaoNaMassa = () => {
     }
   };
 
-  return (
-    <Card className="shadow-medium">
-      <CardHeader>
-        <CardTitle className="text-2xl flex items-center gap-2">
-          <Rocket className="w-6 h-6 text-accent" />
-          Mão na Massa
-        </CardTitle>
-        <CardDescription>Transforme seus objetivos em metas executáveis</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <div className="space-y-6">
+  const content = (
+    <div className="space-y-6">
           {/* Loading State - sempre visível enquanto carrega */}
           {isQueryLoading && metasCadastradas.length === 0 && (
             <div className="py-8">
@@ -972,10 +967,12 @@ const MaoNaMassa = () => {
               </div>
             </CollapsibleContent>
           </Collapsible>
-          </div>
         </div>
-      </CardContent>
+      </div>
+  );
 
+  const modals = (
+    <>
       <Dialog open={showSuggestionModal} onOpenChange={setShowSuggestionModal}>
         <DialogContent className="max-w-md">
           <DialogHeader>
@@ -983,59 +980,44 @@ const MaoNaMassa = () => {
               <Lightbulb className="w-6 h-6 text-accent" />
               Meta Cadastrada com Sucesso! 🎉
             </DialogTitle>
-            <DialogDescription className="text-base space-y-3 pt-3">
-              <p className="font-semibold text-foreground">
-                Sua meta foi registrada no Plano de Vida.
-              </p>
-              <p className="bg-accent/10 p-3 rounded-md border border-accent/20">
-                <span className="font-semibold text-accent">💡 Sugestão:</span> Para garantir que você dedique tempo para trabalhar nesta meta, cadastre uma ação relacionada na <span className="font-semibold">Matriz de Eisenhower</span> como <span className="font-semibold text-accent">"Importante não urgente"</span>.
-              </p>
-              <p className="text-sm text-muted-foreground">
-                Isso ajudará você a priorizar o que realmente importa sem deixar para depois!
-              </p>
+            <DialogDescription className="text-base pt-2">
+              Parabéns! Você acabou de dar um passo importante para alcançar seus objetivos.
             </DialogDescription>
           </DialogHeader>
-          <DialogFooter className="flex-col sm:flex-row gap-2">
+          <div className="space-y-4 py-2">
+            <p className="text-sm text-muted-foreground">
+              <strong>Sugestão:</strong> Que tal revisar suas metas e ações regularmente? 
+              Isso ajuda a manter o foco e celebrar cada conquista!
+            </p>
+          </div>
+          <DialogFooter>
             <Button 
-              variant="outline" 
               onClick={() => setShowSuggestionModal(false)}
-              className="w-full sm:w-auto"
+              className="w-full"
             >
-              Fechar
-            </Button>
-            <Button 
-              onClick={() => {
-                setShowSuggestionModal(false);
-                navigate('/ferramentas/eisenhower');
-              }}
-              className="w-full sm:w-auto"
-            >
-              Ir para Matriz de Eisenhower
+              Entendi!
             </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
 
-      {/* Modal de Ação Criada */}
       <Dialog open={showActionCreatedModal} onOpenChange={setShowActionCreatedModal}>
         <DialogContent className="max-w-md">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2 text-xl">
-              <Rocket className="w-6 h-6 text-primary" />
-              Ação Registrada! 🎉
+              <Rocket className="w-6 h-6 text-accent" />
+              Ação Criada! 🚀
             </DialogTitle>
-            <DialogDescription className="text-base space-y-4 pt-4">
-              <p className="text-foreground leading-relaxed">
-                Você deu um passo muito importante. Lembre-se: é na consistência e constância das execuções das ações que você alcança suas metas e objetivos.
-              </p>
-              <p className="italic text-muted-foreground border-l-4 border-primary/50 pl-4 py-2 bg-muted/30 rounded-r-md">
-                "Quem não aprende a respeitar o processo desiste antes do resultado."
-              </p>
-              <p className="font-bold text-primary text-lg">
-                Continue firme! 💪
-              </p>
+            <DialogDescription className="text-base pt-2">
+              Continue cadastrando ações para maximizar suas chances de sucesso!
             </DialogDescription>
           </DialogHeader>
+          <div className="space-y-4 py-2">
+            <p className="text-sm text-muted-foreground">
+              <strong>Dica:</strong> Ações com periodicidade definida têm maior taxa de conclusão. 
+              Não esqueça de definir!
+            </p>
+          </div>
           <DialogFooter>
             <Button 
               onClick={() => setShowActionCreatedModal(false)}
@@ -1047,7 +1029,6 @@ const MaoNaMassa = () => {
         </DialogContent>
       </Dialog>
 
-      {/* Dialogs de Confirmação de Exclusão */}
       <ConfirmDeleteDialog
         open={deleteAcaoId !== null}
         onOpenChange={() => setDeleteAcaoId(null)}
@@ -1071,6 +1052,36 @@ const MaoNaMassa = () => {
         title="Excluir Meta"
         description="Tem certeza que deseja excluir esta meta? Esta ação não pode ser desfeita."
       />
+    </>
+  );
+
+  if (embedded) {
+    return (
+      <>
+        <div className="flex items-center gap-2 mb-4">
+          <Rocket className="w-5 h-5 text-accent" />
+          <h3 className="text-lg font-semibold">Mão na Massa</h3>
+        </div>
+        <p className="text-sm text-muted-foreground mb-4">Transforme seus objetivos em metas executáveis</p>
+        {content}
+        {modals}
+      </>
+    );
+  }
+
+  return (
+    <Card className="shadow-medium">
+      <CardHeader>
+        <CardTitle className="text-2xl flex items-center gap-2">
+          <Rocket className="w-6 h-6 text-accent" />
+          Mão na Massa
+        </CardTitle>
+        <CardDescription>Transforme seus objetivos em metas executáveis</CardDescription>
+      </CardHeader>
+      <CardContent>
+        {content}
+      </CardContent>
+      {modals}
     </Card>
   );
 };
