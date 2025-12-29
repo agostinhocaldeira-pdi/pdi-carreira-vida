@@ -762,11 +762,16 @@ const PlanoDeVida = ({ onTabChange, onOpenChange, forcedTab, forcedOpen }: Plano
   };
 
   const handleSectionOpen = (section: string, open: boolean) => {
-    // Se estiver abrindo no mobile, mostrar aviso primeiro
+    // Se estiver abrindo no mobile, mostrar aviso apenas na primeira vez para cada passo
     if (open && isMobile) {
-      setPendingSection(section);
-      setShowMobileWarning(true);
-      return;
+      const storageKey = `pdi_mobile_tip_seen_${section}`;
+      const alreadySeen = localStorage.getItem(storageKey);
+      
+      if (!alreadySeen) {
+        setPendingSection(section);
+        setShowMobileWarning(true);
+        return;
+      }
     }
     
     if (section === "quem-sou") {
@@ -799,6 +804,10 @@ const PlanoDeVida = ({ onTabChange, onOpenChange, forcedTab, forcedOpen }: Plano
   const handleConfirmMobileOpen = () => {
     setShowMobileWarning(false);
     if (pendingSection) {
+      // Salva no localStorage que o usuário já viu a dica para este passo
+      const storageKey = `pdi_mobile_tip_seen_${pendingSection}`;
+      localStorage.setItem(storageKey, 'true');
+      
       if (pendingSection === "quem-sou") {
         setQuemSouOpen(true);
         setParaOndeOpen(false);
