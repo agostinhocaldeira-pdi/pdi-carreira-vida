@@ -867,7 +867,7 @@ const PlanoDeVida = ({ onTabChange, onOpenChange, forcedTab, forcedOpen }: Plano
         </DialogContent>
       </Dialog>
 
-      <Card className="shadow-medium overflow-hidden">
+      <Card className="shadow-medium overflow-hidden max-w-full">
         <CardHeader className="pb-4">
           <div className="flex items-center gap-3">
             <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center shadow-lg">
@@ -880,9 +880,9 @@ const PlanoDeVida = ({ onTabChange, onOpenChange, forcedTab, forcedOpen }: Plano
           </div>
         </CardHeader>
 
-        <CardContent className="space-y-4">
+        <CardContent className="space-y-4 overflow-hidden max-w-full">
           {/* Step Cards */}
-          <div className="grid gap-3 w-full overflow-hidden">
+          <div className="grid gap-3 w-full overflow-hidden max-w-full box-border">
             {/* Passo 1 - Quem sou Eu */}
             <Collapsible open={quemSouOpen} onOpenChange={(open) => handleSectionOpen("quem-sou", open)}>
               <div className={`rounded-xl border-2 transition-all duration-300 overflow-hidden max-w-full ${quemSouOpen ? 'border-primary bg-primary/5' : 'border-border hover:border-primary/50 hover:bg-muted/30'}`}>
