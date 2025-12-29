@@ -361,7 +361,7 @@ const Home = () => {
         </section>
 
         {/* Plano de Vida Section */}
-        <section className="animate-slide-up" style={{ animationDelay: "0.2s" }} data-section="plano-de-vida">
+        <section className="animate-slide-up overflow-hidden max-w-full" style={{ animationDelay: "0.2s" }} data-section="plano-de-vida">
           <PlanoDeVida 
             onTabChange={setActiveTab} 
             onOpenChange={setPlanoDeVidaOpen} 

@@ -871,7 +871,7 @@ const PlanoDeVida = ({ onTabChange, onOpenChange, forcedTab, forcedOpen }: Plano
         </DialogContent>
       </Dialog>
 
-      <Card className="shadow-medium overflow-hidden max-w-full">
+      <Card className="shadow-medium overflow-hidden max-w-full w-full box-border">
         <CardHeader className="pb-4">
           <div className="flex items-center gap-3">
             <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center shadow-lg">
@@ -884,7 +884,7 @@ const PlanoDeVida = ({ onTabChange, onOpenChange, forcedTab, forcedOpen }: Plano
           </div>
         </CardHeader>
 
-        <CardContent className="space-y-4 overflow-hidden max-w-full">
+        <CardContent className="space-y-4 overflow-hidden max-w-full px-3 sm:px-6">
           {/* Step Cards */}
           <div className="grid gap-3 w-full overflow-hidden max-w-full box-border">
             {/* Passo 1 - Quem sou Eu */}
@@ -1342,7 +1342,7 @@ const PlanoDeVida = ({ onTabChange, onOpenChange, forcedTab, forcedOpen }: Plano
 
             {/* Passo 3 - Como chegar lá */}
             <Collapsible open={comoChegarOpen} onOpenChange={(open) => handleSectionOpen("como-chegar", open)}>
-              <div className={`rounded-xl border-2 transition-all duration-300 overflow-hidden max-w-full ${comoChegarOpen ? 'border-primary bg-primary/5' : 'border-border hover:border-primary/50 hover:bg-muted/30'}`}>
+              <div className={`rounded-xl border-2 transition-all duration-300 overflow-hidden max-w-full w-full box-border ${comoChegarOpen ? 'border-primary bg-primary/5' : 'border-border hover:border-primary/50 hover:bg-muted/30'}`}>
                 <CollapsibleTrigger asChild>
                   <button className="w-full p-4 flex items-center justify-between text-left group">
                     <div className="flex items-center gap-3 sm:gap-4 flex-1 min-w-0">
@@ -1378,8 +1378,8 @@ const PlanoDeVida = ({ onTabChange, onOpenChange, forcedTab, forcedOpen }: Plano
                 </CollapsibleTrigger>
                 
                 <CollapsibleContent>
-                  <div className="px-4 pb-4 pt-2 space-y-4 border-t border-border/50 overflow-hidden max-w-full">
-                    <div className="space-y-4">
+                  <div className="px-3 sm:px-4 pb-4 pt-2 space-y-4 border-t border-border/50 overflow-hidden max-w-full w-full box-border">
+                    <div className="space-y-4 max-w-full overflow-hidden">
                       <div className="flex items-center gap-2 mb-4">
                         <Lightbulb className="w-5 h-5 text-primary" />
                         <h3 className="text-lg font-semibold">Desenvolvimento</h3>
@@ -1498,7 +1498,7 @@ const PlanoDeVida = ({ onTabChange, onOpenChange, forcedTab, forcedOpen }: Plano
                     </div>
 
                     {/* Mão na Massa - dentro de Como chegar lá */}
-                    <div className="pt-4 border-t border-border/50">
+                    <div className="pt-4 border-t border-border/50 max-w-full overflow-hidden w-full box-border">
                       <MaoNaMassa embedded />
                     </div>
                   </div>
