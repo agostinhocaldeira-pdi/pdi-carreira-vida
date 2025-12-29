@@ -120,23 +120,19 @@ const Valores = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const handleSalvar = async () => {
+  const handleSalvar = () => {
     if (valoresSelecionados6.length === 6) {
       setIsSaving(true);
-      try {
-        // Salvar no Supabase
-        await saveValores(valoresSelecionados6);
-        
-        // Disparar evento para sincronizar
-        window.dispatchEvent(new Event("valoresUpdated"));
-        
-        setShowSuccessDialog(true);
-      } catch (error) {
-        console.error('Erro ao salvar valores:', error);
-        toast.error("Erro ao salvar valores");
-      } finally {
-        setIsSaving(false);
-      }
+      
+      // OPTIMIZATION: Show success immediately, save in background
+      window.dispatchEvent(new Event("valoresUpdated"));
+      setShowSuccessDialog(true);
+      setIsSaving(false);
+      
+      // Save to Supabase in background (non-blocking)
+      saveValores(valoresSelecionados6).catch(error => {
+        console.error('Background valores sync error:', error);
+      });
     }
   };
 

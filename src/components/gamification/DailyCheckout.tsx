@@ -39,16 +39,10 @@ export const DailyCheckout = () => {
     today.setHours(0, 0, 0, 0);
 
     try {
-      // Load all data in parallel for better performance
-      const [metasResult, objetivosResult, eisenhowerResult] = await Promise.all([
-        storage.getMetas().catch(() => null),
-        storage.getObjetivos().catch(() => null),
-        storage.getEisenhowerTasks().catch(() => null)
-      ]);
-
-      const metas = metasResult || JSON.parse(localStorage.getItem("metas") || "[]");
-      const objetivos = objetivosResult || JSON.parse(localStorage.getItem("objetivos") || "[]");
-      const eisenhowerData = eisenhowerResult || {
+      // OPTIMIZATION: Load from localStorage FIRST for instant display
+      const metas = JSON.parse(localStorage.getItem("metas") || "[]");
+      const objetivos = JSON.parse(localStorage.getItem("objetivos") || "[]");
+      const eisenhowerData = JSON.parse(localStorage.getItem("eisenhower_tasks") || "{}") || {
         urgente_importante: [],
         nao_urgente_importante: [],
         urgente_nao_importante: [],

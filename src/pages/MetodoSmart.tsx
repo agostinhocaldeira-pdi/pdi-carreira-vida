@@ -373,13 +373,12 @@ const MetodoSmart = () => {
     };
 
     try {
-      const metasExistentes = await storage.getMetas();
+      // OPTIMIZATION: Use localStorage first for instant feedback
+      const metasExistentes = JSON.parse(localStorage.getItem("metas") || "[]");
       const metasAtualizadas = [...metasExistentes, novaMeta];
       
-      await storage.saveMetas(metasAtualizadas);
+      // Update localStorage and show success immediately
       localStorage.setItem("metas", JSON.stringify(metasAtualizadas));
-
-      await queryClient.invalidateQueries({ queryKey: PDI_QUERY_KEYS.pdiData() });
       localStorage.setItem("metaImportadaSmart", JSON.stringify(novaMeta));
 
       toast.success("🎯 Meta SMART importada com sucesso!", {
@@ -390,6 +389,13 @@ const MetodoSmart = () => {
       setTimeout(() => {
         navigate("/home");
       }, 2000);
+      
+      // Save to Supabase in background (non-blocking)
+      storage.saveMetas(metasAtualizadas).then(() => {
+        queryClient.invalidateQueries({ queryKey: PDI_QUERY_KEYS.pdiData() });
+      }).catch(error => {
+        console.error('Background sync error:', error);
+      });
     } catch (error) {
       console.error('Erro ao salvar meta SMART:', error);
       toast.error("Erro ao salvar a meta. Tente novamente.");
