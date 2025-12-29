@@ -1388,51 +1388,6 @@ const Index = () => {
         </div>
       </section>
 
-      {/* CTA Empresas */}
-      <section className="py-12 sm:py-16 px-4 bg-muted/20">
-        <div className="container mx-auto max-w-4xl">
-          <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-700 p-6 sm:p-10">
-            <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC4wNSI+PHBhdGggZD0iTTM2IDM0djItSDI0di0yaDEyek0zNiAzMHYySDI0di0yaDEyek0zNiAyNnYySDI0di0yaDEyeiIvPjwvZz48L2c+PC9zdmc+')] opacity-30" />
-            <div className="relative z-10 text-center text-white">
-              <div className="flex items-center justify-center gap-2 mb-4">
-                <Building2 className="h-8 w-8 sm:h-10 sm:w-10" />
-              </div>
-              <h3 className="text-2xl sm:text-3xl font-bold mb-3">
-                É empresário ou RH?
-              </h3>
-              <p className="text-white/90 text-base sm:text-lg max-w-2xl mx-auto mb-4">
-                Transforme sua equipe em profissionais de alta performance com o PDI Carreira & Vida para Empresas.
-              </p>
-              <div className="flex flex-wrap justify-center gap-3 mb-6 text-sm text-white/80">
-                <span className="flex items-center gap-1">
-                  <Check className="h-4 w-4" /> Dashboard de gestão
-                </span>
-                <span className="flex items-center gap-1">
-                  <Check className="h-4 w-4" /> Acompanhamento de equipes
-                </span>
-                <span className="flex items-center gap-1">
-                  <Check className="h-4 w-4" /> OKRs alinhados
-                </span>
-                <span className="flex items-center gap-1">
-                  <Check className="h-4 w-4" /> Relatórios de progresso
-                </span>
-              </div>
-              <p className="text-white/70 text-sm mb-6">
-                Planos a partir de <span className="font-bold text-white">R$ 30/funcionário</span> • Retenha talentos • Aumente produtividade
-              </p>
-              <Button 
-                size="lg"
-                onClick={() => navigate("/empresas")}
-                className="bg-background text-primary hover:bg-background/90 font-semibold text-sm sm:text-base px-4 sm:px-8 w-full sm:w-auto"
-              >
-                Conhecer soluções para empresas
-                <ArrowRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5" />
-              </Button>
-            </div>
-          </div>
-        </div>
-      </section>
-
       {/* Footer */}
       <footer className="py-8 sm:py-12 px-4 border-t border-border/50 bg-muted/10">
         <div className="container mx-auto max-w-4xl">
