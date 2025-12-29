@@ -8,7 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Rocket, Plus, Trash2, Pencil, Check, X, ChevronDown, Lightbulb, Loader2 } from "lucide-react";
+import { Rocket, Plus, Trash2, Pencil, Check, X, ChevronDown, Lightbulb, Loader2, Target } from "lucide-react";
 import { PDILoader } from "@/components/ui/pdi-loader";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
@@ -464,97 +464,128 @@ const MaoNaMassa = ({ embedded = false }: MaoNaMassaProps) => {
                 </Table>
               </div>
 
-              {/* Versão Mobile - Cards */}
-              <div className="md:hidden space-y-4">
+              {/* Versão Mobile - Cards Colapsáveis */}
+              <div className="md:hidden space-y-3 max-w-full overflow-hidden">
                 {metasCadastradas.map((metaCadastrada) => {
                   // Normalizar ID para comparação (suporta UUID e numeric IDs)
                   const objetivoIdMeta = String(metaCadastrada.objetivoId || metaCadastrada.objetivo_id || '');
                   const objetivo = objetivosDisponiveis.find(
                     (obj) => String(obj.id) === objetivoIdMeta
                   );
+                  const dataValor = metaCadastrada.dataAlvo || metaCadastrada.data_alvo;
+                  const dataFormatada = dataValor ? (() => {
+                    const data = new Date(dataValor);
+                    return isNaN(data.getTime()) ? "-" : data.toLocaleDateString('pt-BR');
+                  })() : "-";
+                  const acoesCount = metaCadastrada.acoes?.length || 0;
+                  const passosCount = metaCadastrada.passos?.length || 0;
                   
                   return (
-                    <Card key={metaCadastrada.id} className="shadow-sm">
-                      <CardContent className="pt-6 space-y-3">
-                        <div>
-                          <Label className="text-xs text-muted-foreground">Objetivo</Label>
-                          <p className="font-medium">{objetivo?.texto || "Objetivo não encontrado"}</p>
-                        </div>
-                        
-                        <div>
-                          <Label className="text-xs text-muted-foreground">Meta</Label>
-                          <p className="text-sm">{metaCadastrada.texto}</p>
-                        </div>
-                        
-                        <div>
-                          <Label className="text-xs text-muted-foreground">Data Alvo</Label>
-                          <p className="text-sm">
-                            {(() => {
-                              const dataValor = metaCadastrada.dataAlvo || metaCadastrada.data_alvo;
-                              if (!dataValor) return "-";
-                              const data = new Date(dataValor);
-                              return isNaN(data.getTime()) ? "-" : data.toLocaleDateString('pt-BR');
-                            })()}
-                          </p>
-                        </div>
-                        
-                        <div>
-                          <Label className="text-xs text-muted-foreground">Ações</Label>
-                          {metaCadastrada.acoes && Array.isArray(metaCadastrada.acoes) && metaCadastrada.acoes.length > 0 ? (
-                            <div className="space-y-1 mt-1">
-                              {metaCadastrada.acoes.map((acao: any, idx: number) => (
-                                <div key={`acao-mobile-${metaCadastrada.id}-${idx}`} className="text-sm">
-                                  • {acao?.acao || "Ação sem nome"}
+                    <Collapsible key={metaCadastrada.id}>
+                      <div className="rounded-lg border bg-card overflow-hidden">
+                        {/* Header do Card - Sempre visível */}
+                        <CollapsibleTrigger asChild>
+                          <button className="w-full p-4 flex items-start justify-between text-left hover:bg-muted/50 transition-colors">
+                            <div className="flex-1 min-w-0 pr-3">
+                              <div className="flex items-center gap-2 mb-1">
+                                <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+                                  <Target className="w-4 h-4 text-primary" />
                                 </div>
-                              ))}
+                                <p className="font-medium text-sm truncate">{metaCadastrada.texto}</p>
+                              </div>
+                              <div className="flex items-center gap-3 text-xs text-muted-foreground ml-10">
+                                <span className="flex items-center gap-1">
+                                  📅 {dataFormatada}
+                                </span>
+                                <span className="flex items-center gap-1">
+                                  ✅ {acoesCount} ações
+                                </span>
+                                <span className="flex items-center gap-1">
+                                  📋 {passosCount} passos
+                                </span>
+                              </div>
                             </div>
-                          ) : (
-                            <p className="text-muted-foreground text-sm">Nenhuma ação</p>
-                          )}
-                        </div>
+                            <ChevronDown className="w-5 h-5 text-muted-foreground flex-shrink-0 transition-transform duration-200 group-data-[state=open]:rotate-180" />
+                          </button>
+                        </CollapsibleTrigger>
                         
-                        <div>
-                          <Label className="text-xs text-muted-foreground">Passos</Label>
-                          {metaCadastrada.passos && Array.isArray(metaCadastrada.passos) && metaCadastrada.passos.length > 0 ? (
-                            <div className="space-y-1 mt-1">
-                              {metaCadastrada.passos.map((passo: any, idx: number) => (
-                                <div key={`passo-mobile-${metaCadastrada.id}-${idx}`} className="text-sm">
-                                  {idx + 1}. {passo?.passo || "Passo sem descrição"}
+                        {/* Conteúdo Expandido */}
+                        <CollapsibleContent>
+                          <div className="px-4 pb-4 pt-2 space-y-4 border-t border-border/50">
+                            {/* Objetivo */}
+                            <div className="bg-muted/30 rounded-lg p-3">
+                              <Label className="text-xs text-muted-foreground uppercase tracking-wider">Objetivo Vinculado</Label>
+                              <p className="text-sm font-medium mt-1">{objetivo?.texto || "Objetivo não encontrado"}</p>
+                            </div>
+                            
+                            {/* Ações */}
+                            <div>
+                              <Label className="text-xs text-muted-foreground uppercase tracking-wider flex items-center gap-1">
+                                <Check className="w-3 h-3" /> Ações ({acoesCount})
+                              </Label>
+                              {metaCadastrada.acoes && Array.isArray(metaCadastrada.acoes) && metaCadastrada.acoes.length > 0 ? (
+                                <div className="mt-2 space-y-2">
+                                  {metaCadastrada.acoes.map((acao: any, idx: number) => (
+                                    <div key={`acao-mobile-${metaCadastrada.id}-${idx}`} className="flex items-start gap-2 text-sm bg-green-50 dark:bg-green-950/20 p-2 rounded-md">
+                                      <span className="text-green-600 dark:text-green-400 flex-shrink-0">•</span>
+                                      <span className="break-words">{acao?.acao || "Ação sem nome"}</span>
+                                    </div>
+                                  ))}
                                 </div>
-                              ))}
+                              ) : (
+                                <p className="text-muted-foreground text-sm mt-1 italic">Nenhuma ação cadastrada</p>
+                              )}
                             </div>
-                          ) : (
-                            <p className="text-muted-foreground text-sm">Nenhum passo</p>
-                          )}
-                        </div>
-                        
-                        <div className="flex gap-2 pt-2 border-t">
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => handleEditMeta(metaCadastrada.id)}
-                            className="flex-1"
-                          >
-                            <Pencil className="w-4 h-4 mr-2" />
-                            Editar
-                          </Button>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => handleDeleteMeta(metaCadastrada.id)}
-                            disabled={deletingMetaId === metaCadastrada.id}
-                            className="flex-1"
-                          >
-                            {deletingMetaId === metaCadastrada.id ? (
-                              <Loader2 className="w-4 h-4 mr-2 animate-spin text-destructive" />
-                            ) : (
-                              <Trash2 className="w-4 h-4 mr-2 text-destructive" />
-                            )}
-                            {deletingMetaId === metaCadastrada.id ? "Excluindo..." : "Excluir"}
-                          </Button>
-                        </div>
-                      </CardContent>
-                    </Card>
+                            
+                            {/* Passos */}
+                            <div>
+                              <Label className="text-xs text-muted-foreground uppercase tracking-wider flex items-center gap-1">
+                                <Lightbulb className="w-3 h-3" /> Passos ({passosCount})
+                              </Label>
+                              {metaCadastrada.passos && Array.isArray(metaCadastrada.passos) && metaCadastrada.passos.length > 0 ? (
+                                <div className="mt-2 space-y-2">
+                                  {metaCadastrada.passos.map((passo: any, idx: number) => (
+                                    <div key={`passo-mobile-${metaCadastrada.id}-${idx}`} className="flex items-start gap-2 text-sm bg-blue-50 dark:bg-blue-950/20 p-2 rounded-md">
+                                      <span className="text-blue-600 dark:text-blue-400 font-medium flex-shrink-0">{idx + 1}.</span>
+                                      <span className="break-words">{passo?.passo || "Passo sem descrição"}</span>
+                                    </div>
+                                  ))}
+                                </div>
+                              ) : (
+                                <p className="text-muted-foreground text-sm mt-1 italic">Nenhum passo cadastrado</p>
+                              )}
+                            </div>
+                            
+                            {/* Botões de Ação */}
+                            <div className="flex gap-2 pt-3 border-t">
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => handleEditMeta(metaCadastrada.id)}
+                                className="flex-1 h-11"
+                              >
+                                <Pencil className="w-4 h-4 mr-2" />
+                                Editar
+                              </Button>
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => handleDeleteMeta(metaCadastrada.id)}
+                                disabled={deletingMetaId === metaCadastrada.id}
+                                className="flex-1 h-11 text-destructive hover:text-destructive hover:bg-destructive/10"
+                              >
+                                {deletingMetaId === metaCadastrada.id ? (
+                                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                                ) : (
+                                  <Trash2 className="w-4 h-4 mr-2" />
+                                )}
+                                {deletingMetaId === metaCadastrada.id ? "Excluindo..." : "Excluir"}
+                              </Button>
+                            </div>
+                          </div>
+                        </CollapsibleContent>
+                      </div>
+                    </Collapsible>
                   );
                 })}
               </div>
