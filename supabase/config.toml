@@ -65,3 +65,6 @@ verify_jwt = false
 
 [functions.check-smart-payment]
 verify_jwt = false
+
+[functions.cleanup-incomplete-signups]
+verify_jwt = false

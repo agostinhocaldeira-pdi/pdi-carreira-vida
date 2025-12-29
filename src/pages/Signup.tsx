@@ -1,27 +1,18 @@
-import { useState, useEffect } from "react";
-import { useNavigate, Link, useSearchParams } from "react-router-dom";
+import { useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-} from "@/components/ui/dialog";
 import { toast } from "sonner";
-import { UserPlus, Eye, EyeOff, Loader2, Shield, Star, Sparkles, Crown, Check } from "lucide-react";
+import { UserPlus, Eye, EyeOff, Loader2, Shield } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { LGPDConsentModal } from "@/components/lgpd/LGPDConsentModal";
 import Logo from "@/components/Logo";
 
 const Signup = () => {
   const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
-  const planFromUrl = searchParams.get('plan');
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -32,8 +23,6 @@ const Signup = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [showLGPDModal, setShowLGPDModal] = useState(false);
   const [lgpdAccepted, setLgpdAccepted] = useState(false);
-  const [showPlansModal, setShowPlansModal] = useState(false);
-  const [isCheckoutLoading, setIsCheckoutLoading] = useState(false);
 
   const validateForm = () => {
     if (!formData.name || !formData.email || !formData.phone || !formData.password) {
@@ -124,52 +113,40 @@ const Signup = () => {
           console.log('Welcome email sent successfully');
         } catch (emailError) {
           console.error('Error sending welcome email:', emailError);
-          // Não bloqueia o fluxo se o e-mail falhar
         }
 
-        toast.success("Perfil criado com sucesso!");
+        toast.success("Perfil criado! Redirecionando para pagamento...");
         
-        // If user came with basico plan intent, go directly to checkout
-        if (planFromUrl === 'basico') {
-          // Trigger checkout directly
-          setTimeout(async () => {
-            try {
-              const { data: session } = await supabase.auth.getSession();
-              
-              if (!session?.session?.access_token) {
-                toast.error("Sessão expirada. Por favor, faça login novamente.");
-                navigate("/login");
-                return;
-              }
+        // Direcionar direto para checkout do Stripe
+        try {
+          const { data: session } = await supabase.auth.getSession();
+          
+          if (!session?.session?.access_token) {
+            toast.error("Sessão expirada. Por favor, faça login novamente.");
+            navigate("/login");
+            return;
+          }
 
-              const { data, error } = await supabase.functions.invoke('create-checkout', {
-                headers: {
-                  Authorization: `Bearer ${session.session.access_token}`,
-                },
-              });
+          const { data: checkoutData, error: checkoutError } = await supabase.functions.invoke('create-checkout', {
+            headers: {
+              Authorization: `Bearer ${session.session.access_token}`,
+            },
+          });
 
-              if (error) {
-                console.error('Checkout error:', error);
-                toast.error("Erro ao iniciar checkout. Tente novamente.");
-                setShowPlansModal(true);
-                return;
-              }
+          if (checkoutError) {
+            console.error('Checkout error:', checkoutError);
+            toast.error("Erro ao iniciar checkout. Tente novamente.");
+            return;
+          }
 
-              if (data?.url) {
-                window.location.href = data.url;
-              } else {
-                toast.error("Erro ao obter URL de checkout.");
-                setShowPlansModal(true);
-              }
-            } catch (error) {
-              console.error('Checkout error:', error);
-              toast.error("Erro ao processar pagamento. Tente novamente.");
-              setShowPlansModal(true);
-            }
-          }, 500);
-        } else {
-          // Show plans modal for plan selection
-          setShowPlansModal(true);
+          if (checkoutData?.url) {
+            window.location.href = checkoutData.url;
+          } else {
+            toast.error("Erro ao obter URL de checkout.");
+          }
+        } catch (checkoutErr) {
+          console.error('Checkout error:', checkoutErr);
+          toast.error("Erro ao processar pagamento. Tente novamente.");
         }
       }
     } catch (error: any) {
@@ -177,49 +154,6 @@ const Signup = () => {
       toast.error("Erro ao criar perfil. Tente novamente.");
     } finally {
       setIsLoading(false);
-    }
-  };
-
-
-  const handleSelectFreePlan = () => {
-    setShowPlansModal(false);
-    navigate("/onboarding");
-  };
-
-  const handleSelectBasicPlan = async () => {
-    setIsCheckoutLoading(true);
-    try {
-      const { data: session } = await supabase.auth.getSession();
-      
-      if (!session?.session?.access_token) {
-        toast.error("Sessão expirada. Por favor, faça login novamente.");
-        navigate("/login");
-        return;
-      }
-
-      const { data, error } = await supabase.functions.invoke('create-checkout', {
-        headers: {
-          Authorization: `Bearer ${session.session.access_token}`,
-        },
-      });
-
-      if (error) {
-        console.error('Checkout error:', error);
-        toast.error("Erro ao iniciar checkout. Tente novamente.");
-        return;
-      }
-
-      if (data?.url) {
-        // Redirect to Stripe checkout
-        window.location.href = data.url;
-      } else {
-        toast.error("Erro ao obter URL de checkout.");
-      }
-    } catch (error) {
-      console.error('Checkout error:', error);
-      toast.error("Erro ao processar pagamento. Tente novamente.");
-    } finally {
-      setIsCheckoutLoading(false);
     }
   };
 
@@ -234,6 +168,11 @@ const Signup = () => {
           <CardDescription className="text-sm sm:text-base">
             Crie seu perfil e comece sua jornada de desenvolvimento
           </CardDescription>
+          <div className="bg-primary/10 border border-primary/20 rounded-lg px-3 py-2 mt-2">
+            <p className="text-sm font-medium text-primary">
+              R$ 67,00/ano • Acesso completo por 12 meses
+            </p>
+          </div>
         </CardHeader>
         <CardContent className="px-4 sm:px-6">
           <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
@@ -331,7 +270,7 @@ const Signup = () => {
               ) : (
                 <UserPlus className="w-4 h-4 mr-2" />
               )}
-              {isLoading ? "Criando..." : "Criar Perfil"}
+              {isLoading ? "Processando..." : "Criar Perfil e Pagar"}
             </Button>
           </form>
 
@@ -351,186 +290,6 @@ const Signup = () => {
         open={showLGPDModal}
         onClose={() => setShowLGPDModal(false)}
       />
-
-      {/* Plans Selection Modal */}
-      <Dialog open={showPlansModal} onOpenChange={() => {}}>
-        <DialogContent className="sm:max-w-4xl max-h-[90vh] overflow-y-auto" onPointerDownOutside={(e) => e.preventDefault()}>
-          <DialogHeader>
-            <DialogTitle className="text-center text-xl">Escolha seu plano</DialogTitle>
-            <DialogDescription className="text-center">
-              Selecione o plano que melhor atende suas necessidades
-            </DialogDescription>
-          </DialogHeader>
-          <div className="grid gap-4 py-4 sm:grid-cols-3">
-            {/* Plano Gratuito */}
-            <Card 
-              className="border-2 border-border hover:border-primary hover:shadow-lg transition-all cursor-pointer group"
-              onClick={handleSelectFreePlan}
-            >
-              <CardHeader className="pb-3">
-                <div className="flex items-center gap-2">
-                  <Star className="h-5 w-5 text-primary" />
-                  <CardTitle className="text-lg">Gratuito</CardTitle>
-                </div>
-                <div className="text-2xl font-bold">R$ 0<span className="text-sm font-normal text-muted-foreground">/mês</span></div>
-              </CardHeader>
-              <CardContent className="space-y-2 text-sm">
-                <div className="space-y-1.5">
-                  <div className="flex items-start gap-2">
-                    <Check className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
-                    <span><span className="line-through text-muted-foreground">30 dias</span> <strong className="text-primary">1 ANO</strong></span>
-                  </div>
-                  <div className="flex items-start gap-2">
-                    <Check className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
-                    <span>Dashboard "Seu Progresso"</span>
-                  </div>
-                  <div className="flex items-start gap-2">
-                    <Check className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
-                    <span>Gerar 1 insight</span>
-                  </div>
-                  <div className="flex items-start gap-2">
-                    <Check className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
-                    <span>Diário completo</span>
-                  </div>
-                  <div className="flex items-start gap-2">
-                    <Check className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
-                    <span>1 objetivo, 1 meta, 5 ações</span>
-                  </div>
-                  <div className="flex items-start gap-2">
-                    <Check className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
-                    <span className="text-xs">Ferramentas ilimitadas: Roda da Vida, VVD, Valores, Eisenhower</span>
-                  </div>
-                  <div className="flex items-start gap-2">
-                    <Check className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
-                    <span className="text-xs">1 uso: SWOT, SMART, Autoavaliação 360º, Crenças</span>
-                  </div>
-                </div>
-                <Button variant="outline" className="w-full mt-4 group-hover:bg-primary/10">
-                  Começar grátis
-                </Button>
-              </CardContent>
-            </Card>
-
-            {/* Plano Básico */}
-            <Card 
-              className="border-2 border-muted opacity-70 relative overflow-hidden"
-            >
-              <CardHeader className="pb-3">
-                <div className="flex items-center gap-2">
-                  <Sparkles className="h-5 w-5 text-muted-foreground" />
-                  <CardTitle className="text-lg text-muted-foreground">Básico</CardTitle>
-                </div>
-                <div className="text-2xl font-bold text-muted-foreground">
-                  R$ 14,90<span className="text-sm font-normal">/mês</span>
-                </div>
-              </CardHeader>
-              <CardContent className="space-y-2 text-sm text-muted-foreground">
-                <div className="space-y-1.5">
-                  <div className="flex items-start gap-2">
-                    <Check className="h-4 w-4 mt-0.5 flex-shrink-0" />
-                    <span>Dashboard "Seu Progresso"</span>
-                  </div>
-                  <div className="flex items-start gap-2">
-                    <Check className="h-4 w-4 mt-0.5 flex-shrink-0" />
-                    <span>1 insight por mês</span>
-                  </div>
-                  <div className="flex items-start gap-2">
-                    <Check className="h-4 w-4 mt-0.5 flex-shrink-0" />
-                    <span>Diário completo</span>
-                  </div>
-                  <div className="flex items-start gap-2">
-                    <Check className="h-4 w-4 mt-0.5 flex-shrink-0" />
-                    <span>Plano de Vida ilimitado</span>
-                  </div>
-                  <div className="flex items-start gap-2">
-                    <Check className="h-4 w-4 mt-0.5 flex-shrink-0" />
-                    <span>Todas as ferramentas ilimitadas</span>
-                  </div>
-                  <div className="flex items-start gap-2">
-                    <Check className="h-4 w-4 mt-0.5 flex-shrink-0" />
-                    <span>Integração Google Calendar</span>
-                  </div>
-                  <div className="flex items-start gap-2">
-                    <Check className="h-4 w-4 mt-0.5 flex-shrink-0" />
-                    <span>Construção Guiada</span>
-                  </div>
-                </div>
-                <Button variant="outline" className="w-full mt-4" disabled>
-                  Em breve
-                </Button>
-                <p className="text-xs text-center text-muted-foreground mt-2">
-                  acesso ilimitado* a todas funcionalidades
-                </p>
-                <p className="text-[10px] text-center text-muted-foreground">
-                  *exceto insights com limite de 1 por mês
-                </p>
-              </CardContent>
-            </Card>
-
-            {/* Plano Completo */}
-            <Card className="border-2 border-muted opacity-70 relative overflow-hidden">
-              <div className="absolute top-0 right-0 bg-muted text-muted-foreground text-xs px-3 py-1 rounded-bl-lg font-medium">
-                Recomendado
-              </div>
-              <CardHeader className="pb-3">
-                <div className="flex items-center gap-2">
-                  <Crown className="h-5 w-5 text-muted-foreground" />
-                  <CardTitle className="text-lg text-muted-foreground">Completo</CardTitle>
-                </div>
-                <div className="text-2xl font-bold text-muted-foreground">R$ 49<span className="text-sm font-normal">/mês</span></div>
-              </CardHeader>
-              <CardContent className="space-y-2 text-sm text-muted-foreground">
-                <div className="space-y-1.5">
-                  <div className="flex items-start gap-2">
-                    <Check className="h-4 w-4 mt-0.5 flex-shrink-0" />
-                    <span>Dashboard "Seu Progresso"</span>
-                  </div>
-                  <div className="flex items-start gap-2">
-                    <Check className="h-4 w-4 mt-0.5 flex-shrink-0" />
-                    <span>Insights ilimitados</span>
-                  </div>
-                  <div className="flex items-start gap-2">
-                    <Check className="h-4 w-4 mt-0.5 flex-shrink-0" />
-                    <span>Diário completo</span>
-                  </div>
-                  <div className="flex items-start gap-2">
-                    <Check className="h-4 w-4 mt-0.5 flex-shrink-0" />
-                    <span>Plano de Vida ilimitado</span>
-                  </div>
-                  <div className="flex items-start gap-2">
-                    <Check className="h-4 w-4 mt-0.5 flex-shrink-0" />
-                    <span>Todas as ferramentas ilimitadas</span>
-                  </div>
-                  <div className="flex items-start gap-2">
-                    <Check className="h-4 w-4 mt-0.5 flex-shrink-0" />
-                    <span>Integração Google Calendar</span>
-                  </div>
-                  <div className="flex items-start gap-2">
-                    <Check className="h-4 w-4 mt-0.5 flex-shrink-0" />
-                    <span>Notificações e-mail e WhatsApp</span>
-                  </div>
-                  <div className="flex items-start gap-2">
-                    <Check className="h-4 w-4 mt-0.5 flex-shrink-0" />
-                    <span>Construção Guiada</span>
-                  </div>
-                  <div className="flex items-start gap-2">
-                    <Check className="h-4 w-4 mt-0.5 flex-shrink-0" />
-                    <span>Gerar relatórios PDF</span>
-                  </div>
-                </div>
-                <Button variant="outline" className="w-full mt-4" disabled>
-                  Em breve
-                </Button>
-              </CardContent>
-            </Card>
-          </div>
-          <div className="bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-800 rounded-lg p-3 text-center">
-            <p className="text-sm font-medium text-green-700 dark:text-green-300">
-              🚀 Promoção de lançamento: acesso do plano completo liberado no Plano Gratuito para os primeiros 100 assinantes, por 1 ano!
-            </p>
-          </div>
-        </DialogContent>
-      </Dialog>
     </div>
   );
 };

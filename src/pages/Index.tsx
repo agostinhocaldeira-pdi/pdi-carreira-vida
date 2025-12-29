@@ -259,17 +259,22 @@ const Index = () => {
               </div>
             </div>
 
-            <div className="flex flex-col items-center gap-2">
+            <div className="flex flex-col items-center gap-3">
+              <div className="bg-primary/10 border border-primary/20 rounded-xl px-4 py-2 inline-block">
+                <p className="text-sm sm:text-base font-semibold text-primary">
+                  R$ 67,00/ano <span className="text-muted-foreground font-normal">• Acesso completo por 12 meses</span>
+                </p>
+              </div>
               <Button 
                 size="lg" 
-                onClick={() => handlePlanClick('gratuito')}
+                onClick={() => navigate('/signup')}
                 className="text-base sm:text-lg px-6 sm:px-8 py-5 sm:py-6 bg-primary hover:bg-primary/90"
               >
-                Retomar o controle
+                Começar agora
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
               <p className="text-xs sm:text-sm text-muted-foreground">
-                Com mentoria especializada e apoio da Inteligência Artificial
+                Mentoria especializada + Inteligência Artificial
               </p>
             </div>
           </div>
@@ -717,7 +722,12 @@ const Index = () => {
               <ArrowRight className="h-4 w-4" />
             </button>
             
-            <div className="flex flex-col items-center gap-2">
+            <div className="flex flex-col items-center gap-3">
+              <div className="bg-primary/10 border border-primary/20 rounded-xl px-4 py-2 inline-block">
+                <p className="text-sm sm:text-base font-semibold text-primary">
+                  R$ 67,00/ano <span className="text-muted-foreground font-normal">• Acesso por 12 meses</span>
+                </p>
+              </div>
               <Button 
                 size="lg" 
                 onClick={() => navigate('/signup')}
@@ -1009,30 +1019,117 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Flash Promotion Banner - Plano Gratuito */}
+      {/* Seção de Benefícios e Limites */}
       <section id="planos" className="py-12 sm:py-16 px-4 bg-muted/30">
-        <div className="container mx-auto max-w-4xl">
-          <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-amber-500 via-orange-500 to-red-500 p-[2px]">
-            <div className="relative bg-background rounded-2xl p-6 sm:p-8 text-center">
-              <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-amber-500 via-orange-500 to-red-500 animate-pulse" />
-              <h3 className="text-xl sm:text-2xl md:text-3xl font-bold mb-2 bg-gradient-to-r from-amber-600 via-orange-500 to-red-500 bg-clip-text text-transparent">
-                Plano Gratuito com TODAS as funções liberadas!
+        <div className="container mx-auto max-w-5xl">
+          <div className="text-center mb-8">
+            <Badge variant="secondary" className="mb-4 text-xs sm:text-sm">
+              <Star className="h-3.5 w-3.5 mr-1.5" />
+              O que você recebe
+            </Badge>
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 sm:mb-4">
+              Tudo que você precisa para evoluir
+            </h2>
+            <p className="text-muted-foreground max-w-2xl mx-auto text-sm sm:text-base">
+              Acesso completo a todas as ferramentas e recursos por apenas <strong className="text-primary">R$ 67/ano</strong>
+            </p>
+          </div>
+
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-8">
+            {/* Plano de Vida */}
+            <Card className="border-border/50 bg-card/50 backdrop-blur-sm">
+              <CardContent className="p-5 sm:p-6">
+                <div className="w-10 h-10 rounded-lg bg-primary/20 flex items-center justify-center mb-4">
+                  <Target className="h-5 w-5 text-primary" />
+                </div>
+                <h3 className="font-semibold mb-2">Plano de Vida Ilimitado</h3>
+                <p className="text-sm text-muted-foreground">Objetivos, metas e ações sem limites para organizar toda sua jornada</p>
+              </CardContent>
+            </Card>
+
+            {/* Ferramentas */}
+            <Card className="border-border/50 bg-card/50 backdrop-blur-sm">
+              <CardContent className="p-5 sm:p-6">
+                <div className="w-10 h-10 rounded-lg bg-purple-500/20 flex items-center justify-center mb-4">
+                  <Compass className="h-5 w-5 text-purple-500" />
+                </div>
+                <h3 className="font-semibold mb-2">8 Ferramentas de Autoconhecimento</h3>
+                <p className="text-sm text-muted-foreground">Roda da Vida, SWOT, VVD, SMART, Eisenhower, Valores, Crenças e mais</p>
+              </CardContent>
+            </Card>
+
+            {/* Diário */}
+            <Card className="border-border/50 bg-card/50 backdrop-blur-sm">
+              <CardContent className="p-5 sm:p-6">
+                <div className="w-10 h-10 rounded-lg bg-pink-500/20 flex items-center justify-center mb-4">
+                  <BookOpen className="h-5 w-5 text-pink-500" />
+                </div>
+                <h3 className="font-semibold mb-2">Diário de Reflexão Completo</h3>
+                <p className="text-sm text-muted-foreground">Registro diário com humor, gratidão, conquistas e gráficos de progresso</p>
+              </CardContent>
+            </Card>
+
+            {/* IA */}
+            <Card className="border-border/50 bg-card/50 backdrop-blur-sm">
+              <CardContent className="p-5 sm:p-6">
+                <div className="w-10 h-10 rounded-lg bg-blue-500/20 flex items-center justify-center mb-4">
+                  <Cpu className="h-5 w-5 text-blue-500" />
+                </div>
+                <h3 className="font-semibold mb-2">Insights de IA</h3>
+                <p className="text-sm text-muted-foreground">1 insight personalizado por mês sobre sua jornada e evolução</p>
+              </CardContent>
+            </Card>
+
+            {/* Construção Guiada */}
+            <Card className="border-border/50 bg-card/50 backdrop-blur-sm">
+              <CardContent className="p-5 sm:p-6">
+                <div className="w-10 h-10 rounded-lg bg-green-500/20 flex items-center justify-center mb-4">
+                  <TrendingUp className="h-5 w-5 text-green-500" />
+                </div>
+                <h3 className="font-semibold mb-2">Construção Guiada</h3>
+                <p className="text-sm text-muted-foreground">Passo a passo para construir seu PDI do zero com mentoria</p>
+              </CardContent>
+            </Card>
+
+            {/* Integrações */}
+            <Card className="border-border/50 bg-card/50 backdrop-blur-sm">
+              <CardContent className="p-5 sm:p-6">
+                <div className="w-10 h-10 rounded-lg bg-orange-500/20 flex items-center justify-center mb-4">
+                  <Calendar className="h-5 w-5 text-orange-500" />
+                </div>
+                <h3 className="font-semibold mb-2">Google Calendar</h3>
+                <p className="text-sm text-muted-foreground">Sincronize suas metas e prazos com sua agenda automaticamente</p>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* CTA Final */}
+          <div className="text-center">
+            <div className="bg-gradient-to-r from-primary/10 via-purple-500/10 to-pink-500/10 rounded-2xl p-6 sm:p-8 border border-primary/20">
+              <h3 className="text-xl sm:text-2xl font-bold mb-2">
+                Comece sua transformação hoje
               </h3>
-              <p className="text-muted-foreground text-sm sm:text-base max-w-2xl mx-auto mb-4">
-                Para os <strong className="text-foreground">primeiros 100 usuários</strong>, liberamos acesso completo por <strong className="text-foreground">1 ano</strong> a todas as ferramentas, 
-                PDI ilimitado e recursos premium. Aproveite antes que acabe!
+              <p className="text-muted-foreground mb-4 text-sm sm:text-base">
+                Acesso completo por 12 meses com renovação automática
               </p>
-              <Button 
-                size="lg"
-                onClick={() => handlePlanClick('gratuito')}
-                className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-semibold text-sm sm:text-base"
-              >
-                Ativar meu PDI
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Button>
-              <p className="text-xs text-muted-foreground mt-3">
-                Especialista em Desenvolvimento Humano + IA durante toda a jornada
-              </p>
+              <div className="flex flex-col items-center gap-3">
+                <div className="bg-background/80 rounded-xl px-4 py-2 inline-block">
+                  <p className="text-lg sm:text-xl font-bold text-primary">
+                    R$ 67,00<span className="text-sm font-normal text-muted-foreground">/ano</span>
+                  </p>
+                </div>
+                <Button 
+                  size="lg"
+                  onClick={() => navigate('/signup')}
+                  className="bg-primary hover:bg-primary/90 text-sm sm:text-base"
+                >
+                  Assinar agora
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Button>
+                <p className="text-xs text-muted-foreground">
+                  Mentoria especializada + IA durante toda a jornada
+                </p>
+              </div>
             </div>
           </div>
         </div>

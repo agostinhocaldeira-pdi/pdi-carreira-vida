@@ -49,8 +49,8 @@ serve(async (req) => {
       logStep("Found existing customer", { customerId });
     }
 
-    // Price ID for Plano Básico (R$14,90/mês)
-    const priceId = "price_1SaRrgKNmFxHHoXqZUBzMS2Z";
+    // Price ID for Plano Anual (R$67/ano)
+    const priceId = "price_1Sjo293aJLvyiewRDW1gCi39";
 
     const session = await stripe.checkout.sessions.create({
       customer: customerId,
@@ -63,7 +63,7 @@ serve(async (req) => {
       ],
       mode: "subscription",
       success_url: `${req.headers.get("origin")}/onboarding?checkout=success`,
-      cancel_url: `${req.headers.get("origin")}/signup?checkout=canceled`,
+      cancel_url: `${req.headers.get("origin")}/?checkout=canceled`,
       metadata: {
         user_id: user.id,
       },
