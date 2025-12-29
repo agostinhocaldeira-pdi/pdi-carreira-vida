@@ -88,28 +88,11 @@ const ProgressSection = () => {
   }, []);
 
   useEffect(() => {
-    const loadProgressData = async () => {
-      // Load from localStorage first (instant)
-      let objetivos = JSON.parse(localStorage.getItem("objetivos") || "[]");
-      let metas = JSON.parse(localStorage.getItem("metas") || "[]");
-      
-      // Then try to sync with Supabase in background (parallel)
-      try {
-        const [savedObjetivos, savedMetas] = await Promise.all([
-          storage.getObjetivos().catch(() => null),
-          storage.getMetas().catch(() => null)
-        ]);
-
-        if (savedObjetivos && savedObjetivos.length > 0) {
-          objetivos = savedObjetivos;
-        }
-        
-        if (savedMetas && savedMetas.length > 0) {
-          metas = savedMetas;
-        }
-      } catch (error) {
-        console.error("Error syncing progress data with Supabase:", error);
-      }
+    const loadProgressData = () => {
+      // OPTIMIZATION: Load ONLY from localStorage for instant display
+      // Data is already synced by the parent usePDIQueries hook
+      const objetivos = JSON.parse(localStorage.getItem("objetivos") || "[]");
+      const metas = JSON.parse(localStorage.getItem("metas") || "[]");
       
       // Calculate real progress data
       const totalObjetivos = objetivos.length;

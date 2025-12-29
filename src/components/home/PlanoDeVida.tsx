@@ -383,41 +383,41 @@ const PlanoDeVida = ({ onTabChange, onOpenChange, forcedTab, forcedOpen }: Plano
     }
   }, [pdiData?.objetivos]);
 
-  const handleSaveVvd = async () => {
-    try {
-      await storage.saveVvd(vvd);
-      localStorage.setItem("vvd", vvd); // Backup
-      setIsEditingVvd(false);
-      toast.success("Visão de Vida Desejada salva!");
-      
-      if (typeof window !== 'undefined' && (window as any).markSectionCompleted) {
-        (window as any).markSectionCompleted("Visão de Vida Desejada (VVD)");
-      }
-    } catch (error) {
-      console.error("Error saving VVD:", error);
-      toast.error("Erro ao salvar VVD");
+  const handleSaveVvd = () => {
+    // OPTIMIZATION: Update UI immediately, save in background
+    localStorage.setItem("vvd", vvd);
+    setIsEditingVvd(false);
+    toast.success("Visão de Vida Desejada salva!");
+    
+    if (typeof window !== 'undefined' && (window as any).markSectionCompleted) {
+      (window as any).markSectionCompleted("Visão de Vida Desejada (VVD)");
     }
+    
+    // Save to Supabase in background (non-blocking)
+    storage.saveVvd(vvd).catch(error => {
+      console.error("Background VVD sync error:", error);
+    });
   };
 
   const handleEditVvd = () => {
     setIsEditingVvd(true);
   };
 
-  const handleSaveValores = async () => {
-    try {
-      const filteredValores = valores.filter(v => v.trim() !== "");
-      await storage.saveValores(filteredValores);
-      localStorage.setItem("valores", JSON.stringify(valores)); // Backup
-      setIsEditingValores(false);
-      toast.success("Valores salvos!");
-      
-      if (typeof window !== 'undefined' && (window as any).markSectionCompleted) {
-        (window as any).markSectionCompleted("Meus Valores");
-      }
-    } catch (error) {
-      console.error("Error saving valores:", error);
-      toast.error("Erro ao salvar valores");
+  const handleSaveValores = () => {
+    // OPTIMIZATION: Update UI immediately, save in background
+    const filteredValores = valores.filter(v => v.trim() !== "");
+    localStorage.setItem("valores", JSON.stringify(valores));
+    setIsEditingValores(false);
+    toast.success("Valores salvos!");
+    
+    if (typeof window !== 'undefined' && (window as any).markSectionCompleted) {
+      (window as any).markSectionCompleted("Meus Valores");
     }
+    
+    // Save to Supabase in background (non-blocking)
+    storage.saveValores(filteredValores).catch(error => {
+      console.error("Background valores sync error:", error);
+    });
   };
 
   const handleEditValores = () => {
@@ -432,26 +432,27 @@ const PlanoDeVida = ({ onTabChange, onOpenChange, forcedTab, forcedOpen }: Plano
 
   const isValoresComplete = valores.some((valor) => valor.trim() !== "");
 
-  const handleSaveAreas = async () => {
-    try {
-      const areasToSave = areasVida.map((area, index) => ({
-        id: index + 1,
-        area: area.area,
-        nota_atual: parseInt(String(area.notaAtual)) || 0,
-        nota_desejada: parseInt(String(area.notaDesejada)) || 0,
-      }));
-      await storage.saveAreasVida(areasToSave);
-      localStorage.setItem("areasVida", JSON.stringify(areasVida)); // Backup
-      setIsEditingAreas(false);
-      toast.success("Áreas da Vida salvas!");
-      
-      if (typeof window !== 'undefined' && (window as any).markSectionCompleted) {
-        (window as any).markSectionCompleted("Áreas da Vida");
-      }
-    } catch (error) {
-      console.error("Error saving areas:", error);
-      toast.error("Erro ao salvar áreas");
+  const handleSaveAreas = () => {
+    // OPTIMIZATION: Update UI immediately, save in background
+    const areasToSave = areasVida.map((area, index) => ({
+      id: index + 1,
+      area: area.area,
+      nota_atual: parseInt(String(area.notaAtual)) || 0,
+      nota_desejada: parseInt(String(area.notaDesejada)) || 0,
+    }));
+    
+    localStorage.setItem("areasVida", JSON.stringify(areasVida));
+    setIsEditingAreas(false);
+    toast.success("Áreas da Vida salvas!");
+    
+    if (typeof window !== 'undefined' && (window as any).markSectionCompleted) {
+      (window as any).markSectionCompleted("Áreas da Vida");
     }
+    
+    // Save to Supabase in background (non-blocking)
+    storage.saveAreasVida(areasToSave).catch(error => {
+      console.error("Background areas sync error:", error);
+    });
   };
 
   const handleEditAreas = () => {
@@ -582,21 +583,21 @@ const PlanoDeVida = ({ onTabChange, onOpenChange, forcedTab, forcedOpen }: Plano
     const novosObjetivos = [...objetivos, novoObjetivo];
     setObjetivos(novosObjetivos);
     
-    // Salvar em Supabase e localStorage
-    try {
-      const objetivosToSave = novosObjetivos.map(obj => ({
-        id: obj.id,
-        texto: obj.texto,
-        data_alvo: obj.dataAlvo,
-        conexao_vvd: obj.conexaoVvd,
-        status: obj.status?.replace('-', ' ') || 'a fazer',
-      }));
-      await storage.saveObjetivos(objetivosToSave as any);
-    } catch (error) {
-      console.error("Error saving objetivos:", error);
-    }
+    // OPTIMIZATION: Save to localStorage first, show success immediately
     localStorage.setItem("objetivos", JSON.stringify(novosObjetivos));
     toast.success("Objetivo cadastrado!");
+    
+    // Salvar em Supabase em background (non-blocking)
+    const objetivosToSave = novosObjetivos.map(obj => ({
+      id: obj.id,
+      texto: obj.texto,
+      data_alvo: obj.dataAlvo,
+      conexao_vvd: obj.conexaoVvd,
+      status: obj.status?.replace('-', ' ') || 'a fazer',
+    }));
+    storage.saveObjetivos(objetivosToSave as any).catch(error => {
+      console.error("Background objetivos sync error:", error);
+    });
     setObjetivo({ texto: "", dataAlvo: "", conexaoVvd: "", status: "em-andamento" });
     
     // Guardar ID do objetivo recém criado e mostrar modal
@@ -643,36 +644,29 @@ const PlanoDeVida = ({ onTabChange, onOpenChange, forcedTab, forcedOpen }: Plano
     setDeleteObjetivoId(id);
   };
 
-  const confirmRemoveObjetivo = async () => {
+  const confirmRemoveObjetivo = () => {
     if (deleteObjetivoId == null) return;
 
     const prevObjetivos = objetivos;
     const novosObjetivos = prevObjetivos.filter((obj) => String(obj.id) !== String(deleteObjetivoId));
     setObjetivos(novosObjetivos);
+    localStorage.setItem("objetivos", JSON.stringify(novosObjetivos));
+    toast.success("Objetivo removido!");
+    setDeleteObjetivoId(null);
 
-    try {
-      const objetivosToSave = novosObjetivos.map((obj) => ({
-        id: obj.id,
-        texto: obj.texto,
-        data_alvo: obj.dataAlvo,
-        conexao_vvd: obj.conexaoVvd,
-        status: obj.status || 'a fazer',
-      }));
-
-      await storage.saveObjetivos(objetivosToSave as any);
-      localStorage.setItem("objetivos", JSON.stringify(novosObjetivos));
-
-      // Mantém o cache global consistente para não reaparecer em outras telas (ex: SMART)
-      await queryClient.invalidateQueries({ queryKey: PDI_QUERY_KEYS.pdiData() });
-
-      toast.success("Objetivo removido!");
-    } catch (error) {
-      console.error("Error saving objetivos:", error);
-      setObjetivos(prevObjetivos);
-      toast.error("Erro ao remover objetivo. Tente novamente.");
-    } finally {
-      setDeleteObjetivoId(null);
-    }
+    // Save in background (non-blocking)
+    const objetivosToSave = novosObjetivos.map((obj) => ({
+      id: obj.id,
+      texto: obj.texto,
+      data_alvo: obj.dataAlvo,
+      conexao_vvd: obj.conexaoVvd,
+      status: obj.status || 'a fazer',
+    }));
+    storage.saveObjetivos(objetivosToSave as any).then(() => {
+      queryClient.invalidateQueries({ queryKey: PDI_QUERY_KEYS.pdiData() });
+    }).catch(error => {
+      console.error("Background objetivos sync error:", error);
+    });
   };
 
   const handleStartEditObjetivo = (obj: any) => {
@@ -709,7 +703,7 @@ const PlanoDeVida = ({ onTabChange, onOpenChange, forcedTab, forcedOpen }: Plano
   };
 
   // Funções para gerenciar habilidades
-  const handleAddHabilidade = async () => {
+  const handleAddHabilidade = () => {
     if (!novaHabilidade.trim()) {
       toast.error("Digite uma habilidade para adicionar");
       return;
@@ -718,34 +712,30 @@ const PlanoDeVida = ({ onTabChange, onOpenChange, forcedTab, forcedOpen }: Plano
     const novaHab = { id: Date.now(), tipo: 'fraco' as const, texto: novaHabilidade };
     const novasHabilidades = [...habilidades, novaHab];
     setHabilidades(novasHabilidades);
-    
-    try {
-      await storage.saveHabilidades(novasHabilidades);
-    } catch (error) {
-      console.error("Erro ao salvar habilidade:", error);
-    }
-    
     setNovaHabilidade("");
     toast.success("Habilidade adicionada!");
+    
+    // Save in background (non-blocking)
+    storage.saveHabilidades(novasHabilidades).catch(error => {
+      console.error("Background habilidades sync error:", error);
+    });
   };
 
   const handleRemoveHabilidade = (id: number) => {
     setDeleteHabilidadeId(id);
   };
 
-  const confirmRemoveHabilidade = async () => {
+  const confirmRemoveHabilidade = () => {
     if (deleteHabilidadeId) {
       const novasHabilidades = habilidades.filter((hab) => hab.id !== deleteHabilidadeId);
       setHabilidades(novasHabilidades);
-      
-      try {
-        await storage.saveHabilidades(novasHabilidades);
-      } catch (error) {
-        console.error("Erro ao remover habilidade:", error);
-      }
-      
       toast.success("Habilidade removida!");
       setDeleteHabilidadeId(null);
+      
+      // Save in background (non-blocking)
+      storage.saveHabilidades(novasHabilidades).catch(error => {
+        console.error("Background habilidades sync error:", error);
+      });
     }
   };
 

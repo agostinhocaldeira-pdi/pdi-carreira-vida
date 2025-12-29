@@ -252,26 +252,27 @@ const MaoNaMassa = ({ embedded = false }: MaoNaMassaProps) => {
             ? { ...meta, objetivoId: objetivoSelecionado, acoes, passos, id: editandoMetaId, concluida: false }
             : m
         );
-        await storage.saveMetas(metasAtualizadas);
+        
+        // OPTIMIZATION: Optimistic update - show immediately
         localStorage.setItem("metas", JSON.stringify(metasAtualizadas));
         setMetasCadastradas(metasAtualizadas);
         celebrateAction('goal', 'Meta');
         toast.success("Meta atualizada com sucesso!");
         setEditandoMetaId(null);
         setIsFormOpen(false);
+        
+        // Save to Supabase in background (non-blocking)
+        storage.saveMetas(metasAtualizadas).catch(err => console.error("Background sync error:", err));
       } else {
         // Create new meta without adding to existing array to prevent duplicates
-        // The storage service will handle the insert and return proper UUIDs
-        const novaMeta = { ...meta, objetivoId: objetivoSelecionado, acoes, passos, concluida: false };
+        const novaMeta = { ...meta, id: `temp-${Date.now()}`, objetivoId: objetivoSelecionado, acoes, passos, concluida: false };
         
-        // Save only the new meta (not the entire array with a temporary ID)
-        await storage.saveMetas([...metas, novaMeta]);
+        // OPTIMIZATION: Optimistic update - show immediately in UI
+        const optimisticMetas = [...metas, novaMeta];
+        localStorage.setItem("metas", JSON.stringify(optimisticMetas));
+        setMetasCadastradas(optimisticMetas);
         
-        // Reload metas from Supabase to get proper UUIDs
-        const updatedMetas = await storage.getMetas();
-        localStorage.setItem("metas", JSON.stringify(updatedMetas || []));
-        setMetasCadastradas(updatedMetas || []);
-        
+        // Show success feedback IMMEDIATELY before network request
         celebrateAction('goal', 'Meta');
         setShowSuggestionModal(true);
         setIsFormOpen(false);
@@ -279,6 +280,16 @@ const MaoNaMassa = ({ embedded = false }: MaoNaMassaProps) => {
         if (typeof window !== 'undefined' && (window as any).markSectionCompleted) {
           (window as any).markSectionCompleted("Mão na Massa (Metas)");
         }
+        
+        // Then save to Supabase in background (non-blocking)
+        storage.saveMetas(optimisticMetas).then(async () => {
+          // Reload to get proper UUIDs after save completes
+          const updatedMetas = await storage.getMetas();
+          if (updatedMetas && updatedMetas.length > 0) {
+            localStorage.setItem("metas", JSON.stringify(updatedMetas));
+            setMetasCadastradas(updatedMetas);
+          }
+        }).catch(err => console.error("Background sync error:", err));
       }
     } catch (error) {
       console.error("Error saving meta:", error);
