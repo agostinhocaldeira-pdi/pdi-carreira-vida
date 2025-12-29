@@ -82,6 +82,7 @@ const Index = () => {
   const [isEisenhowerModalOpen, setIsEisenhowerModalOpen] = useState(false);
   const [isBeliefsModalOpen, setIsBeliefsModalOpen] = useState(false);
   const [isAutoavaliacaoModalOpen, setIsAutoavaliacaoModalOpen] = useState(false);
+
   const journeySteps = [
     {
       icon: Rocket,
@@ -200,7 +201,6 @@ const Index = () => {
 
   const handlePessoaFisicaClick = () => {
     setIsModalOpen(false);
-    // Pass the selected plan as a query parameter
     if (selectedPlan === 'basico') {
       navigate("/signup?plan=basico");
     } else {
@@ -209,7 +209,6 @@ const Index = () => {
   };
 
   const handlePlanClick = (planName: string) => {
-    // Normalize plan name: remove accents and convert to lowercase
     const normalizedPlan = planName.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
     setSelectedPlan(normalizedPlan);
     setIsModalOpen(true);
@@ -217,7 +216,7 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/30">
-      {/* Header - Azul petróleo estrutural */}
+      {/* Header */}
       <header className="fixed top-0 left-0 right-0 z-50 bg-primary shadow-elegant">
         <div className="container mx-auto px-3 sm:px-4 py-3 sm:py-4 flex items-center justify-between">
           <Logo size="md" />
@@ -232,16 +231,22 @@ const Index = () => {
         </div>
       </header>
 
-      {/* Hero Section */}
+      {/* ============================================================ */}
+      {/* NOVO HERO SECTION */}
+      {/* ============================================================ */}
       <section className="pt-28 sm:pt-32 pb-12 sm:pb-16 px-4">
         <div className="container mx-auto max-w-4xl">
           <div className="text-center">
             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-5xl font-bold mb-4 sm:mb-6 text-foreground leading-tight">
-              Tudo que você precisa para transformar seus <span className="text-primary/90 font-extrabold">sonhos</span> em <span className="text-primary/90 font-extrabold">realidade</span> - na <span className="text-muted-foreground font-semibold underline underline-offset-4 decoration-primary/50">carreira</span> e na <span className="text-muted-foreground font-semibold underline underline-offset-4 decoration-primary/50">vida</span>!
+              Pare de viver no improviso.{" "}
+              <span className="block text-primary/90">
+                Construa uma vida e uma carreira com clareza, direção e progresso real.
+              </span>
             </h1>
-            <p className="text-base sm:text-lg md:text-xl text-muted-foreground mb-6 sm:mb-8 max-w-3xl mx-auto">
-              Sistema guiado por <span className="text-primary font-semibold">Inteligência Artificial</span> e <span className="text-primary font-semibold">Especialistas em Desenvolvimento Humano</span>, para você <span className="text-foreground font-semibold">conquistar seus objetivos</span>, <span className="text-primary font-bold">de verdade!</span>
+            <p className="text-base sm:text-lg md:text-xl text-muted-foreground mb-6 sm:mb-8 max-w-3xl mx-auto leading-relaxed">
+              O PDI – Carreira & Vida é um sistema guiado por método, tecnologia e reflexão consciente para quem cansou de se sentir perdido, sobrecarregado ou travado — e quer retomar o controle da própria trajetória, com consistência e sentido.
             </p>
+            
             {/* Video Section */}
             <div className="w-full max-w-3xl mx-auto mb-6 sm:mb-8">
               <div className="relative w-full rounded-xl overflow-hidden shadow-2xl border border-border/50" style={{ paddingBottom: '56.25%' }}>
@@ -255,24 +260,28 @@ const Index = () => {
               </div>
             </div>
 
-            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center">
+            <div className="flex flex-col items-center gap-2">
               <Button 
                 size="lg" 
                 onClick={() => handlePlanClick('gratuito')}
                 className="text-base sm:text-lg px-6 sm:px-8 py-5 sm:py-6 bg-primary hover:bg-primary/90"
               >
-                Comece sua evolução hoje
+                Retomar o controle
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
+              <p className="text-xs sm:text-sm text-muted-foreground">
+                Com mentoria especializada e apoio da Inteligência Artificial
+              </p>
             </div>
-            <p className="text-xs sm:text-sm text-muted-foreground mt-4">
-              Comece grátis. Sem cartão de crédito.
-            </p>
           </div>
         </div>
       </section>
 
-      {/* Problem-Solution - O problema não é falta de vontade */}
+      {/* ============================================================ */}
+      {/* SEÇÃO PAREDE - Identificação Emocional */}
+      {/* ============================================================ */}
+      
+      {/* Frase motivacional */}
       <section className="py-12 sm:py-16 px-4 bg-muted/20">
         <div className="container mx-auto max-w-6xl">
           <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
@@ -304,140 +313,6 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Como o SEPP transforma sua evolução */}
-      <section className="py-12 sm:py-16 px-4">
-        <div className="container mx-auto max-w-6xl">
-          <div className="text-center mb-10 sm:mb-14">
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 sm:mb-4">
-              Como o Sistema PDI - Carreira e Vida transforma sua evolução
-            </h2>
-            <p className="text-muted-foreground max-w-2xl mx-auto text-sm sm:text-base">
-              Um método estruturado para sair da intenção e ir para a ação.
-            </p>
-          </div>
-          
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-            <Card className="border-primary/20 bg-gradient-to-br from-primary/5 to-transparent hover:shadow-lg transition-all">
-              <CardContent className="p-5 sm:p-6 text-center">
-                <div className="w-14 h-14 mx-auto rounded-full bg-primary/10 flex items-center justify-center mb-4">
-                  <Compass className="h-7 w-7 text-primary" />
-                </div>
-                <h3 className="text-lg font-semibold mb-2">Clareza e Diagnóstico</h3>
-                <p className="text-muted-foreground text-sm">
-                  Organize prioridades, identifique lacunas e defina metas concretas.
-                </p>
-              </CardContent>
-            </Card>
-            
-            <Card className="border-purple-500/20 bg-gradient-to-br from-purple-500/5 to-transparent hover:shadow-lg transition-all">
-              <CardContent className="p-5 sm:p-6 text-center">
-                <div className="w-14 h-14 mx-auto rounded-full bg-purple-500/10 flex items-center justify-center mb-4">
-                  <Target className="h-7 w-7 text-purple-500" />
-                </div>
-                <h3 className="text-lg font-semibold mb-2">Estrutura e Método</h3>
-                <p className="text-muted-foreground text-sm">
-                  Transforme intenções em ações repetíveis e mensuráveis.
-                </p>
-              </CardContent>
-            </Card>
-            
-            <Card className="border-emerald-500/20 bg-gradient-to-br from-emerald-500/5 to-transparent hover:shadow-lg transition-all">
-              <CardContent className="p-5 sm:p-6 text-center">
-                <div className="w-14 h-14 mx-auto rounded-full bg-emerald-500/10 flex items-center justify-center mb-4">
-                  <TrendingUp className="h-7 w-7 text-emerald-500" />
-                </div>
-                <h3 className="text-lg font-semibold mb-2">Acompanhamento Contínuo</h3>
-                <p className="text-muted-foreground text-sm">
-                  Utilize tecnologia e processos do método para manter evolução consistente.
-                </p>
-              </CardContent>
-            </Card>
-            
-            <Card className="border-orange-500/20 bg-gradient-to-br from-orange-500/5 to-transparent hover:shadow-lg transition-all">
-              <CardContent className="p-5 sm:p-6 text-center">
-                <div className="w-14 h-14 mx-auto rounded-full bg-orange-500/10 flex items-center justify-center mb-4">
-                  <User className="h-7 w-7 text-orange-500" />
-                </div>
-                <h3 className="text-lg font-semibold mb-2">Protagonismo do Usuário</h3>
-                <p className="text-muted-foreground text-sm">
-                  Você conduz sua própria jornada, com suporte e método ao seu lado.
-                </p>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-      </section>
-
-      {/* O que você ganha com o SEPP */}
-      <section className="py-12 sm:py-16 px-4 bg-muted/30">
-        <div className="container mx-auto max-w-6xl">
-          <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
-            <div className="text-center lg:text-left">
-              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-6">
-                O que o Sistema PDI - Carreira e Vida faz por você
-              </h2>
-              <ul className="space-y-4 text-left">
-                <li className="flex items-start gap-3">
-                  <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                    <Check className="h-4 w-4 text-primary" />
-                  </div>
-                  <span className="text-base sm:text-lg text-foreground">Clareza e direção em sua carreira e vida pessoal</span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                    <Check className="h-4 w-4 text-primary" />
-                  </div>
-                  <span className="text-base sm:text-lg text-foreground">Transformação de objetivos em ações mensuráveis</span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                    <Check className="h-4 w-4 text-primary" />
-                  </div>
-                  <span className="text-base sm:text-lg text-foreground">Redução de confusão, procrastinação e decisões dispersas</span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                    <Check className="h-4 w-4 text-primary" />
-                  </div>
-                  <span className="text-base sm:text-lg text-foreground">Evolução contínua e sustentável</span>
-                </li>
-                <li className="flex items-start gap-3">
-                  <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                    <Check className="h-4 w-4 text-primary" />
-                  </div>
-                  <span className="text-base sm:text-lg text-foreground">Aplicação prática do método com suporte de tecnologia</span>
-                </li>
-              </ul>
-            </div>
-            <div className="mt-6 lg:mt-0 flex justify-center">
-              <img 
-                src={pdiFocusTarget} 
-                alt="PDI - Foco em objetivos com direção clara" 
-                className="rounded-2xl shadow-xl w-full max-w-[220px] sm:max-w-[260px] lg:max-w-[300px] h-auto object-contain"
-              />
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Por que o PDI funciona */}
-      <section className="py-12 sm:py-16 px-4">
-        <div className="container mx-auto max-w-4xl">
-          <div className="text-center">
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-6">
-              Por que o PDI – Carreira & Vida funciona
-            </h2>
-            <p className="text-muted-foreground text-sm sm:text-base md:text-lg leading-relaxed max-w-3xl mx-auto">
-              O PDI – Carreira & Vida não foi criado como uma fórmula mágica ou um método motivacional passageiro. 
-              Ele funciona porque organiza, de forma prática e acessível, princípios amplamente utilizados em 
-              psicologia comportamental, planejamento estratégico, desenvolvimento de carreira e gestão de metas, 
-              aplicados à realidade da vida pessoal e profissional.
-            </p>
-          </div>
-        </div>
-      </section>
-
-      {/* Why Now Section */}
       {/* Por que agora? Section */}
       <section className="py-12 sm:py-20 px-4 bg-gradient-to-br from-primary/5 via-background to-purple-500/5">
         <div className="container mx-auto max-w-5xl">
@@ -554,11 +429,145 @@ const Index = () => {
               </CardContent>
             </Card>
           </div>
+
+          {/* CTA da Seção PAREDE */}
+          <div className="text-center mt-10 sm:mt-14">
+            <Button 
+              size="lg" 
+              onClick={() => handlePlanClick('gratuito')}
+              className="text-base sm:text-lg px-6 sm:px-8 py-5 sm:py-6 bg-primary hover:bg-primary/90"
+            >
+              Retomar o controle
+              <ArrowRight className="ml-2 h-5 w-5" />
+            </Button>
+            <p className="text-xs sm:text-sm text-muted-foreground mt-3">
+              Com mentoria especializada e apoio da Inteligência Artificial
+            </p>
+          </div>
         </div>
       </section>
 
+      {/* ============================================================ */}
+      {/* SEÇÃO QUADRO - Resultado Desejado */}
+      {/* ============================================================ */}
 
-      {/* Journey Steps */}
+      {/* Confusão vs Evolução - Benefícios do sistema */}
+      <section className="py-12 sm:py-16 px-4">
+        <div className="container mx-auto max-w-6xl">
+          <div className="text-center mb-10 sm:mb-14">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 sm:mb-4">
+              Como o Sistema PDI - Carreira e Vida transforma sua evolução
+            </h2>
+            <p className="text-muted-foreground max-w-2xl mx-auto text-sm sm:text-base">
+              Um método estruturado para sair da intenção e ir para a ação.
+            </p>
+          </div>
+          
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+            <Card className="border-primary/20 bg-gradient-to-br from-primary/5 to-transparent hover:shadow-lg transition-all">
+              <CardContent className="p-5 sm:p-6 text-center">
+                <div className="w-14 h-14 mx-auto rounded-full bg-primary/10 flex items-center justify-center mb-4">
+                  <Compass className="h-7 w-7 text-primary" />
+                </div>
+                <h3 className="text-lg font-semibold mb-2">Clareza e Diagnóstico</h3>
+                <p className="text-muted-foreground text-sm">
+                  Organize prioridades, identifique lacunas e defina metas concretas.
+                </p>
+              </CardContent>
+            </Card>
+            
+            <Card className="border-purple-500/20 bg-gradient-to-br from-purple-500/5 to-transparent hover:shadow-lg transition-all">
+              <CardContent className="p-5 sm:p-6 text-center">
+                <div className="w-14 h-14 mx-auto rounded-full bg-purple-500/10 flex items-center justify-center mb-4">
+                  <Target className="h-7 w-7 text-purple-500" />
+                </div>
+                <h3 className="text-lg font-semibold mb-2">Estrutura e Método</h3>
+                <p className="text-muted-foreground text-sm">
+                  Transforme intenções em ações repetíveis e mensuráveis.
+                </p>
+              </CardContent>
+            </Card>
+            
+            <Card className="border-emerald-500/20 bg-gradient-to-br from-emerald-500/5 to-transparent hover:shadow-lg transition-all">
+              <CardContent className="p-5 sm:p-6 text-center">
+                <div className="w-14 h-14 mx-auto rounded-full bg-emerald-500/10 flex items-center justify-center mb-4">
+                  <TrendingUp className="h-7 w-7 text-emerald-500" />
+                </div>
+                <h3 className="text-lg font-semibold mb-2">Acompanhamento Contínuo</h3>
+                <p className="text-muted-foreground text-sm">
+                  Utilize tecnologia e processos do método para manter evolução consistente.
+                </p>
+              </CardContent>
+            </Card>
+            
+            <Card className="border-orange-500/20 bg-gradient-to-br from-orange-500/5 to-transparent hover:shadow-lg transition-all">
+              <CardContent className="p-5 sm:p-6 text-center">
+                <div className="w-14 h-14 mx-auto rounded-full bg-orange-500/10 flex items-center justify-center mb-4">
+                  <User className="h-7 w-7 text-orange-500" />
+                </div>
+                <h3 className="text-lg font-semibold mb-2">Protagonismo do Usuário</h3>
+                <p className="text-muted-foreground text-sm">
+                  Você conduz sua própria jornada, com suporte e método ao seu lado.
+                </p>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </section>
+
+      {/* O que você ganha com o Sistema */}
+      <section className="py-12 sm:py-16 px-4 bg-muted/30">
+        <div className="container mx-auto max-w-6xl">
+          <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
+            <div className="text-center lg:text-left">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-6">
+                O que o Sistema PDI - Carreira e Vida faz por você
+              </h2>
+              <ul className="space-y-4 text-left">
+                <li className="flex items-start gap-3">
+                  <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <Check className="h-4 w-4 text-primary" />
+                  </div>
+                  <span className="text-base sm:text-lg text-foreground">Clareza e direção em sua carreira e vida pessoal</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <Check className="h-4 w-4 text-primary" />
+                  </div>
+                  <span className="text-base sm:text-lg text-foreground">Transformação de objetivos em ações mensuráveis</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <Check className="h-4 w-4 text-primary" />
+                  </div>
+                  <span className="text-base sm:text-lg text-foreground">Redução de confusão, procrastinação e decisões dispersas</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <Check className="h-4 w-4 text-primary" />
+                  </div>
+                  <span className="text-base sm:text-lg text-foreground">Evolução contínua e sustentável</span>
+                </li>
+                <li className="flex items-start gap-3">
+                  <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <Check className="h-4 w-4 text-primary" />
+                  </div>
+                  <span className="text-base sm:text-lg text-foreground">Aplicação prática do método com suporte de tecnologia</span>
+                </li>
+              </ul>
+            </div>
+            <div className="mt-6 lg:mt-0 flex justify-center">
+              <img 
+                src={pdiFocusTarget} 
+                alt="PDI - Foco em objetivos com direção clara" 
+                className="rounded-2xl shadow-xl w-full max-w-[220px] sm:max-w-[260px] lg:max-w-[300px] h-auto object-contain"
+              />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Sua jornada começa aqui (Etapas 1 a 6) */}
       <section className="py-12 sm:py-16 px-4">
         <div className="container mx-auto max-w-6xl">
           <button 
@@ -607,6 +616,42 @@ const Index = () => {
               </div>
             </>
           )}
+
+          {/* CTA da Seção QUADRO */}
+          <div className="text-center mt-10 sm:mt-14">
+            <Button 
+              size="lg" 
+              onClick={() => handlePlanClick('gratuito')}
+              className="text-base sm:text-lg px-6 sm:px-8 py-5 sm:py-6 bg-primary hover:bg-primary/90"
+            >
+              Criar meu plano
+              <ArrowRight className="ml-2 h-5 w-5" />
+            </Button>
+            <p className="text-xs sm:text-sm text-muted-foreground mt-3">
+              Método estruturado com acompanhamento humano e IA
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* ============================================================ */}
+      {/* SEÇÃO FURADEIRA - Método, Sistema e Tecnologia */}
+      {/* ============================================================ */}
+
+      {/* Por que o PDI funciona (Método SEPP) */}
+      <section className="py-12 sm:py-16 px-4 bg-muted/20">
+        <div className="container mx-auto max-w-4xl">
+          <div className="text-center">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-6">
+              Por que o PDI – Carreira & Vida funciona
+            </h2>
+            <p className="text-muted-foreground text-sm sm:text-base md:text-lg leading-relaxed max-w-3xl mx-auto">
+              O PDI – Carreira & Vida não foi criado como uma fórmula mágica ou um método motivacional passageiro. 
+              Ele funciona porque organiza, de forma prática e acessível, princípios amplamente utilizados em 
+              psicologia comportamental, planejamento estratégico, desenvolvimento de carreira e gestão de metas, 
+              aplicados à realidade da vida pessoal e profissional.
+            </p>
+          </div>
         </div>
       </section>
 
@@ -673,21 +718,24 @@ const Index = () => {
               <ArrowRight className="h-4 w-4" />
             </button>
             
-            <div>
+            <div className="flex flex-col items-center gap-2">
               <Button 
                 size="lg" 
                 onClick={() => navigate('/signup')}
                 className="text-base sm:text-lg px-6 sm:px-8 py-5 sm:py-6 rounded-full shadow-lg hover:shadow-xl transition-all"
               >
-                Começar meu Diário agora!
+                Começar o diário
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
+              <p className="text-xs sm:text-sm text-muted-foreground">
+                Reflexão guiada com insights de IA
+              </p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Tools Section */}
+      {/* Tools Section - 8 Ferramentas */}
       <section className="py-12 sm:py-16 px-4 bg-muted/30">
         <div className="container mx-auto max-w-5xl">
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center mb-3 sm:mb-4">
@@ -706,97 +754,50 @@ const Index = () => {
               const isEisenhowerCard = tool.name === "Matriz de Eisenhower";
               const isBeliefsCard = tool.name === "Transformação de Crenças";
               const isAutoavaliacaoCard = tool.name === "Autoavaliação 360º";
-              const isClickable = isValoresCard || isRodaDaVidaCard || isSwotCard || isVvdCard || isSmartCard || isEisenhowerCard || isBeliefsCard || isAutoavaliacaoCard;
-              
-              const handleClick = () => {
-                if (isValoresCard) setIsValuesModalOpen(true);
-                if (isRodaDaVidaCard) setIsLifeWheelModalOpen(true);
-                if (isSwotCard) setIsSwotModalOpen(true);
-                if (isVvdCard) setIsVvdModalOpen(true);
-                if (isSmartCard) setIsSmartModalOpen(true);
-                if (isEisenhowerCard) setIsEisenhowerModalOpen(true);
-                if (isBeliefsCard) setIsBeliefsModalOpen(true);
-                if (isAutoavaliacaoCard) setIsAutoavaliacaoModalOpen(true);
-              };
               
               return (
-                <div 
-                  key={index}
-                  onClick={isClickable ? handleClick : undefined}
-                  className={`p-3 sm:p-4 bg-background border border-border rounded-xl hover:border-primary/50 hover:shadow-md transition-all ${isClickable ? 'cursor-pointer' : ''}`}
+                <Card 
+                  key={index} 
+                  className="p-3 sm:p-4 hover:shadow-md transition-all cursor-pointer group"
+                  onClick={() => {
+                    if (isValoresCard) setIsValuesModalOpen(true);
+                    else if (isRodaDaVidaCard) setIsLifeWheelModalOpen(true);
+                    else if (isSwotCard) setIsSwotModalOpen(true);
+                    else if (isVvdCard) setIsVvdModalOpen(true);
+                    else if (isSmartCard) setIsSmartModalOpen(true);
+                    else if (isEisenhowerCard) setIsEisenhowerModalOpen(true);
+                    else if (isBeliefsCard) setIsBeliefsModalOpen(true);
+                    else if (isAutoavaliacaoCard) setIsAutoavaliacaoModalOpen(true);
+                  }}
                 >
-                  <div className="flex items-start justify-between gap-2">
-                    <div className="flex-1">
-                      <p className="font-medium text-sm sm:text-base mb-1">{tool.name}</p>
-                      <p className="text-xs sm:text-sm text-muted-foreground">{tool.desc}</p>
-                    </div>
-                    {isClickable && (
-                      <Lightbulb className="w-4 h-4 text-primary flex-shrink-0 mt-0.5" />
-                    )}
+                  <div className="flex items-center gap-2 mb-2">
+                    <CheckCircle2 className="h-4 w-4 text-primary group-hover:scale-110 transition-transform" />
+                    <span className="font-medium text-sm sm:text-base">{tool.name}</span>
                   </div>
-                </div>
+                  <p className="text-muted-foreground text-xs">{tool.desc}</p>
+                </Card>
               );
             })}
           </div>
-          <p className="text-center text-muted-foreground text-xs sm:text-sm mt-6">
-            Clique sobre as ferramentas para conhecer mais sobre elas
-          </p>
         </div>
       </section>
 
-      {/* Benefits */}
+      {/* VVD Section - Visão de Vida Desejada */}
       <section className="py-12 sm:py-16 px-4">
         <div className="container mx-auto max-w-5xl">
-          <div className="grid sm:grid-cols-3 gap-6 sm:gap-8 text-center">
-            <div className="space-y-3">
-              <div className="w-12 h-12 sm:w-14 sm:h-14 mx-auto rounded-full bg-primary/10 flex items-center justify-center">
-                <Heart className="h-6 w-6 sm:h-7 sm:w-7 text-primary" />
-              </div>
-              <h3 className="text-lg sm:text-xl font-semibold">Clareza de Propósito</h3>
-              <p className="text-muted-foreground text-xs sm:text-sm">
-                Quando você sabe o que quer, as decisões ficam mais fáceis. E a vida, mais leve.
-              </p>
-            </div>
-            <div className="space-y-3">
-              <div className="w-12 h-12 sm:w-14 sm:h-14 mx-auto rounded-full bg-primary/10 flex items-center justify-center">
-                <TrendingUp className="h-6 w-6 sm:h-7 sm:w-7 text-primary" />
-              </div>
-              <h3 className="text-lg sm:text-xl font-semibold">Progresso Visível</h3>
-              <p className="text-muted-foreground text-xs sm:text-sm">
-                Gráficos e métricas que mostram sua evolução. Você vai se surpreender consigo mesmo.
-              </p>
-            </div>
-            <div className="space-y-3">
-              <div className="w-12 h-12 sm:w-14 sm:h-14 mx-auto rounded-full bg-primary/10 flex items-center justify-center">
-                <Lightbulb className="h-6 w-6 sm:h-7 sm:w-7 text-primary" />
-              </div>
-              <h3 className="text-lg sm:text-xl font-semibold">Ação Diária</h3>
-              <p className="text-muted-foreground text-xs sm:text-sm">
-                Pequenos passos consistentes constroem resultados extraordinários.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* VVD Method Section */}
-      <section className="py-12 sm:py-20 px-4 bg-muted/30 overflow-hidden">
-        <div className="container mx-auto max-w-6xl">
-          <div className="grid lg:grid-cols-2 gap-8 sm:gap-12 items-center">
-            {/* Content */}
+          <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
+            {/* Text Content */}
             <div className="order-2 lg:order-1">
-              <Badge variant="secondary" className="mb-4 text-xs sm:text-sm bg-primary/10 text-primary border-0">
-                ✨ Ferramenta Exclusiva
+              <Badge variant="secondary" className="mb-4 text-xs sm:text-sm">
+                <Compass className="h-3.5 w-3.5 mr-1.5" />
+                Ferramenta Principal
               </Badge>
-              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 sm:mb-6">
-                Ferramenta VVD: Sua Visão de Vida Desejada
+              <h2 className="text-2xl sm:text-3xl font-bold mb-4">
+                VVD: Construa sua Visão de Vida Desejada
               </h2>
               <p className="text-muted-foreground mb-4 text-sm sm:text-base leading-relaxed">
-                A maioria das pessoas sabe o que <em>não</em> quer. Mas pouquíssimas conseguem descrever, 
-                com clareza, a vida que realmente desejam viver. É aí que entra a <strong>Ferramenta VVD</strong>.
-              </p>
-              <p className="text-muted-foreground mb-4 text-sm sm:text-base leading-relaxed">
-                Desenvolvido especialmente para o PDI - Carreira & Vida, o VVD te guia num processo 
+                A maioria das pessoas sabe o que <em>não</em> quer. Poucas conseguem descrever com clareza 
+                o que <em>realmente</em> desejam para suas vidas. O VVD é um processo guiado e profundo 
                 de construção da sua <strong>Visão de Vida Desejada</strong> — um texto vivo que descreve 
                 quem você quer ser, como quer viver e o que quer conquistar nos próximos anos.
               </p>
@@ -835,13 +836,18 @@ const Index = () => {
                 </div>
               </div>
 
-              <Button 
-                onClick={() => setIsModalOpen(true)}
-                className="text-sm sm:text-base"
-              >
-                Criar minha Visão de Vida
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Button>
+              <div className="flex flex-col items-start gap-2">
+                <Button 
+                  onClick={() => setIsModalOpen(true)}
+                  className="text-sm sm:text-base"
+                >
+                  Criar minha visão
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Button>
+                <p className="text-xs text-muted-foreground">
+                  Mentoria guiada + apoio da IA
+                </p>
+              </div>
             </div>
 
             {/* Visual - VVD Illustration */}
@@ -1004,10 +1010,7 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Planos - OCULTADOS TEMPORARIAMENTE */}
-      {/* Seção de planos ocultada por solicitação */}
-
-      {/* Flash Promotion Banner */}
+      {/* Flash Promotion Banner - Plano Gratuito */}
       <section id="planos" className="py-12 sm:py-16 px-4 bg-muted/30">
         <div className="container mx-auto max-w-4xl">
           <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-amber-500 via-orange-500 to-red-500 p-[2px]">
@@ -1025,14 +1028,20 @@ const Index = () => {
                 onClick={() => handlePlanClick('gratuito')}
                 className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-semibold text-sm sm:text-base"
               >
-                Começar grátis agora
+                Ativar meu PDI
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
+              <p className="text-xs text-muted-foreground mt-3">
+                Especialista em Desenvolvimento Humano + IA durante toda a jornada
+              </p>
             </div>
           </div>
         </div>
       </section>
 
+      {/* ============================================================ */}
+      {/* SEÇÃO DECISÃO - Prova e Compromisso */}
+      {/* ============================================================ */}
 
       {/* Social Proof - Depoimentos Reais */}
       <section className="py-12 sm:py-20 px-4 bg-muted/20">
@@ -1103,8 +1112,9 @@ const Index = () => {
                   ))}
                 </div>
                 <p className="text-sm sm:text-base text-muted-foreground italic mb-4 leading-relaxed">
-                  "Antes eu nem sabia o que era um PDI. Hoje eu tenho clareza do que quero para os próximos 5, 10 
-                  e até 20 anos. O curso abriu um horizonte de oportunidades e foi fundamental para o meu autoconhecimento."
+                  "O PDI me ajudou a enxergar padrões que eu mesma criava e que me impediam de avançar. 
+                  O processo de reflexão foi transformador — hoje tenho clareza sobre minhas prioridades 
+                  e consigo agir com muito mais consistência."
                 </p>
                 <div className="flex items-center justify-center gap-3">
                   <img 
@@ -1115,20 +1125,20 @@ const Index = () => {
                   <div className="flex items-center gap-2">
                     <p className="text-sm font-medium">Gabriele Campos</p>
                     <a 
-                      href="https://www.linkedin.com/in/gabrielle-campos-406b8a1b2/" 
+                      href="https://www.linkedin.com/in/gabriele-ribeiro-campos/" 
                       target="_blank" 
                       rel="noopener noreferrer"
                       className="text-[#0A66C2] hover:opacity-80 transition-opacity"
                       aria-label="LinkedIn de Gabriele Campos"
                     >
                       <svg className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+                        <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
                       </svg>
                     </a>
                   </div>
                 </div>
                 <button
-                  onClick={() => setVideoModalUrl("gpVTmaktFO8")}
+                  onClick={() => setVideoModalUrl("NjEA4WBiUvA")}
                   className="flex items-center justify-center gap-2 text-xs text-primary hover:text-primary/80 transition-colors mt-3 w-full"
                 >
                   <Play className="h-4 w-4" />
@@ -1146,8 +1156,9 @@ const Index = () => {
                   ))}
                 </div>
                 <p className="text-sm sm:text-base text-muted-foreground italic mb-4 leading-relaxed">
-                  "O treinamento é extremamente didático. Ele fez eu refletir sobre o futuro e me ajudou a traçar 
-                  caminhos claros para alcançar meus objetivos. Já estou colocando tudo em prática e tem me ajudado muito."
+                  "Eu estava travada há muito tempo, sem saber exatamente por quê. O PDI me ajudou a 
+                  identificar o que estava me prendendo e, mais importante, me deu ferramentas práticas 
+                  para superar esses bloqueios. Recomendo muito!"
                 </p>
                 <div className="flex items-center justify-center gap-3">
                   <img 
@@ -1158,20 +1169,20 @@ const Index = () => {
                   <div className="flex items-center gap-2">
                     <p className="text-sm font-medium">Larissa Schuartz</p>
                     <a 
-                      href="https://www.linkedin.com/in/larissa-schwartz-5553651a5/" 
+                      href="https://www.linkedin.com/in/larissa-dos-santos-schuartz-17a7aa189/" 
                       target="_blank" 
                       rel="noopener noreferrer"
                       className="text-[#0A66C2] hover:opacity-80 transition-opacity"
                       aria-label="LinkedIn de Larissa Schuartz"
                     >
                       <svg className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+                        <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
                       </svg>
                     </a>
                   </div>
                 </div>
                 <button
-                  onClick={() => setVideoModalUrl("1FYfKkhVtU4")}
+                  onClick={() => setVideoModalUrl("Tpz2mmxUYHc")}
                   className="flex items-center justify-center gap-2 text-xs text-primary hover:text-primary/80 transition-colors mt-3 w-full"
                 >
                   <Play className="h-4 w-4" />
@@ -1189,9 +1200,9 @@ const Index = () => {
                   ))}
                 </div>
                 <p className="text-sm sm:text-base text-muted-foreground italic mb-4 leading-relaxed">
-                  "Eu sabia o que queria, mas executar parecia um monstro de sete cabeças. Fazer o curso foi como 
-                  acender uma luz em um quarto escuro. Hoje tenho um PDI completo, claro e realista — um dos melhores 
-                  investimentos que já fiz em mim."
+                  "Antes do PDI eu tinha muitos objetivos, mas nenhuma organização para alcançá-los. 
+                  O sistema me ensinou a priorizar, planejar e executar de forma consistente. 
+                  Em 6 meses conquistei mais do que nos últimos 3 anos."
                 </p>
                 <div className="flex items-center justify-center gap-3">
                   <img 
@@ -1230,14 +1241,19 @@ const Index = () => {
           <p className="text-muted-foreground mb-6 sm:mb-8 text-sm sm:text-base">
             Você já sabe o que precisa fazer. Nós vamos te ajudar a realmente fazer.
           </p>
-          <Button 
-            size="lg" 
-            onClick={() => handlePlanClick('gratuito')}
-            className="text-sm sm:text-base md:text-lg px-6 sm:px-8 md:px-10 py-4 sm:py-5 md:py-6 bg-primary hover:bg-primary/90 w-full sm:w-auto max-w-xs sm:max-w-none mx-auto"
-          >
-            Quero conquistar meus objetivos
-            <ArrowRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5" />
-          </Button>
+          <div className="flex flex-col items-center gap-2">
+            <Button 
+              size="lg" 
+              onClick={() => handlePlanClick('gratuito')}
+              className="text-sm sm:text-base md:text-lg px-6 sm:px-8 md:px-10 py-4 sm:py-5 md:py-6 bg-primary hover:bg-primary/90 w-full sm:w-auto max-w-xs sm:max-w-none mx-auto"
+            >
+              Assumir o comando
+              <ArrowRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5" />
+            </Button>
+            <p className="text-xs sm:text-sm text-muted-foreground">
+              No seu ritmo • Com suporte humano e Inteligência Artificial
+            </p>
+          </div>
         </div>
       </section>
 
@@ -1276,7 +1292,7 @@ const Index = () => {
         </div>
       </section>
 
-      {/* CTA Empresas - Movido para o final */}
+      {/* CTA Empresas */}
       <section className="py-12 sm:py-16 px-4 bg-muted/20">
         <div className="container mx-auto max-w-4xl">
           <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-700 p-6 sm:p-10">
