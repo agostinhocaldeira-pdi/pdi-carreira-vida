@@ -6,18 +6,16 @@ import { Badge } from "@/components/ui/badge";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Link, useNavigate } from "react-router-dom";
-import { Target, TrendingUp, BookOpen, MessagesSquare, Book, Sparkles, User, Zap, Star, Shield, Lock, ChevronDown, AlertCircle, Link2, Users, Bell, HelpCircle } from "lucide-react";
+import { Target, TrendingUp, BookOpen, MessagesSquare, Book, Sparkles, User, Zap, Star, Shield, Lock, ChevronDown, AlertCircle, Link2, Users, Bell, HelpCircle, FileText } from "lucide-react";
 import ProgressSection from "@/components/home/ProgressSection";
 
 import PlanoDeVida from "@/components/home/PlanoDeVida";
-import MaoNaMassa from "@/components/home/MaoNaMassa";
 import LanguageSelector from "@/components/LanguageSelector";
 import LogoutButton from "@/components/LogoutButton";
 import { SatisfactionSurveyModal } from "@/components/SatisfactionSurveyModal";
 import { useSatisfactionSurvey } from "@/hooks/useSatisfactionSurvey";
 import { AchievementNotification } from "@/components/gamification/AchievementNotification";
 import { useGamification } from "@/hooks/useGamification";
-import { ExportPDFButton } from "@/components/reports/ExportPDFButton";
 import { useRoleProtection } from "@/hooks/useRoleProtection";
 import { supabase } from "@/integrations/supabase/client";
 import { TrialStatusBanner } from "@/components/subscription/TrialStatusBanner";
@@ -372,12 +370,6 @@ const Home = () => {
           />
         </section>
 
-        {/* Mão na Massa Section - aparece ao clicar em "Como chegar lá" */}
-        {planoDeVidaOpen && activeTab === "como-chegar" && (
-          <section className="animate-slide-up" style={{ animationDelay: "0.3s" }}>
-            <MaoNaMassa />
-          </section>
-        )}
 
         {/* Recursos Section */}
         <section className="animate-slide-up" style={{ animationDelay: "0.4s" }}>
@@ -475,11 +467,25 @@ const Home = () => {
                           <p className="text-sm text-muted-foreground">
                             Perguntas frequentes e dúvidas comuns
                           </p>
-                        </CardContent>
-                      </Card>
-                    </Link>
+                      </CardContent>
+                    </Card>
+                  </Link>
 
-                    {/* Card de Gestão de PDIs - apenas para gestores */}
+                  <Link to="/relatorios">
+                    <Card className="hover:shadow-medium transition-all cursor-pointer h-full border-2 hover:border-primary">
+                      <CardContent className="pt-6 text-center space-y-3">
+                        <div className="w-12 h-12 mx-auto bg-primary/10 rounded-full flex items-center justify-center">
+                          <FileText className="w-6 h-6 text-primary" />
+                        </div>
+                        <h3 className="font-semibold">Relatórios</h3>
+                        <p className="text-sm text-muted-foreground">
+                          Exporte seu PDI e acompanhe progresso
+                        </p>
+                      </CardContent>
+                    </Card>
+                  </Link>
+
+                  {/* Card de Gestão de PDIs - apenas para gestores */}
                     {isGestor && (
                       <Link to="/gestao-pdis">
                         <Card className="hover:shadow-medium transition-all cursor-pointer h-full border-2 hover:border-green-500 bg-gradient-to-br from-card to-green-500/5">
@@ -538,10 +544,6 @@ const Home = () => {
           </section>
         )}
 
-        {/* Botão flutuante de Exportar Relatórios */}
-        <div className="fixed bottom-6 right-6 z-50">
-          <ExportPDFButton label="Exportar Relatórios" variant="default" className="shadow-lg" />
-        </div>
       </main>
     </div>
   );

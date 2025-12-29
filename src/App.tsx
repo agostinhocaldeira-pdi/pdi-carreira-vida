@@ -44,6 +44,7 @@ import EbookBancarioDownload from "./pages/EbookBancarioDownload";
 import Tutorial from "./pages/Tutorial";
 import TutorialEmpresa from "./pages/TutorialEmpresa";
 import Sobre from "./pages/Sobre";
+import Relatorios from "./pages/Relatorios";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -103,6 +104,8 @@ const App = () => (
                 <Route path="/tutorial" element={<Tutorial />} />
                 <Route path="/tutorial-empresa" element={<TutorialEmpresa />} />
                 <Route path="/sobre" element={<Sobre />} />
+                <Route path="/relatorios" element={<Relatorios />} />
+                {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                 <Route path="*" element={<NotFound />} />
               </Routes>
