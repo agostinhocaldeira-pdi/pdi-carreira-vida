@@ -20,9 +20,7 @@ import {
   Sparkles,
   HelpCircle,
   Bot,
-  Loader2,
-  Lock,
-  CreditCard
+  Loader2
 } from "lucide-react";
 import { toast } from "sonner";
 import { usePDIStorage } from "@/hooks/usePDIStorage";
@@ -30,6 +28,8 @@ import { useQueryClient } from "@tanstack/react-query";
 import { PDI_QUERY_KEYS } from "@/hooks/usePDIQueries";
 import SmartScientificModal from "@/components/SmartScientificModal";
 import { supabase } from "@/integrations/supabase/client";
+import { useAIUsage } from "@/hooks/useAIUsage";
+import { AIUsageLimitModal } from "@/components/AIUsageLimitModal";
 
 interface Objetivo {
   id: number | string;
@@ -45,12 +45,6 @@ interface MetaSmart {
   relevante: string;
   temporal: string;
   dataAlvo: string;
-}
-
-interface AIUsageStatus {
-  freeUsageConsumed: boolean;
-  totalPaidUsages: number;
-  usagesRemaining: number;
 }
 
 const MetodoSmart = () => {
@@ -86,21 +80,19 @@ const MetodoSmart = () => {
     A: false,
     R: false,
     T: false,
+    FINAL: false,
   });
-  const [aiUsageStatus, setAiUsageStatus] = useState<AIUsageStatus>({
-    freeUsageConsumed: false,
-    totalPaidUsages: 0,
-    usagesRemaining: 1, // 1 free usage
-  });
-  const [isCheckingUsage, setIsCheckingUsage] = useState(true);
-  const [isCreatingPayment, setIsCreatingPayment] = useState(false);
+  const [showAILimitModal, setShowAILimitModal] = useState(false);
+  const [pendingAIStep, setPendingAIStep] = useState<string | null>(null);
+
+  // AI Usage hook for purchasing additional usage
+  const aiUsage = useAIUsage('smart');
 
   // Check for payment success on mount
   useEffect(() => {
     const paymentStatus = searchParams.get("payment");
     if (paymentStatus === "success") {
       toast.success("Pagamento confirmado! Você pode usar a mentoria IA novamente.");
-      checkAIUsage();
       // Clear the URL params
       navigate("/ferramentas/smart", { replace: true });
     } else if (paymentStatus === "cancelled") {
@@ -109,50 +101,8 @@ const MetodoSmart = () => {
     }
   }, [searchParams, navigate]);
 
-  // Load AI usage status
-  const checkAIUsage = async () => {
-    setIsCheckingUsage(true);
-    try {
-      const { data: session } = await supabase.auth.getSession();
-      if (!session.session) {
-        setIsCheckingUsage(false);
-        return;
-      }
-
-      // Check local usage first
-      const { data: usageData, error } = await supabase
-        .from("user_smart_ai_usage")
-        .select("*")
-        .eq("user_id", session.session.user.id)
-        .maybeSingle();
-
-      if (error) {
-        console.error("Error checking AI usage:", error);
-      }
-
-      // Check for paid usages via Stripe
-      const { data: paymentData } = await supabase.functions.invoke("check-smart-payment");
-      
-      const freeConsumed = usageData?.free_usage_consumed || false;
-      const paidUsages = paymentData?.totalPaidUsages || 0;
-      const usedPaidUsages = usageData?.total_paid_usages || 0;
-      const remainingPaid = Math.max(0, paidUsages - usedPaidUsages);
-      
-      setAiUsageStatus({
-        freeUsageConsumed: freeConsumed,
-        totalPaidUsages: paidUsages,
-        usagesRemaining: freeConsumed ? remainingPaid : 1,
-      });
-    } catch (error) {
-      console.error("Error checking AI usage:", error);
-    } finally {
-      setIsCheckingUsage(false);
-    }
-  };
-
   useEffect(() => {
     window.scrollTo(0, 0);
-    checkAIUsage();
     
     const loadData = async () => {
       try {
@@ -193,11 +143,28 @@ const MetodoSmart = () => {
   };
 
   // AI Mentor function
-  const requestAIFeedback = async (step: string) => {
+  const requestAIFeedback = async (step: string, fromPurchase = false) => {
     // Check if this specific step has already used AI
     if (aiUsedPerStep[step]) {
-      toast.error(`Você já utilizou a IA neste passo (${step}). Continue para o próximo passo.`);
-      return;
+      // If user has a purchased usage, allow retry
+      if (!fromPurchase && !aiUsage.hasAvailablePurchase) {
+        setPendingAIStep(step);
+        setShowAILimitModal(true);
+        return;
+      }
+      // If from purchase, consume and continue
+      if (!fromPurchase && aiUsage.hasAvailablePurchase) {
+        const consumed = await aiUsage.consumePurchase();
+        if (!consumed) {
+          toast.error("Erro ao processar sua compra. Tente novamente.");
+          return;
+        }
+        // Reset the step usage to allow re-use
+        setAiUsedPerStep(prev => ({
+          ...prev,
+          [step]: false,
+        }));
+      }
     }
 
     setIsLoadingAI(true);
@@ -266,24 +233,20 @@ const MetodoSmart = () => {
     }
   };
 
-  const handlePurchaseUsage = async () => {
-    setIsCreatingPayment(true);
-    try {
-      const { data, error } = await supabase.functions.invoke("create-smart-payment");
-      
-      if (error) throw error;
-      if (data?.error) throw new Error(data.error);
-      
-      if (data?.url) {
-        window.open(data.url, "_blank");
-      }
-    } catch (error) {
-      console.error("Error creating payment:", error);
-      toast.error("Erro ao criar pagamento. Tente novamente.");
-    } finally {
-      setIsCreatingPayment(false);
+  const handlePurchaseAI = async () => {
+    const url = await aiUsage.createPurchase('/ferramentas/smart');
+    if (url) {
+      window.location.href = url;
     }
   };
+
+  // Handle purchase verification and trigger AI for pending step
+  useEffect(() => {
+    if (aiUsage.hasAvailablePurchase && pendingAIStep) {
+      requestAIFeedback(pendingAIStep, true);
+      setPendingAIStep(null);
+    }
+  }, [aiUsage.hasAvailablePurchase]);
 
   const handleProximo = () => {
     if (etapa === 1 && !objetivoSelecionado) {
@@ -448,7 +411,7 @@ const MetodoSmart = () => {
     return `${metaSmart.especifico}. Vou medir meu progresso através de: ${metaSmart.mensuravel}. Para tornar isso alcançável: ${metaSmart.atingivel}. Esta meta é relevante porque: ${metaSmart.relevante}. Prazo: ${metaSmart.temporal} (até ${new Date(metaSmart.dataAlvo).toLocaleDateString('pt-BR')}).`;
   };
 
-  // AI Feedback Component - now checks per-step usage
+  // AI Feedback Component - now checks per-step usage and allows purchase
   const AIFeedbackSection = ({ step }: { step: string }) => {
     const hasUsedAIForStep = aiUsedPerStep[step] || false;
     
@@ -488,11 +451,32 @@ const MetodoSmart = () => {
             )}
           </Button>
         ) : (
-          <div className="p-3 bg-muted/50 rounded-lg border border-border flex items-center gap-2">
-            <CheckCircle2 className="w-4 h-4 text-emerald-500" />
-            <span className="text-sm text-muted-foreground">
-              Você já utilizou a IA neste passo. Continue para o próximo.
-            </span>
+          <div className="space-y-2">
+            <div className="p-3 bg-muted/50 rounded-lg border border-border flex items-center gap-2">
+              <CheckCircle2 className="w-4 h-4 text-emerald-500" />
+              <span className="text-sm text-muted-foreground">
+                Uso gratuito consumido neste passo.
+              </span>
+            </div>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => requestAIFeedback(step)}
+              disabled={isLoadingAI}
+              className="w-full gap-2 border-accent/30 hover:bg-accent/5"
+            >
+              {isLoadingAI ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  Analisando...
+                </>
+              ) : (
+                <>
+                  <Sparkles className="w-4 h-4" />
+                  Solicitar novo feedback (R$ 10,00)
+                </>
+              )}
+            </Button>
           </div>
         )}
 
@@ -511,8 +495,17 @@ const MetodoSmart = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-subtle py-8">
-      <div className="container mx-auto px-4 max-w-4xl">
+    <>
+      <AIUsageLimitModal
+        isOpen={showAILimitModal}
+        onClose={() => setShowAILimitModal(false)}
+        onPurchase={handlePurchaseAI}
+        isLoading={aiUsage.isLoading}
+        featureType="smart"
+        featureName="Mentoria SMART IA"
+      />
+      <div className="min-h-screen bg-gradient-subtle py-8">
+        <div className="container mx-auto px-4 max-w-4xl">
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent mb-2">
@@ -893,6 +886,7 @@ const MetodoSmart = () => {
         onOpenChange={setIsSmartModalOpen} 
       />
     </div>
+    </>
   );
 };
 
