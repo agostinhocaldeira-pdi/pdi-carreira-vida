@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -38,9 +37,14 @@ const PlanoDeVida = ({ onTabChange, onOpenChange, forcedTab, forcedOpen }: Plano
   // React Query hook for cached data with localStorage-first pattern
   const { data: pdiData, isLoading: isQueryLoading } = usePDIData();
   
-  const [isOpen, setIsOpen] = useState(false);
+  // Estados para cards expansíveis
+  const [quemSouOpen, setQuemSouOpen] = useState(false);
+  const [paraOndeOpen, setParaOndeOpen] = useState(false);
+  const [comoChegarOpen, setComoChegarOpen] = useState(false);
+  
   const [showMobileWarning, setShowMobileWarning] = useState(false);
-  const [activeTab, setActiveTab] = useState("quem-sou");
+  const [pendingSection, setPendingSection] = useState<string | null>(null);
+  
   const [vvd, setVvd] = useState("");
   const [isEditingVvd, setIsEditingVvd] = useState(true);
   const [valores, setValores] = useState<string[]>(Array(6).fill(""));
@@ -96,16 +100,32 @@ const PlanoDeVida = ({ onTabChange, onOpenChange, forcedTab, forcedOpen }: Plano
 
   // Sincronizar com props externas (para navegação via eventos)
   useEffect(() => {
-    if (forcedTab !== undefined && forcedTab !== activeTab) {
-      setActiveTab(forcedTab);
+    if (forcedTab !== undefined) {
+      if (forcedTab === "quem-sou") {
+        setQuemSouOpen(true);
+        setParaOndeOpen(false);
+        setComoChegarOpen(false);
+      } else if (forcedTab === "para-onde") {
+        setQuemSouOpen(false);
+        setParaOndeOpen(true);
+        setComoChegarOpen(false);
+      } else if (forcedTab === "como-chegar") {
+        setQuemSouOpen(false);
+        setParaOndeOpen(false);
+        setComoChegarOpen(true);
+      }
     }
   }, [forcedTab]);
 
   useEffect(() => {
-    if (forcedOpen !== undefined && forcedOpen !== isOpen) {
-      setIsOpen(forcedOpen);
+    if (forcedOpen !== undefined) {
+      if (forcedOpen && forcedTab) {
+        if (forcedTab === "quem-sou") setQuemSouOpen(true);
+        else if (forcedTab === "para-onde") setParaOndeOpen(true);
+        else if (forcedTab === "como-chegar") setComoChegarOpen(true);
+      }
     }
-  }, [forcedOpen]);
+  }, [forcedOpen, forcedTab]);
 
   // Sincronizar insight entre seções
   useEffect(() => {
@@ -496,8 +516,9 @@ const PlanoDeVida = ({ onTabChange, onOpenChange, forcedTab, forcedOpen }: Plano
       if (data?.insight) {
         setInsight(data.insight);
         localStorage.setItem("userInsight", data.insight);
+        await storage.saveUserInsight(data.insight);
         
-        // Disparar evento para sincronizar na mesma aba
+        // Disparar evento para sincronizar em outras seções
         window.dispatchEvent(new Event("insightUpdated"));
         
         // Salvar data da geração apenas para não-admins
@@ -567,7 +588,9 @@ const PlanoDeVida = ({ onTabChange, onOpenChange, forcedTab, forcedOpen }: Plano
     setShowMetaModal(false);
     
     // Primeiro, mudar para a aba "como-chegar" para que MaoNaMassa seja renderizado
-    setActiveTab("como-chegar");
+    setComoChegarOpen(true);
+    setQuemSouOpen(false);
+    setParaOndeOpen(false);
     if (onTabChange) {
       onTabChange("como-chegar");
     }
@@ -733,25 +756,80 @@ const PlanoDeVida = ({ onTabChange, onOpenChange, forcedTab, forcedOpen }: Plano
     toast.success("Habilidade atualizada!");
   };
 
-  const handleTabChange = (value: string) => {
-    setActiveTab(value);
-    onTabChange?.(value);
-  };
-
-  const handleOpenChange = (open: boolean) => {
+  const handleSectionOpen = (section: string, open: boolean) => {
     // Se estiver abrindo no mobile, mostrar aviso primeiro
-    if (open && isMobile && !isOpen) {
+    if (open && isMobile) {
+      setPendingSection(section);
       setShowMobileWarning(true);
       return;
     }
-    setIsOpen(open);
-    onOpenChange?.(open);
+    
+    if (section === "quem-sou") {
+      setQuemSouOpen(open);
+      if (open) {
+        setParaOndeOpen(false);
+        setComoChegarOpen(false);
+        onTabChange?.("quem-sou");
+        onOpenChange?.(true);
+      }
+    } else if (section === "para-onde") {
+      setParaOndeOpen(open);
+      if (open) {
+        setQuemSouOpen(false);
+        setComoChegarOpen(false);
+        onTabChange?.("para-onde");
+        onOpenChange?.(true);
+      }
+    } else if (section === "como-chegar") {
+      setComoChegarOpen(open);
+      if (open) {
+        setQuemSouOpen(false);
+        setParaOndeOpen(false);
+        onTabChange?.("como-chegar");
+        onOpenChange?.(true);
+      }
+    }
   };
 
   const handleConfirmMobileOpen = () => {
     setShowMobileWarning(false);
-    setIsOpen(true);
-    onOpenChange?.(true);
+    if (pendingSection) {
+      if (pendingSection === "quem-sou") {
+        setQuemSouOpen(true);
+        setParaOndeOpen(false);
+        setComoChegarOpen(false);
+        onTabChange?.("quem-sou");
+      } else if (pendingSection === "para-onde") {
+        setParaOndeOpen(true);
+        setQuemSouOpen(false);
+        setComoChegarOpen(false);
+        onTabChange?.("para-onde");
+      } else if (pendingSection === "como-chegar") {
+        setComoChegarOpen(true);
+        setQuemSouOpen(false);
+        setParaOndeOpen(false);
+        onTabChange?.("como-chegar");
+      }
+      onOpenChange?.(true);
+      setPendingSection(null);
+    }
+  };
+
+  // Calcular progresso de cada seção
+  const quemSouProgress = () => {
+    let count = 0;
+    if (vvd && vvd.trim()) count++;
+    if (isValoresComplete) count++;
+    if (isAreasComplete) count++;
+    return Math.round((count / 3) * 100);
+  };
+
+  const paraOndeProgress = () => {
+    return objetivos.length > 0 ? 100 : 0;
+  };
+
+  const comoChecarProgress = () => {
+    return habilidades.length > 0 ? 100 : 0;
   };
 
   return (
@@ -778,7 +856,7 @@ const PlanoDeVida = ({ onTabChange, onOpenChange, forcedTab, forcedOpen }: Plano
             </DialogDescription>
           </DialogHeader>
           <DialogFooter className="flex-col gap-2 sm:flex-row">
-            <Button variant="outline" onClick={() => setShowMobileWarning(false)} className="w-full sm:w-auto">
+            <Button variant="outline" onClick={() => { setShowMobileWarning(false); setPendingSection(null); }} className="w-full sm:w-auto">
               Voltar
             </Button>
             <Button onClick={handleConfirmMobileOpen} className="w-full sm:w-auto">
@@ -788,651 +866,741 @@ const PlanoDeVida = ({ onTabChange, onOpenChange, forcedTab, forcedOpen }: Plano
         </DialogContent>
       </Dialog>
 
-      <Collapsible open={isOpen} onOpenChange={handleOpenChange}>
-        <Card className="shadow-medium">
-          <CardHeader>
-            <div className="flex items-center justify-between">
-              <div className="space-y-1">
-                <CardTitle className="text-2xl flex items-center gap-2">
-                  <Compass className="w-6 h-6 text-primary" />
-                  Plano de Vida
-                </CardTitle>
-                <CardDescription>Construa sua visão e defina seus objetivos</CardDescription>
-              </div>
-              <CollapsibleTrigger asChild>
-                <Button 
-                  variant="secondary" 
-                  size="sm" 
-                  className="gap-1.5 hover:bg-primary hover:text-primary-foreground transition-all shadow-sm min-w-[44px] border border-border"
-                >
-                  {!isOpen && (
-                    <span className="text-xs font-medium">Abrir</span>
-                  )}
-                  <ChevronDown className={`w-4 h-4 transition-transform duration-300 ${isOpen ? "rotate-180" : ""}`} />
-                </Button>
-              </CollapsibleTrigger>
+      <Card className="shadow-medium overflow-hidden">
+        <CardHeader className="pb-4">
+          <div className="flex items-center gap-3">
+            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center shadow-lg">
+              <Compass className="w-6 h-6 text-primary-foreground" />
             </div>
-          </CardHeader>
-        <CollapsibleContent>
-          <CardContent>
-        <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
-          <TabsList className="flex flex-col sm:grid sm:grid-cols-3 w-full h-auto gap-1 sm:gap-0 p-1">
-            <TabsTrigger value="quem-sou" className="w-full justify-start sm:justify-center text-sm px-3 py-2.5 sm:py-2">
-              <Heart className="w-4 h-4 mr-2 flex-shrink-0" />
-              <span className="truncate">Quem sou Eu</span>
-            </TabsTrigger>
-            <TabsTrigger value="para-onde" className="w-full justify-start sm:justify-center text-sm px-3 py-2.5 sm:py-2">
-              <Target className="w-4 h-4 mr-2 flex-shrink-0" />
-              <span className="truncate">Para onde vou</span>
-            </TabsTrigger>
-            <TabsTrigger value="como-chegar" className="w-full justify-start sm:justify-center text-sm px-3 py-2.5 sm:py-2">
-              <Lightbulb className="w-4 h-4 mr-2 flex-shrink-0" />
-              <span className="truncate">Como chegar lá</span>
-            </TabsTrigger>
-          </TabsList>
+            <div>
+              <CardTitle className="text-xl sm:text-2xl">Plano de Vida</CardTitle>
+              <CardDescription>Construa sua visão e defina seus objetivos</CardDescription>
+            </div>
+          </div>
+        </CardHeader>
 
-          {/* Quem sou Eu */}
-          <TabsContent value="quem-sou" className="space-y-6 mt-6">
-            <div className="space-y-4">
-              <div className="flex items-center gap-2 mb-4">
-                <Heart className="w-5 h-5 text-primary" />
-                <h3 className="text-lg font-semibold">Minha Essência</h3>
-              </div>
-
-              {/* VVD */}
-              <div className="space-y-2">
-                <Label htmlFor="vvd">Minha Visão de Vida Desejada</Label>
-                <Textarea
-                  id="vvd"
-                  placeholder="Clique no link abaixo para fazer seu VVD"
-                  value={vvd}
-                  onChange={(e) => setVvd(e.target.value)}
-                  rows={4}
-                  disabled
-                  spellCheck="true"
-                />
-                <Link 
-                  to="/ferramentas/metodo-vvd" 
-                  className="flex items-center gap-2 text-sm text-primary hover:underline"
-                >
-                  Como criar seu VVD
-                  <ArrowRight className="w-4 h-4" />
-                </Link>
-              </div>
-
-              {/* Valores */}
-              <div className="space-y-3">
-                <Label>Meus Valores</Label>
-                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-3">
-                  {valores.map((valor, index) => (
-                    <Input
-                      key={index}
-                      placeholder={`Valor ${index + 1}`}
-                      value={valor}
-                      onChange={(e) => updateValor(index, e.target.value)}
-                      disabled={!isEditingValores}
-                      className="text-sm"
-                      spellCheck="true"
-                    />
-                  ))}
-                </div>
-                <div className="flex items-center justify-between gap-4">
-                  <Link 
-                    to="/ferramentas/valores" 
-                    className="flex items-center gap-2 text-sm text-primary hover:underline"
-                  >
-                    Descobrir meus valores
-                    <ArrowRight className="w-4 h-4" />
-                  </Link>
-                  
-                  <div className="flex gap-2">
-                    {!isEditingValores && (
-                      <Button onClick={handleEditValores} size="sm" variant="outline">
-                        <Edit className="w-4 h-4 mr-2" />
-                        Editar
-                      </Button>
-                    )}
-                    <Button 
-                      onClick={handleSaveValores} 
-                      size="sm" 
-                      variant="outline"
-                      disabled={!isValoresComplete || !isEditingValores}
-                    >
-                      Salvar
-                    </Button>
-                  </div>
-                </div>
-              </div>
-
-              {/* Áreas da Vida */}
-              <div className="space-y-3">
-                <Label>Áreas da Vida</Label>
-                
-                {/* Gráfico Radar - Roda da Vida */}
-                {areasVida.length > 0 ? (
-                  <div className="rounded-lg border p-4 bg-card">
-                    <ResponsiveContainer width="100%" height={300}>
-                      <RadarChart data={areasVida.map(area => ({
-                        area: area.area,
-                        atual: Number(area.notaAtual) || 0,
-                        desejada: Number(area.notaDesejada) || 0
-                      }))}>
-                        <PolarGrid stroke="hsl(var(--border))" />
-                        <PolarAngleAxis
-                          dataKey="area"
-                          tick={{ fill: "hsl(var(--foreground))", fontSize: 10 }}
-                        />
-                        <PolarRadiusAxis
-                          angle={90}
-                          domain={[0, 10]}
-                          tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 10 }}
-                        />
-                        <Radar
-                          name="Nota Atual"
-                          dataKey="atual"
-                          stroke="hsl(var(--primary))"
-                          fill="hsl(var(--primary))"
-                          fillOpacity={0.3}
-                        />
-                        <Radar
-                          name="Nota Desejada"
-                          dataKey="desejada"
-                          stroke="hsl(var(--accent))"
-                          fill="hsl(var(--accent))"
-                          fillOpacity={0.3}
-                        />
-                        <Legend />
-                      </RadarChart>
-                    </ResponsiveContainer>
-                  </div>
-                ) : (
-                  <div className="rounded-lg border p-6 bg-muted/20 text-center">
-                    <p className="text-sm text-muted-foreground">
-                      Nenhuma área da vida cadastrada. Acesse a Roda da Vida para configurar.
-                    </p>
-                  </div>
-                )}
-
-                <div className="flex items-center justify-start gap-4">
-                  <Link 
-                    to="/roda-da-vida" 
-                    className="flex items-center gap-2 text-sm text-primary hover:underline"
-                  >
-                    Acessar a Roda da Vida para editar
-                    <ArrowRight className="w-4 h-4" />
-                  </Link>
-                </div>
-              </div>
-
-              {/* Insight */}
-              <div className="space-y-3 pt-6 border-t">
-                <div className="flex items-center gap-2 mb-2">
-                  <Sparkles className="w-5 h-5 text-primary" />
-                  <h3 className="text-lg font-semibold">Insight</h3>
-                </div>
-                <p className="text-sm text-muted-foreground mb-3">
-                  Uma análise personalizada do seu Plano de Vida baseada nas informações que você preencheu
-                </p>
-                
-                {!canGenerateInsight && !isAdmin && (
-                  <div className="bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-800 rounded-lg p-3 mb-3">
-                    <p className="text-xs sm:text-sm text-amber-900 dark:text-amber-200">
-                      <strong>Limite mensal atingido.</strong> Você poderá gerar um novo insight em {getNextInsightDate()}. 
-                      Contrate o plano <strong>Premium</strong> para gerar insights ilimitados!
-                    </p>
-                  </div>
-                )}
-                
-                {isAdmin && (
-                  <div className="bg-primary/10 border border-primary/20 rounded-lg p-3 mb-3">
-                    <p className="text-xs sm:text-sm text-primary">
-                      <strong>Acesso Admin:</strong> Você tem insights ilimitados como administrador.
-                    </p>
-                  </div>
-                )}
-                
-                {insight ? (
-                  <div className="space-y-3">
-                    <div className="bg-muted/30 rounded-lg p-4 border">
-                      <div className="prose prose-sm max-w-none whitespace-pre-line">
-                        {insight}
+        <CardContent className="space-y-4">
+          {/* Step Cards */}
+          <div className="grid gap-3">
+            {/* Passo 1 - Quem sou Eu */}
+            <Collapsible open={quemSouOpen} onOpenChange={(open) => handleSectionOpen("quem-sou", open)}>
+              <div className={`rounded-xl border-2 transition-all duration-300 overflow-hidden ${quemSouOpen ? 'border-primary bg-primary/5' : 'border-border hover:border-primary/50 hover:bg-muted/30'}`}>
+                <CollapsibleTrigger asChild>
+                  <button className="w-full p-4 flex items-center justify-between text-left group">
+                    <div className="flex items-center gap-3 sm:gap-4 flex-1 min-w-0">
+                      <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center flex-shrink-0 transition-all duration-300 ${quemSouOpen ? 'bg-primary text-primary-foreground shadow-lg scale-105' : 'bg-primary/10 text-primary group-hover:bg-primary/20'}`}>
+                        <Heart className="w-5 h-5 sm:w-6 sm:h-6" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 mb-0.5">
+                          <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-primary">Passo 1</span>
+                          {quemSouProgress() === 100 && (
+                            <span className="w-4 h-4 sm:w-5 sm:h-5 rounded-full bg-green-500 flex items-center justify-center">
+                              <Check className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-white" />
+                            </span>
+                          )}
+                        </div>
+                        <h3 className="font-semibold text-sm sm:text-base truncate">Quem sou Eu</h3>
+                        <p className="text-[10px] sm:text-xs text-muted-foreground hidden sm:block">VVD, Valores e Roda da Vida</p>
                       </div>
                     </div>
-                    <Button 
-                      onClick={handleGenerateInsight} 
-                      size="sm" 
-                      variant="outline"
-                      disabled={isGeneratingInsight || (!isAdmin && !canGenerateInsight)}
-                    >
-                      {isGeneratingInsight ? (
-                        <>
-                          <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                          Gerando novo insight...
-                        </>
-                      ) : (
-                        <>
-                          <Sparkles className="w-4 h-4 mr-2" />
-                          Gerar novo insight
-                        </>
-                      )}
-                    </Button>
-                  </div>
-                ) : (
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <div className="inline-block">
+                    <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
+                      <div className="hidden sm:flex items-center gap-2 bg-muted/50 rounded-full px-3 py-1">
+                        <div className="w-16 h-1.5 bg-muted rounded-full overflow-hidden">
+                          <div 
+                            className="h-full bg-primary rounded-full transition-all duration-500" 
+                            style={{ width: `${quemSouProgress()}%` }}
+                          />
+                        </div>
+                        <span className="text-xs font-medium text-muted-foreground">{quemSouProgress()}%</span>
+                      </div>
+                      <ChevronDown className={`w-5 h-5 text-muted-foreground transition-transform duration-300 ${quemSouOpen ? 'rotate-180' : ''}`} />
+                    </div>
+                  </button>
+                </CollapsibleTrigger>
+                
+                <CollapsibleContent>
+                  <div className="px-4 pb-4 pt-2 space-y-6 border-t border-border/50">
+                    {/* VVD */}
+                    <div className="space-y-2">
+                      <Label htmlFor="vvd">Minha Visão de Vida Desejada</Label>
+                      <Textarea
+                        id="vvd"
+                        placeholder="Clique no link abaixo para fazer seu VVD"
+                        value={vvd}
+                        onChange={(e) => setVvd(e.target.value)}
+                        rows={4}
+                        disabled
+                        spellCheck="true"
+                      />
+                      <Link 
+                        to="/ferramentas/metodo-vvd" 
+                        className="flex items-center gap-2 text-sm text-primary hover:underline"
+                      >
+                        Como criar seu VVD
+                        <ArrowRight className="w-4 h-4" />
+                      </Link>
+                    </div>
+
+                    {/* Valores */}
+                    <div className="space-y-3">
+                      <Label>Meus Valores</Label>
+                      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-3">
+                        {valores.map((valor, index) => (
+                          <Input
+                            key={index}
+                            placeholder={`Valor ${index + 1}`}
+                            value={valor}
+                            onChange={(e) => updateValor(index, e.target.value)}
+                            disabled={!isEditingValores}
+                            className="text-sm"
+                            spellCheck="true"
+                          />
+                        ))}
+                      </div>
+                      <div className="flex items-center justify-between gap-4">
+                        <Link 
+                          to="/ferramentas/valores" 
+                          className="flex items-center gap-2 text-sm text-primary hover:underline"
+                        >
+                          Descobrir meus valores
+                          <ArrowRight className="w-4 h-4" />
+                        </Link>
+                        
+                        <div className="flex gap-2">
+                          {!isEditingValores && (
+                            <Button onClick={handleEditValores} size="sm" variant="outline">
+                              <Edit className="w-4 h-4 mr-2" />
+                              Editar
+                            </Button>
+                          )}
                           <Button 
-                            onClick={handleGenerateInsight} 
+                            onClick={handleSaveValores} 
                             size="sm" 
-                            disabled={isGeneratingInsight || (!isAdmin && !canGenerateInsight) || (!vvd && !isValoresComplete && !isAreasComplete)}
-                            className="w-full"
+                            variant="outline"
+                            disabled={!isValoresComplete || !isEditingValores}
                           >
-                            {isGeneratingInsight ? (
-                              <>
-                                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                                Gerando insight...
-                              </>
-                            ) : (
-                              <>
-                                <Sparkles className="w-4 h-4 mr-2" />
-                                Gerar Insight
-                              </>
-                            )}
+                            Salvar
                           </Button>
                         </div>
-                      </TooltipTrigger>
-                      {(!vvd || !isValoresComplete || !isAreasComplete || objetivos.length === 0) && (
-                        <TooltipContent>
-                          <p className="text-sm">
-                            Para gerar insights, preencha:<br />
-                            VVD, Valores, Roda da Vida,<br />
-                            ao menos 1 objetivo, 1 meta e 1 ação
-                          </p>
-                        </TooltipContent>
-                      )}
-                      {!isAdmin && !canGenerateInsight && (vvd || isValoresComplete || isAreasComplete) && (
-                        <TooltipContent>
-                          <p className="text-sm">
-                            Limite mensal atingido.<br />
-                            Próxima geração disponível em {getNextInsightDate()}
-                          </p>
-                        </TooltipContent>
-                      )}
-                    </Tooltip>
-                  </TooltipProvider>
-                )}
-              </div>
-            </div>
-          </TabsContent>
+                      </div>
+                    </div>
 
-          {/* Para onde vou */}
-          <TabsContent value="para-onde" className="space-y-6 mt-6">
-            {/* Overview de OKRs da empresa */}
-            <CompanyOKRsOverview />
-            
-            <div className="space-y-4">
-              <div className="flex items-center gap-2 mb-4">
-                <Target className="w-5 h-5 text-primary" />
-                <h3 className="text-lg font-semibold">Meus Objetivos</h3>
-              </div>
+                    {/* Áreas da Vida */}
+                    <div className="space-y-3">
+                      <Label>Áreas da Vida</Label>
+                      
+                      {/* Gráfico Radar - Roda da Vida */}
+                      {areasVida.length > 0 ? (
+                        <div className="rounded-lg border p-4 bg-card">
+                          <ResponsiveContainer width="100%" height={300}>
+                            <RadarChart data={areasVida.map(area => ({
+                              area: area.area,
+                              atual: Number(area.notaAtual) || 0,
+                              desejada: Number(area.notaDesejada) || 0
+                            }))}>
+                              <PolarGrid stroke="hsl(var(--border))" />
+                              <PolarAngleAxis
+                                dataKey="area"
+                                tick={{ fill: "hsl(var(--foreground))", fontSize: 10 }}
+                              />
+                              <PolarRadiusAxis
+                                angle={90}
+                                domain={[0, 10]}
+                                tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 10 }}
+                              />
+                              <Radar
+                                name="Nota Atual"
+                                dataKey="atual"
+                                stroke="hsl(var(--primary))"
+                                fill="hsl(var(--primary))"
+                                fillOpacity={0.3}
+                              />
+                              <Radar
+                                name="Nota Desejada"
+                                dataKey="desejada"
+                                stroke="hsl(var(--accent))"
+                                fill="hsl(var(--accent))"
+                                fillOpacity={0.3}
+                              />
+                              <Legend />
+                            </RadarChart>
+                          </ResponsiveContainer>
+                        </div>
+                      ) : (
+                        <div className="rounded-lg border p-6 bg-muted/20 text-center">
+                          <p className="text-sm text-muted-foreground">
+                            Nenhuma área da vida cadastrada. Acesse a Roda da Vida para configurar.
+                          </p>
+                        </div>
+                      )}
 
-              {/* Formulário de cadastro */}
-              <div className="space-y-4 p-4 border rounded-lg bg-muted/30">
-                <h4 className="font-medium text-sm">"Quem muito quer, pouco consegue"</h4>
-                <p className="text-xs text-muted-foreground">Sugestão: Tenha um único grande objetivo, quebrado em metas e ações!</p>
+                      <div className="flex items-center justify-start gap-4">
+                        <Link 
+                          to="/roda-da-vida" 
+                          className="flex items-center gap-2 text-sm text-primary hover:underline"
+                        >
+                          Acessar a Roda da Vida para editar
+                          <ArrowRight className="w-4 h-4" />
+                        </Link>
+                      </div>
+                    </div>
+                  </div>
+                </CollapsibleContent>
+              </div>
+            </Collapsible>
+
+            {/* Passo 2 - Para onde vou */}
+            <Collapsible open={paraOndeOpen} onOpenChange={(open) => handleSectionOpen("para-onde", open)}>
+              <div className={`rounded-xl border-2 transition-all duration-300 overflow-hidden ${paraOndeOpen ? 'border-primary bg-primary/5' : 'border-border hover:border-primary/50 hover:bg-muted/30'}`}>
+                <CollapsibleTrigger asChild>
+                  <button className="w-full p-4 flex items-center justify-between text-left group">
+                    <div className="flex items-center gap-3 sm:gap-4 flex-1 min-w-0">
+                      <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center flex-shrink-0 transition-all duration-300 ${paraOndeOpen ? 'bg-primary text-primary-foreground shadow-lg scale-105' : 'bg-primary/10 text-primary group-hover:bg-primary/20'}`}>
+                        <Target className="w-5 h-5 sm:w-6 sm:h-6" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 mb-0.5">
+                          <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-primary">Passo 2</span>
+                          {paraOndeProgress() === 100 && (
+                            <span className="w-4 h-4 sm:w-5 sm:h-5 rounded-full bg-green-500 flex items-center justify-center">
+                              <Check className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-white" />
+                            </span>
+                          )}
+                        </div>
+                        <h3 className="font-semibold text-sm sm:text-base truncate">Para onde vou</h3>
+                        <p className="text-[10px] sm:text-xs text-muted-foreground hidden sm:block">Defina seus objetivos</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
+                      <div className="hidden sm:flex items-center gap-2 bg-muted/50 rounded-full px-3 py-1">
+                        <div className="w-16 h-1.5 bg-muted rounded-full overflow-hidden">
+                          <div 
+                            className="h-full bg-primary rounded-full transition-all duration-500" 
+                            style={{ width: `${paraOndeProgress()}%` }}
+                          />
+                        </div>
+                        <span className="text-xs font-medium text-muted-foreground">{paraOndeProgress()}%</span>
+                      </div>
+                      <ChevronDown className={`w-5 h-5 text-muted-foreground transition-transform duration-300 ${paraOndeOpen ? 'rotate-180' : ''}`} />
+                    </div>
+                  </button>
+                </CollapsibleTrigger>
                 
-                <div className="space-y-2">
-                  <Label htmlFor="objetivo">Objetivo em Foco</Label>
-                  <Input
-                    id="objetivo"
-                    placeholder="Descreva seu objetivo principal"
-                    value={objetivo.texto}
-                    onChange={(e) => setObjetivo({ ...objetivo, texto: e.target.value })}
-                    spellCheck="true"
-                  />
-                </div>
+                <CollapsibleContent>
+                  <div className="px-4 pb-4 pt-2 space-y-4 border-t border-border/50">
+                    {/* Overview de OKRs da empresa */}
+                    <CompanyOKRsOverview />
+                    
+                    <div className="space-y-4">
+                      <div className="flex items-center gap-2 mb-4">
+                        <Target className="w-5 h-5 text-primary" />
+                        <h3 className="text-lg font-semibold">Meus Objetivos</h3>
+                      </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="dataAlvo">Data Alvo</Label>
-                    <Input
-                      id="dataAlvo"
-                      type="date"
-                      value={objetivo.dataAlvo}
-                      onChange={(e) => setObjetivo({ ...objetivo, dataAlvo: e.target.value })}
-                    />
+                      {/* Formulário de cadastro */}
+                      <div className="space-y-4 p-4 border rounded-lg bg-muted/30">
+                        <h4 className="font-medium text-sm">"Quem muito quer, pouco consegue"</h4>
+                        <p className="text-xs text-muted-foreground">Sugestão: Tenha um único grande objetivo, quebrado em metas e ações!</p>
+                        
+                        <div className="space-y-2">
+                          <Label htmlFor="objetivo">Objetivo em Foco</Label>
+                          <Input
+                            id="objetivo"
+                            placeholder="Descreva seu objetivo principal"
+                            value={objetivo.texto}
+                            onChange={(e) => setObjetivo({ ...objetivo, texto: e.target.value })}
+                            spellCheck="true"
+                          />
+                        </div>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                          <div className="space-y-2">
+                            <Label htmlFor="dataAlvo">Data Alvo</Label>
+                            <Input
+                              id="dataAlvo"
+                              type="date"
+                              value={objetivo.dataAlvo}
+                              onChange={(e) => setObjetivo({ ...objetivo, dataAlvo: e.target.value })}
+                            />
+                          </div>
+
+                          <div className="space-y-2">
+                            <Label htmlFor="status">Status</Label>
+                            <Select
+                              value={objetivo.status}
+                              onValueChange={(value) => setObjetivo({ ...objetivo, status: value })}
+                            >
+                              <SelectTrigger>
+                                <SelectValue placeholder="Selecione o status" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="a-iniciar">A iniciar</SelectItem>
+                                <SelectItem value="em-andamento">Em andamento</SelectItem>
+                                <SelectItem value="concluido">Concluído</SelectItem>
+                                <SelectItem value="pendente">Pendente</SelectItem>
+                                <SelectItem value="pausado">Pausado</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </div>
+                        </div>
+
+                        <div className="space-y-2">
+                          <Label htmlFor="conexaoVvd">Conexão com o VVD</Label>
+                          <Textarea
+                            id="conexaoVvd"
+                            placeholder="Como este objetivo se conecta com sua visão de vida?"
+                            value={objetivo.conexaoVvd}
+                            onChange={(e) => setObjetivo({ ...objetivo, conexaoVvd: e.target.value })}
+                            rows={3}
+                            spellCheck="true"
+                          />
+                        </div>
+
+                        <Button onClick={handleSaveObjetivo} className="w-full">
+                          <Plus className="w-4 h-4 mr-2" />
+                          Cadastrar Objetivo
+                        </Button>
+                      </div>
+
+                      {/* Lista de objetivos cadastrados */}
+                      {isLoading ? (
+                        <div className="py-6">
+                          <PDILoader 
+                            text="Carregando seus objetivos..." 
+                            size="md" 
+                            variant="target" 
+                          />
+                        </div>
+                      ) : objetivos.length > 0 ? (
+                        <div className="space-y-3">
+                          <h4 className="font-medium text-sm">Objetivos Cadastrados</h4>
+                          <div className="rounded-lg border overflow-x-auto">
+                            <Table>
+                              <TableHeader>
+                                <TableRow>
+                                  <TableHead className="text-xs sm:text-sm">Objetivo</TableHead>
+                                  <TableHead className="text-xs sm:text-sm">Data Alvo</TableHead>
+                                  <TableHead className="text-xs sm:text-sm">Status</TableHead>
+                                  <TableHead className="text-xs sm:text-sm">Conexão VVD</TableHead>
+                                  <TableHead className="text-xs sm:text-sm text-right">Ações</TableHead>
+                                </TableRow>
+                              </TableHeader>
+                              <TableBody>
+                                {objetivos.map((obj) => (
+                                  <TableRow key={obj.id}>
+                                    <TableCell className="text-xs sm:text-sm">
+                                      {editandoObjetivoId === obj.id ? (
+                                        <Input
+                                          value={objetivoEditado?.texto || ""}
+                                          onChange={(e) =>
+                                            setObjetivoEditado({ ...objetivoEditado!, texto: e.target.value })
+                                          }
+                                          className="text-xs sm:text-sm"
+                                        />
+                                      ) : (
+                                        <div>
+                                          <div>{obj.texto}</div>
+                                          <OKRLinkSection 
+                                            objetivoId={obj.id.toString()} 
+                                            objetivoTexto={obj.texto}
+                                          />
+                                        </div>
+                                      )}
+                                    </TableCell>
+                                    <TableCell className="text-xs sm:text-sm">
+                                      {editandoObjetivoId === obj.id ? (
+                                        <Input
+                                          type="date"
+                                          value={objetivoEditado?.dataAlvo || ""}
+                                          onChange={(e) =>
+                                            setObjetivoEditado({ ...objetivoEditado!, dataAlvo: e.target.value })
+                                          }
+                                          className="text-xs sm:text-sm"
+                                        />
+                                      ) : (
+                                        new Date(obj.dataAlvo).toLocaleDateString("pt-BR")
+                                      )}
+                                    </TableCell>
+                                    <TableCell className="text-xs sm:text-sm">
+                                      {editandoObjetivoId === obj.id ? (
+                                        <Select
+                                          value={objetivoEditado?.status || "em-andamento"}
+                                          onValueChange={(value) =>
+                                            setObjetivoEditado({ ...objetivoEditado!, status: value })
+                                          }
+                                        >
+                                          <SelectTrigger className="text-xs sm:text-sm">
+                                            <SelectValue />
+                                          </SelectTrigger>
+                                          <SelectContent>
+                                            <SelectItem value="a-iniciar">A iniciar</SelectItem>
+                                            <SelectItem value="em-andamento">Em andamento</SelectItem>
+                                            <SelectItem value="concluido">Concluído</SelectItem>
+                                            <SelectItem value="pendente">Pendente</SelectItem>
+                                            <SelectItem value="pausado">Pausado</SelectItem>
+                                          </SelectContent>
+                                        </Select>
+                                      ) : (
+                                        <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
+                                          obj.status === "concluido" ? "bg-green-100 text-green-800" :
+                                          obj.status === "em-andamento" ? "bg-blue-100 text-blue-800" :
+                                          obj.status === "pausado" ? "bg-yellow-100 text-yellow-800" :
+                                          obj.status === "a-iniciar" ? "bg-purple-100 text-purple-800" :
+                                          "bg-gray-100 text-gray-800"
+                                        }`}>
+                                          {obj.status === "em-andamento" ? "Em andamento" :
+                                           obj.status === "concluido" ? "Concluído" :
+                                           obj.status === "pausado" ? "Pausado" :
+                                           obj.status === "a-iniciar" ? "A iniciar" : "Pendente"}
+                                        </span>
+                                      )}
+                                    </TableCell>
+                                    <TableCell className="text-xs sm:text-sm">
+                                      {editandoObjetivoId === obj.id ? (
+                                        <Textarea
+                                          value={objetivoEditado?.conexaoVvd || ""}
+                                          onChange={(e) =>
+                                            setObjetivoEditado({ ...objetivoEditado!, conexaoVvd: e.target.value })
+                                          }
+                                          rows={2}
+                                          className="text-xs sm:text-sm"
+                                        />
+                                      ) : obj.conexaoVvd ? (
+                                        <TooltipProvider>
+                                          <Tooltip>
+                                            <TooltipTrigger asChild>
+                                              <span className="line-clamp-2 cursor-help max-w-[180px] block">
+                                                {obj.conexaoVvd}
+                                              </span>
+                                            </TooltipTrigger>
+                                            <TooltipContent side="top" className="max-w-xs">
+                                              <p className="text-sm whitespace-pre-wrap">{obj.conexaoVvd}</p>
+                                            </TooltipContent>
+                                          </Tooltip>
+                                        </TooltipProvider>
+                                      ) : (
+                                        <span className="text-muted-foreground italic">-</span>
+                                      )}
+                                    </TableCell>
+                                    <TableCell className="text-right">
+                                      <div className="flex items-center justify-end gap-1 sm:gap-2">
+                                        {editandoObjetivoId === obj.id ? (
+                                          <>
+                                            <Button
+                                              variant="ghost"
+                                              size="sm"
+                                              onClick={() => handleSaveEditObjetivo(obj.id)}
+                                            >
+                                              <Check className="w-4 h-4 text-green-600" />
+                                            </Button>
+                                            <Button
+                                              variant="ghost"
+                                              size="sm"
+                                              onClick={handleCancelEditObjetivo}
+                                            >
+                                              <X className="w-4 h-4 text-red-600" />
+                                            </Button>
+                                          </>
+                                        ) : (
+                                          <>
+                                            <Button
+                                              variant="ghost"
+                                              size="sm"
+                                              onClick={() => handleStartEditObjetivo(obj)}
+                                            >
+                                              <Pencil className="w-4 h-4" />
+                                            </Button>
+                                            <Button
+                                              variant="ghost"
+                                              size="sm"
+                                              onClick={() => handleRemoveObjetivo(obj.id)}
+                                            >
+                                              <Trash2 className="w-4 h-4 text-red-600" />
+                                            </Button>
+                                          </>
+                                        )}
+                                      </div>
+                                    </TableCell>
+                                  </TableRow>
+                                ))}
+                              </TableBody>
+                            </Table>
+                          </div>
+                        </div>
+                      ) : null}
+                    </div>
                   </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="status">Status</Label>
-                    <Select
-                      value={objetivo.status}
-                      onValueChange={(value) => setObjetivo({ ...objetivo, status: value })}
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Selecione o status" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="a-iniciar">A iniciar</SelectItem>
-                        <SelectItem value="em-andamento">Em andamento</SelectItem>
-                        <SelectItem value="concluido">Concluído</SelectItem>
-                        <SelectItem value="pendente">Pendente</SelectItem>
-                        <SelectItem value="pausado">Pausado</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="conexaoVvd">Conexão com o VVD</Label>
-                  <Textarea
-                    id="conexaoVvd"
-                    placeholder="Como este objetivo se conecta com sua visão de vida?"
-                    value={objetivo.conexaoVvd}
-                    onChange={(e) => setObjetivo({ ...objetivo, conexaoVvd: e.target.value })}
-                    rows={3}
-                    spellCheck="true"
-                  />
-                </div>
-
-                <Button onClick={handleSaveObjetivo} className="w-full">
-                  <Plus className="w-4 h-4 mr-2" />
-                  Cadastrar Objetivo
-                </Button>
+                </CollapsibleContent>
               </div>
+            </Collapsible>
 
-              {/* Lista de objetivos cadastrados */}
-              {isLoading ? (
-                <div className="py-6">
-                  <PDILoader 
-                    text="Carregando seus objetivos..." 
-                    size="md" 
-                    variant="target" 
-                  />
-                </div>
-              ) : objetivos.length > 0 ? (
-                <div className="space-y-3">
-                  <h4 className="font-medium text-sm">Objetivos Cadastrados</h4>
-                  <div className="rounded-lg border overflow-x-auto">
-                    <Table>
-                      <TableHeader>
-                        <TableRow>
-                          <TableHead className="text-xs sm:text-sm">Objetivo</TableHead>
-                          <TableHead className="text-xs sm:text-sm">Data Alvo</TableHead>
-                          <TableHead className="text-xs sm:text-sm">Status</TableHead>
-                          <TableHead className="text-xs sm:text-sm">Conexão VVD</TableHead>
-                          <TableHead className="text-xs sm:text-sm text-right">Ações</TableHead>
-                        </TableRow>
-                      </TableHeader>
-                      <TableBody>
-                        {objetivos.map((obj) => (
-                          <TableRow key={obj.id}>
-                            <TableCell className="text-xs sm:text-sm">
-                              {editandoObjetivoId === obj.id ? (
-                                <Input
-                                  value={objetivoEditado?.texto || ""}
-                                  onChange={(e) =>
-                                    setObjetivoEditado({ ...objetivoEditado!, texto: e.target.value })
-                                  }
-                                  className="text-xs sm:text-sm"
-                                />
-                              ) : (
-                                <div>
-                                  <div>{obj.texto}</div>
-                                  <OKRLinkSection 
-                                    objetivoId={obj.id.toString()} 
-                                    objetivoTexto={obj.texto}
-                                  />
-                                </div>
-                              )}
-                            </TableCell>
-                            <TableCell className="text-xs sm:text-sm">
-                              {editandoObjetivoId === obj.id ? (
-                                <Input
-                                  type="date"
-                                  value={objetivoEditado?.dataAlvo || ""}
-                                  onChange={(e) =>
-                                    setObjetivoEditado({ ...objetivoEditado!, dataAlvo: e.target.value })
-                                  }
-                                  className="text-xs sm:text-sm"
-                                />
-                              ) : (
-                                new Date(obj.dataAlvo).toLocaleDateString("pt-BR")
-                              )}
-                            </TableCell>
-                            <TableCell className="text-xs sm:text-sm">
-                              {editandoObjetivoId === obj.id ? (
-                                <Select
-                                  value={objetivoEditado?.status || "em-andamento"}
-                                  onValueChange={(value) =>
-                                    setObjetivoEditado({ ...objetivoEditado!, status: value })
-                                  }
-                                >
-                                  <SelectTrigger className="text-xs sm:text-sm">
-                                    <SelectValue />
-                                  </SelectTrigger>
-                                  <SelectContent>
-                                    <SelectItem value="a-iniciar">A iniciar</SelectItem>
-                                    <SelectItem value="em-andamento">Em andamento</SelectItem>
-                                    <SelectItem value="concluido">Concluído</SelectItem>
-                                    <SelectItem value="pendente">Pendente</SelectItem>
-                                    <SelectItem value="pausado">Pausado</SelectItem>
-                                  </SelectContent>
-                                </Select>
-                              ) : (
-                                <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
-                                  obj.status === "concluido" ? "bg-green-100 text-green-800" :
-                                  obj.status === "em-andamento" ? "bg-blue-100 text-blue-800" :
-                                  obj.status === "pausado" ? "bg-yellow-100 text-yellow-800" :
-                                  obj.status === "a-iniciar" ? "bg-purple-100 text-purple-800" :
-                                  "bg-gray-100 text-gray-800"
-                                }`}>
-                                  {obj.status === "em-andamento" ? "Em andamento" :
-                                   obj.status === "concluido" ? "Concluído" :
-                                   obj.status === "pausado" ? "Pausado" :
-                                   obj.status === "a-iniciar" ? "A iniciar" : "Pendente"}
-                                </span>
-                              )}
-                            </TableCell>
-                            <TableCell className="text-xs sm:text-sm">
-                              {editandoObjetivoId === obj.id ? (
-                                <Textarea
-                                  value={objetivoEditado?.conexaoVvd || ""}
-                                  onChange={(e) =>
-                                    setObjetivoEditado({ ...objetivoEditado!, conexaoVvd: e.target.value })
-                                  }
-                                  rows={2}
-                                  className="text-xs sm:text-sm"
-                                />
-                              ) : obj.conexaoVvd ? (
-                                <TooltipProvider>
-                                  <Tooltip>
-                                    <TooltipTrigger asChild>
-                                      <span className="line-clamp-2 cursor-help max-w-[180px] block">
-                                        {obj.conexaoVvd}
-                                      </span>
-                                    </TooltipTrigger>
-                                    <TooltipContent side="top" className="max-w-xs">
-                                      <p className="text-sm whitespace-pre-wrap">{obj.conexaoVvd}</p>
-                                    </TooltipContent>
-                                  </Tooltip>
-                                </TooltipProvider>
-                              ) : (
-                                <span className="text-muted-foreground italic">-</span>
-                              )}
-                            </TableCell>
-                            <TableCell className="text-right">
-                              <div className="flex items-center justify-end gap-1 sm:gap-2">
-                                {editandoObjetivoId === obj.id ? (
-                                  <>
-                                    <Button
-                                      variant="ghost"
-                                      size="sm"
-                                      onClick={() => handleSaveEditObjetivo(obj.id)}
-                                    >
-                                      <Check className="w-4 h-4 text-green-600" />
-                                    </Button>
-                                    <Button
-                                      variant="ghost"
-                                      size="sm"
-                                      onClick={handleCancelEditObjetivo}
-                                    >
-                                      <X className="w-4 h-4 text-red-600" />
-                                    </Button>
-                                  </>
-                                ) : (
-                                  <>
-                                    <Button
-                                      variant="ghost"
-                                      size="sm"
-                                      onClick={() => handleStartEditObjetivo(obj)}
-                                    >
-                                      <Pencil className="w-4 h-4" />
-                                    </Button>
-                                    <Button
-                                      variant="ghost"
-                                      size="sm"
-                                      onClick={() => handleRemoveObjetivo(obj.id)}
-                                    >
-                                      <Trash2 className="w-4 h-4 text-red-600" />
-                                    </Button>
-                                  </>
-                                )}
-                              </div>
-                            </TableCell>
-                          </TableRow>
-                        ))}
-                      </TableBody>
-                    </Table>
+            {/* Passo 3 - Como chegar lá */}
+            <Collapsible open={comoChegarOpen} onOpenChange={(open) => handleSectionOpen("como-chegar", open)}>
+              <div className={`rounded-xl border-2 transition-all duration-300 overflow-hidden ${comoChegarOpen ? 'border-primary bg-primary/5' : 'border-border hover:border-primary/50 hover:bg-muted/30'}`}>
+                <CollapsibleTrigger asChild>
+                  <button className="w-full p-4 flex items-center justify-between text-left group">
+                    <div className="flex items-center gap-3 sm:gap-4 flex-1 min-w-0">
+                      <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center flex-shrink-0 transition-all duration-300 ${comoChegarOpen ? 'bg-primary text-primary-foreground shadow-lg scale-105' : 'bg-primary/10 text-primary group-hover:bg-primary/20'}`}>
+                        <Lightbulb className="w-5 h-5 sm:w-6 sm:h-6" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 mb-0.5">
+                          <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-primary">Passo 3</span>
+                          {comoChecarProgress() === 100 && (
+                            <span className="w-4 h-4 sm:w-5 sm:h-5 rounded-full bg-green-500 flex items-center justify-center">
+                              <Check className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-white" />
+                            </span>
+                          )}
+                        </div>
+                        <h3 className="font-semibold text-sm sm:text-base truncate">Como chegar lá</h3>
+                        <p className="text-[10px] sm:text-xs text-muted-foreground hidden sm:block">Habilidades e desenvolvimento</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
+                      <div className="hidden sm:flex items-center gap-2 bg-muted/50 rounded-full px-3 py-1">
+                        <div className="w-16 h-1.5 bg-muted rounded-full overflow-hidden">
+                          <div 
+                            className="h-full bg-primary rounded-full transition-all duration-500" 
+                            style={{ width: `${comoChecarProgress()}%` }}
+                          />
+                        </div>
+                        <span className="text-xs font-medium text-muted-foreground">{comoChecarProgress()}%</span>
+                      </div>
+                      <ChevronDown className={`w-5 h-5 text-muted-foreground transition-transform duration-300 ${comoChegarOpen ? 'rotate-180' : ''}`} />
+                    </div>
+                  </button>
+                </CollapsibleTrigger>
+                
+                <CollapsibleContent>
+                  <div className="px-4 pb-4 pt-2 space-y-4 border-t border-border/50">
+                    <div className="space-y-4">
+                      <div className="flex items-center gap-2 mb-4">
+                        <Lightbulb className="w-5 h-5 text-primary" />
+                        <h3 className="text-lg font-semibold">Desenvolvimento</h3>
+                      </div>
+
+                      <div className="space-y-3">
+                        <Label>Habilidades a Desenvolver</Label>
+
+                        <div className="flex gap-2 p-3 sm:p-4 bg-muted/30 rounded-lg">
+                          <Input
+                            placeholder="Digite uma habilidade"
+                            value={novaHabilidade}
+                            onChange={(e) => setNovaHabilidade(e.target.value)}
+                            spellCheck="true"
+                            onKeyPress={(e) => {
+                              if (e.key === 'Enter') {
+                                handleAddHabilidade();
+                              }
+                            }}
+                          />
+                        </div>
+
+                        <Button 
+                          type="button" 
+                          variant="outline" 
+                          size="sm"
+                          onClick={handleAddHabilidade}
+                          className="mt-2"
+                        >
+                          <Plus className="w-4 h-4 mr-2" />
+                          Adicionar Habilidade
+                        </Button>
+
+                        {habilidades.length > 0 && (
+                          <div className="rounded-lg border overflow-x-auto">
+                            <Table>
+                              <TableHeader>
+                                <TableRow>
+                                  <TableHead className="text-xs sm:text-sm">Habilidade</TableHead>
+                                  <TableHead className="w-[80px] sm:w-[100px] text-xs sm:text-sm">Ações</TableHead>
+                                </TableRow>
+                              </TableHeader>
+                              <TableBody>
+                                {habilidades.map((habilidade) => {
+                                  const isEditing = editandoHabilidadeId === habilidade.id;
+                                  
+                                  return (
+                                    <TableRow key={habilidade.id}>
+                                      <TableCell>
+                                        {isEditing ? (
+                                          <Input
+                                            value={habilidadeEditada}
+                                            onChange={(e) => setHabilidadeEditada(e.target.value)}
+                                            spellCheck="true"
+                                          />
+                                        ) : (
+                                          habilidade.texto
+                                        )}
+                                      </TableCell>
+                                      <TableCell>
+                                        <div className="flex gap-1">
+                                          {isEditing ? (
+                                            <>
+                                              <Button
+                                                variant="ghost"
+                                                size="sm"
+                                                onClick={() => handleSaveEditHabilidade(habilidade.id)}
+                                              >
+                                                <Check className="w-4 h-4 text-green-600" />
+                                              </Button>
+                                              <Button
+                                                variant="ghost"
+                                                size="sm"
+                                                onClick={handleCancelEditHabilidade}
+                                              >
+                                                <X className="w-4 h-4 text-destructive" />
+                                              </Button>
+                                            </>
+                                          ) : (
+                                            <>
+                                              <Button
+                                                variant="ghost"
+                                                size="sm"
+                                                onClick={() => handleStartEditHabilidade(habilidade)}
+                                              >
+                                                <Pencil className="w-4 h-4" />
+                                              </Button>
+                                              <Button
+                                                variant="ghost"
+                                                size="sm"
+                                                onClick={() => handleRemoveHabilidade(habilidade.id)}
+                                              >
+                                                <Trash2 className="w-4 h-4 text-destructive" />
+                                              </Button>
+                                            </>
+                                          )}
+                                        </div>
+                                      </TableCell>
+                                    </TableRow>
+                                  );
+                                })}
+                              </TableBody>
+                            </Table>
+                          </div>
+                        )}
+
+                        <Link 
+                          to="/ferramentas" 
+                          className="flex items-center gap-2 text-sm text-primary hover:underline mt-2"
+                        >
+                          Ferramenta de Habilidades (FF)
+                          <ExternalLink className="w-4 h-4" />
+                        </Link>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              ) : null}
+                </CollapsibleContent>
+              </div>
+            </Collapsible>
+          </div>
+
+          {/* Insight Card - Sempre visível */}
+          <div className="rounded-xl border-2 border-primary/30 bg-gradient-to-br from-primary/5 to-primary/10 p-4 sm:p-6 mt-4">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center shadow-lg">
+                <Sparkles className="w-5 h-5 sm:w-6 sm:h-6 text-primary-foreground" />
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold">Insight Personalizado</h3>
+                <p className="text-xs sm:text-sm text-muted-foreground">
+                  Análise baseada no seu Plano de Vida
+                </p>
+              </div>
             </div>
-          </TabsContent>
-
-          {/* Como chegar lá */}
-          <TabsContent value="como-chegar" className="space-y-6 mt-6">
-            <div className="space-y-4">
-              <div className="flex items-center gap-2 mb-4">
-                <Lightbulb className="w-5 h-5 text-primary" />
-                <h3 className="text-lg font-semibold">Desenvolvimento</h3>
+            
+            {!isAdmin && !canGenerateInsight && (
+              <div className="bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-800 rounded-lg p-3 mb-4">
+                <p className="text-xs sm:text-sm text-amber-900 dark:text-amber-200">
+                  <strong>Limite mensal atingido.</strong> Você poderá gerar um novo insight em {getNextInsightDate()}. 
+                  Contrate o plano <strong>Premium</strong> para gerar insights ilimitados!
+                </p>
               </div>
-
-              <div className="space-y-3">
-                <Label>Habilidades a Desenvolver</Label>
-
-                <div className="flex gap-2 p-3 sm:p-4 bg-muted/30 rounded-lg">
-                  <Input
-                    placeholder="Digite uma habilidade"
-                    value={novaHabilidade}
-                    onChange={(e) => setNovaHabilidade(e.target.value)}
-                    spellCheck="true"
-                    onKeyPress={(e) => {
-                      if (e.key === 'Enter') {
-                        handleAddHabilidade();
-                      }
-                    }}
-                  />
+            )}
+            
+            {isAdmin && (
+              <div className="bg-primary/10 border border-primary/20 rounded-lg p-3 mb-4">
+                <p className="text-xs sm:text-sm text-primary">
+                  <strong>Acesso Admin:</strong> Você tem insights ilimitados como administrador.
+                </p>
+              </div>
+            )}
+            
+            {insight ? (
+              <div className="space-y-4">
+                <div className="bg-card rounded-lg p-4 border shadow-sm">
+                  <div className="prose prose-sm max-w-none whitespace-pre-line text-sm">
+                    {insight}
+                  </div>
                 </div>
-
                 <Button 
-                  type="button" 
-                  variant="outline" 
-                  size="sm"
-                  onClick={handleAddHabilidade}
-                  className="mt-2"
+                  onClick={handleGenerateInsight} 
+                  size="sm" 
+                  variant="outline"
+                  disabled={isGeneratingInsight || (!isAdmin && !canGenerateInsight)}
+                  className="w-full sm:w-auto"
                 >
-                  <Plus className="w-4 h-4 mr-2" />
-                  Adicionar Habilidade
+                  {isGeneratingInsight ? (
+                    <>
+                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                      Gerando novo insight...
+                    </>
+                  ) : (
+                    <>
+                      <Sparkles className="w-4 h-4 mr-2" />
+                      Gerar novo insight
+                    </>
+                  )}
                 </Button>
-
-                {habilidades.length > 0 && (
-                  <div className="rounded-lg border overflow-x-auto">
-                    <Table>
-                      <TableHeader>
-                        <TableRow>
-                          <TableHead className="text-xs sm:text-sm">Habilidade</TableHead>
-                          <TableHead className="w-[80px] sm:w-[100px] text-xs sm:text-sm">Ações</TableHead>
-                        </TableRow>
-                      </TableHeader>
-                      <TableBody>
-                        {habilidades.map((habilidade) => {
-                          const isEditing = editandoHabilidadeId === habilidade.id;
-                          
-                          return (
-                            <TableRow key={habilidade.id}>
-                              <TableCell>
-                                {isEditing ? (
-                                  <Input
-                                    value={habilidadeEditada}
-                                    onChange={(e) => setHabilidadeEditada(e.target.value)}
-                                    spellCheck="true"
-                                  />
-                                ) : (
-                                  habilidade.texto
-                                )}
-                              </TableCell>
-                              <TableCell>
-                                <div className="flex gap-1">
-                                  {isEditing ? (
-                                    <>
-                                      <Button
-                                        variant="ghost"
-                                        size="sm"
-                                        onClick={() => handleSaveEditHabilidade(habilidade.id)}
-                                      >
-                                        <Check className="w-4 h-4 text-green-600" />
-                                      </Button>
-                                      <Button
-                                        variant="ghost"
-                                        size="sm"
-                                        onClick={handleCancelEditHabilidade}
-                                      >
-                                        <X className="w-4 h-4 text-destructive" />
-                                      </Button>
-                                    </>
-                                  ) : (
-                                    <>
-                                      <Button
-                                        variant="ghost"
-                                        size="sm"
-                                        onClick={() => handleStartEditHabilidade(habilidade)}
-                                      >
-                                        <Pencil className="w-4 h-4" />
-                                      </Button>
-                                      <Button
-                                        variant="ghost"
-                                        size="sm"
-                                        onClick={() => handleRemoveHabilidade(habilidade.id)}
-                                      >
-                                        <Trash2 className="w-4 h-4 text-destructive" />
-                                      </Button>
-                                    </>
-                                  )}
-                                </div>
-                              </TableCell>
-                            </TableRow>
-                          );
-                        })}
-                      </TableBody>
-                    </Table>
-                  </div>
-                )}
-
-                <Link 
-                  to="/ferramentas" 
-                  className="flex items-center gap-2 text-sm text-primary hover:underline mt-2"
-                >
-                  Ferramenta de Habilidades (FF)
-                  <ExternalLink className="w-4 h-4" />
-                </Link>
               </div>
-            </div>
-          </TabsContent>
-          </Tabs>
+            ) : (
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <div className="inline-block w-full">
+                      <Button 
+                        onClick={handleGenerateInsight} 
+                        disabled={isGeneratingInsight || (!isAdmin && !canGenerateInsight) || (!vvd && !isValoresComplete && !isAreasComplete)}
+                        className="w-full"
+                        size="lg"
+                      >
+                        {isGeneratingInsight ? (
+                          <>
+                            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                            Gerando insight...
+                          </>
+                        ) : (
+                          <>
+                            <Sparkles className="w-4 h-4 mr-2" />
+                            Gerar Insight
+                          </>
+                        )}
+                      </Button>
+                    </div>
+                  </TooltipTrigger>
+                  {(!vvd || !isValoresComplete || !isAreasComplete || objetivos.length === 0) && (
+                    <TooltipContent>
+                      <p className="text-sm">
+                        Para gerar insights, preencha:<br />
+                        VVD, Valores, Roda da Vida,<br />
+                        ao menos 1 objetivo, 1 meta e 1 ação
+                      </p>
+                    </TooltipContent>
+                  )}
+                  {!isAdmin && !canGenerateInsight && (vvd || isValoresComplete || isAreasComplete) && (
+                    <TooltipContent>
+                      <p className="text-sm">
+                        Limite mensal atingido.<br />
+                        Próxima geração disponível em {getNextInsightDate()}
+                      </p>
+                    </TooltipContent>
+                  )}
+                </Tooltip>
+              </TooltipProvider>
+            )}
+          </div>
         </CardContent>
-        </CollapsibleContent>
       </Card>
 
       {/* Modal para perguntar se quer cadastrar meta */}
@@ -1471,7 +1639,6 @@ const PlanoDeVida = ({ onTabChange, onOpenChange, forcedTab, forcedOpen }: Plano
         title="Excluir Habilidade"
         description="Tem certeza que deseja excluir esta habilidade?"
       />
-      </Collapsible>
     </>
   );
 };
