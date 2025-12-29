@@ -260,19 +260,17 @@ const MaoNaMassa = ({ embedded = false }: MaoNaMassaProps) => {
         setEditandoMetaId(null);
         setIsFormOpen(false);
       } else {
-        const novaMeta = { ...meta, objetivoId: objetivoSelecionado, acoes, passos, id: Date.now(), concluida: false };
-        metas.push(novaMeta);
-        await storage.saveMetas(metas);
+        // Create new meta without adding to existing array to prevent duplicates
+        // The storage service will handle the insert and return proper UUIDs
+        const novaMeta = { ...meta, objetivoId: objetivoSelecionado, acoes, passos, concluida: false };
         
-        // Reload metas from Supabase to get proper UUIDs and prevent duplicates
+        // Save only the new meta (not the entire array with a temporary ID)
+        await storage.saveMetas([...metas, novaMeta]);
+        
+        // Reload metas from Supabase to get proper UUIDs
         const updatedMetas = await storage.getMetas();
-        if (updatedMetas && updatedMetas.length > 0) {
-          localStorage.setItem("metas", JSON.stringify(updatedMetas));
-          setMetasCadastradas(updatedMetas);
-        } else {
-          localStorage.setItem("metas", JSON.stringify(metas));
-          setMetasCadastradas(metas);
-        }
+        localStorage.setItem("metas", JSON.stringify(updatedMetas || []));
+        setMetasCadastradas(updatedMetas || []);
         
         celebrateAction('goal', 'Meta');
         setShowSuggestionModal(true);
