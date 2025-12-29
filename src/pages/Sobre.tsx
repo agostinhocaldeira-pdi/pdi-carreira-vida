@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { ArrowRight, ArrowLeft, Quote } from "lucide-react";
 import Logo from "@/components/Logo";
-import agostinhoImage from "@/assets/agostinho-caldeira.jpg";
+import agostinhoImage from "@/assets/agostinho-caldeira-new.jpg";
 
 const Sobre = () => {
   const navigate = useNavigate();
