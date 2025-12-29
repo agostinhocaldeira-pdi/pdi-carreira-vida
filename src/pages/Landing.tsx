@@ -105,9 +105,8 @@ const Landing = () => {
               Hoje
             </h1>
             
-            <p className="text-sm sm:text-base md:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed hidden sm:block">
-              <span className="font-semibold text-foreground">89% das pessoas vivem no piloto automático</span>. 
-              <span className="font-semibold text-foreground"> Esse dia é hoje.</span>
+            <p className="text-sm sm:text-base md:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
+              Sistema guiado por método, mentoria especializada e Inteligência Artificial para quem quer evoluir com clareza e consistência.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 justify-center items-center pt-2 sm:pt-4">
