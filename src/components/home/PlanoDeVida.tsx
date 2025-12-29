@@ -38,7 +38,7 @@ const PlanoDeVida = ({ onTabChange, onOpenChange, forcedTab, forcedOpen }: Plano
   // React Query hook for cached data with localStorage-first pattern
   const { data: pdiData, isLoading: isQueryLoading } = usePDIData();
   
-  // Estados para cards expansíveis
+  // Estados para cards expansíveis - Passo 1 inicia minimizado
   const [quemSouOpen, setQuemSouOpen] = useState(false);
   const [paraOndeOpen, setParaOndeOpen] = useState(false);
   const [comoChegarOpen, setComoChegarOpen] = useState(false);
