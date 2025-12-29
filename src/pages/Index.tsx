@@ -238,13 +238,12 @@ const Index = () => {
         <div className="container mx-auto max-w-4xl">
           <div className="text-center">
             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-5xl font-bold mb-4 sm:mb-6 text-foreground leading-tight">
-              Pare de viver no improviso.{" "}
-              <span className="block text-primary/90">
+              <span className="text-primary/90">
                 Construa uma vida e uma carreira com clareza, direção e progresso real.
               </span>
             </h1>
             <p className="text-base sm:text-lg md:text-xl text-muted-foreground mb-6 sm:mb-8 max-w-3xl mx-auto leading-relaxed">
-              O PDI – Carreira & Vida é um sistema guiado por método, tecnologia e reflexão consciente para quem cansou de se sentir perdido, sobrecarregado ou travado — e quer retomar o controle da própria trajetória, com consistência e sentido.
+              Sistema guiado por método, mentoria especializada e Inteligência Artificial para quem quer evoluir com clareza e consistência.
             </p>
             
             {/* Video Section */}
