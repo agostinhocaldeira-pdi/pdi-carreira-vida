@@ -14,6 +14,8 @@ import { useGamification } from "@/hooks/useGamification";
 
 import { usePDIStorage } from "@/hooks/usePDIStorage";
 import { DailyCheckout } from "@/components/gamification/DailyCheckout";
+import { useAIUsage } from "@/hooks/useAIUsage";
+import { AIUsageLimitModal } from "@/components/AIUsageLimitModal";
 
 const ProgressSection = () => {
   const storage = usePDIStorage();
@@ -33,6 +35,10 @@ const ProgressSection = () => {
   const [isGenerating, setIsGenerating] = useState(false);
   const [canGenerateInsight, setCanGenerateInsight] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [showAILimitModal, setShowAILimitModal] = useState(false);
+  
+  // AI Usage hook for purchasing additional usage
+  const aiUsage = useAIUsage('insight');
   
   // Real progress data calculated from user data
   const [progressData, setProgressData] = useState({
@@ -133,11 +139,21 @@ const ProgressSection = () => {
     loadProgressData();
   }, [storage]);
 
-  const handleGenerateInsight = async () => {
+  const handleGenerateInsight = async (fromPurchase = false) => {
     // Administradores não têm limite
-    if (!isAdmin && !canGenerateInsight) {
-      toast.error("Você já gerou seu insight mensal. Contrate o plano Premium para gerar mais insights!");
+    if (!isAdmin && !canGenerateInsight && !fromPurchase && !aiUsage.hasAvailablePurchase) {
+      // Show purchase modal instead of just error
+      setShowAILimitModal(true);
       return;
+    }
+
+    // If using a paid purchase, consume it first
+    if (!isAdmin && !canGenerateInsight && !fromPurchase && aiUsage.hasAvailablePurchase) {
+      const consumed = await aiUsage.consumePurchase();
+      if (!consumed) {
+        toast.error("Erro ao processar sua compra. Tente novamente.");
+        return;
+      }
     }
 
     // Validar requisitos mínimos para gerar insight
@@ -230,8 +246,32 @@ const ProgressSection = () => {
     }
   };
 
+  const handlePurchaseAI = async () => {
+    const url = await aiUsage.createPurchase('/home');
+    if (url) {
+      window.location.href = url;
+    }
+  };
+
+  // Check for verified purchase and trigger generation
+  useEffect(() => {
+    if (aiUsage.hasAvailablePurchase && !isGenerating) {
+      // User has a paid purchase available, trigger generation
+      handleGenerateInsight(true);
+    }
+  }, [aiUsage.hasAvailablePurchase]);
+
   return (
-    <Collapsible open={isOpen} onOpenChange={setIsOpen}>
+    <>
+      <AIUsageLimitModal
+        isOpen={showAILimitModal}
+        onClose={() => setShowAILimitModal(false)}
+        onPurchase={handlePurchaseAI}
+        isLoading={aiUsage.isLoading}
+        featureType="insight"
+        featureName="Insights Personalizados"
+      />
+      <Collapsible open={isOpen} onOpenChange={setIsOpen}>
       <Card className="shadow-medium">
         <CardHeader>
           <div className="flex items-center justify-between">
@@ -549,6 +589,7 @@ const ProgressSection = () => {
         </CollapsibleContent>
       </Card>
     </Collapsible>
+    </>
   );
 };
 

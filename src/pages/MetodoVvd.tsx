@@ -6,12 +6,14 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { ArrowLeft, Sparkles, Heart, Star, Loader2, Edit, Check, ExternalLink, HelpCircle, ClipboardList, Lightbulb } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import LogoutButton from "@/components/LogoutButton";
 import { usePDIStorage } from "@/hooks/usePDIStorage";
 import VvdScientificModal from "@/components/VvdScientificModal";
+import { useAIUsage } from "@/hooks/useAIUsage";
+import { AIUsageLimitModal } from "@/components/AIUsageLimitModal";
 
 interface SurveyData {
   currentPhase: string;
@@ -38,6 +40,11 @@ const MetodoVvd = () => {
   const [isVvdModalOpen, setIsVvdModalOpen] = useState(false);
   const [showSurveySection, setShowSurveySection] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
+  const [showAILimitModal, setShowAILimitModal] = useState(false);
+  const [pendingAIStep, setPendingAIStep] = useState<"step1" | "step2" | null>(null);
+  
+  // AI Usage hook for purchasing additional usage
+  const aiUsage = useAIUsage('vvd');
 
   const [surveyData, setSurveyData] = useState<SurveyData>({
     currentPhase: "",
@@ -122,27 +129,38 @@ const MetodoVvd = () => {
     }
   };
 
-  const handleStep1Save = async () => {
+  const handleStep1Save = async (fromPurchase = false) => {
     if (!freeText.trim()) {
       toast.error("Por favor, escreva sua visão de vida antes de continuar.");
       return;
     }
 
-    if (hasUsedAI) {
-      toast.error("Você já utilizou a IA para criar seu VVD.", {
-        description: "Use o botão Editar para fazer alterações manuais."
-      });
+    if (hasUsedAI && !fromPurchase && !aiUsage.hasAvailablePurchase) {
+      // Show purchase modal
+      setPendingAIStep("step1");
+      setShowAILimitModal(true);
       return;
+    }
+
+    // If using a paid purchase, consume it
+    if (hasUsedAI && !fromPurchase && aiUsage.hasAvailablePurchase) {
+      const consumed = await aiUsage.consumePurchase();
+      if (!consumed) {
+        toast.error("Erro ao processar sua compra. Tente novamente.");
+        return;
+      }
     }
 
     const result = await processVvd(freeText, "paragraph");
     if (result) {
       setParagraphText(result);
       setStep(2);
-      setShowSurveySection(true); // Show survey questions
-      // Marcar que a IA foi usada
-      localStorage.setItem("vvd_ai_used", "true");
-      setHasUsedAI(true);
+      setShowSurveySection(true);
+      // Marcar que a IA foi usada (apenas primeira vez gratuita)
+      if (!hasUsedAI) {
+        localStorage.setItem("vvd_ai_used", "true");
+        setHasUsedAI(true);
+      }
       toast.success("Texto resumido com sucesso!", {
         description: "Revise e edite se desejar, depois salve para continuar."
       });
@@ -162,17 +180,24 @@ const MetodoVvd = () => {
     });
   };
 
-  const handleStep2Save = async () => {
+  const handleStep2Save = async (fromPurchase = false) => {
     if (!paragraphText.trim()) {
       toast.error("O parágrafo não pode estar vazio.");
       return;
     }
 
-    if (hasUsedAI) {
-      toast.error("Você já utilizou a IA para criar seu VVD.", {
-        description: "Use o botão Editar para fazer alterações manuais."
-      });
+    if (hasUsedAI && !fromPurchase && !aiUsage.hasAvailablePurchase) {
+      setPendingAIStep("step2");
+      setShowAILimitModal(true);
       return;
+    }
+
+    if (hasUsedAI && !fromPurchase && aiUsage.hasAvailablePurchase) {
+      const consumed = await aiUsage.consumePurchase();
+      if (!consumed) {
+        toast.error("Erro ao processar sua compra. Tente novamente.");
+        return;
+      }
     }
 
     const result = await processVvd(paragraphText, "sentence");
@@ -262,7 +287,35 @@ const MetodoVvd = () => {
     }
   };
 
+  const handlePurchaseAI = async () => {
+    const url = await aiUsage.createPurchase('/ferramentas/vvd');
+    if (url) {
+      window.location.href = url;
+    }
+  };
+
+  // Handle purchase verification and trigger AI
+  useEffect(() => {
+    if (aiUsage.hasAvailablePurchase && pendingAIStep) {
+      if (pendingAIStep === "step1") {
+        handleStep1Save(true);
+      } else if (pendingAIStep === "step2") {
+        handleStep2Save(true);
+      }
+      setPendingAIStep(null);
+    }
+  }, [aiUsage.hasAvailablePurchase]);
+
   return (
+    <>
+      <AIUsageLimitModal
+        isOpen={showAILimitModal}
+        onClose={() => setShowAILimitModal(false)}
+        onPurchase={handlePurchaseAI}
+        isLoading={aiUsage.isLoading}
+        featureType="vvd"
+        featureName="VVD com IA"
+      />
     <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-accent/5">
       <div className="container mx-auto px-4 py-8 max-w-4xl">
         {/* Header */}
@@ -377,8 +430,8 @@ const MetodoVvd = () => {
                       Salvar
                     </Button>
                     <Button
-                      onClick={handleStep1Save}
-                      disabled={!freeText.trim() || isProcessing || hasUsedAI}
+                      onClick={() => handleStep1Save()}
+                      disabled={!freeText.trim() || isProcessing}
                       size="lg"
                       className="w-full sm:w-auto bg-gradient-to-r from-primary to-accent hover:opacity-90 transition-opacity"
                     >
@@ -496,8 +549,8 @@ const MetodoVvd = () => {
                           Salvar
                         </Button>
                         <Button
-                          onClick={handleStep2Save}
-                          disabled={!paragraphText.trim() || isProcessing || hasUsedAI}
+                          onClick={() => handleStep2Save()}
+                          disabled={!paragraphText.trim() || isProcessing}
                           size="lg"
                           className="w-full sm:w-auto bg-gradient-to-r from-primary to-accent hover:opacity-90 transition-opacity"
                         >
