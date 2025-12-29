@@ -103,12 +103,12 @@ const Diario = () => {
 
   return (
     <div className="min-h-screen bg-gradient-subtle">
-      <header className="bg-card border-b shadow-soft">
+      <header className="bg-primary border-b border-primary/80 shadow-elegant">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between gap-2">
             <div className="flex items-center gap-2">
-              <Book className="w-6 h-6 text-primary" />
-              <h1 className="text-2xl font-bold">Meu Diário</h1>
+              <Book className="w-6 h-6 text-primary-foreground" />
+              <h1 className="text-2xl font-bold text-primary-foreground">Meu Diário</h1>
             </div>
             <LogoutButton />
           </div>

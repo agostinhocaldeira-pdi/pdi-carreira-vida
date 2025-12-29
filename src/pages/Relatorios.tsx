@@ -209,18 +209,18 @@ const Relatorios = () => {
   return (
     <div className="min-h-screen bg-gradient-subtle">
       {/* Header */}
-      <header className="bg-card border-b shadow-sm">
+      <header className="bg-primary border-b border-primary/80 shadow-elegant">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <Logo size="sm" showText={false} />
               <div>
-                <h1 className="text-xl sm:text-2xl font-bold">Relatórios</h1>
-                <p className="text-sm text-muted-foreground">Exporte e acompanhe sua evolução</p>
+                <h1 className="text-xl sm:text-2xl font-bold text-primary-foreground">Relatórios</h1>
+                <p className="text-sm text-primary-foreground/70">Exporte e acompanhe sua evolução</p>
               </div>
             </div>
             <Link to="/home">
-              <Button variant="outline" size="sm" className="gap-2">
+              <Button variant="outline" size="sm" className="gap-2 bg-primary-foreground/10 border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/20">
                 <ArrowLeft className="w-4 h-4" />
                 <span className="hidden sm:inline">Voltar</span>
               </Button>
