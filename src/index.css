@@ -8,45 +8,63 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    --background: 210 40% 98%;
-    --foreground: 215 25% 15%;
+    /* Paleta Principal - Núcleo Cognitivo */
+    /* Off-white #F6F7F4 - fundo principal para leitura e reflexão */
+    --background: 80 20% 96%;
+    /* Cinza grafite #2E2E2E - textos, ícones e divisórias */
+    --foreground: 0 0% 18%;
 
     --card: 0 0% 100%;
-    --card-foreground: 215 25% 15%;
+    --card-foreground: 0 0% 18%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 215 25% 15%;
+    --popover-foreground: 0 0% 18%;
 
-    --primary: 174 65% 42%;
+    /* Azul petróleo #0F2A3D - cor estrutural principal (headers, navegação) */
+    --primary: 204 61% 15%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 210 30% 92%;
-    --secondary-foreground: 215 25% 15%;
+    /* Verde oliva suave #6B7F5A - equilíbrio e acompanhamento de progresso */
+    --secondary: 92 17% 43%;
+    --secondary-foreground: 0 0% 100%;
 
-    --muted: 210 30% 94%;
-    --muted-foreground: 215 15% 50%;
+    --muted: 80 15% 92%;
+    --muted-foreground: 0 0% 35%;
 
-    --accent: 15 85% 65%;
+    /* Laranja queimado #D9822B - botões primários de ação consciente */
+    --accent: 30 69% 51%;
     --accent-foreground: 0 0% 100%;
 
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 214 25% 88%;
-    --input: 214 25% 88%;
-    --ring: 174 65% 42%;
+    --border: 80 10% 85%;
+    --input: 80 10% 85%;
+    --ring: 204 61% 15%;
 
     --radius: 0.75rem;
 
-    --gradient-primary: linear-gradient(135deg, hsl(174 65% 42%), hsl(174 75% 55%));
-    --gradient-accent: linear-gradient(135deg, hsl(15 85% 65%), hsl(15 95% 75%));
-    --gradient-subtle: linear-gradient(180deg, hsl(210 40% 98%), hsl(210 30% 96%));
+    /* Paleta de Dopamina Controlada */
+    /* Verde esmeralda #1FA774 - conquistas reais */
+    --success: 156 68% 39%;
+    --success-foreground: 0 0% 100%;
     
-    --shadow-soft: 0 2px 8px -2px hsl(215 25% 15% / 0.08);
-    --shadow-medium: 0 4px 16px -4px hsl(215 25% 15% / 0.12);
-    --shadow-large: 0 8px 24px -6px hsl(215 25% 15% / 0.15);
-    --shadow-elegant: 0 10px 30px -10px hsl(174 65% 42% / 0.2);
-    --shadow-glow: 0 0 30px hsl(174 75% 55% / 0.3);
+    /* Amarelo dourado suave #E6C65C - insights, alertas, destaques */
+    --warning: 46 72% 63%;
+    --warning-foreground: 0 0% 18%;
+
+    /* Gradientes sutis - sem estímulos agressivos */
+    --gradient-primary: linear-gradient(135deg, hsl(204 61% 15%), hsl(204 61% 22%));
+    --gradient-accent: linear-gradient(135deg, hsl(30 69% 51%), hsl(30 69% 58%));
+    --gradient-subtle: linear-gradient(180deg, hsl(80 20% 96%), hsl(80 15% 94%));
+    --gradient-success: linear-gradient(135deg, hsl(156 68% 39%), hsl(156 68% 45%));
+    
+    /* Sombras suaves - sensação de segurança */
+    --shadow-soft: 0 2px 8px -2px hsl(0 0% 18% / 0.06);
+    --shadow-medium: 0 4px 16px -4px hsl(0 0% 18% / 0.08);
+    --shadow-large: 0 8px 24px -6px hsl(0 0% 18% / 0.10);
+    --shadow-elegant: 0 10px 30px -10px hsl(204 61% 15% / 0.15);
+    --shadow-glow: 0 0 30px hsl(156 68% 39% / 0.2);
     
     --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
