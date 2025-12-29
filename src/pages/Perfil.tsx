@@ -200,11 +200,11 @@ const Perfil = () => {
         {/* Header */}
         <div className="flex flex-col gap-4">
           <div className="flex items-center gap-4">
-            <Button variant="ghost" size="icon" onClick={() => navigate("/home")}>
-              <ArrowLeft className="h-5 w-5" />
+            <Button variant="outline" size="icon" onClick={() => navigate("/home")} className="border-primary/30 hover:bg-primary/10">
+              <ArrowLeft className="h-5 w-5 text-primary" />
             </Button>
             <div>
-              <h1 className="text-2xl sm:text-3xl font-bold">Meu Perfil</h1>
+              <h1 className="text-2xl sm:text-3xl font-bold text-primary">Meu Perfil</h1>
               <p className="text-muted-foreground text-sm">Gerencie suas informações pessoais</p>
             </div>
           </div>
