@@ -56,3 +56,12 @@ verify_jwt = false
 
 [functions.send-welcome-email]
 verify_jwt = false
+
+[functions.evaluate-smart-step]
+verify_jwt = false
+
+[functions.create-smart-payment]
+verify_jwt = false
+
+[functions.check-smart-payment]
+verify_jwt = false

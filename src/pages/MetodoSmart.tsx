@@ -6,8 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { 
   ArrowLeft, 
   Home, 
@@ -18,15 +17,19 @@ import {
   Calendar,
   BarChart3,
   TrendingUp,
-  Clock,
   Sparkles,
-  HelpCircle
+  HelpCircle,
+  Bot,
+  Loader2,
+  Lock,
+  CreditCard
 } from "lucide-react";
 import { toast } from "sonner";
 import { usePDIStorage } from "@/hooks/usePDIStorage";
 import { useQueryClient } from "@tanstack/react-query";
 import { PDI_QUERY_KEYS } from "@/hooks/usePDIQueries";
 import SmartScientificModal from "@/components/SmartScientificModal";
+import { supabase } from "@/integrations/supabase/client";
 
 interface Objetivo {
   id: number | string;
@@ -44,13 +47,21 @@ interface MetaSmart {
   dataAlvo: string;
 }
 
+interface AIUsageStatus {
+  freeUsageConsumed: boolean;
+  totalPaidUsages: number;
+  usagesRemaining: number;
+}
+
 const MetodoSmart = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const storage = usePDIStorage();
   const queryClient = useQueryClient();
-  const [etapa, setEtapa] = useState(0); // 0=intro, 1=selecao objetivo, 2-6=SMART, 7=preview
+  const [etapa, setEtapa] = useState(0);
   const [objetivos, setObjetivos] = useState<Objetivo[]>([]);
   const [objetivoSelecionado, setObjetivoSelecionado] = useState<Objetivo | null>(null);
+  const [vvd, setVvd] = useState<string>("");
   
   const [metaSmart, setMetaSmart] = useState<MetaSmart>({
     objetivoId: "",
@@ -65,13 +76,80 @@ const MetodoSmart = () => {
   const [isImporting, setIsImporting] = useState(false);
   const [isSmartModalOpen, setIsSmartModalOpen] = useState(false);
 
+  // AI Mentor states
+  const [aiFeedback, setAiFeedback] = useState<string>("");
+  const [isLoadingAI, setIsLoadingAI] = useState(false);
+  const [hasRequestedAI, setHasRequestedAI] = useState(false);
+  const [aiUsageStatus, setAiUsageStatus] = useState<AIUsageStatus>({
+    freeUsageConsumed: false,
+    totalPaidUsages: 0,
+    usagesRemaining: 1, // 1 free usage
+  });
+  const [isCheckingUsage, setIsCheckingUsage] = useState(true);
+  const [isCreatingPayment, setIsCreatingPayment] = useState(false);
+
+  // Check for payment success on mount
+  useEffect(() => {
+    const paymentStatus = searchParams.get("payment");
+    if (paymentStatus === "success") {
+      toast.success("Pagamento confirmado! Você pode usar a mentoria IA novamente.");
+      checkAIUsage();
+      // Clear the URL params
+      navigate("/ferramentas/smart", { replace: true });
+    } else if (paymentStatus === "cancelled") {
+      toast.info("Pagamento cancelado.");
+      navigate("/ferramentas/smart", { replace: true });
+    }
+  }, [searchParams, navigate]);
+
+  // Load AI usage status
+  const checkAIUsage = async () => {
+    setIsCheckingUsage(true);
+    try {
+      const { data: session } = await supabase.auth.getSession();
+      if (!session.session) {
+        setIsCheckingUsage(false);
+        return;
+      }
+
+      // Check local usage first
+      const { data: usageData, error } = await supabase
+        .from("user_smart_ai_usage")
+        .select("*")
+        .eq("user_id", session.session.user.id)
+        .maybeSingle();
+
+      if (error) {
+        console.error("Error checking AI usage:", error);
+      }
+
+      // Check for paid usages via Stripe
+      const { data: paymentData } = await supabase.functions.invoke("check-smart-payment");
+      
+      const freeConsumed = usageData?.free_usage_consumed || false;
+      const paidUsages = paymentData?.totalPaidUsages || 0;
+      const usedPaidUsages = usageData?.total_paid_usages || 0;
+      const remainingPaid = Math.max(0, paidUsages - usedPaidUsages);
+      
+      setAiUsageStatus({
+        freeUsageConsumed: freeConsumed,
+        totalPaidUsages: paidUsages,
+        usagesRemaining: freeConsumed ? remainingPaid : 1,
+      });
+    } catch (error) {
+      console.error("Error checking AI usage:", error);
+    } finally {
+      setIsCheckingUsage(false);
+    }
+  };
+
   useEffect(() => {
     window.scrollTo(0, 0);
+    checkAIUsage();
     
-    const loadObjetivos = async () => {
+    const loadData = async () => {
       try {
-        // Sempre prioriza a fonte "oficial" (backend ou storage local via usePDIStorage).
-        // NÃO fazer fallback por "length > 0" para evitar ressuscitar objetivos excluídos.
+        // Load objectives
         const savedObjetivos = await storage.getObjetivos();
         setObjetivos(
           (savedObjetivos || []).map((obj: any) => ({
@@ -79,14 +157,20 @@ const MetodoSmart = () => {
             texto: obj.texto,
           }))
         );
+
+        // Load VVD for AI context
+        const savedVvd = await storage.getVvd();
+        if (savedVvd) {
+          setVvd(savedVvd);
+        }
       } catch (error) {
-        console.error("Erro ao carregar objetivos (SMART):", error);
+        console.error("Erro ao carregar dados (SMART):", error);
         const localObjetivos = localStorage.getItem("objetivos");
         if (localObjetivos) setObjetivos(JSON.parse(localObjetivos));
       }
     };
 
-    loadObjetivos();
+    loadData();
   }, [storage.isAuthenticated]);
 
   const handleSelecionarObjetivo = (objId: string) => {
@@ -101,13 +185,130 @@ const MetodoSmart = () => {
     }
   };
 
+  // AI Mentor function
+  const requestAIFeedback = async (step: string) => {
+    if (aiUsageStatus.usagesRemaining <= 0) {
+      toast.error("Você já utilizou sua mentoria IA gratuita. Adquira um uso adicional para continuar.");
+      return;
+    }
+
+    setIsLoadingAI(true);
+    setAiFeedback("");
+    setHasRequestedAI(true);
+
+    try {
+      const { data: session } = await supabase.auth.getSession();
+      if (!session.session) {
+        toast.error("Você precisa estar logado para usar a mentoria IA.");
+        return;
+      }
+
+      const currentField = step === "S" ? "especifico" : 
+                           step === "M" ? "mensuravel" :
+                           step === "A" ? "atingivel" :
+                           step === "R" ? "relevante" :
+                           step === "T" ? "temporal" : "";
+      
+      const currentText = currentField ? metaSmart[currentField as keyof MetaSmart] : "";
+      
+      if (!currentText.trim() && step !== "FINAL") {
+        toast.error("Preencha o campo antes de solicitar feedback da IA.");
+        setIsLoadingAI(false);
+        return;
+      }
+
+      const { data, error } = await supabase.functions.invoke("evaluate-smart-step", {
+        body: {
+          step,
+          currentText,
+          objetivo: objetivoSelecionado?.texto,
+          vvd,
+          previousSteps: {
+            especifico: metaSmart.especifico,
+            mensuravel: metaSmart.mensuravel,
+            atingivel: metaSmart.atingivel,
+            relevante: metaSmart.relevante,
+            temporal: metaSmart.temporal,
+            dataAlvo: metaSmart.dataAlvo,
+          }
+        }
+      });
+
+      if (error) {
+        throw error;
+      }
+
+      if (data?.error) {
+        throw new Error(data.error);
+      }
+
+      setAiFeedback(data.feedback);
+
+      // Mark free usage as consumed if this was the first use
+      if (!aiUsageStatus.freeUsageConsumed) {
+        await supabase
+          .from("user_smart_ai_usage")
+          .upsert({
+            user_id: session.session.user.id,
+            free_usage_consumed: true,
+            updated_at: new Date().toISOString(),
+          }, { onConflict: "user_id" });
+        
+        setAiUsageStatus(prev => ({
+          ...prev,
+          freeUsageConsumed: true,
+          usagesRemaining: prev.totalPaidUsages > 0 ? prev.totalPaidUsages : 0,
+        }));
+      } else {
+        // Decrement paid usage
+        const newUsedCount = (aiUsageStatus.totalPaidUsages - aiUsageStatus.usagesRemaining) + 1;
+        await supabase
+          .from("user_smart_ai_usage")
+          .update({
+            total_paid_usages: newUsedCount,
+            updated_at: new Date().toISOString(),
+          })
+          .eq("user_id", session.session.user.id);
+        
+        setAiUsageStatus(prev => ({
+          ...prev,
+          usagesRemaining: prev.usagesRemaining - 1,
+        }));
+      }
+
+    } catch (error) {
+      console.error("Error getting AI feedback:", error);
+      toast.error("Erro ao obter feedback da IA. Tente novamente.");
+    } finally {
+      setIsLoadingAI(false);
+    }
+  };
+
+  const handlePurchaseUsage = async () => {
+    setIsCreatingPayment(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("create-smart-payment");
+      
+      if (error) throw error;
+      if (data?.error) throw new Error(data.error);
+      
+      if (data?.url) {
+        window.open(data.url, "_blank");
+      }
+    } catch (error) {
+      console.error("Error creating payment:", error);
+      toast.error("Erro ao criar pagamento. Tente novamente.");
+    } finally {
+      setIsCreatingPayment(false);
+    }
+  };
+
   const handleProximo = () => {
     if (etapa === 1 && !objetivoSelecionado) {
       toast.error("Selecione um objetivo para continuar");
       return;
     }
     
-    // Validações por etapa
     if (etapa === 2 && !metaSmart.especifico.trim()) {
       toast.error("Preencha o campo para continuar");
       return;
@@ -129,24 +330,26 @@ const MetodoSmart = () => {
       return;
     }
     
+    // Clear AI feedback when moving to next step
+    setAiFeedback("");
+    setHasRequestedAI(false);
     setEtapa(etapa + 1);
   };
 
   const handleVoltar = () => {
     if (etapa > 0) {
+      setAiFeedback("");
+      setHasRequestedAI(false);
       setEtapa(etapa - 1);
     }
   };
 
   const handleImportar = async () => {
-    if (isImporting) return; // Previne cliques duplicados
+    if (isImporting) return;
     
     setIsImporting(true);
     
-    // Texto da meta = resposta de "O que exatamente você quer alcançar?" (Específico)
     const metaTexto = metaSmart.especifico;
-    
-    // Ação = resposta de "Como você vai tornar essa meta alcançável?" (Atingível)
     const acaoTexto = metaSmart.atingivel;
     
     const novaMeta = {
@@ -159,7 +362,6 @@ const MetodoSmart = () => {
       medicao: metaSmart.mensuravel,
       inicio: new Date().toISOString().split('T')[0],
       concluida: false,
-      // Criar ação a partir do campo "Atingível"
       acoes: acaoTexto ? [{
         id: Date.now(),
         acao: acaoTexto,
@@ -171,20 +373,13 @@ const MetodoSmart = () => {
     };
 
     try {
-      // Buscar metas existentes e adicionar a nova
       const metasExistentes = await storage.getMetas();
       const metasAtualizadas = [...metasExistentes, novaMeta];
       
-      // Salvar usando o storage service (Supabase ou localStorage)
       await storage.saveMetas(metasAtualizadas);
-      
-      // Também salvar no localStorage para garantir que aparece imediatamente
       localStorage.setItem("metas", JSON.stringify(metasAtualizadas));
 
-      // Invalidar cache do React Query para atualizar Metas Cadastradas automaticamente
       await queryClient.invalidateQueries({ queryKey: PDI_QUERY_KEYS.pdiData() });
-
-      // Salvar temporariamente para destacar na home
       localStorage.setItem("metaImportadaSmart", JSON.stringify(novaMeta));
 
       toast.success("🎯 Meta SMART importada com sucesso!", {
@@ -192,14 +387,13 @@ const MetodoSmart = () => {
         duration: 5000,
       });
 
-      // Redirecionar para home
       setTimeout(() => {
         navigate("/home");
       }, 2000);
     } catch (error) {
       console.error('Erro ao salvar meta SMART:', error);
       toast.error("Erro ao salvar a meta. Tente novamente.");
-      setIsImporting(false); // Permite tentar novamente em caso de erro
+      setIsImporting(false);
     }
   };
 
@@ -207,6 +401,11 @@ const MetodoSmart = () => {
     if (etapa === 0) return 0;
     if (etapa === 1) return 10;
     return ((etapa - 1) / 6) * 100;
+  };
+
+  const getStepLetter = (etapaNum: number) => {
+    const letters = ["S", "M", "A", "R", "T"];
+    return letters[etapaNum - 2] || "";
   };
 
   const etapas = [
@@ -260,6 +459,89 @@ const MetodoSmart = () => {
   const gerarPreviewMeta = () => {
     return `${metaSmart.especifico}. Vou medir meu progresso através de: ${metaSmart.mensuravel}. Para tornar isso alcançável: ${metaSmart.atingivel}. Esta meta é relevante porque: ${metaSmart.relevante}. Prazo: ${metaSmart.temporal} (até ${new Date(metaSmart.dataAlvo).toLocaleDateString('pt-BR')}).`;
   };
+
+  const canUseAI = aiUsageStatus.usagesRemaining > 0;
+
+  // AI Feedback Component
+  const AIFeedbackSection = ({ step }: { step: string }) => (
+    <div className="mt-4 space-y-3">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <Bot className="w-5 h-5 text-primary" />
+          <span className="font-medium text-sm">Mentoria IA</span>
+          {!isCheckingUsage && (
+            <Badge variant={canUseAI ? "secondary" : "outline"} className="text-xs">
+              {canUseAI 
+                ? `${aiUsageStatus.usagesRemaining} uso${aiUsageStatus.usagesRemaining > 1 ? 's' : ''} disponível${aiUsageStatus.usagesRemaining > 1 ? 'is' : ''}`
+                : "Limite atingido"
+              }
+            </Badge>
+          )}
+        </div>
+      </div>
+
+      {canUseAI ? (
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => requestAIFeedback(step)}
+          disabled={isLoadingAI}
+          className="w-full gap-2 border-primary/30 hover:bg-primary/5"
+        >
+          {isLoadingAI ? (
+            <>
+              <Loader2 className="w-4 h-4 animate-spin" />
+              Analisando...
+            </>
+          ) : (
+            <>
+              <Sparkles className="w-4 h-4" />
+              Solicitar feedback do mentor IA
+            </>
+          )}
+        </Button>
+      ) : (
+        <div className="space-y-2">
+          <div className="p-3 bg-muted/50 rounded-lg border border-border flex items-center gap-2">
+            <Lock className="w-4 h-4 text-muted-foreground" />
+            <span className="text-sm text-muted-foreground">
+              Você já utilizou sua mentoria IA gratuita.
+            </span>
+          </div>
+          <Button
+            variant="default"
+            size="sm"
+            onClick={handlePurchaseUsage}
+            disabled={isCreatingPayment}
+            className="w-full gap-2"
+          >
+            {isCreatingPayment ? (
+              <>
+                <Loader2 className="w-4 h-4 animate-spin" />
+                Processando...
+              </>
+            ) : (
+              <>
+                <CreditCard className="w-4 h-4" />
+                Adquirir uso adicional (R$ 1,00)
+              </>
+            )}
+          </Button>
+        </div>
+      )}
+
+      {aiFeedback && (
+        <div className="p-4 bg-gradient-to-r from-primary/5 via-primary/10 to-primary/5 rounded-lg border border-primary/20 animate-fade-in">
+          <div className="flex items-start gap-3">
+            <Bot className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
+            <div className="space-y-2 text-sm leading-relaxed whitespace-pre-wrap">
+              {aiFeedback}
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
 
   return (
     <div className="min-h-screen bg-gradient-subtle py-8">
@@ -360,6 +642,21 @@ const MetodoSmart = () => {
                     ))}
                   </div>
                 </div>
+
+                {/* AI Mentor Info */}
+                <div className="mt-4 p-4 bg-gradient-to-r from-violet-50 via-purple-50 to-violet-50 dark:from-violet-950/30 dark:via-purple-950/30 dark:to-violet-950/30 rounded-lg border border-violet-200 dark:border-violet-800">
+                  <h4 className="font-semibold mb-2 flex items-center gap-2">
+                    <Bot className="w-4 h-4 text-violet-600" />
+                    Mentoria IA Integrada
+                  </h4>
+                  <p className="text-sm text-muted-foreground mb-2">
+                    A cada passo, você pode solicitar feedback de um mentor de IA que avalia a consistência, 
+                    profundidade e alinhamento do seu texto com o objetivo e sua Visão de Vida Desejada.
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    <strong>1 uso gratuito</strong> • Usos adicionais disponíveis por R$ 1,00
+                  </p>
+                </div>
               </CardContent>
             </Card>
 
@@ -443,6 +740,7 @@ const MetodoSmart = () => {
             {(() => {
               const etapaAtual = etapas[etapa - 2];
               const Icon = etapaAtual.icon;
+              const stepLetter = getStepLetter(etapa);
               
               return (
                 <Card className="border-2 border-primary/20 shadow-lg">
@@ -500,6 +798,9 @@ const MetodoSmart = () => {
                         <span><strong>Dica:</strong> {etapaAtual.dica}</span>
                       </p>
                     </div>
+
+                    {/* AI Feedback Section */}
+                    <AIFeedbackSection step={stepLetter} />
                   </CardContent>
                 </Card>
               );
@@ -557,6 +858,9 @@ const MetodoSmart = () => {
                     );
                   })}
                 </div>
+
+                {/* Final AI Evaluation */}
+                <AIFeedbackSection step="FINAL" />
 
                 <div className="flex justify-center">
                   <Button 
