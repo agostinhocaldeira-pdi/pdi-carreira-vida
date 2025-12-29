@@ -354,7 +354,7 @@ const MaoNaMassa = ({ embedded = false }: MaoNaMassaProps) => {
   };
 
   const content = (
-    <div className="space-y-6">
+    <div className="space-y-6 max-w-full overflow-hidden">
           {/* Loading State - sempre visível enquanto carrega */}
           {isQueryLoading && metasCadastradas.length === 0 && (
             <div className="py-8">
@@ -1057,7 +1057,7 @@ const MaoNaMassa = ({ embedded = false }: MaoNaMassaProps) => {
 
   if (embedded) {
     return (
-      <>
+      <div className="max-w-full overflow-hidden">
         <div className="flex items-center gap-2 mb-4">
           <Rocket className="w-5 h-5 text-accent" />
           <h3 className="text-lg font-semibold">Mão na Massa</h3>
@@ -1065,7 +1065,7 @@ const MaoNaMassa = ({ embedded = false }: MaoNaMassaProps) => {
         <p className="text-sm text-muted-foreground mb-4">Transforme seus objetivos em metas executáveis</p>
         {content}
         {modals}
-      </>
+      </div>
     );
   }
 
