@@ -168,8 +168,11 @@ const Signup = () => {
           <CardDescription className="text-sm sm:text-base">
             Crie seu perfil e comece sua jornada de desenvolvimento
           </CardDescription>
-          <div className="bg-primary/10 border border-primary/20 rounded-lg px-3 py-2 mt-2">
-            <p className="text-sm font-medium text-primary">
+          <div className="bg-primary/10 border border-primary/20 rounded-lg px-3 py-3 mt-2 text-center">
+            <p className="text-base font-bold text-primary mb-1">
+              30 dias grátis
+            </p>
+            <p className="text-sm text-muted-foreground">
               R$ 67,00/ano • Acesso completo por 12 meses
             </p>
           </div>

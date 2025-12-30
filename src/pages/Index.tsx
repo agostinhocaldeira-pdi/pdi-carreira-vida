@@ -260,9 +260,12 @@ const Index = () => {
             </div>
 
             <div className="flex flex-col items-center gap-3">
-              <div className="bg-primary/10 border border-primary/20 rounded-xl px-4 py-2 inline-block">
-                <p className="text-sm sm:text-base font-semibold text-primary">
-                  R$ 67,00/ano <span className="text-muted-foreground font-normal">• Acesso completo por 12 meses</span>
+              <div className="bg-primary/10 border border-primary/20 rounded-xl px-4 py-3 inline-block text-center">
+                <p className="text-base sm:text-lg font-bold text-primary mb-1">
+                  30 dias grátis
+                </p>
+                <p className="text-sm sm:text-base text-muted-foreground">
+                  R$ 67,00/ano • Acesso completo por 12 meses
                 </p>
               </div>
               <Button 
