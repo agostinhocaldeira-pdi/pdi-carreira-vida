@@ -35,6 +35,7 @@ const Perfil = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [isCheckoutLoading, setIsCheckoutLoading] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -115,23 +116,38 @@ const Perfil = () => {
   };
 
   useEffect(() => {
-    const user = localStorage.getItem("user");
-    if (!user) {
-      navigate("/login");
-      return;
-    }
+    const loadUserData = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      if (!user) {
+        navigate("/login");
+        return;
+      }
 
-    const parsedUser = JSON.parse(user);
-    setUserData(parsedUser);
-    setFormData({
-      name: parsedUser.name || "",
-      email: parsedUser.email || "",
-      phone: parsedUser.phone || "",
-      password: parsedUser.password || "",
-    });
+      const userMetadata = user.user_metadata || {};
+      const loadedUser: UserData = {
+        name: userMetadata.name || userMetadata.full_name || "",
+        email: user.email || "",
+        phone: userMetadata.phone || "",
+        password: "", // Password is never returned from Supabase
+      };
 
-    // Verificar se usuário está associado a uma empresa
-    checkCompanyAssociation(parsedUser.email);
+      setUserData(loadedUser);
+      setFormData({
+        name: loadedUser.name,
+        email: loadedUser.email,
+        phone: loadedUser.phone,
+        password: "",
+      });
+
+      // Also update localStorage for other parts of the app
+      localStorage.setItem("user", JSON.stringify(loadedUser));
+
+      // Verificar se usuário está associado a uma empresa
+      checkCompanyAssociation(loadedUser.email);
+    };
+
+    loadUserData();
   }, [navigate]);
 
   const checkCompanyAssociation = (userEmail: string) => {
@@ -174,17 +190,51 @@ const Perfil = () => {
     setCompanyInfo(null);
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!formData.name || !formData.email || !formData.phone) {
       toast.error("Por favor, preencha todos os campos obrigatórios");
       return;
     }
 
-    const updatedUser = { ...userData, ...formData };
-    localStorage.setItem("user", JSON.stringify(updatedUser));
-    setUserData(updatedUser as UserData);
-    setIsEditing(false);
-    toast.success("Perfil atualizado com sucesso!");
+    setIsSaving(true);
+    try {
+      // Update user metadata in Supabase
+      const updateData: { data?: { name?: string; phone?: string }; password?: string } = {
+        data: {
+          name: formData.name,
+          phone: formData.phone,
+        }
+      };
+
+      // Only update password if it was provided
+      if (formData.password && formData.password.length > 0) {
+        if (formData.password.length < 6) {
+          toast.error("A senha deve ter pelo menos 6 caracteres");
+          setIsSaving(false);
+          return;
+        }
+        updateData.password = formData.password;
+      }
+
+      const { error } = await supabase.auth.updateUser(updateData);
+
+      if (error) {
+        throw error;
+      }
+
+      // Update local state and localStorage
+      const updatedUser = { ...userData, name: formData.name, phone: formData.phone };
+      localStorage.setItem("user", JSON.stringify(updatedUser));
+      setUserData(updatedUser as UserData);
+      setFormData(prev => ({ ...prev, password: "" })); // Clear password field after save
+      setIsEditing(false);
+      toast.success("Perfil atualizado com sucesso!");
+    } catch (error: any) {
+      console.error("Error updating profile:", error);
+      toast.error(error.message || "Erro ao atualizar perfil");
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const formatCNPJ = (cnpj: string) => {
@@ -287,11 +337,15 @@ const Perfil = () => {
             <div className="flex gap-2 pt-2">
               {isEditing ? (
                 <>
-                  <Button onClick={handleSave} className="flex-1">
-                    <Save className="w-4 h-4 mr-2" />
-                    Salvar
+                  <Button onClick={handleSave} className="flex-1" disabled={isSaving}>
+                    {isSaving ? (
+                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    ) : (
+                      <Save className="w-4 h-4 mr-2" />
+                    )}
+                    {isSaving ? "Salvando..." : "Salvar"}
                   </Button>
-                  <Button variant="outline" onClick={() => setIsEditing(false)} className="flex-1">
+                  <Button variant="outline" onClick={() => setIsEditing(false)} className="flex-1" disabled={isSaving}>
                     Cancelar
                   </Button>
                 </>
