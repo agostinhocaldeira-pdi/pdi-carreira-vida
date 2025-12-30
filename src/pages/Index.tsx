@@ -574,29 +574,29 @@ const Index = () => {
       {/* Seção de Garantia - 30 dias grátis */}
       <section className="py-12 sm:py-16 px-4">
         <div className="container mx-auto max-w-4xl">
-          <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-success/10 via-secondary/10 to-success/5 border-2 border-success/30 p-8 sm:p-12">
+          <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-accent/10 via-primary/5 to-accent/5 border-2 border-accent/30 p-8 sm:p-12">
             {/* Background decoration */}
-            <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-success/20 to-transparent rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
-            <div className="absolute bottom-0 left-0 w-48 h-48 bg-gradient-to-tr from-secondary/20 to-transparent rounded-full blur-3xl translate-y-1/2 -translate-x-1/2" />
+            <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-accent/20 to-transparent rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
+            <div className="absolute bottom-0 left-0 w-48 h-48 bg-gradient-to-tr from-primary/20 to-transparent rounded-full blur-3xl translate-y-1/2 -translate-x-1/2" />
             
             <div className="relative z-10">
               {/* Shield icon with glow effect */}
               <div className="flex justify-center mb-6">
                 <div className="relative">
-                  <div className="absolute inset-0 bg-success/30 rounded-full blur-xl animate-pulse" />
-                  <div className="relative w-20 h-20 rounded-full bg-gradient-success flex items-center justify-center shadow-lg shadow-success/30">
-                    <Shield className="h-10 w-10 text-success-foreground" />
+                  <div className="absolute inset-0 bg-accent/30 rounded-full blur-xl animate-pulse" />
+                  <div className="relative w-20 h-20 rounded-full bg-gradient-accent flex items-center justify-center shadow-lg shadow-accent/30">
+                    <Shield className="h-10 w-10 text-accent-foreground" />
                   </div>
                 </div>
               </div>
               
               {/* Main headline */}
               <div className="text-center mb-6">
-                <Badge className="mb-4 bg-success/20 text-success border-success/30 text-xs sm:text-sm px-4 py-1">
+                <Badge className="mb-4 bg-accent/20 text-accent border-accent/30 text-xs sm:text-sm px-4 py-1">
                   <CheckCircle2 className="h-3.5 w-3.5 mr-1.5" />
                   Garantia de Avaliação
                 </Badge>
-                <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 text-success">
+                <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 text-accent">
                   30 dias para experimentar. Grátis.
                 </h2>
                 <p className="text-muted-foreground max-w-2xl mx-auto text-base sm:text-lg">
@@ -607,9 +607,9 @@ const Index = () => {
               
               {/* Benefits grid */}
               <div className="grid sm:grid-cols-3 gap-4 sm:gap-6 mb-8">
-                <div className="bg-background/60 backdrop-blur-sm rounded-xl p-4 sm:p-5 text-center border border-success/20">
-                  <div className="w-10 h-10 rounded-full bg-success/20 flex items-center justify-center mx-auto mb-3">
-                    <Zap className="h-5 w-5 text-success" />
+                <div className="bg-background/60 backdrop-blur-sm rounded-xl p-4 sm:p-5 text-center border border-accent/20">
+                  <div className="w-10 h-10 rounded-full bg-accent/20 flex items-center justify-center mx-auto mb-3">
+                    <Zap className="h-5 w-5 text-accent" />
                   </div>
                   <h4 className="font-semibold text-sm sm:text-base mb-1">Acesso Imediato</h4>
                   <p className="text-xs sm:text-sm text-muted-foreground">
@@ -617,9 +617,9 @@ const Index = () => {
                   </p>
                 </div>
                 
-                <div className="bg-background/60 backdrop-blur-sm rounded-xl p-4 sm:p-5 text-center border border-success/20">
-                  <div className="w-10 h-10 rounded-full bg-success/20 flex items-center justify-center mx-auto mb-3">
-                    <Crown className="h-5 w-5 text-success" />
+                <div className="bg-background/60 backdrop-blur-sm rounded-xl p-4 sm:p-5 text-center border border-accent/20">
+                  <div className="w-10 h-10 rounded-full bg-accent/20 flex items-center justify-center mx-auto mb-3">
+                    <Crown className="h-5 w-5 text-accent" />
                   </div>
                   <h4 className="font-semibold text-sm sm:text-base mb-1">100% Completo</h4>
                   <p className="text-xs sm:text-sm text-muted-foreground">
@@ -627,9 +627,9 @@ const Index = () => {
                   </p>
                 </div>
                 
-                <div className="bg-background/60 backdrop-blur-sm rounded-xl p-4 sm:p-5 text-center border border-success/20">
-                  <div className="w-10 h-10 rounded-full bg-success/20 flex items-center justify-center mx-auto mb-3">
-                    <Heart className="h-5 w-5 text-success" />
+                <div className="bg-background/60 backdrop-blur-sm rounded-xl p-4 sm:p-5 text-center border border-accent/20">
+                  <div className="w-10 h-10 rounded-full bg-accent/20 flex items-center justify-center mx-auto mb-3">
+                    <Heart className="h-5 w-5 text-accent" />
                   </div>
                   <h4 className="font-semibold text-sm sm:text-base mb-1">Sem Compromisso</h4>
                   <p className="text-xs sm:text-sm text-muted-foreground">
@@ -640,10 +640,10 @@ const Index = () => {
               
               {/* CTA */}
               <div className="text-center">
-                <div className="inline-flex flex-col sm:flex-row items-center gap-3 sm:gap-4 bg-background/80 rounded-2xl p-4 sm:p-5 border border-success/30">
+                <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 bg-background/80 rounded-2xl p-4 sm:p-5 border border-accent/30 max-w-lg mx-auto">
                   <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 rounded-full bg-success/20 flex items-center justify-center">
-                      <span className="text-xl font-bold text-success">30</span>
+                    <div className="w-12 h-12 rounded-full bg-accent/20 flex items-center justify-center flex-shrink-0">
+                      <span className="text-xl font-bold text-accent">30</span>
                     </div>
                     <div className="text-left">
                       <p className="font-semibold text-sm sm:text-base">Dias de teste gratuito</p>
@@ -653,7 +653,7 @@ const Index = () => {
                   <Button 
                     size="lg"
                     onClick={() => navigate('/signup')}
-                    className="bg-success hover:bg-success/90 text-success-foreground text-sm sm:text-base shadow-lg shadow-success/30"
+                    className="w-full sm:w-auto bg-accent hover:bg-accent/90 text-accent-foreground text-sm sm:text-base shadow-lg shadow-accent/30"
                   >
                     Começar teste grátis
                     <ArrowRight className="ml-2 h-4 w-4" />
