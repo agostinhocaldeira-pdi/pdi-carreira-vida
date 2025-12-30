@@ -213,7 +213,46 @@ const Login = () => {
       return;
     }
 
-    // 6. Usuário comum
+    // 6. Usuário comum - verificar se tem assinatura ativa
+    try {
+      const { data: session } = await supabase.auth.getSession();
+      
+      if (session?.session?.access_token) {
+        const { data: subscriptionData, error: subscriptionError } = await supabase.functions.invoke('check-subscription', {
+          headers: {
+            Authorization: `Bearer ${session.session.access_token}`,
+          },
+        });
+
+        if (!subscriptionError && subscriptionData) {
+          // Se não tem assinatura ativa, redirecionar para checkout
+          if (!subscriptionData.subscribed) {
+            toast.info("Finalize seu pagamento para acessar o sistema.");
+            
+            // Criar nova sessão de checkout
+            const { data: checkoutData, error: checkoutError } = await supabase.functions.invoke('create-checkout', {
+              headers: {
+                Authorization: `Bearer ${session.session.access_token}`,
+              },
+            });
+
+            if (!checkoutError && checkoutData?.url) {
+              window.location.href = checkoutData.url;
+              return;
+            } else {
+              console.error('Checkout error:', checkoutError);
+              toast.error("Erro ao redirecionar para pagamento. Entre em contato com o suporte.");
+              await supabase.auth.signOut();
+              return;
+            }
+          }
+        }
+      }
+    } catch (error) {
+      console.error('Error checking subscription:', error);
+      // Em caso de erro na verificação, permitir acesso (fail-safe)
+    }
+
     localStorage.setItem("user", JSON.stringify({
       id: userId,
       name: userName,
