@@ -653,10 +653,10 @@ const Index = () => {
                   <Button 
                     size="lg"
                     onClick={() => navigate('/signup')}
-                    className="w-full sm:w-auto bg-accent hover:bg-accent/90 text-accent-foreground text-sm sm:text-base shadow-lg shadow-accent/30"
+                    className="w-full sm:w-auto bg-accent hover:bg-accent/90 text-accent-foreground text-xs sm:text-base shadow-lg shadow-accent/30 px-4 sm:px-6 whitespace-nowrap"
                   >
-                    Começar teste grátis
-                    <ArrowRight className="ml-2 h-4 w-4" />
+                    Testar grátis
+                    <ArrowRight className="ml-2 h-4 w-4 flex-shrink-0" />
                   </Button>
                 </div>
                 <p className="text-xs text-muted-foreground mt-4 max-w-md mx-auto">
