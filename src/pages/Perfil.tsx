@@ -397,173 +397,154 @@ const Perfil = () => {
                   <Crown className="h-6 w-6 text-amber-500" />
                 </div>
                 <div>
-                  <CardTitle>Planos de Assinatura</CardTitle>
-                  <CardDescription>Escolha o melhor plano para você</CardDescription>
+                  <CardTitle>Sua Assinatura</CardTitle>
+                  <CardDescription>Gerencie seu plano de acesso</CardDescription>
                 </div>
               </div>
             </CardHeader>
             <CardContent>
-              <div className="grid gap-4 sm:grid-cols-3">
-                {/* Plano Gratuito */}
-                <Card className={`border-2 transition-colors ${subscription.plan === 'gratuito' || subscription.status === 'trial' ? 'border-primary ring-2 ring-primary/20' : 'border-muted'}`}>
+              <div className="grid gap-4 sm:grid-cols-2">
+                {/* Período de Teste Gratuito */}
+                <Card className={`border-2 transition-colors ${subscription.status === 'trial' ? 'border-primary ring-2 ring-primary/20' : 'border-muted'}`}>
                   <CardHeader className="pb-3">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
                         <Star className="h-5 w-5 text-muted-foreground" />
-                        <CardTitle className="text-lg">Gratuito</CardTitle>
+                        <CardTitle className="text-lg">Teste Gratuito</CardTitle>
                       </div>
-                      {(subscription.plan === 'gratuito' || subscription.status === 'trial') && (
+                      {subscription.status === 'trial' && (
                         <Badge variant="secondary" className="text-xs">Atual</Badge>
                       )}
                     </div>
                     <div className="text-2xl font-bold">R$ 0<span className="text-sm font-normal text-muted-foreground"> por 30 dias</span></div>
-                    <p className="text-xs text-muted-foreground">Experimente sem compromisso</p>
+                    <p className="text-xs text-muted-foreground">Experimente tudo sem compromisso</p>
                   </CardHeader>
                   <CardContent className="space-y-2 text-sm">
                     <div className="space-y-1.5 text-muted-foreground">
                       <div className="flex items-start gap-2">
                         <Check className="h-4 w-4 mt-0.5 flex-shrink-0" />
-                        <span>1 objetivo ativo</span>
+                        <span>Acesso completo por 30 dias</span>
                       </div>
                       <div className="flex items-start gap-2">
                         <Check className="h-4 w-4 mt-0.5 flex-shrink-0" />
-                        <span>1 meta por objetivo</span>
+                        <span>Todas as ferramentas liberadas</span>
                       </div>
                       <div className="flex items-start gap-2">
                         <Check className="h-4 w-4 mt-0.5 flex-shrink-0" />
-                        <span>5 ações por meta</span>
-                      </div>
-                      <div className="flex items-start gap-2">
-                        <Check className="h-4 w-4 mt-0.5 flex-shrink-0" />
-                        <span>4 ferramentas ilimitadas</span>
-                      </div>
-                      <div className="flex items-start gap-2">
-                        <Check className="h-4 w-4 mt-0.5 flex-shrink-0" />
-                        <span>4 ferramentas com 1 uso</span>
-                      </div>
-                      <div className="flex items-start gap-2">
-                        <Check className="h-4 w-4 mt-0.5 flex-shrink-0" />
-                        <span>Diário de reflexão</span>
-                      </div>
-                    </div>
-                    <Button variant="outline" className="w-full mt-4" disabled>
-                      {(subscription.plan === 'gratuito' || subscription.status === 'trial') ? '✓ Plano Atual' : 'Começar grátis'}
-                    </Button>
-                  </CardContent>
-                </Card>
-
-                {/* Plano Básico */}
-                <Card className={`border-2 transition-colors relative overflow-hidden ${subscription.plan === 'basico' ? 'border-green-500 ring-2 ring-green-500/20' : 'border-green-500/50'}`}>
-                  <div className="absolute top-0 right-0 bg-green-500 text-white text-xs px-3 py-1 rounded-bl-lg font-medium">
-                    🚀 Promoção
-                  </div>
-                  <CardHeader className="pb-3">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <Sparkles className="h-5 w-5 text-green-500" />
-                        <CardTitle className="text-lg">Básico</CardTitle>
-                      </div>
-                      {subscription.plan === 'basico' && (
-                        <Badge className="bg-green-500 text-xs">Atual</Badge>
-                      )}
-                    </div>
-                    <div className="text-2xl font-bold">R$ 14,90<span className="text-sm font-normal text-muted-foreground">/mês</span></div>
-                    <p className="text-xs text-muted-foreground">Tudo que você precisa para evoluir</p>
-                  </CardHeader>
-                  <CardContent className="space-y-2 text-sm">
-                    <div className="space-y-1.5 text-muted-foreground">
-                      <div className="flex items-start gap-2">
-                        <Check className="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0" />
                         <span>PDI ilimitado</span>
                       </div>
                       <div className="flex items-start gap-2">
-                        <Check className="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0" />
-                        <span>1 insight de IA por mês</span>
-                      </div>
-                      <div className="flex items-start gap-2">
-                        <Check className="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0" />
-                        <span>Todas as ferramentas ilimitadas</span>
-                      </div>
-                      <div className="flex items-start gap-2">
-                        <Check className="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0" />
-                        <span>Integração Google Calendar</span>
-                      </div>
-                      <div className="flex items-start gap-2">
-                        <Check className="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0" />
-                        <span>Construção Guiada completa</span>
-                      </div>
-                      <div className="flex items-start gap-2">
-                        <Check className="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0" />
-                        <span>Suporte prioritário</span>
+                        <Check className="h-4 w-4 mt-0.5 flex-shrink-0" />
+                        <span>Sem cartão de crédito</span>
                       </div>
                     </div>
-                    <Button className="w-full mt-4 bg-green-500 hover:bg-green-600" disabled>
-                      {subscription.plan === 'basico' ? '✓ Plano Atual' : 'Assinar agora'}
-                    </Button>
-                    {subscription.plan === 'basico' && (
-                      <Button 
-                        variant="outline" 
-                        className="w-full text-xs"
-                        onClick={handleManageSubscription}
-                      >
-                        Gerenciar Assinatura
-                      </Button>
+                    {subscription.status === 'trial' && (
+                      <div className="mt-4 p-2 bg-primary/10 rounded-lg text-center">
+                        <p className="text-xs text-primary font-medium">
+                          {subscription.daysRemaining !== undefined 
+                            ? `${subscription.daysRemaining} dias restantes`
+                            : 'Período de teste ativo'}
+                        </p>
+                      </div>
                     )}
                   </CardContent>
                 </Card>
 
-                {/* Plano Completo */}
-                <Card className="border-2 border-amber-500/30 transition-colors relative overflow-hidden">
-                  <div className="absolute top-0 right-0 bg-amber-500 text-white text-xs px-3 py-1 rounded-bl-lg font-medium">
-                    Em breve
+                {/* Plano Acesso Completo Anual */}
+                <Card className={`border-2 transition-colors relative overflow-hidden ${subscription.plan === 'basico' || subscription.status === 'active' ? 'border-accent ring-2 ring-accent/20' : 'border-accent/50'}`}>
+                  <div className="absolute top-0 right-0 bg-accent text-accent-foreground text-xs px-3 py-1 rounded-bl-lg font-medium">
+                    Melhor valor
                   </div>
                   <CardHeader className="pb-3">
-                    <div className="flex items-center gap-2">
-                      <Crown className="h-5 w-5 text-amber-500" />
-                      <CardTitle className="text-lg">Completo</CardTitle>
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <Crown className="h-5 w-5 text-accent" />
+                        <CardTitle className="text-lg">Acesso Completo</CardTitle>
+                      </div>
+                      {(subscription.plan === 'basico' || subscription.status === 'active') && (
+                        <Badge className="bg-accent text-accent-foreground text-xs">Atual</Badge>
+                      )}
                     </div>
-                    <div className="text-2xl font-bold">R$ 59<span className="text-sm font-normal text-muted-foreground">/mês</span></div>
-                    <p className="text-xs text-muted-foreground">Máximo potencial de crescimento</p>
+                    <div className="flex items-baseline gap-2">
+                      <span className="text-2xl font-bold">R$ 67</span>
+                      <span className="text-sm font-normal text-muted-foreground">/ano</span>
+                    </div>
+                    <p className="text-xs text-muted-foreground">Apenas R$ 5,58/mês - Acesso ilimitado</p>
                   </CardHeader>
                   <CardContent className="space-y-2 text-sm">
                     <div className="space-y-1.5 text-muted-foreground">
                       <div className="flex items-start gap-2">
-                        <Check className="h-4 w-4 text-amber-500 mt-0.5 flex-shrink-0" />
-                        <span>Tudo do Básico</span>
+                        <Check className="h-4 w-4 text-accent mt-0.5 flex-shrink-0" />
+                        <span>PDI ilimitado</span>
                       </div>
                       <div className="flex items-start gap-2">
-                        <Check className="h-4 w-4 text-amber-500 mt-0.5 flex-shrink-0" />
-                        <span>Insights de IA ilimitados</span>
+                        <Check className="h-4 w-4 text-accent mt-0.5 flex-shrink-0" />
+                        <span>Todas as ferramentas</span>
                       </div>
                       <div className="flex items-start gap-2">
-                        <Check className="h-4 w-4 text-amber-500 mt-0.5 flex-shrink-0" />
-                        <span>Notificações por e-mail</span>
+                        <Check className="h-4 w-4 text-accent mt-0.5 flex-shrink-0" />
+                        <span>Diário de reflexão</span>
                       </div>
                       <div className="flex items-start gap-2">
-                        <Check className="h-4 w-4 text-amber-500 mt-0.5 flex-shrink-0" />
-                        <span>Notificações por WhatsApp</span>
+                        <Check className="h-4 w-4 text-accent mt-0.5 flex-shrink-0" />
+                        <span>Construção guiada</span>
                       </div>
                       <div className="flex items-start gap-2">
-                        <Check className="h-4 w-4 text-amber-500 mt-0.5 flex-shrink-0" />
-                        <span>Relatórios em PDF</span>
+                        <Check className="h-4 w-4 text-accent mt-0.5 flex-shrink-0" />
+                        <span>Relatórios e progresso</span>
                       </div>
                       <div className="flex items-start gap-2">
-                        <Check className="h-4 w-4 text-amber-500 mt-0.5 flex-shrink-0" />
-                        <span>Acompanhamento personalizado</span>
+                        <Check className="h-4 w-4 text-accent mt-0.5 flex-shrink-0" />
+                        <span>Suporte prioritário</span>
                       </div>
                     </div>
-                    <Button className="w-full mt-4 bg-amber-500 hover:bg-amber-600" disabled>
-                      Em breve
-                    </Button>
+                    {(subscription.plan === 'basico' || subscription.status === 'active') ? (
+                      <>
+                        <div className="mt-4 p-2 bg-accent/10 rounded-lg text-center">
+                          <p className="text-xs text-accent font-medium">
+                            ✓ Assinatura ativa
+                            {subscription.subscriptionEnd && (
+                              <span className="block mt-1 text-muted-foreground">
+                                Válida até {new Date(subscription.subscriptionEnd).toLocaleDateString('pt-BR')}
+                              </span>
+                            )}
+                          </p>
+                        </div>
+                        <Button 
+                          variant="outline" 
+                          className="w-full text-xs mt-2"
+                          onClick={handleManageSubscription}
+                        >
+                          Gerenciar Assinatura
+                        </Button>
+                      </>
+                    ) : (
+                      <Button 
+                        className="w-full mt-4 bg-accent hover:bg-accent/90 text-accent-foreground" 
+                        onClick={handleCheckout}
+                        disabled={isCheckoutLoading}
+                      >
+                        {isCheckoutLoading ? (
+                          <>
+                            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                            Processando...
+                          </>
+                        ) : (
+                          'Assinar por R$ 67/ano'
+                        )}
+                      </Button>
+                    )}
                   </CardContent>
                 </Card>
               </div>
 
-              <div className="bg-primary/5 border border-primary/20 rounded-lg p-3 text-center mt-4">
-                <p className="text-sm font-medium text-primary">
-                  Você tem acesso gratuito a todas as funções do PDI - Carreira e Vida durante 1 ano. Ao vencer esse prazo, escolha um novo plano.
-                </p>
-              </div>
+              {subscription.status === 'trial' && (
+                <div className="bg-accent/10 border border-accent/20 rounded-lg p-3 text-center mt-4">
+                  <p className="text-sm font-medium text-accent">
+                    Aproveite seu teste gratuito! Após 30 dias, assine por apenas R$ 67/ano para continuar.
+                  </p>
+                </div>
+              )}
             </CardContent>
           </Card>
         )}
