@@ -1019,6 +1019,103 @@ const Index = () => {
         </div>
       </section>
 
+      {/* Seção de Garantia - 30 dias grátis */}
+      <section className="py-12 sm:py-16 px-4 bg-gradient-to-b from-background to-muted/30">
+        <div className="container mx-auto max-w-4xl">
+          <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-emerald-500/10 via-green-500/10 to-teal-500/10 border-2 border-emerald-500/30 p-8 sm:p-12">
+            {/* Background decoration */}
+            <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-emerald-500/20 to-transparent rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
+            <div className="absolute bottom-0 left-0 w-48 h-48 bg-gradient-to-tr from-green-500/20 to-transparent rounded-full blur-3xl translate-y-1/2 -translate-x-1/2" />
+            
+            <div className="relative z-10">
+              {/* Shield icon with glow effect */}
+              <div className="flex justify-center mb-6">
+                <div className="relative">
+                  <div className="absolute inset-0 bg-emerald-500/30 rounded-full blur-xl animate-pulse" />
+                  <div className="relative w-20 h-20 rounded-full bg-gradient-to-br from-emerald-500 to-green-600 flex items-center justify-center shadow-lg shadow-emerald-500/30">
+                    <Shield className="h-10 w-10 text-white" />
+                  </div>
+                </div>
+              </div>
+              
+              {/* Main headline */}
+              <div className="text-center mb-6">
+                <Badge className="mb-4 bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 border-emerald-500/30 text-xs sm:text-sm px-4 py-1">
+                  <CheckCircle2 className="h-3.5 w-3.5 mr-1.5" />
+                  Garantia de Avaliação
+                </Badge>
+                <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 bg-gradient-to-r from-emerald-600 to-green-500 bg-clip-text text-transparent">
+                  30 dias para experimentar. Grátis.
+                </h2>
+                <p className="text-muted-foreground max-w-2xl mx-auto text-base sm:text-lg">
+                  Você não precisa decidir agora. Explore todas as ferramentas, construa seu PDI, 
+                  e só então decida se quer continuar.
+                </p>
+              </div>
+              
+              {/* Benefits grid */}
+              <div className="grid sm:grid-cols-3 gap-4 sm:gap-6 mb-8">
+                <div className="bg-background/60 backdrop-blur-sm rounded-xl p-4 sm:p-5 text-center border border-emerald-500/20">
+                  <div className="w-10 h-10 rounded-full bg-emerald-500/20 flex items-center justify-center mx-auto mb-3">
+                    <Zap className="h-5 w-5 text-emerald-500" />
+                  </div>
+                  <h4 className="font-semibold text-sm sm:text-base mb-1">Acesso Imediato</h4>
+                  <p className="text-xs sm:text-sm text-muted-foreground">
+                    Comece agora mesmo com todas as funcionalidades liberadas
+                  </p>
+                </div>
+                
+                <div className="bg-background/60 backdrop-blur-sm rounded-xl p-4 sm:p-5 text-center border border-emerald-500/20">
+                  <div className="w-10 h-10 rounded-full bg-emerald-500/20 flex items-center justify-center mx-auto mb-3">
+                    <Crown className="h-5 w-5 text-emerald-500" />
+                  </div>
+                  <h4 className="font-semibold text-sm sm:text-base mb-1">100% Completo</h4>
+                  <p className="text-xs sm:text-sm text-muted-foreground">
+                    Nada de versão limitada — você testa o sistema completo
+                  </p>
+                </div>
+                
+                <div className="bg-background/60 backdrop-blur-sm rounded-xl p-4 sm:p-5 text-center border border-emerald-500/20">
+                  <div className="w-10 h-10 rounded-full bg-emerald-500/20 flex items-center justify-center mx-auto mb-3">
+                    <Heart className="h-5 w-5 text-emerald-500" />
+                  </div>
+                  <h4 className="font-semibold text-sm sm:text-base mb-1">Sem Compromisso</h4>
+                  <p className="text-xs sm:text-sm text-muted-foreground">
+                    Cobrança só após 30 dias — se você escolher continuar
+                  </p>
+                </div>
+              </div>
+              
+              {/* CTA */}
+              <div className="text-center">
+                <div className="inline-flex flex-col sm:flex-row items-center gap-3 sm:gap-4 bg-background/80 rounded-2xl p-4 sm:p-5 border border-emerald-500/30">
+                  <div className="flex items-center gap-3">
+                    <div className="w-12 h-12 rounded-full bg-emerald-500/20 flex items-center justify-center">
+                      <span className="text-xl font-bold text-emerald-500">30</span>
+                    </div>
+                    <div className="text-left">
+                      <p className="font-semibold text-sm sm:text-base">Dias de teste gratuito</p>
+                      <p className="text-xs sm:text-sm text-muted-foreground">Depois, apenas R$ 67/ano</p>
+                    </div>
+                  </div>
+                  <Button 
+                    size="lg"
+                    onClick={() => navigate('/signup')}
+                    className="bg-emerald-600 hover:bg-emerald-700 text-white text-sm sm:text-base shadow-lg shadow-emerald-500/30"
+                  >
+                    Começar teste grátis
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </Button>
+                </div>
+                <p className="text-xs text-muted-foreground mt-4 max-w-md mx-auto">
+                  Sem pegadinhas. Se não gostar, basta não usar — você não paga nada.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Seção de Benefícios e Limites */}
       <section id="planos" className="py-12 sm:py-16 px-4 bg-muted/30">
         <div className="container mx-auto max-w-5xl">
