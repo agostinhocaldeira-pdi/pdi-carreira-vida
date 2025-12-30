@@ -115,7 +115,7 @@ const Signup = () => {
           console.error('Error sending welcome email:', emailError);
         }
 
-        toast.success("Perfil criado! Redirecionando para pagamento...");
+        toast.success("Cadastro Efetuado. Registre forma de pagamento após 30 dias");
         
         // Direcionar direto para checkout do Stripe
         try {
