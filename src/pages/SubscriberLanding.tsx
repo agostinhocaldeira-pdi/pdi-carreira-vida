@@ -61,6 +61,18 @@ const SubscriberLanding = () => {
             Continuar minha jornada
             <Sparkles className="ml-3 w-5 h-5" />
           </Button>
+
+          <div className="mt-6 pt-6 border-t border-border/30">
+            <p className="text-muted-foreground mb-2">Ainda não é assinante?</p>
+            <Button 
+              variant="outline"
+              onClick={() => navigate("/leadp")}
+              className="border-primary/30 text-primary hover:bg-primary/10"
+            >
+              Conheça o PDI
+              <ArrowRight className="ml-2 h-4 w-4" />
+            </Button>
+          </div>
         </div>
       </section>
 
@@ -187,16 +199,7 @@ const SubscriberLanding = () => {
 
       {/* Footer Simples */}
       <footer className="py-6 border-t bg-muted/10">
-        <div className="container mx-auto px-4 text-center space-y-3">
-          <p className="text-sm text-muted-foreground">
-            Ainda não é assinante?{" "}
-            <button 
-              onClick={() => navigate("/leadp")}
-              className="text-primary hover:underline font-medium"
-            >
-              Conheça o PDI
-            </button>
-          </p>
+        <div className="container mx-auto px-4 text-center">
           <p className="text-sm text-muted-foreground">
             © {new Date().getFullYear()} PDI - Carreira e Vida. Todos os direitos reservados.
           </p>
