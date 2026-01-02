@@ -519,6 +519,30 @@ export type Database = {
           },
         ]
       }
+      stoic_reflection_audio: {
+        Row: {
+          audio_url: string
+          created_at: string
+          date_key: string
+          id: string
+          title: string
+        }
+        Insert: {
+          audio_url: string
+          created_at?: string
+          date_key: string
+          id?: string
+          title: string
+        }
+        Update: {
+          audio_url?: string
+          created_at?: string
+          date_key?: string
+          id?: string
+          title?: string
+        }
+        Relationships: []
+      }
       support_messages: {
         Row: {
           created_at: string | null
