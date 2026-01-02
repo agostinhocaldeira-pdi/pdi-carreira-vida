@@ -9,7 +9,7 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Calendar } from "@/components/ui/calendar";
-import { BookOpen, Calendar as CalendarIcon, Save, Check, ChevronDown, PenLine, History, Loader2, Smile, Frown, Meh } from "lucide-react";
+import { BookOpen, Calendar as CalendarIcon, Save, Check, ChevronDown, PenLine, History, Loader2, Smile, Frown, Meh, Volume2, VolumeX, Loader } from "lucide-react";
 import { getTodayReflection } from "@/data/stoicReflections";
 import { supabase } from "@/integrations/supabase/client";
 import { format } from "date-fns";
@@ -29,6 +29,9 @@ const StoicReflectionSection = () => {
   const [originalStoicResponse, setOriginalStoicResponse] = useState("");
   const [isSavingStoic, setIsSavingStoic] = useState(false);
   const [isStoicSaved, setIsStoicSaved] = useState(false);
+  const [isPlayingAudio, setIsPlayingAudio] = useState(false);
+  const [isLoadingAudio, setIsLoadingAudio] = useState(false);
+  const [audioElement, setAudioElement] = useState<HTMLAudioElement | null>(null);
   const { celebrateAction } = useActionCelebration();
   
   const { date, reflection } = getTodayReflection();
@@ -194,6 +197,70 @@ const StoicReflectionSection = () => {
         title: "Reflexão salva",
         description: "Sua reflexão foi salva com sucesso."
       });
+    }
+  };
+
+  const handlePlayNarration = async () => {
+    // If already playing, stop
+    if (isPlayingAudio && audioElement) {
+      audioElement.pause();
+      audioElement.currentTime = 0;
+      setIsPlayingAudio(false);
+      return;
+    }
+
+    setIsLoadingAudio(true);
+    
+    try {
+      const textToNarrate = `${reflection.title}. ${reflection.text}`;
+      
+      const response = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/elevenlabs-tts`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
+            Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+          },
+          body: JSON.stringify({ text: textToNarrate }),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`TTS request failed: ${response.status}`);
+      }
+
+      const audioBlob = await response.blob();
+      const audioUrl = URL.createObjectURL(audioBlob);
+      const audio = new Audio(audioUrl);
+      
+      audio.onended = () => {
+        setIsPlayingAudio(false);
+        URL.revokeObjectURL(audioUrl);
+      };
+
+      audio.onerror = () => {
+        setIsPlayingAudio(false);
+        toast({
+          title: "Erro ao reproduzir",
+          description: "Não foi possível reproduzir o áudio.",
+          variant: "destructive"
+        });
+      };
+
+      setAudioElement(audio);
+      await audio.play();
+      setIsPlayingAudio(true);
+    } catch (error) {
+      console.error("Error playing narration:", error);
+      toast({
+        title: "Erro na narração",
+        description: "Não foi possível gerar a narração. Tente novamente.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsLoadingAudio(false);
     }
   };
 
@@ -781,10 +848,36 @@ const StoicReflectionSection = () => {
             {/* Stoic Reflection Section - Inside Collapsible */}
             <div className="border-t border-primary/20 pt-4 space-y-4">
               <div className="space-y-2">
-                <h3 className="text-lg font-semibold flex items-center gap-2">
-                  <BookOpen className="w-5 h-5 text-primary" />
-                  "{reflection.title}"
-                </h3>
+                <div className="flex items-center justify-between">
+                  <h3 className="text-lg font-semibold flex items-center gap-2">
+                    <BookOpen className="w-5 h-5 text-primary" />
+                    "{reflection.title}"
+                  </h3>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={handlePlayNarration}
+                    disabled={isLoadingAudio}
+                    className="gap-2"
+                  >
+                    {isLoadingAudio ? (
+                      <>
+                        <Loader className="w-4 h-4 animate-spin" />
+                        Carregando...
+                      </>
+                    ) : isPlayingAudio ? (
+                      <>
+                        <VolumeX className="w-4 h-4" />
+                        Parar
+                      </>
+                    ) : (
+                      <>
+                        <Volume2 className="w-4 h-4" />
+                        Ouvir
+                      </>
+                    )}
+                  </Button>
+                </div>
                 <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">
                   {reflection.text}
                 </p>
