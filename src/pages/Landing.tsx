@@ -105,8 +105,12 @@ const Landing = () => {
             <span className="text-primary">organização</span>.
           </h1>
           
-          <p className="text-xl sm:text-2xl md:text-3xl text-muted-foreground mb-8 sm:mb-12 font-light">
+          <p className="text-xl sm:text-2xl md:text-3xl text-muted-foreground mb-6 font-light">
             A diferença é se você se antecipa… ou reage.
+          </p>
+          
+          <p className="text-base sm:text-lg text-muted-foreground/80 mb-8 sm:mb-12 italic">
+            "Quando tudo depende demais do improviso, até quem é competente começa a sentir o peso."
           </p>
           
         </div>
