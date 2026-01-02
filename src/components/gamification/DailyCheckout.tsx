@@ -9,6 +9,7 @@ import { Check, X, AlertCircle, PartyPopper, HeadphonesIcon, ClipboardCheck, Zap
 import { PDILoader } from "@/components/ui/pdi-loader";
 import { usePDIStorage } from "@/hooks/usePDIStorage";
 import { useNavigate } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
 
 interface CheckoutItem {
   id: string;
@@ -146,36 +147,30 @@ export const DailyCheckout = () => {
         }
       });
 
-      // 5. Priority tasks from Eisenhower (Q1 - Urgente e Importante)
-      if (eisenhowerData.urgente_importante && Array.isArray(eisenhowerData.urgente_importante)) {
-        eisenhowerData.urgente_importante.forEach((task: string, idx: number) => {
-          if (task && task.trim()) {
-            checkoutItems.push({
-              id: `priority-q1-${idx}`,
-              text: task,
-              type: 'priority',
-              category: 'Urgente & Importante',
-              done: null,
-              originalData: { task, quadrant: 'Q1' }
-            });
-          }
-        });
-      }
+      // 5. Priority tasks from Eisenhower - Fetch from Supabase
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        const { data: eisenhowerTasks } = await supabase
+          .from('user_eisenhower_tasks')
+          .select('*')
+          .eq('user_id', user.id)
+          .in('quadrant', ['urgent-important', 'not-urgent-important']);
 
-      // Also include Q2 (Important but not urgent) as priorities
-      if (eisenhowerData.nao_urgente_importante && Array.isArray(eisenhowerData.nao_urgente_importante)) {
-        eisenhowerData.nao_urgente_importante.slice(0, 3).forEach((task: string, idx: number) => {
-          if (task && task.trim()) {
-            checkoutItems.push({
-              id: `priority-q2-${idx}`,
-              text: task,
-              type: 'priority',
-              category: 'Importante',
-              done: null,
-              originalData: { task, quadrant: 'Q2' }
-            });
-          }
-        });
+        if (eisenhowerTasks && eisenhowerTasks.length > 0) {
+          eisenhowerTasks.forEach((task, idx) => {
+            if (task.task_text && task.task_text.trim()) {
+              const isUrgent = task.quadrant === 'urgent-important';
+              checkoutItems.push({
+                id: `priority-${task.quadrant}-${task.id}`,
+                text: task.task_text,
+                type: 'priority',
+                category: isUrgent ? 'Urgente e Importante' : 'Importante, Não Urgente',
+                done: null,
+                originalData: { task: task.task_text, quadrant: task.quadrant, id: task.id }
+              });
+            }
+          });
+        }
       }
 
       setItems(checkoutItems);
