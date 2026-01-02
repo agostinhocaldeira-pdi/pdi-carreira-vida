@@ -24,7 +24,7 @@ import Logo from "@/components/Logo";
 // Import platform images
 import planoDeVidaScreenshot from "@/assets/plano-de-vida-screenshot.png";
 import vvdScreenshot from "@/assets/vvd-screenshot.png";
-import maoNaMassa from "@/assets/tutorial/mao-na-massa.jpg";
+import smartScreenshot from "@/assets/smart-screenshot.png";
 import progresso from "@/assets/tutorial/progresso.jpg";
 import ferramentas from "@/assets/tutorial/ferramentas.jpg";
 
@@ -58,7 +58,7 @@ const Landing = () => {
       icon: Layout,
       title: "Do Planejamento à Execução",
       description: "Transforme seus objetivos em planos de ação concretos e gerenciáveis.",
-      image: maoNaMassa
+      image: smartScreenshot
     },
     {
       icon: BarChart3,
