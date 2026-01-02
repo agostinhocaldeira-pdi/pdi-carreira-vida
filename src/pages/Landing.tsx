@@ -115,23 +115,6 @@ const Landing = () => {
       </section>
 
       {/* ============================================================ */}
-      {/* 2) SEÇÃO DE CONTEXTO E DESEJO */}
-      {/* ============================================================ */}
-      <section id="contexto" className="py-16 sm:py-24 px-4 bg-muted/20">
-        <div className="container mx-auto max-w-3xl text-center">
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-6 text-foreground">
-            Onde você se encontra?
-          </h2>
-          
-          <p className="text-base sm:text-lg md:text-xl text-muted-foreground leading-relaxed">
-            Você não está perdido, mas talvez sinta que falta um controle mais firme sobre os próximos passos. 
-            É natural desejar a <strong className="text-foreground">estabilidade</strong>, a <strong className="text-foreground">clareza</strong> e 
-            a <strong className="text-foreground">tranquilidade</strong> para sustentar a vida que você construiu e planejou.
-          </p>
-        </div>
-      </section>
-
-      {/* ============================================================ */}
       {/* SEÇÃO DE VÍDEO */}
       {/* ============================================================ */}
       <section className="py-12 sm:py-16 px-4">
@@ -146,6 +129,23 @@ const Landing = () => {
               allowFullScreen
             />
           </div>
+        </div>
+      </section>
+
+      {/* ============================================================ */}
+      {/* 2) SEÇÃO DE CONTEXTO E DESEJO */}
+      {/* ============================================================ */}
+      <section id="contexto" className="py-16 sm:py-24 px-4 bg-muted/20">
+        <div className="container mx-auto max-w-3xl text-center">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-6 text-foreground">
+            Onde você se encontra?
+          </h2>
+          
+          <p className="text-base sm:text-lg md:text-xl text-muted-foreground leading-relaxed">
+            Você não está perdido, mas talvez sinta que falta um controle mais firme sobre os próximos passos. 
+            É natural desejar a <strong className="text-foreground">estabilidade</strong>, a <strong className="text-foreground">clareza</strong> e 
+            a <strong className="text-foreground">tranquilidade</strong> para sustentar a vida que você construiu e planejou.
+          </p>
         </div>
       </section>
 
