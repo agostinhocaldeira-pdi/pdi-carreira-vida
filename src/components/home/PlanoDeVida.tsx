@@ -582,7 +582,7 @@ const PlanoDeVida = ({ onTabChange, onOpenChange, forcedTab, forcedOpen }: Plano
   };
 
   const handlePurchaseAI = async () => {
-    const url = await aiUsage.createPurchase('insight');
+    const url = await aiUsage.createPurchase('/home');
     if (url) {
       window.open(url, '_blank');
     }

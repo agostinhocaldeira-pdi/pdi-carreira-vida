@@ -89,8 +89,10 @@ export const useAIUsage = (featureType: AIFeatureType) => {
   const createPurchase = useCallback(async (returnPath: string): Promise<string | null> => {
     setState(prev => ({ ...prev, isLoading: true }));
     try {
+      const normalizedReturnPath = returnPath?.startsWith('/') ? returnPath : `/${returnPath}`;
+
       const { data, error } = await supabase.functions.invoke('create-ai-purchase', {
-        body: { featureType, returnPath },
+        body: { featureType, returnPath: normalizedReturnPath },
       });
 
       if (error) {

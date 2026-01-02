@@ -60,6 +60,28 @@ serve(async (req) => {
 
     const origin = req.headers.get("origin") || "https://pdi.app";
 
+    const rawReturnPath = typeof returnPath === "string" ? returnPath.trim() : "";
+
+    // Normalize returnPath to always start with "/" to avoid malformed domains like ".com.brinsight"
+    let normalizedReturnPath = rawReturnPath;
+    try {
+      if (normalizedReturnPath.startsWith("http://") || normalizedReturnPath.startsWith("https://")) {
+        const parsed = new URL(normalizedReturnPath);
+        normalizedReturnPath = `${parsed.pathname}${parsed.search}`;
+      }
+    } catch {
+      // ignore invalid URLs
+    }
+
+    if (!normalizedReturnPath) normalizedReturnPath = "/home";
+    if (!normalizedReturnPath.startsWith("/")) normalizedReturnPath = `/${normalizedReturnPath}`;
+
+    const qpSeparator = normalizedReturnPath.includes("?") ? "&" : "?";
+    const successUrl = `${origin}${normalizedReturnPath}${qpSeparator}ai_purchase=success&feature=${featureType}&session_id={CHECKOUT_SESSION_ID}`;
+    const cancelUrl = `${origin}${normalizedReturnPath}${qpSeparator}ai_purchase=cancelled`;
+
+    logStep("Return path normalized", { rawReturnPath, normalizedReturnPath });
+
     // Create checkout session for one-time payment
     const session = await stripe.checkout.sessions.create({
       customer: customerId,
@@ -71,8 +93,8 @@ serve(async (req) => {
         },
       ],
       mode: "payment",
-      success_url: `${origin}${returnPath}?ai_purchase=success&feature=${featureType}&session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${origin}${returnPath}?ai_purchase=cancelled`,
+      success_url: successUrl,
+      cancel_url: cancelUrl,
       metadata: {
         user_id: user.id,
         type: "ai_usage",
