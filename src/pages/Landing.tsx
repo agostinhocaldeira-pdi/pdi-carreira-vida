@@ -120,10 +120,9 @@ const Landing = () => {
       <section className="py-6 sm:py-8 px-4">
         <div className="container mx-auto max-w-4xl">
           <div className="aspect-video rounded-xl overflow-hidden shadow-2xl border border-border/30 bg-muted/50">
-            {/* Substitua a URL abaixo pelo embed do seu vídeo */}
             <iframe
               className="w-full h-full"
-              src="https://www.youtube.com/embed/VIDEO_ID_AQUI"
+              src="https://www.youtube.com/embed/R4oKexScqXU"
               title="Apresentação PDI"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
               allowFullScreen
