@@ -260,29 +260,39 @@ const Landing = () => {
 
           <div className="space-y-16 sm:space-y-24">
             {platformFeatures.map((feature, index) => (
-              <div 
-                key={index} 
-                className={`grid lg:grid-cols-2 gap-8 lg:gap-12 items-center ${
-                  index % 2 === 1 ? 'lg:flex-row-reverse' : ''
-                }`}
-              >
-                <div className={`space-y-4 ${index % 2 === 1 ? 'lg:order-2' : ''}`}>
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
-                      <feature.icon className="w-5 h-5 text-primary" />
-                    </div>
-                    <h3 className="text-xl sm:text-2xl font-bold text-foreground">{feature.title}</h3>
+              <div key={index}>
+                {index === 1 && (
+                  <div className="text-center py-8 max-w-3xl mx-auto mb-16 sm:mb-24">
+                    <p className="text-lg sm:text-xl md:text-2xl text-foreground font-medium leading-relaxed">
+                      Não é algo que você configura uma vez e esquece.
+                      <br />
+                      <span className="text-primary">É um sistema que acompanha decisões reais, semana após semana.</span>
+                    </p>
                   </div>
-                  <p className="text-muted-foreground text-base sm:text-lg leading-relaxed">
-                    {feature.description}
-                  </p>
-                </div>
-                <div className={`${index % 2 === 1 ? 'lg:order-1' : ''}`}>
-                  <img 
-                    src={feature.image} 
-                    alt={feature.title}
-                    className="rounded-xl shadow-xl w-full border border-border/30"
-                  />
+                )}
+                <div 
+                  className={`grid lg:grid-cols-2 gap-8 lg:gap-12 items-center ${
+                    index % 2 === 1 ? 'lg:flex-row-reverse' : ''
+                  }`}
+                >
+                  <div className={`space-y-4 ${index % 2 === 1 ? 'lg:order-2' : ''}`}>
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
+                        <feature.icon className="w-5 h-5 text-primary" />
+                      </div>
+                      <h3 className="text-xl sm:text-2xl font-bold text-foreground">{feature.title}</h3>
+                    </div>
+                    <p className="text-muted-foreground text-base sm:text-lg leading-relaxed">
+                      {feature.description}
+                    </p>
+                  </div>
+                  <div className={`${index % 2 === 1 ? 'lg:order-1' : ''}`}>
+                    <img 
+                      src={feature.image} 
+                      alt={feature.title}
+                      className="rounded-xl shadow-xl w-full border border-border/30"
+                    />
+                  </div>
                 </div>
               </div>
             ))}
