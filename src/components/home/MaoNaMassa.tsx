@@ -502,7 +502,7 @@ const MaoNaMassa = ({ embedded = false }: MaoNaMassaProps) => {
                                 </div>
                                 <p className="font-medium text-sm truncate">{metaCadastrada.texto}</p>
                               </div>
-                              <div className="flex items-center gap-3 text-xs text-muted-foreground ml-10">
+                              <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground ml-10">
                                 <span className="flex items-center gap-1">
                                   📅 {dataFormatada}
                                 </span>
