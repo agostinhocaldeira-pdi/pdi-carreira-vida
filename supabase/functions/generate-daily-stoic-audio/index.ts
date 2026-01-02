@@ -49,7 +49,7 @@ serve(async (req) => {
       throw new Error('Reflection data required: title, text, question, dateKey');
     }
 
-    const audioFileName = `${dateKey}-full-v3.mp3`;
+    const audioFileName = `${dateKey}-full-v4.mp3`;
 
     // Check if audio already exists
     const { data: existingAudio } = await supabase
@@ -58,7 +58,7 @@ serve(async (req) => {
       .eq('date_key', dateKey)
       .single();
 
-    if (existingAudio?.audio_url?.includes('-full-v3')) {
+    if (existingAudio?.audio_url?.includes('-full-v4')) {
       console.log(`Audio already exists for ${dateKey}`);
       return new Response(
         JSON.stringify({ 
@@ -70,12 +70,14 @@ serve(async (req) => {
       );
     }
 
-    // Prepare full narration text
-    const fullText = `${reflection.title}. ${reflection.text} ${reflection.question}`;
+    // Prepare narration text - ONLY title and reflection text (no question)
+    // Add natural pause at the end for 2 seconds of silence
+    const fullText = `${reflection.title}. ${reflection.text}`;
     const cleanedText = fullText.trim().replace(/\s+/g, ' ');
-    const textWithPause = cleanedText.endsWith('.') || cleanedText.endsWith('?') || cleanedText.endsWith('!')
-      ? cleanedText + " ..."
-      : cleanedText + ". ...";
+    // Add ellipsis to create natural ending pause
+    const textWithPause = cleanedText.endsWith('.') 
+      ? cleanedText + " ... ... ..."
+      : cleanedText + ". ... ... ...";
 
     console.log(`Generating daily stoic audio for ${dateKey}`);
 
