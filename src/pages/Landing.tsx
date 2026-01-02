@@ -132,6 +132,24 @@ const Landing = () => {
       </section>
 
       {/* ============================================================ */}
+      {/* SEÇÃO DE VÍDEO */}
+      {/* ============================================================ */}
+      <section className="py-12 sm:py-16 px-4">
+        <div className="container mx-auto max-w-4xl">
+          <div className="aspect-video rounded-xl overflow-hidden shadow-2xl border border-border/30 bg-muted/50">
+            {/* Substitua a URL abaixo pelo embed do seu vídeo */}
+            <iframe
+              className="w-full h-full"
+              src="https://www.youtube.com/embed/VIDEO_ID_AQUI"
+              title="Apresentação PDI"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              allowFullScreen
+            />
+          </div>
+        </div>
+      </section>
+
+      {/* ============================================================ */}
       {/* 3) SEÇÃO DO PROBLEMA REAL */}
       {/* ============================================================ */}
       <section className="py-16 sm:py-24 px-4">
