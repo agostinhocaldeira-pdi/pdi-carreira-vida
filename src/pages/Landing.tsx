@@ -153,6 +153,35 @@ const Landing = () => {
               allowFullScreen
             />
           </div>
+          
+          {/* CTA após vídeo */}
+          <div className="text-center mt-10">
+            <Button 
+              size="lg" 
+              className="text-base sm:text-lg px-8 py-6 bg-primary hover:bg-primary/90 transition-all duration-300"
+              onClick={() => navigate("/signup")}
+            >
+              Quero experimentar
+              <ArrowRight className="ml-2 h-5 w-5" />
+            </Button>
+            <p className="mt-4 text-sm sm:text-base text-muted-foreground">
+              "Use o sistema. Veja se funciona para você."
+            </p>
+            <div className="mt-4 flex flex-wrap justify-center gap-4 text-xs sm:text-sm text-muted-foreground">
+              <span className="flex items-center gap-2">
+                <CheckCircle2 className="h-4 w-4 text-primary" />
+                30 dias de uso real
+              </span>
+              <span className="flex items-center gap-2">
+                <CheckCircle2 className="h-4 w-4 text-primary" />
+                cancelamento livre
+              </span>
+              <span className="flex items-center gap-2">
+                <CheckCircle2 className="h-4 w-4 text-primary" />
+                cobrança só após esse período
+              </span>
+            </div>
+          </div>
         </div>
       </section>
 
