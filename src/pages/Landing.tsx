@@ -119,7 +119,7 @@ const Landing = () => {
           </p>
           
           <p className="text-base sm:text-lg text-muted-foreground/80 mb-0 italic">
-            "Quando tudo depende demais do improviso, até quem é competente começa a sentir o peso."
+            Quando tudo depende demais do improviso, até quem é competente começa a sentir o peso.
           </p>
           
         </div>
@@ -141,7 +141,7 @@ const Landing = () => {
               <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
             <p className="mt-4 text-sm sm:text-base text-muted-foreground italic">
-              "A melhor forma de entender o PDI não é lendo. É vendo como ele funciona no dia a dia."
+              A melhor forma de entender o PDI não é lendo. É vendo como ele funciona no dia a dia.
             </p>
           </div>
           <div className="aspect-video rounded-xl overflow-hidden shadow-2xl border border-border/30 bg-muted/50">
@@ -165,7 +165,7 @@ const Landing = () => {
               <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
             <p className="mt-4 text-sm sm:text-base text-muted-foreground">
-              "Use o sistema. Veja se funciona para você."
+              Use o sistema. Veja se funciona para você.
             </p>
             <div className="mt-4 flex flex-wrap justify-center gap-4 text-xs sm:text-sm text-muted-foreground">
               <span className="flex items-center gap-2">
