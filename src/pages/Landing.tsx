@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -29,9 +30,15 @@ import ferramentas from "@/assets/tutorial/ferramentas.jpg";
 
 const Landing = () => {
   const navigate = useNavigate();
+  const [videoPlaying, setVideoPlaying] = useState(false);
 
   const scrollToSection = (id: string) => {
     document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  const handlePlayVideo = () => {
+    setVideoPlaying(true);
+    document.getElementById("video-section")?.scrollIntoView({ behavior: "smooth" });
   };
 
   const platformFeatures = [
@@ -102,27 +109,29 @@ const Landing = () => {
             A diferença é se você se antecipa… ou reage.
           </p>
           
-          <Button 
-            size="lg" 
-            variant="outline"
-            className="text-base sm:text-lg px-8 py-6 border-2 border-primary/30 hover:bg-primary/10 hover:border-primary/50 transition-all duration-300"
-            onClick={() => scrollToSection("contexto")}
-          >
-            Entender como funciona
-            <ArrowRight className="ml-2 h-5 w-5" />
-          </Button>
         </div>
       </section>
 
       {/* ============================================================ */}
       {/* SEÇÃO DE VÍDEO */}
       {/* ============================================================ */}
-      <section className="py-6 sm:py-8 px-4">
+      <section id="video-section" className="py-6 sm:py-8 px-4">
         <div className="container mx-auto max-w-4xl">
+          <div className="text-center mb-6">
+            <Button 
+              size="lg" 
+              variant="outline"
+              className="text-base sm:text-lg px-8 py-6 border-2 border-primary/30 hover:bg-primary/10 hover:border-primary/50 transition-all duration-300"
+              onClick={handlePlayVideo}
+            >
+              Entender como funciona
+              <ArrowRight className="ml-2 h-5 w-5" />
+            </Button>
+          </div>
           <div className="aspect-video rounded-xl overflow-hidden shadow-2xl border border-border/30 bg-muted/50">
             <iframe
               className="w-full h-full"
-              src="https://www.youtube.com/embed/R4oKexScqXU"
+              src={`https://www.youtube.com/embed/R4oKexScqXU${videoPlaying ? '?autoplay=1' : ''}`}
               title="Apresentação PDI"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
               allowFullScreen
@@ -130,6 +139,7 @@ const Landing = () => {
           </div>
         </div>
       </section>
+
 
       {/* ============================================================ */}
       {/* 2) SEÇÃO DE CONTEXTO E DESEJO */}
