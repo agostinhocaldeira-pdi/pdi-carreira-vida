@@ -257,14 +257,6 @@ const Landing = () => {
       {/* ============================================================ */}
       <section className="py-16 sm:py-24 px-4">
         <div className="container mx-auto max-w-6xl">
-          <div className="text-center mb-12 sm:mb-16">
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 text-foreground">
-              Uma Plataforma Completa
-            </h2>
-            <p className="text-muted-foreground text-base sm:text-lg max-w-2xl mx-auto">
-              Conheça as principais funcionalidades que vão te ajudar a organizar sua vida e carreira.
-            </p>
-          </div>
 
           <div className="space-y-16 sm:space-y-24">
             {platformFeatures.map((feature, index) => (
