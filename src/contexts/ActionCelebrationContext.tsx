@@ -44,14 +44,43 @@ export function ActionCelebrationProvider({ children }: { children: ReactNode })
   const [showCongratulation, setShowCongratulation] = useState(false);
   const [lastCelebration, setLastCelebration] = useState<{ type: ActionType; name?: string } | null>(null);
   const [progressMirrorMessage, setProgressMirrorMessage] = useState('');
+  
+  // Track how many actions of each type have been created in this session
+  const [actionTypeCounts, setActionTypeCounts] = useState<Record<ActionType, number>>({
+    diary: 0,
+    objective: 0,
+    goal: 0,
+    action: 0,
+    step: 0,
+    tool_vvd: 0,
+    tool_valores: 0,
+    tool_roda: 0,
+    tool_swot: 0,
+    tool_smart: 0,
+    tool_eisenhower: 0,
+    tool_crencas: 0,
+    tool_autoavaliacao: 0,
+    stoic_reflection: 0,
+  });
 
   const celebrateAction = useCallback((actionType: ActionType, actionName?: string) => {
+    const currentTypeCount = actionTypeCounts[actionType];
+    const newTypeCount = currentTypeCount + 1;
+    
+    // Update the count for this specific action type
+    setActionTypeCounts(prev => ({
+      ...prev,
+      [actionType]: newTypeCount
+    }));
+    
     const newCount = sessionActionCount + 1;
     setSessionActionCount(newCount);
     setLastCelebration({ type: actionType, name: actionName });
     
-    // Always show congratulation toast
-    setShowCongratulation(true);
+    // Only show congratulation toast for the FIRST action of each type
+    if (currentTypeCount === 0) {
+      setShowCongratulation(true);
+    }
     
     // After 3+ actions, show Progress Mirror
     if (newCount >= 3 && newCount % 3 === 0) {
@@ -62,7 +91,7 @@ export function ActionCelebrationProvider({ children }: { children: ReactNode })
         setShowProgressMirror(true);
       }, 2500);
     }
-  }, [sessionActionCount]);
+  }, [sessionActionCount, actionTypeCounts]);
 
   const dismissProgressMirror = useCallback(() => {
     setShowProgressMirror(false);
