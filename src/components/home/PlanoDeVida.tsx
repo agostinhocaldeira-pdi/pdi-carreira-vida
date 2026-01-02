@@ -22,6 +22,8 @@ import { useQueryClient } from "@tanstack/react-query";
 import { usePDIStorage } from "@/hooks/usePDIStorage";
 import { PDI_QUERY_KEYS, usePDIData } from "@/hooks/usePDIQueries";
 import { RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, Legend, ResponsiveContainer } from "recharts";
+import { useAIUsage } from "@/hooks/useAIUsage";
+import { AIUsageLimitModal } from "@/components/AIUsageLimitModal";
 
 interface PlanoDeVidaProps {
   onTabChange?: (tab: string) => void;
@@ -34,6 +36,10 @@ const PlanoDeVida = ({ onTabChange, onOpenChange, forcedTab, forcedOpen }: Plano
   const storage = usePDIStorage();
   const queryClient = useQueryClient();
   const isMobile = useIsMobile();
+  
+  // AI Usage hook for insight purchases
+  const aiUsage = useAIUsage('insight');
+  const [showAILimitModal, setShowAILimitModal] = useState(false);
   
   // React Query hook for cached data with localStorage-first pattern
   const { data: pdiData, isLoading: isQueryLoading } = usePDIData();
@@ -472,11 +478,21 @@ const PlanoDeVida = ({ onTabChange, onOpenChange, forcedTab, forcedOpen }: Plano
     (area) => String(area.notaAtual).trim() !== "" && String(area.notaDesejada).trim() !== ""
   );
 
-  const handleGenerateInsight = async () => {
+  const handleGenerateInsight = async (fromPurchase = false) => {
     // Administradores não têm limite
-    if (!isAdmin && !canGenerateInsight) {
-      toast.error("Você já gerou seu insight mensal. Contrate o plano Premium para gerar mais insights!");
+    if (!isAdmin && !canGenerateInsight && !fromPurchase && !aiUsage.hasAvailablePurchase) {
+      // Mostrar modal de compra avulsa
+      setShowAILimitModal(true);
       return;
+    }
+
+    // Se estiver usando uma compra paga, consumir primeiro
+    if (!isAdmin && !canGenerateInsight && !fromPurchase && aiUsage.hasAvailablePurchase) {
+      const consumed = await aiUsage.consumePurchase();
+      if (!consumed) {
+        toast.error("Erro ao processar sua compra. Tente novamente.");
+        return;
+      }
     }
 
     // Validar requisitos mínimos para gerar insight
@@ -562,6 +578,13 @@ const PlanoDeVida = ({ onTabChange, onOpenChange, forcedTab, forcedOpen }: Plano
       toast.error("Erro ao gerar insight");
     } finally {
       setIsGeneratingInsight(false);
+    }
+  };
+
+  const handlePurchaseAI = async () => {
+    const url = await aiUsage.createPurchase('insight');
+    if (url) {
+      window.open(url, '_blank');
     }
   };
 
@@ -1540,11 +1563,24 @@ const PlanoDeVida = ({ onTabChange, onOpenChange, forcedTab, forcedOpen }: Plano
               </div>
             </div>
             
-            {!isAdmin && !canGenerateInsight && (
+            {!isAdmin && !canGenerateInsight && !aiUsage.hasAvailablePurchase && (
               <div className="bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-800 rounded-lg p-3 mb-4">
                 <p className="text-xs sm:text-sm text-amber-900 dark:text-amber-200">
-                  <strong>Limite mensal atingido.</strong> Você poderá gerar um novo insight em {getNextInsightDate()}. 
-                  Contrate o plano <strong>Premium</strong> para gerar insights ilimitados!
+                  <strong>Limite mensal atingido.</strong> Você poderá gerar um novo insight em {getNextInsightDate()}, ou{' '}
+                  <button 
+                    onClick={() => setShowAILimitModal(true)}
+                    className="underline font-semibold hover:text-amber-700 dark:hover:text-amber-300"
+                  >
+                    compre um insight avulso por R$ 10,00
+                  </button>.
+                </p>
+              </div>
+            )}
+            
+            {!isAdmin && aiUsage.hasAvailablePurchase && (
+              <div className="bg-green-50 dark:bg-green-950/20 border border-green-200 dark:border-green-800 rounded-lg p-3 mb-4">
+                <p className="text-xs sm:text-sm text-green-900 dark:text-green-200">
+                  <strong>Você tem 1 insight disponível!</strong> Clique no botão abaixo para gerar seu insight personalizado.
                 </p>
               </div>
             )}
@@ -1565,10 +1601,10 @@ const PlanoDeVida = ({ onTabChange, onOpenChange, forcedTab, forcedOpen }: Plano
                   </div>
                 </div>
                 <Button 
-                  onClick={handleGenerateInsight} 
+                  onClick={() => handleGenerateInsight()} 
                   size="sm" 
                   variant="outline"
-                  disabled={isGeneratingInsight || (!isAdmin && !canGenerateInsight)}
+                  disabled={isGeneratingInsight}
                   className="w-full sm:w-auto"
                 >
                   {isGeneratingInsight ? (
@@ -1590,8 +1626,8 @@ const PlanoDeVida = ({ onTabChange, onOpenChange, forcedTab, forcedOpen }: Plano
                   <TooltipTrigger asChild>
                     <div className="inline-block w-full">
                       <Button 
-                        onClick={handleGenerateInsight} 
-                        disabled={isGeneratingInsight || (!isAdmin && !canGenerateInsight) || (!vvd && !isValoresComplete && !isAreasComplete)}
+                        onClick={() => handleGenerateInsight()} 
+                        disabled={isGeneratingInsight || (!vvd && !isValoresComplete && !isAreasComplete)}
                         className="w-full"
                         size="lg"
                       >
@@ -1668,6 +1704,15 @@ const PlanoDeVida = ({ onTabChange, onOpenChange, forcedTab, forcedOpen }: Plano
         onConfirm={confirmRemoveHabilidade}
         title="Excluir Habilidade"
         description="Tem certeza que deseja excluir esta habilidade?"
+      />
+
+      <AIUsageLimitModal
+        isOpen={showAILimitModal}
+        onClose={() => setShowAILimitModal(false)}
+        onPurchase={handlePurchaseAI}
+        isLoading={aiUsage.isLoading}
+        featureType="insight"
+        featureName="Insights Personalizados"
       />
     </>
   );
