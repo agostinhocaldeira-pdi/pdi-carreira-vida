@@ -29,9 +29,32 @@ export const DailyCheckout = () => {
   const [showHelpModal, setShowHelpModal] = useState(false);
   const [hasChanges, setHasChanges] = useState(false);
 
+  // Load saved checkout status from localStorage on mount
   useEffect(() => {
     loadCheckoutItems();
   }, []);
+
+  // Get today's date key for localStorage
+  const getTodayKey = () => {
+    const today = new Date();
+    return `checkout-${today.toISOString().split('T')[0]}`;
+  };
+
+  // Load saved status from localStorage
+  const loadSavedStatus = (loadedItems: CheckoutItem[]): CheckoutItem[] => {
+    const savedData = localStorage.getItem(getTodayKey());
+    if (!savedData) return loadedItems;
+    
+    try {
+      const savedStatuses: Record<string, boolean | null> = JSON.parse(savedData);
+      return loadedItems.map(item => ({
+        ...item,
+        done: savedStatuses[item.id] !== undefined ? savedStatuses[item.id] : null
+      }));
+    } catch {
+      return loadedItems;
+    }
+  };
 
   const loadCheckoutItems = async () => {
     setLoading(true);
@@ -173,7 +196,9 @@ export const DailyCheckout = () => {
         }
       }
 
-      setItems(checkoutItems);
+      // Apply saved status from localStorage
+      const itemsWithSavedStatus = loadSavedStatus(checkoutItems);
+      setItems(itemsWithSavedStatus);
     } catch (error) {
       console.error("Error loading checkout items:", error);
     } finally {
@@ -182,13 +207,30 @@ export const DailyCheckout = () => {
   };
 
   const toggleItemStatus = (id: string, status: boolean) => {
-    setItems(prev => prev.map(item => 
-      item.id === id ? { ...item, done: item.done === status ? null : status } : item
-    ));
+    setItems(prev => {
+      const updated = prev.map(item => 
+        item.id === id ? { ...item, done: item.done === status ? null : status } : item
+      );
+      // Save to localStorage immediately on toggle
+      saveCheckoutStatus(updated);
+      return updated;
+    });
     setHasChanges(true);
   };
 
+  // Save checkout status to localStorage
+  const saveCheckoutStatus = (currentItems: CheckoutItem[]) => {
+    const statuses: Record<string, boolean | null> = {};
+    currentItems.forEach(item => {
+      statuses[item.id] = item.done;
+    });
+    localStorage.setItem(getTodayKey(), JSON.stringify(statuses));
+  };
+
   const handleSave = () => {
+    // Save status to localStorage
+    saveCheckoutStatus(items);
+    
     const allDone = items.every(item => item.done === true);
     const hasUndone = items.some(item => item.done === false);
 
