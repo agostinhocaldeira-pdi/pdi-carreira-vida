@@ -109,7 +109,7 @@ const Landing = () => {
             A diferença é se você se antecipa… ou reage.
           </p>
           
-          <p className="text-base sm:text-lg text-muted-foreground/80 mb-8 sm:mb-12 italic">
+          <p className="text-base sm:text-lg text-muted-foreground/80 mb-4 sm:mb-6 italic">
             "Quando tudo depende demais do improviso, até quem é competente começa a sentir o peso."
           </p>
           
