@@ -39,10 +39,10 @@ const StoicInteractiveExperience = ({
   const [displayedQuestion, setDisplayedQuestion] = useState("");
   const [showQuestion, setShowQuestion] = useState(false);
   const [preloadedAudio, setPreloadedAudio] = useState<HTMLAudioElement | null>(null);
-  const [isPreloading, setIsPreloading] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const textAnimationRef = useRef<NodeJS.Timeout | null>(null);
   const questionAnimationRef = useRef<NodeJS.Timeout | null>(null);
+  const isPreloadingRef = useRef(false);
 
   const dateKey = format(date, "MM-dd");
 
@@ -132,20 +132,18 @@ const StoicInteractiveExperience = ({
     return urlData.publicUrl;
   };
 
-  // Preload audio when component mounts or reflection changes
+  // Preload audio silently in background - doesn't affect UI
   useEffect(() => {
     const preloadAudio = async () => {
-      if (isPreloading || preloadedAudio) return;
+      if (isPreloadingRef.current || preloadedAudio) return;
       
-      setIsPreloading(true);
-      setPhase("loading");
+      isPreloadingRef.current = true;
       
       try {
         // Check for existing audio first
         let url = await checkExistingAudio();
         
         // If existing audio doesn't have full narration or is old format, generate new
-        // Adding version suffix to force regeneration with improved audio quality
         if (url && !url.includes("-full-v2")) {
           url = null;
         }
@@ -165,17 +163,11 @@ const StoicInteractiveExperience = ({
         });
         
         setPreloadedAudio(audio);
-        setPhase("ready");
       } catch (error) {
         console.error("Error preloading audio:", error);
-        setPhase("idle");
-        toast({
-          title: "Erro ao carregar áudio",
-          description: "A reflexão ainda pode ser lida manualmente.",
-          variant: "destructive",
-        });
+        // Silently fail - user can still click and we'll try again
       } finally {
-        setIsPreloading(false);
+        isPreloadingRef.current = false;
       }
     };
 
@@ -201,8 +193,8 @@ const StoicInteractiveExperience = ({
     return animate();
   }, []);
 
-  // Start the experience - now instant since audio is preloaded
-  const handleStart = () => {
+  // Start the experience - try to use preloaded audio, or generate on-the-fly
+  const handleStart = async () => {
     if (phase === "playing" || phase === "text-animation" || phase === "question") {
       // Pause
       if (audioRef.current) {
@@ -214,15 +206,7 @@ const StoicInteractiveExperience = ({
       if (questionAnimationRef.current) {
         clearTimeout(questionAnimationRef.current);
       }
-      setPhase("ready");
-      return;
-    }
-
-    if (!preloadedAudio) {
-      toast({
-        title: "Aguarde",
-        description: "O áudio ainda está sendo carregado.",
-      });
+      setPhase("idle");
       return;
     }
 
@@ -230,8 +214,36 @@ const StoicInteractiveExperience = ({
     setDisplayedQuestion("");
     setShowQuestion(false);
 
-    // Clone the preloaded audio to allow replay
-    const audio = preloadedAudio.cloneNode(true) as HTMLAudioElement;
+    let audio: HTMLAudioElement;
+
+    if (preloadedAudio) {
+      // Use preloaded audio - instant start
+      audio = preloadedAudio.cloneNode(true) as HTMLAudioElement;
+    } else {
+      // Audio not ready yet - generate now
+      setPhase("loading");
+      try {
+        let url = await checkExistingAudio();
+        if (url && !url.includes("-full-v2")) {
+          url = null;
+        }
+        if (!url) {
+          url = await generateAudio();
+        }
+        audio = new Audio(url);
+        setPreloadedAudio(audio);
+      } catch (error) {
+        console.error("Error generating audio:", error);
+        toast({
+          title: "Erro ao gerar áudio",
+          description: "Tente novamente.",
+          variant: "destructive",
+        });
+        setPhase("idle");
+        return;
+      }
+    }
+
     audioRef.current = audio;
 
     audio.onplay = () => {
@@ -267,7 +279,7 @@ const StoicInteractiveExperience = ({
         description: "Não foi possível reproduzir o áudio.",
         variant: "destructive",
       });
-      setPhase("ready");
+      setPhase("idle");
     };
 
     audio.play();
@@ -285,7 +297,7 @@ const StoicInteractiveExperience = ({
     if (questionAnimationRef.current) {
       clearTimeout(questionAnimationRef.current);
     }
-    setPhase("ready");
+    setPhase("idle");
     setDisplayedText("");
     setDisplayedQuestion("");
     setShowQuestion(false);
@@ -293,7 +305,6 @@ const StoicInteractiveExperience = ({
 
   const isActive = phase === "playing" || phase === "text-animation" || phase === "question" || phase === "completed";
   const isLoading = phase === "loading";
-  const isReady = phase === "ready";
 
   return (
     <div className="space-y-6">
@@ -408,16 +419,13 @@ const StoicInteractiveExperience = ({
               )}
             >
               {isLoading ? (
-                <>
-                  <Loader2 className="w-5 h-5 animate-spin" />
-                  {!isActive && <span>Carregando...</span>}
-                </>
+                <Loader2 className="w-5 h-5 animate-spin" />
               ) : isActive ? (
                 <Pause className="w-5 h-5" />
               ) : (
                 <>
                   <Play className="w-5 h-5" />
-                  <span>{isReady ? "Iniciar Reflexão" : "Iniciar Reflexão"}</span>
+                  <span>Iniciar Reflexão</span>
                 </>
               )}
             </Button>
