@@ -23,7 +23,7 @@ interface StoicInteractiveExperienceProps {
   canSave: boolean;
 }
 
-type ExperiencePhase = "idle" | "playing" | "text-animation" | "question" | "completed";
+type ExperiencePhase = "idle" | "loading" | "ready" | "playing" | "text-animation" | "question" | "completed";
 
 const StoicInteractiveExperience = ({
   reflection,
@@ -35,12 +35,14 @@ const StoicInteractiveExperience = ({
   canSave,
 }: StoicInteractiveExperienceProps) => {
   const [phase, setPhase] = useState<ExperiencePhase>("idle");
-  const [isLoadingAudio, setIsLoadingAudio] = useState(false);
   const [displayedText, setDisplayedText] = useState("");
+  const [displayedQuestion, setDisplayedQuestion] = useState("");
   const [showQuestion, setShowQuestion] = useState(false);
-  const [audioUrl, setAudioUrl] = useState<string | null>(null);
+  const [preloadedAudio, setPreloadedAudio] = useState<HTMLAudioElement | null>(null);
+  const [isPreloading, setIsPreloading] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const textAnimationRef = useRef<NodeJS.Timeout | null>(null);
+  const questionAnimationRef = useRef<NodeJS.Timeout | null>(null);
 
   const dateKey = format(date, "MM-dd");
 
@@ -51,14 +53,17 @@ const StoicInteractiveExperience = ({
         audioRef.current.pause();
         audioRef.current = null;
       }
+      if (preloadedAudio) {
+        preloadedAudio.pause();
+      }
       if (textAnimationRef.current) {
         clearTimeout(textAnimationRef.current);
       }
-      if (audioUrl) {
-        URL.revokeObjectURL(audioUrl);
+      if (questionAnimationRef.current) {
+        clearTimeout(questionAnimationRef.current);
       }
     };
-  }, [audioUrl]);
+  }, [preloadedAudio]);
 
   // Check if audio already exists
   const checkExistingAudio = useCallback(async () => {
@@ -71,10 +76,10 @@ const StoicInteractiveExperience = ({
     return data?.audio_url || null;
   }, [dateKey]);
 
-  // Generate and save audio
+  // Generate and save audio - now narrates title, text, and question
   const generateAudio = async (): Promise<string> => {
-    // Only narrate the title
-    const textToNarrate = reflection.title;
+    // Narrate title, text, and question with pauses
+    const textToNarrate = `${reflection.title}. ... ${reflection.text} ... ${reflection.question}`;
 
     const response = await fetch(
       `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/elevenlabs-tts`,
@@ -96,7 +101,7 @@ const StoicInteractiveExperience = ({
     const audioBlob = await response.blob();
 
     // Upload to storage
-    const fileName = `${dateKey}.mp3`;
+    const fileName = `${dateKey}-full.mp3`;
     const { error: uploadError } = await supabase.storage
       .from("stoic-audio")
       .upload(fileName, audioBlob, {
@@ -106,7 +111,6 @@ const StoicInteractiveExperience = ({
 
     if (uploadError) {
       console.error("Upload error:", uploadError);
-      // Still create a local URL even if upload fails
       return URL.createObjectURL(audioBlob);
     }
 
@@ -128,27 +132,77 @@ const StoicInteractiveExperience = ({
     return urlData.publicUrl;
   };
 
+  // Preload audio when component mounts or reflection changes
+  useEffect(() => {
+    const preloadAudio = async () => {
+      if (isPreloading || preloadedAudio) return;
+      
+      setIsPreloading(true);
+      setPhase("loading");
+      
+      try {
+        // Check for existing audio first
+        let url = await checkExistingAudio();
+        
+        // If existing audio doesn't have full narration, generate new
+        if (url && !url.includes("-full")) {
+          url = null;
+        }
+        
+        if (!url) {
+          url = await generateAudio();
+        }
+        
+        // Preload the audio
+        const audio = new Audio(url);
+        audio.preload = "auto";
+        
+        await new Promise<void>((resolve, reject) => {
+          audio.oncanplaythrough = () => resolve();
+          audio.onerror = () => reject(new Error("Failed to load audio"));
+          audio.load();
+        });
+        
+        setPreloadedAudio(audio);
+        setPhase("ready");
+      } catch (error) {
+        console.error("Error preloading audio:", error);
+        setPhase("idle");
+        toast({
+          title: "Erro ao carregar áudio",
+          description: "A reflexão ainda pode ser lida manualmente.",
+          variant: "destructive",
+        });
+      } finally {
+        setIsPreloading(false);
+      }
+    };
+
+    preloadAudio();
+  }, [dateKey, reflection.title]);
+
   // Animate text with typewriter effect
-  const animateText = useCallback((fullText: string, onComplete: () => void) => {
+  const animateText = useCallback((fullText: string, setFn: (text: string) => void, onComplete: () => void, speed = 100) => {
     let index = 0;
     const words = fullText.split(" ");
     
     const animate = () => {
       if (index < words.length) {
-        setDisplayedText(words.slice(0, index + 1).join(" "));
+        setFn(words.slice(0, index + 1).join(" "));
         index++;
-        textAnimationRef.current = setTimeout(animate, 120); // ~120ms per word
+        return setTimeout(animate, speed);
       } else {
         onComplete();
+        return null;
       }
     };
     
-    animate();
+    return animate();
   }, []);
 
-  // Start the experience
-  const handleStart = async () => {
-    if (phase === "playing" || phase === "text-animation") {
+  // Start the experience - now instant since audio is preloaded
+  const handleStart = () => {
+    if (phase === "playing" || phase === "text-animation" || phase === "question") {
       // Pause
       if (audioRef.current) {
         audioRef.current.pause();
@@ -156,67 +210,66 @@ const StoicInteractiveExperience = ({
       if (textAnimationRef.current) {
         clearTimeout(textAnimationRef.current);
       }
-      setPhase("idle");
+      if (questionAnimationRef.current) {
+        clearTimeout(questionAnimationRef.current);
+      }
+      setPhase("ready");
       return;
     }
 
-    setIsLoadingAudio(true);
+    if (!preloadedAudio) {
+      toast({
+        title: "Aguarde",
+        description: "O áudio ainda está sendo carregado.",
+      });
+      return;
+    }
+
     setDisplayedText("");
+    setDisplayedQuestion("");
     setShowQuestion(false);
 
-    try {
-      // Check for existing audio first
-      let url = await checkExistingAudio();
-      
-      if (!url) {
-        url = await generateAudio();
-      }
+    // Clone the preloaded audio to allow replay
+    const audio = preloadedAudio.cloneNode(true) as HTMLAudioElement;
+    audioRef.current = audio;
 
-      setAudioUrl(url);
-      
-      // Create and play audio
-      const audio = new Audio(url);
-      audioRef.current = audio;
-      
-      audio.onplay = () => {
-        setPhase("playing");
-        // Start text animation after a short delay
-        setTimeout(() => {
-          setPhase("text-animation");
-          animateText(reflection.text, () => {
-            // Show question after text animation
-            setShowQuestion(true);
-            setPhase("question");
-          });
-        }, 500);
-      };
-
-      audio.onended = () => {
-        // Audio ended, but text animation might still be running
-        // The animation will handle phase transitions
-      };
-
-      audio.onerror = () => {
-        toast({
-          title: "Erro ao reproduzir",
-          description: "Não foi possível reproduzir o áudio.",
-          variant: "destructive",
+    audio.onplay = () => {
+      setPhase("playing");
+      // Start text animation after title is narrated (~2-3 seconds)
+      setTimeout(() => {
+        setPhase("text-animation");
+        textAnimationRef.current = animateText(reflection.text, setDisplayedText, () => {
+          // Show question after text animation
+          setShowQuestion(true);
+          setPhase("question");
+          // Animate the question text
+          questionAnimationRef.current = animateText(reflection.question, setDisplayedQuestion, () => {
+            setPhase("completed");
+          }, 80);
         });
-        setPhase("idle");
-      };
+      }, 2500);
+    };
 
-      await audio.play();
-    } catch (error) {
-      console.error("Error starting experience:", error);
+    audio.onended = () => {
+      // Ensure we're at completed phase
+      if (phase !== "completed") {
+        setDisplayedText(reflection.text);
+        setDisplayedQuestion(reflection.question);
+        setShowQuestion(true);
+        setPhase("completed");
+      }
+    };
+
+    audio.onerror = () => {
       toast({
-        title: "Erro",
-        description: "Não foi possível iniciar a experiência. Tente novamente.",
+        title: "Erro ao reproduzir",
+        description: "Não foi possível reproduzir o áudio.",
         variant: "destructive",
       });
-      setPhase("idle");
-    } finally {
-      setIsLoadingAudio(false);
-    }
+      setPhase("ready");
+    };
+
+    audio.play();
   };
 
   // Reset experience
@@ -228,12 +281,18 @@ const StoicInteractiveExperience = ({
     if (textAnimationRef.current) {
       clearTimeout(textAnimationRef.current);
     }
-    setPhase("idle");
+    if (questionAnimationRef.current) {
+      clearTimeout(questionAnimationRef.current);
+    }
+    setPhase("ready");
     setDisplayedText("");
+    setDisplayedQuestion("");
     setShowQuestion(false);
   };
 
-  const isActive = phase !== "idle";
+  const isActive = phase === "playing" || phase === "text-animation" || phase === "question" || phase === "completed";
+  const isLoading = phase === "loading";
+  const isReady = phase === "ready";
 
   return (
     <div className="space-y-6">
@@ -243,7 +302,7 @@ const StoicInteractiveExperience = ({
           "relative rounded-xl overflow-hidden transition-all duration-500",
           "bg-gradient-to-br from-primary/10 via-card to-primary/5",
           "border border-primary/20",
-          isActive ? "min-h-[300px]" : "min-h-[120px]"
+          isActive ? "min-h-[350px]" : "min-h-[120px]"
         )}
       >
         {/* Title - Always visible */}
@@ -275,13 +334,49 @@ const StoicInteractiveExperience = ({
           </div>
         )}
 
-        {/* Question with animation */}
+        {/* Question and Response - Inside same container */}
         {showQuestion && (
           <div className="px-6 pb-6 animate-fade-in">
-            <div className="mt-4 p-4 rounded-lg bg-primary/10 border border-primary/30">
-              <p className="text-primary font-medium italic">
-                "{reflection.question}"
+            <div className="mt-4 p-4 rounded-lg bg-primary/10 border border-primary/30 space-y-4">
+              {/* Question */}
+              <p className={cn(
+                "text-primary font-medium italic",
+                phase === "question" && "animate-pulse"
+              )}>
+                "{displayedQuestion || reflection.question}"
+                {phase === "question" && displayedQuestion !== reflection.question && (
+                  <span className="inline-block w-0.5 h-4 bg-primary ml-1 animate-pulse" />
+                )}
               </p>
+              
+              {/* Response Field - Inside the question box */}
+              {phase === "completed" && (
+                <div className="space-y-3 pt-2 border-t border-primary/20 animate-fade-in">
+                  <label className="text-sm font-medium text-muted-foreground">
+                    Sua resposta:
+                  </label>
+                  <Textarea
+                    value={stoicResponse}
+                    onChange={(e) => onStoicResponseChange(e.target.value)}
+                    placeholder="Escreva sua reflexão sobre a pergunta acima..."
+                    className="min-h-[100px] resize-none bg-background/50 border-primary/20 focus:border-primary/40"
+                  />
+                  <div className="flex justify-end">
+                    <Button
+                      onClick={onSave}
+                      disabled={!canSave || isSaving}
+                      className="gap-2"
+                    >
+                      {isSaving ? (
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                      ) : (
+                        <Send className="w-4 h-4" />
+                      )}
+                      Salvar Reflexão
+                    </Button>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         )}
@@ -304,21 +399,24 @@ const StoicInteractiveExperience = ({
             )}
             <Button
               onClick={handleStart}
-              disabled={isLoadingAudio}
+              disabled={isLoading}
               size={isActive ? "icon" : "default"}
               className={cn(
                 "shadow-md transition-all duration-300",
                 isActive ? "rounded-full" : "rounded-lg gap-2"
               )}
             >
-              {isLoadingAudio ? (
-                <Loader2 className="w-5 h-5 animate-spin" />
+              {isLoading ? (
+                <>
+                  <Loader2 className="w-5 h-5 animate-spin" />
+                  {!isActive && <span>Carregando...</span>}
+                </>
               ) : isActive ? (
                 <Pause className="w-5 h-5" />
               ) : (
                 <>
                   <Play className="w-5 h-5" />
-                  <span>Iniciar Reflexão</span>
+                  <span>{isReady ? "Iniciar Reflexão" : "Iniciar Reflexão"}</span>
                 </>
               )}
             </Button>
@@ -326,63 +424,36 @@ const StoicInteractiveExperience = ({
         </div>
       </div>
 
-      {/* Response Field - Only visible after question appears */}
-      {showQuestion && (
-        <div className="space-y-3 animate-fade-in">
-          <label className="text-sm font-medium text-muted-foreground">
-            Sua resposta à reflexão:
-          </label>
-          <Textarea
-            value={stoicResponse}
-            onChange={(e) => onStoicResponseChange(e.target.value)}
-            placeholder="Escreva sua reflexão sobre a pergunta acima..."
-            className="min-h-[100px] resize-none border-primary/20 focus:border-primary/40"
-          />
-          <div className="flex justify-end">
-            <Button
-              onClick={onSave}
-              disabled={!canSave || isSaving}
-              className="gap-2"
-            >
-              {isSaving ? (
-                <Loader2 className="w-4 h-4 animate-spin" />
-              ) : (
-                <Send className="w-4 h-4" />
-              )}
-              Salvar Reflexão
-            </Button>
-          </div>
-        </div>
-      )}
-
-      {/* Static version for when not playing - shows question and response */}
-      {phase === "idle" && stoicResponse && (
+      {/* Static version for when ready but not yet started - shows question and existing response */}
+      {(phase === "idle" || phase === "ready" || phase === "loading") && stoicResponse && (
         <div className="space-y-3 pt-2">
-          <div className="p-3 rounded-lg bg-muted/50 border border-border">
-            <p className="text-sm text-muted-foreground italic">
+          <div className="p-4 rounded-lg bg-primary/10 border border-primary/30 space-y-4">
+            <p className="text-primary font-medium italic">
               "{reflection.question}"
             </p>
-          </div>
-          <Textarea
-            value={stoicResponse}
-            onChange={(e) => onStoicResponseChange(e.target.value)}
-            placeholder="Escreva sua reflexão..."
-            className="min-h-[80px] resize-none"
-          />
-          <div className="flex justify-end">
-            <Button
-              onClick={onSave}
-              disabled={!canSave || isSaving}
-              size="sm"
-              className="gap-2"
-            >
-              {isSaving ? (
-                <Loader2 className="w-4 h-4 animate-spin" />
-              ) : (
-                <Send className="w-4 h-4" />
-              )}
-              Salvar
-            </Button>
+            <div className="space-y-3 pt-2 border-t border-primary/20">
+              <Textarea
+                value={stoicResponse}
+                onChange={(e) => onStoicResponseChange(e.target.value)}
+                placeholder="Escreva sua reflexão..."
+                className="min-h-[80px] resize-none bg-background/50"
+              />
+              <div className="flex justify-end">
+                <Button
+                  onClick={onSave}
+                  disabled={!canSave || isSaving}
+                  size="sm"
+                  className="gap-2"
+                >
+                  {isSaving ? (
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  ) : (
+                    <Send className="w-4 h-4" />
+                  )}
+                  Salvar
+                </Button>
+              </div>
+            </div>
           </div>
         </div>
       )}
