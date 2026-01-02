@@ -23,6 +23,7 @@ import Logo from "@/components/Logo";
 import { FirstStepsModal } from "@/components/FirstStepsModal";
 import StoicReflectionSection from "@/components/home/StoicReflectionSection";
 import { getTodayReflection } from "@/data/stoicReflections";
+import { useStoicAudioPreload } from "@/hooks/useStoicAudioPreload";
 
 const Home = () => {
   const navigate = useNavigate();
@@ -49,6 +50,9 @@ const Home = () => {
   
   const { showSurvey, setShowSurvey, completedSection, markSectionCompleted } = useSatisfactionSurvey();
   const { newAchievement, dismissNewAchievement, checkAndUnlockAchievements } = useGamification();
+
+  // Preload stoic audio in background with low priority
+  useStoicAudioPreload();
 
   // Check achievements on mount
   useEffect(() => {
