@@ -26,8 +26,8 @@ export function useStoicAudioPreload() {
           .eq("date_key", dateKey)
           .maybeSingle();
 
-        // If audio exists with v3, it's ready - no need to generate
-        if (existingAudio?.audio_url?.includes("-full-v3")) {
+        // If audio exists with v4, it's ready - no need to generate
+        if (existingAudio?.audio_url?.includes("-full-v4")) {
           console.log("[StoicAudioPreload] Audio already exists for", dateKey);
           return;
         }

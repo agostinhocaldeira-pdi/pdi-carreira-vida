@@ -76,10 +76,10 @@ const StoicInteractiveExperience = ({
     return data?.audio_url || null;
   }, [dateKey]);
 
-  // Generate and save audio - now narrates title, text, and question
+  // Generate and save audio - narrates title and text only (no question)
   const generateAudio = async (): Promise<string> => {
-    // Narrate title, text, and question with pauses
-    const textToNarrate = `${reflection.title}. ... ${reflection.text} ... ${reflection.question}`;
+    // Narrate title and text with pauses (no question - ends with silence)
+    const textToNarrate = `${reflection.title}. ... ${reflection.text} ... ... ...`;
 
     const response = await fetch(
       `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/elevenlabs-tts`,
@@ -101,7 +101,7 @@ const StoicInteractiveExperience = ({
     const audioBlob = await response.blob();
 
     // Upload to storage with version suffix for improved audio
-    const fileName = `${dateKey}-full-v3.mp3`;
+    const fileName = `${dateKey}-full-v4.mp3`;
     const { error: uploadError } = await supabase.storage
       .from("stoic-audio")
       .upload(fileName, audioBlob, {
@@ -143,8 +143,8 @@ const StoicInteractiveExperience = ({
         // Check for existing audio first
         let url = await checkExistingAudio();
         
-        // If existing audio doesn't have full narration or is old format, generate new
-        if (url && !url.includes("-full-v3")) {
+        // If existing audio doesn't have v4 format, generate new
+        if (url && !url.includes("-full-v4")) {
           url = null;
         }
         
