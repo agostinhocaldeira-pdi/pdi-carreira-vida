@@ -674,7 +674,7 @@ const Landing = () => {
             className="text-base sm:text-lg px-8 sm:px-12 py-6 sm:py-8 bg-primary hover:bg-primary/90 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
             onClick={() => navigate("/signup")}
           >
-            Iniciar minha Experiência de 30 Dias
+            Experimentar agora
             <Sparkles className="ml-3 w-5 h-5" />
           </Button>
 
