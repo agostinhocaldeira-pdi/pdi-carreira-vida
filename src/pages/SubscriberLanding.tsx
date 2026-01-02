@@ -187,7 +187,16 @@ const SubscriberLanding = () => {
 
       {/* Footer Simples */}
       <footer className="py-6 border-t bg-muted/10">
-        <div className="container mx-auto px-4 text-center">
+        <div className="container mx-auto px-4 text-center space-y-3">
+          <p className="text-sm text-muted-foreground">
+            Ainda não é assinante?{" "}
+            <button 
+              onClick={() => navigate("/leadp")}
+              className="text-primary hover:underline font-medium"
+            >
+              Conheça o PDI
+            </button>
+          </p>
           <p className="text-sm text-muted-foreground">
             © {new Date().getFullYear()} PDI - Carreira e Vida. Todos os direitos reservados.
           </p>
