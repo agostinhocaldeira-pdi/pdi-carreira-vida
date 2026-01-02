@@ -165,7 +165,8 @@ const Landing = () => {
               <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
             <p className="mt-4 text-sm sm:text-base text-muted-foreground">
-              Use o sistema. Veja se funciona para você.
+              Você não precisa decidir agora.<br />
+              Use o sistema por 30 dias e veja como ele se encaixa na sua rotina.
             </p>
             <div className="mt-4 flex flex-wrap justify-center gap-4 text-xs sm:text-sm text-muted-foreground">
               <span className="flex items-center gap-2">
