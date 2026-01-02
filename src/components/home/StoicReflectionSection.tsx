@@ -410,14 +410,13 @@ const StoicReflectionSection = () => {
     return null;
   };
 
+  const shortDate = format(new Date(), "EEEE, d 'de' MMMM'/'yy", { locale: ptBR });
+  const capitalizedShortDate = shortDate.charAt(0).toUpperCase() + shortDate.slice(1);
+
   return (
     <Card className="shadow-medium border-primary/20 bg-gradient-to-br from-card to-primary/5">
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between flex-wrap gap-2">
-          <CardTitle className="text-xl sm:text-2xl flex items-center gap-2">
-            <PenLine className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
-            Diário & Reflexão
-          </CardTitle>
           <Badge variant="secondary" className="gap-1.5">
             <CalendarIcon className="w-3 h-3" />
             <span className="text-xs">{capitalizedDate}</span>
@@ -425,22 +424,17 @@ const StoicReflectionSection = () => {
         </div>
       </CardHeader>
       <CardContent className="space-y-4">
-        {/* Diary Section - Collapsible */}
+        {/* Diary & Stoic Reflection Section - Collapsible */}
         <Collapsible open={isDiaryOpen} onOpenChange={setIsDiaryOpen}>
           <div>
             <div className="flex items-center justify-between">
               <div className="space-y-1">
                 <h3 className="text-lg font-semibold flex items-center gap-2">
                   <PenLine className="w-5 h-5 text-primary" />
-                  Diário
+                  Diário & Reflexão
                 </h3>
                 <p className="text-sm text-muted-foreground">
-                  Registre seu dia: {new Date().toLocaleDateString("pt-BR", { 
-                    weekday: "long", 
-                    year: "numeric", 
-                    month: "long", 
-                    day: "numeric" 
-                  })}
+                  {capitalizedShortDate}
                 </p>
               </div>
               <CollapsibleTrigger asChild>
@@ -784,61 +778,60 @@ const StoicReflectionSection = () => {
                 </div>
               </div>
             )}
+            {/* Stoic Reflection Section - Inside Collapsible */}
+            <div className="border-t border-primary/20 pt-4 space-y-4">
+              <div className="space-y-2">
+                <h3 className="text-lg font-semibold flex items-center gap-2">
+                  <BookOpen className="w-5 h-5 text-primary" />
+                  "{reflection.title}"
+                </h3>
+                <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">
+                  {reflection.text}
+                </p>
+              </div>
+
+              {/* Question Card */}
+              <Card className="bg-primary/10 border-primary/20">
+                <CardContent className="p-4">
+                  <p className="text-sm sm:text-base font-medium text-foreground">
+                    💭 {reflection.question}
+                  </p>
+                </CardContent>
+              </Card>
+
+              {/* Response Field */}
+              <div className="space-y-3">
+                <Textarea
+                  placeholder="Escreva sua reflexão aqui..."
+                  value={stoicResponse}
+                  onChange={(e) => setStoicResponse(e.target.value)}
+                  className="min-h-[100px] resize-none"
+                />
+                <div className="flex items-center justify-end">
+                  <Button
+                    onClick={handleSaveStoic}
+                    disabled={!canSaveStoic || isSavingStoic}
+                    className="gap-2"
+                  >
+                    {isSavingStoic ? (
+                      <>Salvando...</>
+                    ) : isStoicSaved ? (
+                      <>
+                        <Check className="w-4 h-4" />
+                        Salvo
+                      </>
+                    ) : (
+                      <>
+                        <Save className="w-4 h-4" />
+                        Salvar
+                      </>
+                    )}
+                  </Button>
+                </div>
+              </div>
+            </div>
           </CollapsibleContent>
         </Collapsible>
-
-        {/* Stoic Reflection Section */}
-        <div className="border-t border-primary/20 pt-4 space-y-4">
-          <div className="space-y-2">
-            <h3 className="text-lg font-semibold flex items-center gap-2">
-              <BookOpen className="w-5 h-5 text-primary" />
-              "{reflection.title}"
-            </h3>
-            <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">
-              {reflection.text}
-            </p>
-          </div>
-
-          {/* Question Card */}
-          <Card className="bg-primary/10 border-primary/20">
-            <CardContent className="p-4">
-              <p className="text-sm sm:text-base font-medium text-foreground">
-                💭 {reflection.question}
-              </p>
-            </CardContent>
-          </Card>
-
-          {/* Response Field */}
-          <div className="space-y-3">
-            <Textarea
-              placeholder="Escreva sua reflexão aqui..."
-              value={stoicResponse}
-              onChange={(e) => setStoicResponse(e.target.value)}
-              className="min-h-[100px] resize-none"
-            />
-            <div className="flex items-center justify-end">
-              <Button
-                onClick={handleSaveStoic}
-                disabled={!canSaveStoic || isSavingStoic}
-                className="gap-2"
-              >
-                {isSavingStoic ? (
-                  <>Salvando...</>
-                ) : isStoicSaved ? (
-                  <>
-                    <Check className="w-4 h-4" />
-                    Salvo
-                  </>
-                ) : (
-                  <>
-                    <Save className="w-4 h-4" />
-                    Salvar
-                  </>
-                )}
-              </Button>
-            </div>
-          </div>
-        </div>
 
         {/* Daily Checkout Section */}
         <div className="border-t border-primary/20 pt-4">
