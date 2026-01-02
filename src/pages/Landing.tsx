@@ -293,7 +293,7 @@ const Landing = () => {
               </div>
               
               <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-6 text-foreground">
-                Experimente Sem Compromisso
+                Experimente Gratuitamente
               </h2>
               
               <p className="text-base sm:text-lg text-muted-foreground leading-relaxed mb-8 max-w-2xl mx-auto">
@@ -398,7 +398,7 @@ const Landing = () => {
           </Button>
 
           <p className="text-sm text-muted-foreground mt-6">
-            Acesso imediato • Sem compromisso • Cancele quando quiser
+            Acesso imediato • Cancele quando quiser
           </p>
         </div>
       </section>
