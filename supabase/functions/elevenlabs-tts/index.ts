@@ -29,7 +29,15 @@ serve(async (req) => {
 
     const selectedVoiceId = voiceId || DEFAULT_VOICE_ID;
 
-    console.log(`Generating TTS for text: "${text.substring(0, 50)}..." with voice: ${selectedVoiceId}`);
+    // Clean and prepare text - add trailing silence marker to prevent truncation
+    // Remove extra spaces and add a pause at the end
+    const cleanedText = text.trim().replace(/\s+/g, ' ');
+    // Add a period and ellipsis at the end to create natural pause and prevent cutoff
+    const textWithPause = cleanedText.endsWith('.') || cleanedText.endsWith('?') || cleanedText.endsWith('!')
+      ? cleanedText + " ..."
+      : cleanedText + ". ...";
+
+    console.log(`Generating TTS for text: "${textWithPause.substring(0, 50)}..." with voice: ${selectedVoiceId}`);
 
     const response = await fetch(
       `https://api.elevenlabs.io/v1/text-to-speech/${selectedVoiceId}?output_format=mp3_44100_128`,
@@ -40,12 +48,12 @@ serve(async (req) => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          text,
+          text: textWithPause,
           model_id: "eleven_multilingual_v2",
           voice_settings: {
-            stability: 0.5,
+            stability: 0.7,  // Increased for more consistent ending
             similarity_boost: 0.75,
-            style: 0.5,
+            style: 0.3,      // Reduced to minimize artifacts
             use_speaker_boost: true,
           },
         }),
