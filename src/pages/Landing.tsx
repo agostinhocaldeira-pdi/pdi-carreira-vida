@@ -396,7 +396,7 @@ const Landing = () => {
               Depoimentos reais de quem viveu a jornada
             </h2>
             <p className="text-muted-foreground max-w-2xl mx-auto text-sm sm:text-base">
-              Pessoas comuns que decidiram investir em si mesmas e colheram resultados extraordinários.
+              Pessoas comuns que decidiram investir em si mesmas e colheram resultados reais.
             </p>
           </div>
 
