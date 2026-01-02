@@ -1,399 +1,385 @@
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useNavigate } from "react-router-dom";
 import { 
   Target, 
   TrendingUp, 
   Brain, 
-  Heart, 
-  Zap, 
   CheckCircle2, 
-  Star,
   ArrowRight,
   Sparkles,
-  Clock,
   Users,
-  Award
+  Shield,
+  Eye,
+  Layout,
+  BarChart3,
+  Cpu,
+  Calendar,
+  Compass
 } from "lucide-react";
-import { useLanguage } from "@/contexts/LanguageContext";
+import Logo from "@/components/Logo";
+
+// Import platform images
+import dashboardOverview from "@/assets/tutorial/dashboard-overview.jpg";
+import planoVida from "@/assets/tutorial/plano-vida.jpg";
+import maoNaMassa from "@/assets/tutorial/mao-na-massa.jpg";
+import progresso from "@/assets/tutorial/progresso.jpg";
+import ferramentas from "@/assets/tutorial/ferramentas.jpg";
 
 const Landing = () => {
   const navigate = useNavigate();
-  const { t } = useLanguage();
 
-  const features = [
+  const scrollToSection = (id: string) => {
+    document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  const platformFeatures = [
+    {
+      icon: Eye,
+      title: "Sua Vida, Sua Carreira: Uma Visão Integrada",
+      description: "Tenha uma perspectiva clara de todos os aspectos importantes da sua vida e carreira em um só lugar.",
+      image: dashboardOverview
+    },
     {
       icon: Target,
-      title: "Clareza de Propósito",
-      description: "Descubra quem você é e para onde realmente quer ir na vida e carreira"
+      title: "Clareza para o Futuro",
+      description: "Defina seus objetivos de forma estratégica e alinhada com seus valores e aspirações.",
+      image: planoVida
     },
     {
-      icon: Brain,
-      title: "Autoconhecimento Profundo",
-      description: "8 ferramentas cientificamente validadas para entender suas crenças, valores e potencial"
+      icon: Layout,
+      title: "Do Planejamento à Execução",
+      description: "Transforme seus objetivos em planos de ação concretos e gerenciáveis.",
+      image: maoNaMassa
     },
     {
-      icon: TrendingUp,
-      title: "Metas que Funcionam",
-      description: "Transforme sonhos vagos em objetivos SMART acionáveis com acompanhamento diário"
+      icon: BarChart3,
+      title: "Evolução Constante",
+      description: "Monitore seu progresso de forma visual e intuitiva, mantendo-se motivado e no caminho certo.",
+      image: progresso
     },
     {
-      icon: Heart,
-      title: "Equilíbrio Vida-Carreira",
-      description: "Alcance sucesso profissional sem sacrificar sua saúde, relacionamentos e felicidade"
-    },
-    {
-      icon: Zap,
-      title: "Ação Consistente",
-      description: "Sistema de hábitos e reflexões diárias que garantem progresso contínuo"
-    },
-    {
-      icon: Sparkles,
-      title: "Insights com IA",
-      description: "Análises inteligentes que revelam padrões ocultos e oportunidades de crescimento"
+      icon: Cpu,
+      title: "Inteligência Artificial a Seu Favor",
+      description: "Conte com o suporte da IA para insights, sugestões e otimização contínua do seu planejamento.",
+      image: ferramentas
     }
-  ];
-
-  const testimonials = [
-    {
-      name: "Maria Silva",
-      role: "Gerente de Projetos",
-      content: "Em 3 meses consegui a promoção que perseguia há anos. O PDI me deu clareza sobre meus valores e como comunicá-los.",
-      rating: 5
-    },
-    {
-      name: "Carlos Mendes",
-      role: "Empreendedor",
-      content: "Estava perdido entre mil ideias. O método VVD me ajudou a focar no que realmente importa. Meu negócio cresceu 200%.",
-      rating: 5
-    },
-    {
-      name: "Ana Costa",
-      role: "Advogada",
-      content: "Finalmente entendi que sucesso não é só carreira. Hoje tenho equilíbrio, propósito e realização em todas as áreas.",
-      rating: 5
-    }
-  ];
-
-  const stats = [
-    { number: "10.000+", label: "Vidas Transformadas" },
-    { number: "94%", label: "Taxa de Sucesso" },
-    { number: "8", label: "Ferramentas Exclusivas" },
-    { number: "24/7", label: "Acesso Ilimitado" }
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-background via-background to-secondary/10">
-      {/* Hero Section */}
-      <section className="relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-accent/5 to-transparent" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-primary/20 via-transparent to-transparent" />
-        
-        <div className="container relative mx-auto px-4 py-6 sm:py-12 md:py-20">
-          <div className="mx-auto max-w-4xl text-center space-y-2 sm:space-y-4 md:space-y-6 animate-fade-in">
-            <Badge className="mx-auto bg-primary/10 text-primary border-primary/20 hover:bg-primary/20 px-2 py-1 sm:px-4 sm:py-2 text-[10px] sm:text-sm">
-              <Sparkles className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2 inline" />
-              +10.000 Pessoas Transformadas
-            </Badge>
-            
-            <h1 className="text-xl sm:text-2xl md:text-5xl lg:text-6xl font-bold leading-snug">
-              Transforme Sua
-              <span className="block text-transparent bg-clip-text bg-gradient-to-r from-primary via-accent to-primary animate-gradient">
-                Vida e Carreira
-              </span>
-              Hoje
-            </h1>
-            
-            <p className="text-sm sm:text-base md:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-              Sistema guiado por método, mentoria especializada e Inteligência Artificial para quem quer evoluir com clareza e consistência.
-            </p>
-
-            <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 justify-center items-center pt-2 sm:pt-4">
-              <Button 
-                size="default" 
-                className="text-sm sm:text-lg px-4 sm:px-8 py-2 sm:py-6 bg-primary hover:bg-primary/90 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 group w-full sm:w-auto"
-                onClick={() => navigate("/signup")}
-              >
-                Começar Agora
-                <ArrowRight className="ml-2 w-4 h-4 sm:w-5 sm:h-5 group-hover:translate-x-1 transition-transform" />
-              </Button>
-              <Button 
-                size="default" 
-                variant="outline" 
-                className="text-sm sm:text-lg px-4 sm:px-8 py-2 sm:py-6 border-2 w-full sm:w-auto"
-                onClick={() => {
-                  document.getElementById("como-funciona")?.scrollIntoView({ behavior: "smooth" });
-                }}
-              >
-                Conhecer o Método
-              </Button>
-            </div>
-
-            <div className="hidden sm:flex items-center justify-center gap-2 text-sm text-muted-foreground pt-2">
-              <CheckCircle2 className="w-4 h-4 text-primary" />
-              <span>7 dias de garantia</span>
-              <span className="text-muted-foreground/50">•</span>
-              <CheckCircle2 className="w-4 h-4 text-primary" />
-              <span>Cancele quando quiser</span>
-            </div>
-          </div>
+    <div className="min-h-screen bg-gradient-to-b from-background via-background to-muted/10">
+      {/* Header */}
+      <header className="fixed top-0 left-0 right-0 z-50 bg-card/95 backdrop-blur-sm shadow-sm border-b border-border/50">
+        <div className="container mx-auto px-4 py-3 sm:py-4 flex items-center justify-between">
+          <Logo size="md" />
+          <Button 
+            variant="outline" 
+            size="sm"
+            onClick={() => navigate("/login")}
+            className="text-primary border-primary/30 hover:bg-primary/10 text-xs sm:text-sm"
+          >
+            Entrar
+          </Button>
         </div>
+      </header>
 
-        {/* Wave Divider */}
-        <div className="absolute bottom-0 left-0 right-0">
-          <svg viewBox="0 0 1440 120" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M0 120L60 110C120 100 240 80 360 70C480 60 600 60 720 65C840 70 960 80 1080 85C1200 90 1320 90 1380 90L1440 90V120H1380C1320 120 1200 120 1080 120C960 120 840 120 720 120C600 120 480 120 360 120C240 120 120 120 60 120H0Z" fill="hsl(var(--background))"/>
-          </svg>
+      {/* ============================================================ */}
+      {/* 1) HERO SECTION - ABERTURA REFLEXIVA */}
+      {/* ============================================================ */}
+      <section className="pt-28 sm:pt-36 pb-16 sm:pb-24 px-4 relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-muted/10" />
+        <div className="absolute top-20 right-0 w-96 h-96 bg-primary/5 rounded-full blur-3xl" />
+        <div className="absolute bottom-0 left-0 w-80 h-80 bg-accent/5 rounded-full blur-3xl" />
+        
+        <div className="container relative mx-auto max-w-4xl text-center">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-6 text-foreground leading-tight">
+            Em algum momento, a vida cobra{" "}
+            <span className="text-primary">organização</span>.
+          </h1>
+          
+          <p className="text-xl sm:text-2xl md:text-3xl text-muted-foreground mb-8 sm:mb-12 font-light">
+            A diferença é se você se antecipa… ou reage.
+          </p>
+          
+          <Button 
+            size="lg" 
+            variant="outline"
+            className="text-base sm:text-lg px-8 py-6 border-2 border-primary/30 hover:bg-primary/10 hover:border-primary/50 transition-all duration-300"
+            onClick={() => scrollToSection("contexto")}
+          >
+            Entender como funciona
+            <ArrowRight className="ml-2 h-5 w-5" />
+          </Button>
         </div>
       </section>
 
-      {/* Stats Section */}
-      <section className="py-16 bg-background">
-        <div className="container mx-auto px-4">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-            {stats.map((stat, index) => (
-              <div key={index} className="text-center space-y-2 animate-fade-in" style={{ animationDelay: `${index * 100}ms` }}>
-                <div className="text-4xl md:text-5xl font-bold text-primary">{stat.number}</div>
-                <div className="text-sm md:text-base text-muted-foreground">{stat.label}</div>
+      {/* ============================================================ */}
+      {/* 2) SEÇÃO DE CONTEXTO E DESEJO */}
+      {/* ============================================================ */}
+      <section id="contexto" className="py-16 sm:py-24 px-4 bg-muted/20">
+        <div className="container mx-auto max-w-3xl text-center">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-6 text-foreground">
+            Onde você se encontra?
+          </h2>
+          
+          <p className="text-base sm:text-lg md:text-xl text-muted-foreground leading-relaxed">
+            Você não está perdido, mas talvez sinta que falta um controle mais firme sobre os próximos passos. 
+            É natural desejar a <strong className="text-foreground">estabilidade</strong>, a <strong className="text-foreground">clareza</strong> e 
+            a <strong className="text-foreground">tranquilidade</strong> para sustentar a vida que você construiu e planejou.
+          </p>
+        </div>
+      </section>
+
+      {/* ============================================================ */}
+      {/* 3) SEÇÃO DO PROBLEMA REAL */}
+      {/* ============================================================ */}
+      <section className="py-16 sm:py-24 px-4">
+        <div className="container mx-auto max-w-4xl">
+          <div className="text-center mb-10">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-6 text-foreground">
+              O Desafio da Constância
+            </h2>
+          </div>
+          
+          <Card className="border-none shadow-lg bg-gradient-to-br from-card to-muted/30">
+            <CardContent className="p-8 sm:p-12">
+              <p className="text-base sm:text-lg md:text-xl text-muted-foreground leading-relaxed text-center">
+                Muitas vezes, o que nos impede não é a falta de esforço ou capacidade, mas a{" "}
+                <strong className="text-foreground">ausência de um sistema confiável</strong>. 
+                Um método que ofereça <span className="text-primary font-medium">estrutura para suas decisões</span>, 
+                {" "}<span className="text-primary font-medium">clareza para seu foco</span> e{" "}
+                <span className="text-primary font-medium">constância para suas ações</span>, dia após dia.
+              </p>
+            </CardContent>
+          </Card>
+        </div>
+      </section>
+
+      {/* ============================================================ */}
+      {/* 4) APRESENTAÇÃO DO MÉTODO PDI */}
+      {/* ============================================================ */}
+      <section className="py-16 sm:py-24 px-4 bg-gradient-to-b from-muted/10 to-background">
+        <div className="container mx-auto max-w-5xl">
+          <div className="text-center mb-12">
+            <Badge className="mb-4 bg-primary/10 text-primary border-primary/20">
+              <Compass className="w-4 h-4 mr-2 inline" />
+              O Método
+            </Badge>
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-6 text-foreground">
+              O PDI: Seu Sistema de Organização Pessoal
+            </h2>
+            
+            <p className="text-base sm:text-lg md:text-xl text-muted-foreground leading-relaxed max-w-3xl mx-auto">
+              O PDI é um <strong className="text-foreground">sistema prático de organização de vida e carreira</strong>, 
+              desenvolvido para oferecer clareza e direção. Com acompanhamento contínuo e o apoio da inteligência artificial, 
+              ele foi criado para te ajudar a navegar pelas complexidades do dia a dia com mais segurança e propósito.
+            </p>
+          </div>
+
+          {/* 3 Pilares do Método */}
+          <div className="grid md:grid-cols-3 gap-6 mt-12">
+            {[
+              {
+                phase: "Autoconhecimento",
+                icon: Brain,
+                description: "Descubra seus valores, crenças e o que realmente importa para você através de ferramentas validadas."
+              },
+              {
+                phase: "Planejamento",
+                icon: Target,
+                description: "Defina objetivos claros e construa um plano estruturado que conecta onde você está com onde quer chegar."
+              },
+              {
+                phase: "Execução",
+                icon: TrendingUp,
+                description: "Transforme seu plano em ações diárias com acompanhamento contínuo e suporte inteligente."
+              }
+            ].map((item, index) => (
+              <Card key={index} className="p-6 sm:p-8 text-center hover:shadow-lg transition-all duration-300 border-t-4 border-t-primary/50 bg-card">
+                <div className="mx-auto w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center mb-4">
+                  <item.icon className="w-7 h-7 text-primary" />
+                </div>
+                <h3 className="text-xl font-bold mb-3 text-foreground">{item.phase}</h3>
+                <p className="text-muted-foreground text-sm sm:text-base leading-relaxed">{item.description}</p>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ============================================================ */}
+      {/* 5) FUNCIONALIDADES DA PLATAFORMA (VISUAL FIRST) */}
+      {/* ============================================================ */}
+      <section className="py-16 sm:py-24 px-4">
+        <div className="container mx-auto max-w-6xl">
+          <div className="text-center mb-12 sm:mb-16">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 text-foreground">
+              Uma Plataforma Completa
+            </h2>
+            <p className="text-muted-foreground text-base sm:text-lg max-w-2xl mx-auto">
+              Conheça as principais funcionalidades que vão te ajudar a organizar sua vida e carreira.
+            </p>
+          </div>
+
+          <div className="space-y-16 sm:space-y-24">
+            {platformFeatures.map((feature, index) => (
+              <div 
+                key={index} 
+                className={`grid lg:grid-cols-2 gap-8 lg:gap-12 items-center ${
+                  index % 2 === 1 ? 'lg:flex-row-reverse' : ''
+                }`}
+              >
+                <div className={`space-y-4 ${index % 2 === 1 ? 'lg:order-2' : ''}`}>
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
+                      <feature.icon className="w-5 h-5 text-primary" />
+                    </div>
+                    <h3 className="text-xl sm:text-2xl font-bold text-foreground">{feature.title}</h3>
+                  </div>
+                  <p className="text-muted-foreground text-base sm:text-lg leading-relaxed">
+                    {feature.description}
+                  </p>
+                </div>
+                <div className={`${index % 2 === 1 ? 'lg:order-1' : ''}`}>
+                  <img 
+                    src={feature.image} 
+                    alt={feature.title}
+                    className="rounded-xl shadow-xl w-full border border-border/30"
+                  />
+                </div>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Problem/Agitation Section */}
-      <section className="py-20 bg-gradient-to-b from-background to-muted/20">
-        <div className="container mx-auto px-4">
-          <div className="max-w-4xl mx-auto space-y-12">
-            <div className="text-center space-y-4">
-              <h2 className="text-3xl md:text-5xl font-bold">
-                Você Já Se Sentiu Assim?
-              </h2>
-              <p className="text-xl text-muted-foreground">
-                Se alguma dessas situações é familiar, você não está sozinho...
-              </p>
-            </div>
-
-            <div className="grid md:grid-cols-2 gap-6">
-              {[
-                "Acordo todos os dias sem entusiasmo, apenas cumprindo obrigações",
-                "Trabalho duro, mas não vejo progresso real na minha carreira",
-                "Tenho mil planos na cabeça, mas nenhum sai do papel",
-                "Sacrifico minha saúde e relacionamentos pelo trabalho",
-                "Não sei qual é meu verdadeiro propósito de vida",
-                "Vejo outros conquistando seus sonhos enquanto fico parado"
-              ].map((problem, index) => (
-                <Card key={index} className="p-6 border-l-4 border-l-destructive hover:shadow-lg transition-shadow">
-                  <p className="text-foreground">{problem}</p>
-                </Card>
-              ))}
-            </div>
-
-            <div className="text-center space-y-6 pt-8">
-              <p className="text-2xl font-semibold text-foreground">
-                A verdade é que <span className="text-primary">você não precisa de mais motivação</span>.
-              </p>
-              <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-                Você precisa de um <span className="font-semibold text-foreground">sistema claro, estruturado e científico</span> que 
-                transforme suas intenções em ações concretas. Você precisa do <span className="font-bold text-primary">PDI - Carreira & Vida</span>.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Solution Section */}
-      <section id="como-funciona" className="py-20 bg-background">
-        <div className="container mx-auto px-4">
-          <div className="max-w-6xl mx-auto space-y-16">
-            <div className="text-center space-y-4">
-              <Badge className="mx-auto bg-primary/10 text-primary border-primary/20">
-                O Método PDI
-              </Badge>
-              <h2 className="text-3xl md:text-5xl font-bold">
-                Como o PDI Transforma Sua Vida
-              </h2>
-              <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-                Um caminho estruturado em 3 fases para você sair da confusão e alcançar clareza total
-              </p>
-            </div>
-
-            <div className="grid md:grid-cols-3 gap-8">
-              {[
-                {
-                  phase: "Fase 1",
-                  title: "Quem Sou Eu",
-                  icon: Heart,
-                  description: "Descubra seus valores, crenças e identidade real através de ferramentas como VVD, Valores e Roda da Vida"
-                },
-                {
-                  phase: "Fase 2",
-                  title: "Para Onde Vou",
-                  icon: Target,
-                  description: "Defina sua visão de futuro e objetivos claros usando métodos validados como SMART e Análise SWOT"
-                },
-                {
-                  phase: "Fase 3",
-                  title: "Como Chegar Lá",
-                  icon: Zap,
-                  description: "Execute com consistência através de metas, ações diárias e sistema de acompanhamento inteligente"
-                }
-              ].map((phase, index) => (
-                <Card key={index} className="p-8 text-center space-y-4 hover:shadow-xl transition-all duration-300 hover:-translate-y-2 border-t-4 border-t-primary">
-                  <div className="mx-auto w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
-                    <phase.icon className="w-8 h-8 text-primary" />
-                  </div>
-                  <Badge variant="outline" className="text-xs">{phase.phase}</Badge>
-                  <h3 className="text-2xl font-bold">{phase.title}</h3>
-                  <p className="text-muted-foreground">{phase.description}</p>
-                </Card>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Features Section */}
-      <section className="py-20 bg-gradient-to-b from-muted/20 to-background">
-        <div className="container mx-auto px-4">
-          <div className="max-w-6xl mx-auto space-y-16">
-            <div className="text-center space-y-4">
-              <h2 className="text-3xl md:text-5xl font-bold">
-                8 Ferramentas Poderosas em Um Só Lugar
-              </h2>
-              <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-                Tudo que você precisa para construir uma vida extraordinária
-              </p>
-            </div>
-
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {features.map((feature, index) => (
-                <Card key={index} className="p-6 space-y-4 hover:shadow-lg transition-shadow">
-                  <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center">
-                    <feature.icon className="w-6 h-6 text-primary" />
-                  </div>
-                  <h3 className="text-xl font-semibold">{feature.title}</h3>
-                  <p className="text-muted-foreground">{feature.description}</p>
-                </Card>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Testimonials Section */}
-      <section className="py-20 bg-background">
-        <div className="container mx-auto px-4">
-          <div className="max-w-6xl mx-auto space-y-16">
-            <div className="text-center space-y-4">
-              <Badge className="mx-auto bg-primary/10 text-primary border-primary/20">
-                <Users className="w-4 h-4 mr-2 inline" />
-                Prova Social
-              </Badge>
-              <h2 className="text-3xl md:text-5xl font-bold">
-                Veja o Que Nossos Usuários Dizem
-              </h2>
-            </div>
-
-            <div className="grid md:grid-cols-3 gap-8">
-              {testimonials.map((testimonial, index) => (
-                <Card key={index} className="p-6 space-y-4 hover:shadow-xl transition-shadow">
-                  <div className="flex gap-1">
-                    {[...Array(testimonial.rating)].map((_, i) => (
-                      <Star key={i} className="w-5 h-5 fill-primary text-primary" />
-                    ))}
-                  </div>
-                  <p className="text-foreground italic">"{testimonial.content}"</p>
-                  <div className="pt-4 border-t">
-                    <p className="font-semibold">{testimonial.name}</p>
-                    <p className="text-sm text-muted-foreground">{testimonial.role}</p>
-                  </div>
-                </Card>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Urgency Section */}
-      <section className="py-20 bg-gradient-to-br from-primary/10 via-accent/5 to-background">
-        <div className="container mx-auto px-4">
-          <Card className="max-w-4xl mx-auto p-8 md:p-12 border-2 border-primary/20 shadow-2xl">
-            <div className="text-center space-y-6">
-              <Badge className="mx-auto bg-destructive/10 text-destructive border-destructive/20 px-4 py-2">
-                <Clock className="w-4 h-4 mr-2 inline" />
-                Oferta por Tempo Limitado
-              </Badge>
+      {/* ============================================================ */}
+      {/* 6) SEGURANÇA DE USO — GARANTIA DE 30 DIAS */}
+      {/* ============================================================ */}
+      <section className="py-16 sm:py-24 px-4 bg-gradient-to-br from-primary/5 via-background to-muted/10">
+        <div className="container mx-auto max-w-4xl">
+          <Card className="border-2 border-primary/20 shadow-xl bg-card">
+            <CardContent className="p-8 sm:p-12 text-center">
+              <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-6">
+                <Shield className="w-8 h-8 text-primary" />
+              </div>
               
-              <h2 className="text-3xl md:text-5xl font-bold">
-                O Custo de Não Agir Agora
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-6 text-foreground">
+                Experimente Sem Compromisso
               </h2>
               
-              <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-                Cada dia que passa sem clareza é um dia perdido. Quanto vale para você 
-                <span className="font-semibold text-foreground"> acordar amanhã com propósito</span>, 
-                sabendo exatamente onde quer chegar e como vai fazer isso acontecer?
+              <p className="text-base sm:text-lg text-muted-foreground leading-relaxed mb-8 max-w-2xl mx-auto">
+                Confiamos no poder transformador do PDI. Por isso, oferecemos a você a oportunidade de{" "}
+                <strong className="text-foreground">usar o sistema completo por 30 dias, sem qualquer risco</strong>. 
+                Você só será cobrado após este período. Caso decida que o PDI não é para você, 
+                o cancelamento é simples, rápido e sem burocracia — <strong className="text-foreground">sem cobrança alguma</strong>.
               </p>
 
-              <div className="grid md:grid-cols-3 gap-6 pt-8">
-                {[
-                  { icon: Award, text: "7 dias de garantia" },
-                  { icon: Zap, text: "Acesso imediato" },
-                  { icon: CheckCircle2, text: "Suporte dedicado" }
-                ].map((item, index) => (
-                  <div key={index} className="flex flex-col items-center gap-2">
-                    <item.icon className="w-8 h-8 text-primary" />
-                    <p className="text-sm font-medium">{item.text}</p>
-                  </div>
-                ))}
+              <div className="flex flex-wrap justify-center gap-6 text-sm text-muted-foreground">
+                <div className="flex items-center gap-2">
+                  <CheckCircle2 className="w-5 h-5 text-primary" />
+                  <span>30 dias grátis</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <CheckCircle2 className="w-5 h-5 text-primary" />
+                  <span>Cancele quando quiser</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <CheckCircle2 className="w-5 h-5 text-primary" />
+                  <span>Sem burocracia</span>
+                </div>
               </div>
-
-              <div className="pt-8">
-                <Button 
-                  size="lg" 
-                  className="text-xl px-12 py-8 bg-primary hover:bg-primary/90 shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105 group animate-pulse"
-                  onClick={() => navigate("/signup")}
-                >
-                  Começar Minha Transformação Agora
-                  <ArrowRight className="ml-3 w-6 h-6 group-hover:translate-x-2 transition-transform" />
-                </Button>
-                <p className="text-sm text-muted-foreground mt-4">
-                  Junte-se a mais de 10.000 pessoas que já transformaram suas vidas
-                </p>
-              </div>
-            </div>
+            </CardContent>
           </Card>
         </div>
       </section>
 
-      {/* Final CTA Section */}
-      <section className="py-20 bg-gradient-to-t from-primary/5 to-background">
-        <div className="container mx-auto px-4">
-          <div className="max-w-3xl mx-auto text-center space-y-8">
-            <h2 className="text-3xl md:text-5xl font-bold">
-              Sua Nova Vida Começa Hoje
+      {/* ============================================================ */}
+      {/* 7) APRESENTAÇÃO DO LABORATÓRIO DE FUNDADORES */}
+      {/* ============================================================ */}
+      <section className="py-16 sm:py-24 px-4">
+        <div className="container mx-auto max-w-4xl">
+          <div className="text-center mb-10">
+            <Badge className="mb-4 bg-accent/10 text-accent border-accent/20">
+              <Users className="w-4 h-4 mr-2 inline" />
+              Convite Especial
+            </Badge>
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-6 text-foreground">
+              Torne-se um Fundador do PDI
             </h2>
-            <p className="text-xl text-muted-foreground">
-              Não deixe mais um ano passar sem realizar seus sonhos. 
-              A clareza que você busca está a um clique de distância.
-            </p>
-            <Button 
-              size="lg" 
-              className="text-xl px-12 py-8 bg-primary hover:bg-primary/90 shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105"
-              onClick={() => navigate("/signup")}
-            >
-              Sim, Quero Ter Clareza Total
-              <Sparkles className="ml-3 w-6 h-6" />
-            </Button>
           </div>
+
+          <Card className="border border-accent/30 shadow-lg bg-gradient-to-br from-card to-accent/5">
+            <CardContent className="p-8 sm:p-12">
+              <p className="text-base sm:text-lg text-muted-foreground leading-relaxed mb-8 text-center">
+                Convidamos você a fazer parte de um <strong className="text-foreground">grupo seleto de 100 pessoas</strong> para 
+                integrar o <strong className="text-foreground">Laboratório de Fundadores</strong>. Como fundador, você terá:
+              </p>
+
+              <div className="grid sm:grid-cols-2 gap-6 mb-8">
+                {[
+                  "Acesso completo ao sistema por 12 meses",
+                  "Participação ativa na validação do método",
+                  "Contribuição direta no aprimoramento do PDI",
+                  "Possibilidade de condições especiais futuras"
+                ].map((item, index) => (
+                  <div key={index} className="flex items-start gap-3">
+                    <div className="w-6 h-6 rounded-full bg-accent/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <CheckCircle2 className="w-4 h-4 text-accent" />
+                    </div>
+                    <p className="text-foreground text-sm sm:text-base">{item}</p>
+                  </div>
+                ))}
+              </div>
+
+              <div className="text-center pt-6 border-t border-border/50">
+                <p className="text-muted-foreground mb-2">Valor simbólico para fundadores:</p>
+                <div className="text-3xl sm:text-4xl font-bold text-foreground mb-2">
+                  R$ 67
+                </div>
+                <p className="text-sm text-muted-foreground">
+                  Pagamento único • Não renovável • Acesso por 12 meses
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </section>
+
+      {/* ============================================================ */}
+      {/* 8) CTA FINAL */}
+      {/* ============================================================ */}
+      <section className="py-16 sm:py-24 px-4 bg-gradient-to-t from-primary/5 to-background">
+        <div className="container mx-auto max-w-3xl text-center">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-6 text-foreground">
+            Dê o Próximo Passo com Confiança
+          </h2>
+          
+          <p className="text-base sm:text-lg text-muted-foreground mb-8 max-w-2xl mx-auto leading-relaxed">
+            Comece hoje a construir a organização e a clareza que sua vida e carreira merecem. 
+            Lembre-se: você tem <strong className="text-foreground">30 dias para experimentar o PDI sem risco</strong>.
+          </p>
+
+          <Button 
+            size="lg" 
+            className="text-base sm:text-lg px-8 sm:px-12 py-6 sm:py-8 bg-primary hover:bg-primary/90 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
+            onClick={() => navigate("/signup")}
+          >
+            Iniciar minha Experiência de 30 Dias
+            <Sparkles className="ml-3 w-5 h-5" />
+          </Button>
+
+          <p className="text-sm text-muted-foreground mt-6">
+            Acesso imediato • Sem compromisso • Cancele quando quiser
+          </p>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="py-8 border-t bg-muted/30">
+      <footer className="py-8 border-t bg-muted/20">
         <div className="container mx-auto px-4 text-center text-sm text-muted-foreground">
-          <p>© 2024 PDI - Carreira & Vida. Todos os direitos reservados.</p>
+          <p>© {new Date().getFullYear()} PDI - Carreira & Vida. Todos os direitos reservados.</p>
         </div>
       </footer>
     </div>
