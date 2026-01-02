@@ -77,3 +77,6 @@ verify_jwt = false
 
 [functions.consume-ai-purchase]
 verify_jwt = false
+
+[functions.elevenlabs-tts]
+verify_jwt = false
