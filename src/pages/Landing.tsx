@@ -23,7 +23,7 @@ import Logo from "@/components/Logo";
 
 // Import platform images
 import planoDeVidaScreenshot from "@/assets/plano-de-vida-screenshot.png";
-import planoVida from "@/assets/tutorial/plano-vida.jpg";
+import vvdScreenshot from "@/assets/vvd-screenshot.png";
 import maoNaMassa from "@/assets/tutorial/mao-na-massa.jpg";
 import progresso from "@/assets/tutorial/progresso.jpg";
 import ferramentas from "@/assets/tutorial/ferramentas.jpg";
@@ -52,7 +52,7 @@ const Landing = () => {
       icon: Target,
       title: "Clareza para o Futuro",
       description: "Defina seus objetivos de forma estratégica e alinhada com seus valores e aspirações.",
-      image: planoVida
+      image: vvdScreenshot
     },
     {
       icon: Layout,
