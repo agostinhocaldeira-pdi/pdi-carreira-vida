@@ -13,7 +13,6 @@ import { toast } from "sonner";
 import { useGamification } from "@/hooks/useGamification";
 
 import { usePDIStorage } from "@/hooks/usePDIStorage";
-import { DailyCheckout } from "@/components/gamification/DailyCheckout";
 import { useAIUsage } from "@/hooks/useAIUsage";
 import { AIUsageLimitModal } from "@/components/AIUsageLimitModal";
 
@@ -298,11 +297,6 @@ const ProgressSection = () => {
         </CardHeader>
         <CollapsibleContent>
           <CardContent>
-
-            {/* Daily Checkout Section - Now inside Seu Progresso */}
-            <div className="mb-6">
-              <DailyCheckout />
-            </div>
 
             {/* Sua Jornada Modal */}
             <Dialog open={isJourneyModalOpen} onOpenChange={setIsJourneyModalOpen}>
