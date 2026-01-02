@@ -76,9 +76,9 @@ serve(async (req) => {
     if (!normalizedReturnPath) normalizedReturnPath = "/home";
     if (!normalizedReturnPath.startsWith("/")) normalizedReturnPath = `/${normalizedReturnPath}`;
 
-    const qpSeparator = normalizedReturnPath.includes("?") ? "&" : "?";
-    const successUrl = `${origin}${normalizedReturnPath}${qpSeparator}ai_purchase=success&feature=${featureType}&session_id={CHECKOUT_SESSION_ID}`;
-    const cancelUrl = `${origin}${normalizedReturnPath}${qpSeparator}ai_purchase=cancelled`;
+    // Use dedicated success page for better UX
+    const successUrl = `${origin}/payment-success?session_id={CHECKOUT_SESSION_ID}&feature=${featureType}`;
+    const cancelUrl = `${origin}${normalizedReturnPath}`;
 
     logStep("Return path normalized", { rawReturnPath, normalizedReturnPath });
 
