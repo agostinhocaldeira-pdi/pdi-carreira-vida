@@ -140,6 +140,9 @@ const Landing = () => {
               Entender como funciona
               <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
+            <p className="mt-4 text-sm sm:text-base text-muted-foreground italic">
+              "A melhor forma de entender o PDI não é lendo. É vendo como ele funciona no dia a dia."
+            </p>
           </div>
           <div className="aspect-video rounded-xl overflow-hidden shadow-2xl border border-border/30 bg-muted/50">
             <iframe
