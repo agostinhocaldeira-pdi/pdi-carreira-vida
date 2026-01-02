@@ -25,7 +25,7 @@ import Logo from "@/components/Logo";
 import planoDeVidaScreenshot from "@/assets/plano-de-vida-screenshot.png";
 import vvdScreenshot from "@/assets/vvd-screenshot.png";
 import smartScreenshot from "@/assets/smart-screenshot.png";
-import progresso from "@/assets/tutorial/progresso.jpg";
+import progressoScreenshot from "@/assets/progresso-screenshot.png";
 import ferramentas from "@/assets/tutorial/ferramentas.jpg";
 
 const Landing = () => {
@@ -64,7 +64,7 @@ const Landing = () => {
       icon: BarChart3,
       title: "Evolução Constante",
       description: "Monitore seu progresso de forma visual e intuitiva, mantendo-se motivado e no caminho certo.",
-      image: progresso
+      image: progressoScreenshot
     },
     {
       icon: Cpu,
