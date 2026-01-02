@@ -57,7 +57,7 @@ export function usePDIData() {
         areasVida: JSON.parse(localStorage.getItem('areasVida') || '[]'),
       };
     },
-    // Return localStorage data immediately as placeholder
+    // Return localStorage data immediately as placeholder (INSTANT RENDER)
     placeholderData: () => ({
       objetivos: JSON.parse(localStorage.getItem('objetivos') || '[]'),
       metas: JSON.parse(localStorage.getItem('metas') || '[]'),
@@ -65,7 +65,12 @@ export function usePDIData() {
       valores: JSON.parse(localStorage.getItem('valores') || '[]'),
       areasVida: JSON.parse(localStorage.getItem('areasVida') || '[]'),
     }),
-    staleTime: 1000 * 60 * 2, // 2 minutes
+    // OPTIMIZATION: Increase staleTime to prevent refetch on mount
+    staleTime: 1000 * 60 * 5, // 5 minutes
+    gcTime: 1000 * 60 * 10, // 10 minutes
+    // Don't refetch on window focus - data changes rarely
+    refetchOnWindowFocus: false,
+    refetchOnMount: false,
   });
 }
 
