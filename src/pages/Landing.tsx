@@ -385,8 +385,13 @@ const Landing = () => {
                 <div className="text-3xl sm:text-4xl font-bold text-foreground mb-2">
                   R$ 67
                 </div>
-                <p className="text-sm text-muted-foreground">
+                <p className="text-sm text-muted-foreground mb-4">
                   Pagamento único • Não renovável • Acesso por 12 meses
+                </p>
+                <p className="text-xs sm:text-sm text-accent italic">
+                  Este laboratório existe apenas nesta fase do PDI.
+                  <br />
+                  Ele não será reaberto neste formato no futuro.
                 </p>
               </div>
             </CardContent>
