@@ -28,8 +28,8 @@ import { useStoicAudioPreload } from "@/hooks/useStoicAudioPreload";
 const Home = () => {
   const navigate = useNavigate();
   
-  // Proteção de role - apenas user, gestor e admin podem acessar
-  const { isLoading: roleLoading, userRole, isAdmin } = useRoleProtection({
+  // Optimized role protection - uses cached role data (no blocking RPC)
+  const { isLoading: roleLoading, userRole, isAdmin, isGestor, isEmployee } = useRoleProtection({
     allowedRoles: ["user", "gestor", "admin"],
     redirectTo: "/dashboard-empresa"
   });
@@ -38,8 +38,6 @@ const Home = () => {
   const [activeTab, setActiveTab] = useState("quem-sou");
   const [planoDeVidaOpen, setPlanoDeVidaOpen] = useState(false);
   const [motivationalQuote, setMotivationalQuote] = useState("");
-  const [isGestor, setIsGestor] = useState(false);
-  const [isEmployee, setIsEmployee] = useState(false);
   const [recursosOpen, setRecursosOpen] = useState(false);
   const [showDiaryWarningModal, setShowDiaryWarningModal] = useState(false);
   
@@ -90,29 +88,15 @@ const Home = () => {
           role: userRole
         }));
         
-        // Verificar se é funcionário
-        const { data: employeeData } = await supabase
-          .from("company_employees")
-          .select("*")
-          .eq("user_id", session.user.id)
-          .eq("is_active", true)
-          .single();
-        
-        if (employeeData) {
-          setIsEmployee(true);
-        }
-        
-        // Carregar notificações
-        loadUnreadMessages({ email: session.user.email }, employeeData);
+        // Carregar notificações (use isEmployee from hook instead of fetching)
+        loadUnreadMessages({ email: session.user.email }, isEmployee);
       }
     };
     
     if (!roleLoading && userRole) {
       loadUserData();
-      // Definir se é gestor baseado no role do Supabase
-      setIsGestor(userRole === "gestor");
     }
-  }, [roleLoading, userRole]);
+  }, [roleLoading, userRole, isEmployee]);
 
   // Usa o título da reflexão estoica do dia como frase motivacional
   useEffect(() => {
@@ -141,7 +125,7 @@ const Home = () => {
     };
   }, []);
   
-  const loadUnreadMessages = (userData: any, employeeData: any) => {
+  const loadUnreadMessages = (userData: any, employeeStatus: boolean) => {
     // 1. Mensagens do suporte (admin para usuário)
     const supportTickets = JSON.parse(localStorage.getItem("supportTickets") || "[]");
     const supportMessages = JSON.parse(localStorage.getItem("supportMessages") || "[]");
@@ -159,8 +143,8 @@ const Home = () => {
     });
     setUnreadSupportMessages(supportUnread);
     
-    // 2. Mensagens do gestor (para funcionários)
-    if (employeeData) {
+    // 2. Mensagens do gestor (para funcionários) - use cached isEmployee
+    if (employeeStatus) {
       const managerConversations = JSON.parse(localStorage.getItem("managerConversations") || "[]");
       const managerMessages = JSON.parse(localStorage.getItem("managerMessages") || "[]");
       
@@ -178,8 +162,8 @@ const Home = () => {
       setUnreadManagerMessages(managerUnread);
     }
     
-    // 3. Mensagens dos funcionários (para gestores)
-    if (userData.role === "gestor") {
+    // 3. Mensagens dos funcionários (para gestores) - use isGestor from hook
+    if (isGestor) {
       const mockManagers = JSON.parse(localStorage.getItem("mockManagers") || "[]");
       const currentManager = mockManagers.find((m: any) => 
         m.email?.toLowerCase() === userData.email?.toLowerCase()

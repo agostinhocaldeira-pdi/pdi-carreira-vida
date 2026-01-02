@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
@@ -11,6 +11,8 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useGamification } from "@/hooks/useGamification";
+import { useHomeData } from "@/hooks/useHomeData";
+import { useUserRole } from "@/hooks/useUserRole";
 
 import { usePDIStorage } from "@/hooks/usePDIStorage";
 import { useAIUsage } from "@/hooks/useAIUsage";
@@ -25,27 +27,35 @@ const ProgressSection = () => {
     getProgressToNextLevel 
   } = useGamification();
 
+  // Use centralized home data hook (eliminates redundant localStorage reads)
+  const { progress: progressData, insight: cachedInsight, lastInsightDate, objetivos, metas, vvd, valores, areasVida } = useHomeData();
+  
+  // Use cached role data (no blocking RPC call)
+  const { isAdmin } = useUserRole();
+
   const unlockedAchievements = getUnlockedAchievements();
   const lockedAchievements = getLockedAchievements();
   const levelProgress = getProgressToNextLevel();
   const [isOpen, setIsOpen] = useState(false);
   const [isJourneyModalOpen, setIsJourneyModalOpen] = useState(false);
-  const [insight, setInsight] = useState("");
+  const [insight, setInsight] = useState(cachedInsight);
   const [isGenerating, setIsGenerating] = useState(false);
-  const [canGenerateInsight, setCanGenerateInsight] = useState(true);
-  const [isAdmin, setIsAdmin] = useState(false);
   const [showAILimitModal, setShowAILimitModal] = useState(false);
+  
+  // Calculate canGenerateInsight from cached data (no RPC needed)
+  const canGenerateInsight = useMemo(() => {
+    if (isAdmin) return true;
+    if (!lastInsightDate) return true;
+    const lastDate = new Date(lastInsightDate);
+    const now = new Date();
+    const diffInDays = Math.floor((now.getTime() - lastDate.getTime()) / (1000 * 60 * 60 * 24));
+    return diffInDays >= 30;
+  }, [isAdmin, lastInsightDate]);
   
   // AI Usage hook for purchasing additional usage
   const aiUsage = useAIUsage('insight');
-  
-  // Real progress data calculated from user data
-  const [progressData, setProgressData] = useState({
-    objectives: { percentage: 0, completed: 0, total: 0 },
-    goals: { percentage: 0, completed: 0, total: 0 },
-    actions: { percentage: 0, completed: 0, total: 0 },
-  });
 
+  // Sync insight from localStorage events
   useEffect(() => {
     const syncInsight = () => {
       const savedInsight = localStorage.getItem("userInsight");
@@ -54,89 +64,17 @@ const ProgressSection = () => {
       }
     };
 
-    // Carregar insight inicial
-    syncInsight();
-
     // Escutar mudanças no localStorage
     window.addEventListener("storage", syncInsight);
     
     // Evento customizado para sincronizar na mesma aba
     window.addEventListener("insightUpdated", syncInsight);
 
-    // Check admin status via server-side RPC (secure)
-    const checkAdminStatus = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (session?.user?.id) {
-        const { data: isAdminResult } = await supabase.rpc('has_role', {
-          _user_id: session.user.id,
-          _role: 'admin'
-        });
-        setIsAdmin(!!isAdminResult);
-        
-        if (!isAdminResult) {
-          const lastInsightDate = localStorage.getItem("lastInsightDate");
-          if (lastInsightDate) {
-            const lastDate = new Date(lastInsightDate);
-            const now = new Date();
-            const diffInDays = Math.floor((now.getTime() - lastDate.getTime()) / (1000 * 60 * 60 * 24));
-            setCanGenerateInsight(diffInDays >= 30);
-          }
-        }
-      }
-    };
-    checkAdminStatus();
-
     return () => {
       window.removeEventListener("storage", syncInsight);
       window.removeEventListener("insightUpdated", syncInsight);
     };
   }, []);
-
-  useEffect(() => {
-    const loadProgressData = () => {
-      // OPTIMIZATION: Load ONLY from localStorage for instant display
-      // Data is already synced by the parent usePDIQueries hook
-      const objetivos = JSON.parse(localStorage.getItem("objetivos") || "[]");
-      const metas = JSON.parse(localStorage.getItem("metas") || "[]");
-      
-      // Calculate real progress data
-      const totalObjetivos = objetivos.length;
-      const completedObjetivos = objetivos.filter((obj: any) => {
-        const status = obj.status?.toLowerCase()?.replace(/\s+/g, '-') || "";
-        return status === "concluido" || status === "concluído";
-      }).length;
-      const objetivosPercentage = totalObjetivos > 0 ? Math.round((completedObjetivos / totalObjetivos) * 100) : 0;
-
-      const totalMetas = metas.length;
-      const completedMetas = metas.filter((meta: any) => {
-        const status = meta.status?.toLowerCase()?.replace(/\s+/g, '-') || "";
-        return status === "concluido" || status === "concluído" || meta.concluida === true;
-      }).length;
-      const metasPercentage = totalMetas > 0 ? Math.round((completedMetas / totalMetas) * 100) : 0;
-
-      // Count all actions from all metas
-      let totalActions = 0;
-      let completedActions = 0;
-      metas.forEach((meta: any) => {
-        if (meta.acoes && Array.isArray(meta.acoes)) {
-          totalActions += meta.acoes.length;
-          completedActions += meta.acoes.filter((acao: any) => {
-            const status = acao.status?.toLowerCase()?.replace(/\s+/g, '-') || "";
-            return status === "concluido" || status === "concluído";
-          }).length;
-        }
-      });
-      const actionsPercentage = totalActions > 0 ? Math.round((completedActions / totalActions) * 100) : 0;
-
-      setProgressData({
-        objectives: { percentage: objetivosPercentage, completed: completedObjetivos, total: totalObjetivos },
-        goals: { percentage: metasPercentage, completed: completedMetas, total: totalMetas },
-        actions: { percentage: actionsPercentage, completed: completedActions, total: totalActions },
-      });
-    };
-    
-    loadProgressData();
-  }, [storage]);
 
   const handleGenerateInsight = async (fromPurchase = false) => {
     // Administradores não têm limite
@@ -155,45 +93,35 @@ const ProgressSection = () => {
       }
     }
 
-    // Validar requisitos mínimos para gerar insight
+    // Validar requisitos mínimos para gerar insight (use cached data)
     const missingItems: string[] = [];
-    
-    const vvd = localStorage.getItem("vvd") || "";
-    const valoresData = JSON.parse(localStorage.getItem("valores") || "[]");
-    const areasVidaData = JSON.parse(localStorage.getItem("areasVida") || "[]");
     
     if (!vvd || vvd.trim() === "") {
       missingItems.push("VVD (Visão de Vida Desejada)");
     }
     
-    const valoresPreenchidos = valoresData.filter((v: string) => v && v.trim() !== "");
+    const valoresPreenchidos = valores.filter((v: string) => v && v.trim() !== "");
     if (valoresPreenchidos.length === 0) {
       missingItems.push("Valores pessoais");
     }
     
-    const areasPreenchidas = areasVidaData.filter((a: any) => a.notaAtual && a.notaDesejada);
+    const areasPreenchidas = areasVida.filter((a: any) => a.notaAtual && a.notaDesejada);
     if (areasPreenchidas.length === 0) {
       missingItems.push("Roda da Vida (Áreas da Vida)");
     }
     
-    // Verificar objetivos, metas e ações
-    try {
-      const objetivos = await storage.getObjetivos();
-      if (objetivos.length === 0) {
-        missingItems.push("Ao menos 1 objetivo");
-      }
-      
-      const metas = await storage.getMetas();
-      if (metas.length === 0) {
-        missingItems.push("Ao menos 1 meta");
-      }
-      
-      const hasAcoes = metas.some(meta => meta.acoes && meta.acoes.length > 0);
-      if (!hasAcoes) {
-        missingItems.push("Ao menos 1 ação");
-      }
-    } catch (error) {
-      console.error("Error checking objetivos/metas/acoes:", error);
+    // Use cached objetivos/metas instead of fetching
+    if (objetivos.length === 0) {
+      missingItems.push("Ao menos 1 objetivo");
+    }
+    
+    if (metas.length === 0) {
+      missingItems.push("Ao menos 1 meta");
+    }
+    
+    const hasAcoes = metas.some((meta: any) => meta.acoes && meta.acoes.length > 0);
+    if (!hasAcoes) {
+      missingItems.push("Ao menos 1 ação");
     }
     
     if (missingItems.length > 0) {
@@ -232,7 +160,6 @@ const ProgressSection = () => {
         if (!isAdmin) {
           const today = new Date().toISOString();
           localStorage.setItem("lastInsightDate", today);
-          setCanGenerateInsight(false);
         }
         
         toast.success("Insight gerado com sucesso!");
