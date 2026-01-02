@@ -21,7 +21,7 @@ import {
 import Logo from "@/components/Logo";
 
 // Import platform images
-import dashboardOverview from "@/assets/tutorial/dashboard-overview.jpg";
+import planoDeVidaScreenshot from "@/assets/plano-de-vida-screenshot.png";
 import planoVida from "@/assets/tutorial/plano-vida.jpg";
 import maoNaMassa from "@/assets/tutorial/mao-na-massa.jpg";
 import progresso from "@/assets/tutorial/progresso.jpg";
@@ -39,7 +39,7 @@ const Landing = () => {
       icon: Eye,
       title: "Sua Vida, Sua Carreira: Uma Visão Integrada",
       description: "Tenha uma perspectiva clara de todos os aspectos importantes da sua vida e carreira em um só lugar.",
-      image: dashboardOverview
+      image: planoDeVidaScreenshot
     },
     {
       icon: Target,
