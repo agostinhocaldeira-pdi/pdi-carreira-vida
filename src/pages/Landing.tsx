@@ -182,7 +182,7 @@ const Landing = () => {
         <div className="container mx-auto max-w-4xl">
           <div className="text-center mb-10">
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-6 text-foreground">
-              O Desafio da Constância
+              Por que manter constância é tão difícil, mesmo querendo
             </h2>
           </div>
           
