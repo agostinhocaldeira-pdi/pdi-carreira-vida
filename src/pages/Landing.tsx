@@ -26,7 +26,7 @@ import planoDeVidaScreenshot from "@/assets/plano-de-vida-screenshot.png";
 import vvdScreenshot from "@/assets/vvd-screenshot.png";
 import smartScreenshot from "@/assets/smart-screenshot.png";
 import progressoScreenshot from "@/assets/progresso-screenshot.png";
-import ferramentas from "@/assets/tutorial/ferramentas.jpg";
+import ferramentasScreenshot from "@/assets/ferramentas-screenshot.png";
 
 const Landing = () => {
   const navigate = useNavigate();
@@ -70,7 +70,7 @@ const Landing = () => {
       icon: Cpu,
       title: "Inteligência Artificial a Seu Favor",
       description: "Conte com o suporte da IA para insights, sugestões e otimização contínua do seu planejamento.",
-      image: ferramentas
+      image: ferramentasScreenshot
     }
   ];
 
