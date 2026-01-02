@@ -415,8 +415,8 @@ const StoicReflectionSection = () => {
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between flex-wrap gap-2">
           <CardTitle className="text-xl sm:text-2xl flex items-center gap-2">
-            <BookOpen className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
-            "{reflection.title}"
+            <PenLine className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
+            Diário & Reflexão
           </CardTitle>
           <Badge variant="secondary" className="gap-1.5">
             <CalendarIcon className="w-3 h-3" />
@@ -425,59 +425,9 @@ const StoicReflectionSection = () => {
         </div>
       </CardHeader>
       <CardContent className="space-y-4">
-        {/* Reflection Text */}
-        <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">
-          {reflection.text}
-        </p>
-
-        {/* Question Card */}
-        <Card className="bg-primary/10 border-primary/20">
-          <CardContent className="p-4">
-            <p className="text-sm sm:text-base font-medium text-foreground">
-              💭 {reflection.question}
-            </p>
-          </CardContent>
-        </Card>
-
-        {/* Response Field */}
-        <div className="space-y-3">
-          <Textarea
-            placeholder="Escreva sua reflexão aqui..."
-            value={stoicResponse}
-            onChange={(e) => setStoicResponse(e.target.value)}
-            className="min-h-[100px] resize-none"
-          />
-          <div className="flex items-center justify-end">
-            <Button
-              onClick={handleSaveStoic}
-              disabled={!canSaveStoic || isSavingStoic}
-              className="gap-2"
-            >
-              {isSavingStoic ? (
-                <>Salvando...</>
-              ) : isStoicSaved ? (
-                <>
-                  <Check className="w-4 h-4" />
-                  Salvo
-                </>
-              ) : (
-                <>
-                  <Save className="w-4 h-4" />
-                  Salvar
-                </>
-              )}
-            </Button>
-          </div>
-        </div>
-
-        {/* Daily Checkout Section */}
-        <div className="border-t border-primary/20 pt-4">
-          <DailyCheckout />
-        </div>
-
         {/* Diary Section - Collapsible */}
         <Collapsible open={isDiaryOpen} onOpenChange={setIsDiaryOpen}>
-          <div className="border-t border-primary/20 pt-4">
+          <div>
             <div className="flex items-center justify-between">
               <div className="space-y-1">
                 <h3 className="text-lg font-semibold flex items-center gap-2">
@@ -836,6 +786,64 @@ const StoicReflectionSection = () => {
             )}
           </CollapsibleContent>
         </Collapsible>
+
+        {/* Stoic Reflection Section */}
+        <div className="border-t border-primary/20 pt-4 space-y-4">
+          <div className="space-y-2">
+            <h3 className="text-lg font-semibold flex items-center gap-2">
+              <BookOpen className="w-5 h-5 text-primary" />
+              "{reflection.title}"
+            </h3>
+            <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">
+              {reflection.text}
+            </p>
+          </div>
+
+          {/* Question Card */}
+          <Card className="bg-primary/10 border-primary/20">
+            <CardContent className="p-4">
+              <p className="text-sm sm:text-base font-medium text-foreground">
+                💭 {reflection.question}
+              </p>
+            </CardContent>
+          </Card>
+
+          {/* Response Field */}
+          <div className="space-y-3">
+            <Textarea
+              placeholder="Escreva sua reflexão aqui..."
+              value={stoicResponse}
+              onChange={(e) => setStoicResponse(e.target.value)}
+              className="min-h-[100px] resize-none"
+            />
+            <div className="flex items-center justify-end">
+              <Button
+                onClick={handleSaveStoic}
+                disabled={!canSaveStoic || isSavingStoic}
+                className="gap-2"
+              >
+                {isSavingStoic ? (
+                  <>Salvando...</>
+                ) : isStoicSaved ? (
+                  <>
+                    <Check className="w-4 h-4" />
+                    Salvo
+                  </>
+                ) : (
+                  <>
+                    <Save className="w-4 h-4" />
+                    Salvar
+                  </>
+                )}
+              </Button>
+            </div>
+          </div>
+        </div>
+
+        {/* Daily Checkout Section */}
+        <div className="border-t border-primary/20 pt-4">
+          <DailyCheckout />
+        </div>
       </CardContent>
     </Card>
   );
