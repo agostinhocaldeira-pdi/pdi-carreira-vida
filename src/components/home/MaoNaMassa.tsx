@@ -8,7 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Rocket, Plus, Trash2, Pencil, Check, X, ChevronDown, Lightbulb, Loader2, Target } from "lucide-react";
+import { Rocket, Plus, Trash2, Pencil, Check, X, ChevronDown, Lightbulb, Loader2, Target, LayoutGrid, ArrowRight } from "lucide-react";
 import { PDILoader } from "@/components/ui/pdi-loader";
 import { toast } from "sonner";
 import { useNavigate, Link } from "react-router-dom";
@@ -257,7 +257,7 @@ const MaoNaMassa = ({ embedded = false }: MaoNaMassaProps) => {
         localStorage.setItem("metas", JSON.stringify(metasAtualizadas));
         setMetasCadastradas(metasAtualizadas);
         celebrateAction('goal', 'Meta');
-        toast.success("Meta atualizada com sucesso!");
+        setShowSuggestionModal(true);
         setEditandoMetaId(null);
         setIsFormOpen(false);
         
@@ -1021,28 +1021,50 @@ const MaoNaMassa = ({ embedded = false }: MaoNaMassaProps) => {
   const modals = (
     <>
       <Dialog open={showSuggestionModal} onOpenChange={setShowSuggestionModal}>
-        <DialogContent className="max-w-md">
+        <DialogContent className="max-w-lg">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2 text-xl">
-              <Lightbulb className="w-6 h-6 text-accent" />
-              Meta Cadastrada com Sucesso! 🎉
+              <Target className="w-6 h-6 text-success" />
+              Meta Salva com Sucesso! 🎉
             </DialogTitle>
             <DialogDescription className="text-base pt-2">
               Parabéns! Você acabou de dar um passo importante para alcançar seus objetivos.
             </DialogDescription>
           </DialogHeader>
-          <div className="space-y-4 py-2">
-            <p className="text-sm text-muted-foreground">
-              <strong>Sugestão:</strong> Que tal revisar suas metas e ações regularmente? 
-              Isso ajuda a manter o foco e celebrar cada conquista!
-            </p>
+          <div className="space-y-4 py-4">
+            <div className="bg-accent/10 border border-accent/20 rounded-lg p-4">
+              <div className="flex items-start gap-3">
+                <LayoutGrid className="w-6 h-6 text-accent mt-0.5 flex-shrink-0" />
+                <div className="space-y-2">
+                  <p className="font-medium text-foreground">
+                    Organize suas tarefas na Matriz de Eisenhower
+                  </p>
+                  <p className="text-sm text-muted-foreground">
+                    Cadastre os passos e ações da sua meta na <strong>Matriz de Eisenhower</strong> para 
+                    visualizar diariamente o que realmente precisa executar e priorizar suas atividades.
+                  </p>
+                </div>
+              </div>
+            </div>
           </div>
-          <DialogFooter>
+          <DialogFooter className="flex-col sm:flex-row gap-2">
             <Button 
+              variant="outline"
               onClick={() => setShowSuggestionModal(false)}
-              className="w-full"
+              className="w-full sm:w-auto"
             >
-              Entendi!
+              Fazer depois
+            </Button>
+            <Button 
+              onClick={() => {
+                setShowSuggestionModal(false);
+                navigate('/ferramentas/eisenhower');
+              }}
+              className="w-full sm:w-auto gap-2"
+            >
+              <LayoutGrid className="w-4 h-4" />
+              Ir para Matriz de Eisenhower
+              <ArrowRight className="w-4 h-4" />
             </Button>
           </DialogFooter>
         </DialogContent>
