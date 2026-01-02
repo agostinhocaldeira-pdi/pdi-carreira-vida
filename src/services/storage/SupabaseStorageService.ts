@@ -380,12 +380,21 @@ class SupabaseStorageService {
     const userId = await this.getUserId();
     if (!userId) return;
 
-    // Clear existing
+    // Helper to check if an ID is a valid UUID (not a temporary ID like "temp-123456")
+    const isValidUUID = (id: any): boolean => {
+      if (typeof id !== 'string') return false;
+      // Check for temporary IDs (start with "temp-")
+      if (id.startsWith('temp-')) return false;
+      // UUID format: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+      const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+      return uuidRegex.test(id);
+    };
+
     for (const meta of metas) {
       // Handle both camelCase and snake_case property names for compatibility
       const objetivoId = meta.objetivo_id || (meta as any).objetivoId || null;
       const dataAlvo = meta.data_alvo || (meta as any).dataAlvo || null;
-      const metaId = typeof meta.id === 'string' && meta.id.includes('-') ? meta.id : undefined;
+      const metaId = isValidUUID(meta.id) ? String(meta.id) : undefined;
       
       // Use upsert to update existing or insert new
       const goalData = {
