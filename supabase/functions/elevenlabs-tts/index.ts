@@ -6,7 +6,7 @@ const corsHeaders = {
 };
 
 // Voice ID do usuário
-const DEFAULT_VOICE_ID = "wKMTVU4n48IdWnycqXcP";
+const DEFAULT_VOICE_ID = "o8m5cSPHyC9ngHsxGRCs";
 
 serve(async (req) => {
   // Handle CORS preflight requests
