@@ -109,7 +109,7 @@ const Landing = () => {
             A diferença é se você se antecipa… ou reage.
           </p>
           
-          <p className="text-base sm:text-lg text-muted-foreground/80 mb-4 sm:mb-6 italic">
+          <p className="text-base sm:text-lg text-muted-foreground/80 mb-0 italic">
             "Quando tudo depende demais do improviso, até quem é competente começa a sentir o peso."
           </p>
           
@@ -119,7 +119,7 @@ const Landing = () => {
       {/* ============================================================ */}
       {/* SEÇÃO DE VÍDEO */}
       {/* ============================================================ */}
-      <section id="video-section" className="py-6 sm:py-8 px-4">
+      <section id="video-section" className="py-4 sm:py-6 px-4">
         <div className="container mx-auto max-w-4xl">
           <div className="text-center mb-6">
             <Button 
