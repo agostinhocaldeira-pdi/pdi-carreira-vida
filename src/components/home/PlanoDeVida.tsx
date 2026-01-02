@@ -967,7 +967,7 @@ const PlanoDeVida = ({ onTabChange, onOpenChange, forcedTab, forcedOpen }: Plano
                 </CollapsibleTrigger>
                 
                 <CollapsibleContent>
-                  <div className="px-3 sm:px-4 pb-4 pt-2 space-y-6 border-t border-border/50 overflow-hidden w-full box-border">
+                  <div className="px-3 sm:px-4 pb-4 pt-2 space-y-6 border-t border-border/50 overflow-x-hidden w-full max-w-full min-w-0 box-border">
                     {/* VVD */}
                     <div className="space-y-2">
                       <Label htmlFor="vvd">Minha Visão de Vida Desejada</Label>
@@ -982,7 +982,7 @@ const PlanoDeVida = ({ onTabChange, onOpenChange, forcedTab, forcedOpen }: Plano
                       />
                       <Link 
                         to="/ferramentas/metodo-vvd" 
-                        className="flex items-center gap-2 text-sm text-primary hover:underline"
+                        className="flex flex-wrap items-center gap-2 text-sm text-primary hover:underline max-w-full"
                       >
                         Como criar seu VVD
                         <ArrowRight className="w-4 h-4" />
@@ -1005,16 +1005,16 @@ const PlanoDeVida = ({ onTabChange, onOpenChange, forcedTab, forcedOpen }: Plano
                           />
                         ))}
                       </div>
-                      <div className="flex items-center justify-between gap-4">
+                      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                         <Link 
                           to="/ferramentas/valores" 
-                          className="flex items-center gap-2 text-sm text-primary hover:underline"
+                          className="flex flex-wrap items-center gap-2 text-sm text-primary hover:underline max-w-full"
                         >
                           Descobrir meus valores
                           <ArrowRight className="w-4 h-4" />
                         </Link>
                         
-                        <div className="flex gap-2">
+                        <div className="flex gap-2 w-full sm:w-auto justify-end">
                           {!isEditingValores && (
                             <Button onClick={handleEditValores} size="sm" variant="outline">
                               <Edit className="w-4 h-4 mr-2" />
@@ -1039,7 +1039,7 @@ const PlanoDeVida = ({ onTabChange, onOpenChange, forcedTab, forcedOpen }: Plano
                       
                       {/* Gráfico Radar - Roda da Vida */}
                       {areasVida.length > 0 ? (
-                        <div className="rounded-lg border p-4 bg-card">
+                        <div className="rounded-lg border p-4 bg-card max-w-full overflow-hidden">
                           <ResponsiveContainer width="100%" height={300}>
                             <RadarChart data={areasVida.map(area => ({
                               area: area.area,
@@ -1085,7 +1085,7 @@ const PlanoDeVida = ({ onTabChange, onOpenChange, forcedTab, forcedOpen }: Plano
                       <div className="flex items-center justify-start gap-4">
                         <Link 
                           to="/roda-da-vida" 
-                          className="flex items-center gap-2 text-sm text-primary hover:underline"
+                          className="flex flex-wrap items-center gap-2 text-sm text-primary hover:underline max-w-full"
                         >
                           Acessar a Roda da Vida para editar
                           <ArrowRight className="w-4 h-4" />
@@ -1135,7 +1135,7 @@ const PlanoDeVida = ({ onTabChange, onOpenChange, forcedTab, forcedOpen }: Plano
                 </CollapsibleTrigger>
                 
                 <CollapsibleContent>
-                  <div className="px-3 sm:px-4 pb-4 pt-2 space-y-4 border-t border-border/50 overflow-hidden w-full box-border">
+                  <div className="px-3 sm:px-4 pb-4 pt-2 space-y-4 border-t border-border/50 overflow-x-hidden w-full max-w-full min-w-0 box-border">
                     {/* Overview de OKRs da empresa */}
                     <CompanyOKRsOverview />
                     
@@ -1420,7 +1420,7 @@ const PlanoDeVida = ({ onTabChange, onOpenChange, forcedTab, forcedOpen }: Plano
                 </CollapsibleTrigger>
                 
                 <CollapsibleContent>
-                  <div className="px-3 sm:px-4 pb-4 pt-2 space-y-4 border-t border-border/50 overflow-hidden w-full box-border">
+                  <div className="px-3 sm:px-4 pb-4 pt-2 space-y-4 border-t border-border/50 overflow-x-hidden w-full max-w-full min-w-0 box-border">
                     <div className="space-y-4 w-full overflow-hidden">
                       <div className="flex items-center gap-2 mb-4">
                         <Lightbulb className="w-5 h-5 text-primary" />
@@ -1457,7 +1457,7 @@ const PlanoDeVida = ({ onTabChange, onOpenChange, forcedTab, forcedOpen }: Plano
                         </Button>
 
                         {habilidades.length > 0 && (
-                          <div className="rounded-lg border overflow-x-auto">
+                          <div className="rounded-lg border overflow-x-auto max-w-full">
                             <Table>
                               <TableHeader>
                                 <TableRow>
@@ -1531,7 +1531,7 @@ const PlanoDeVida = ({ onTabChange, onOpenChange, forcedTab, forcedOpen }: Plano
 
                         <Link 
                           to="/ferramentas" 
-                          className="flex items-center gap-2 text-sm text-primary hover:underline mt-2"
+                          className="flex flex-wrap items-center gap-2 text-sm text-primary hover:underline mt-2 max-w-full"
                         >
                           Ferramenta de Habilidades (FF)
                           <ExternalLink className="w-4 h-4" />
