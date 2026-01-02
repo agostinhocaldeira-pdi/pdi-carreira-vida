@@ -101,7 +101,7 @@ const StoicInteractiveExperience = ({
     const audioBlob = await response.blob();
 
     // Upload to storage with version suffix for improved audio
-    const fileName = `${dateKey}-full-v2.mp3`;
+    const fileName = `${dateKey}-full-v3.mp3`;
     const { error: uploadError } = await supabase.storage
       .from("stoic-audio")
       .upload(fileName, audioBlob, {
@@ -144,7 +144,7 @@ const StoicInteractiveExperience = ({
         let url = await checkExistingAudio();
         
         // If existing audio doesn't have full narration or is old format, generate new
-        if (url && !url.includes("-full-v2")) {
+        if (url && !url.includes("-full-v3")) {
           url = null;
         }
         
@@ -224,7 +224,7 @@ const StoicInteractiveExperience = ({
       setPhase("loading");
       try {
         let url = await checkExistingAudio();
-        if (url && !url.includes("-full-v2")) {
+        if (url && !url.includes("-full-v3")) {
           url = null;
         }
         if (!url) {
