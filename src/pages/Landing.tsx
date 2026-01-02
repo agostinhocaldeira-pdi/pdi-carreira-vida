@@ -318,8 +318,9 @@ const Landing = () => {
               <p className="text-base sm:text-lg text-muted-foreground leading-relaxed mb-8 max-w-2xl mx-auto">
                 Confiamos no poder transformador do PDI. Por isso, oferecemos a você a oportunidade de{" "}
                 <strong className="text-foreground">usar o sistema completo por 30 dias, sem qualquer risco</strong>. 
-                Você só será cobrado após este período. Caso decida que o PDI não é para você, 
-                o cancelamento é simples, rápido e sem burocracia — <strong className="text-foreground">sem cobrança alguma</strong>.
+                Você entra agora. Usa o sistema por 30 dias.
+                <br />
+                <strong className="text-foreground">A cobrança só acontece após esse período.</strong>
               </p>
 
               <div className="flex flex-wrap justify-center gap-6 text-sm text-muted-foreground">
