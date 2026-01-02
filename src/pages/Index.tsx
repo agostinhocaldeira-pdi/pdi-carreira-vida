@@ -218,16 +218,8 @@ const Index = () => {
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/30">
       {/* Header */}
       <header className="fixed top-0 left-0 right-0 z-50 bg-card shadow-elegant border-b border-border">
-        <div className="container mx-auto px-3 sm:px-4 py-3 sm:py-4 flex items-center justify-between">
+        <div className="container mx-auto px-3 sm:px-4 py-3 sm:py-4 flex items-center justify-center">
           <Logo size="md" />
-          <Button 
-            variant="outline" 
-            size="sm"
-            onClick={() => navigate("/login")}
-            className="text-primary border-primary/30 hover:bg-primary/10 text-xs sm:text-sm px-2 sm:px-3 h-8 sm:h-9"
-          >
-            Login
-          </Button>
         </div>
       </header>
 

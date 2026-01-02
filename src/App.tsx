@@ -9,6 +9,7 @@ import { SubscriptionProvider } from "@/contexts/SubscriptionContext";
 import { ActionCelebrationProvider } from "@/contexts/ActionCelebrationContext";
 import ScrollToTop from "@/components/ScrollToTop";
 import Index from "./pages/Index";
+import SubscriberLanding from "./pages/SubscriberLanding";
 import NotFound from "./pages/NotFound";
 import Landing from "./pages/Landing";
 import Signup from "./pages/Signup";
@@ -70,7 +71,8 @@ const App = () => (
               <BrowserRouter>
               <ScrollToTop />
               <Routes>
-                <Route path="/" element={<Index />} />
+                <Route path="/" element={<SubscriberLanding />} />
+                <Route path="/deadp2" element={<Index />} />
                 <Route path="/leadp" element={<Landing />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/signup" element={<Signup />} />
