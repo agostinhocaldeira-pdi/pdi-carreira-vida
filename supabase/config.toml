@@ -83,3 +83,5 @@ verify_jwt = false
 
 [functions.generate-daily-stoic-audio]
 verify_jwt = false
+# Cron: 5h da manhã horário de Brasília (UTC-3 = 08:00 UTC)
+# schedule = "0 8 * * *"
