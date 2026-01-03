@@ -30,7 +30,7 @@ const PlanoVidaComoChegar = () => {
   const [editandoHabilidadeId, setEditandoHabilidadeId] = useState<number | null>(null);
   const [habilidadeEditada, setHabilidadeEditada] = useState("");
   const [deleteHabilidadeId, setDeleteHabilidadeId] = useState<number | null>(null);
-  const [habilidadesExpanded, setHabilidadesExpanded] = useState(true);
+  const [habilidadesExpanded, setHabilidadesExpanded] = useState(false);
 
   // Trigger open meta form if coming from para-onde page
   useEffect(() => {
