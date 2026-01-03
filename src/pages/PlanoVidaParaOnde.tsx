@@ -488,7 +488,7 @@ const PlanoVidaParaOnde = () => {
                       <Button variant="outline" className="w-full justify-between gap-2">
                         <div className="flex items-center gap-2">
                           <Plus className="w-4 h-4" />
-                          <span>+ Objetivos</span>
+                          <span>Objetivos</span>
                         </div>
                         <ChevronDown className="w-4 h-4 transition-transform duration-200 data-[state=open]:rotate-180" />
                       </Button>
