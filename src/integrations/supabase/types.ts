@@ -905,6 +905,7 @@ export type Database = {
           generated_at: string | null
           id: string
           insight_text: string | null
+          plano_vida_email_sent: boolean
           user_id: string
         }
         Insert: {
@@ -912,6 +913,7 @@ export type Database = {
           generated_at?: string | null
           id?: string
           insight_text?: string | null
+          plano_vida_email_sent?: boolean
           user_id: string
         }
         Update: {
@@ -919,6 +921,7 @@ export type Database = {
           generated_at?: string | null
           id?: string
           insight_text?: string | null
+          plano_vida_email_sent?: boolean
           user_id?: string
         }
         Relationships: []

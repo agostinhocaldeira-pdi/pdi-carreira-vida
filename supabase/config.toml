@@ -89,3 +89,6 @@ verify_jwt = false
 
 [functions.stripe-ai-webhook]
 verify_jwt = false
+
+[functions.send-plano-vida-complete-email]
+verify_jwt = false
