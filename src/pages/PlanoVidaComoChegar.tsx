@@ -5,7 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Lightbulb, ArrowLeft, Home, Plus, Trash2, Pencil, Check, X, ExternalLink } from "lucide-react";
+import { Lightbulb, ArrowLeft, Home, Plus, Trash2, Pencil, Check, X, ExternalLink, ChevronDown } from "lucide-react";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { PDILoader } from "@/components/ui/pdi-loader";
 import { toast } from "sonner";
 
@@ -29,6 +30,7 @@ const PlanoVidaComoChegar = () => {
   const [editandoHabilidadeId, setEditandoHabilidadeId] = useState<number | null>(null);
   const [habilidadeEditada, setHabilidadeEditada] = useState("");
   const [deleteHabilidadeId, setDeleteHabilidadeId] = useState<number | null>(null);
+  const [habilidadesExpanded, setHabilidadesExpanded] = useState(true);
 
   // Trigger open meta form if coming from para-onde page
   useEffect(() => {
@@ -210,14 +212,29 @@ const PlanoVidaComoChegar = () => {
             ) : (
               <>
                 {/* Seção: Habilidades a Desenvolver */}
-                <div className="p-4 sm:p-6 rounded-xl border-2 border-primary/20 bg-gradient-to-br from-primary/5 to-transparent space-y-4 w-full overflow-hidden">
-                  <div className="flex items-center gap-2 mb-2">
-                    <Lightbulb className="w-5 h-5 text-primary" />
-                    <h3 className="text-lg font-semibold">Habilidades a Desenvolver</h3>
-                  </div>
+                <Collapsible 
+                  open={habilidadesExpanded} 
+                  onOpenChange={setHabilidadesExpanded}
+                  className="p-4 sm:p-6 rounded-xl border-2 border-primary/20 bg-gradient-to-br from-primary/5 to-transparent space-y-4 w-full overflow-hidden"
+                >
+                  <CollapsibleTrigger asChild>
+                    <button className="flex items-center justify-between w-full group">
+                      <div className="flex items-center gap-2">
+                        <Lightbulb className="w-5 h-5 text-primary" />
+                        <h3 className="text-lg font-semibold">Habilidades a Desenvolver</h3>
+                        {habilidades.length > 0 && (
+                          <span className="text-xs bg-primary/20 text-primary px-2 py-0.5 rounded-full">
+                            {habilidades.length}
+                          </span>
+                        )}
+                      </div>
+                      <ChevronDown className={`w-5 h-5 text-muted-foreground transition-transform duration-200 ${habilidadesExpanded ? 'rotate-180' : ''}`} />
+                    </button>
+                  </CollapsibleTrigger>
 
-                  {/* Explicação sobre habilidades */}
-                  <div className="p-4 bg-muted/40 rounded-lg border border-border/50 space-y-4">
+                  <CollapsibleContent className="space-y-4">
+                    {/* Explicação sobre habilidades */}
+                    <div className="p-4 bg-muted/40 rounded-lg border border-border/50 space-y-4 mt-4">
                     <p className="text-sm text-muted-foreground leading-relaxed">
                       Um objetivo normalmente dependerá de <strong>novas habilidades</strong>. Para identificar quais são as habilidades necessárias para alcançar seus objetivos, sugerimos utilizar:
                     </p>
@@ -358,7 +375,8 @@ const PlanoVidaComoChegar = () => {
                       </div>
                     )}
                   </div>
-                </div>
+                  </CollapsibleContent>
+                </Collapsible>
 
                 {/* Seção: Mão na Massa */}
                 <div className="p-4 sm:p-6 rounded-xl border-2 border-accent/30 bg-gradient-to-br from-accent/5 to-transparent max-w-full overflow-hidden w-full box-border">
