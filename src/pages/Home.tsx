@@ -581,19 +581,6 @@ const Home = () => {
               
               <CollapsibleContent>
                 <div className="px-4 sm:px-6 pb-4 sm:pb-6 space-y-4">
-                  {!isAdmin && !aiUsage.hasAvailablePurchase && insight && (
-                    <div className="bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-800 rounded-lg p-3">
-                      <p className="text-xs sm:text-sm text-amber-900 dark:text-amber-200">
-                        Para gerar um novo insight,{' '}
-                        <button 
-                          onClick={() => setShowAILimitModal(true)}
-                          className="underline font-semibold hover:text-amber-700 dark:hover:text-amber-300"
-                        >
-                          compre um insight avulso por R$ 10,00
-                        </button>.
-                      </p>
-                    </div>
-                  )}
                   
                   {!isAdmin && aiUsage.hasAvailablePurchase && (
                     <div className="bg-green-50 dark:bg-green-950/20 border border-green-200 dark:border-green-800 rounded-lg p-3">
