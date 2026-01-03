@@ -8,7 +8,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Target, ArrowRight, ArrowLeft, Home, Plus, Trash2, Pencil, Check, X } from "lucide-react";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { Target, ArrowRight, ArrowLeft, Home, Plus, Trash2, Pencil, Check, X, ChevronDown } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { PDILoader } from "@/components/ui/pdi-loader";
 import { toast } from "sonner";
@@ -284,74 +285,8 @@ const PlanoVidaParaOnde = () => {
                     <h3 className="text-lg font-semibold">Meus Objetivos</h3>
                   </div>
 
-                  {/* Formulário de cadastro */}
-                  <div className="space-y-4 p-4 border rounded-lg bg-muted/30">
-                    <h4 className="font-medium text-sm">"Quem muito quer, pouco consegue"</h4>
-                    <p className="text-xs text-muted-foreground">Sugestão: Tenha um único grande objetivo, quebrado em metas e ações!</p>
-                    
-                    <div className="space-y-2">
-                      <Label htmlFor="objetivo">Objetivo em Foco</Label>
-                      <Input
-                        id="objetivo"
-                        placeholder="Descreva seu objetivo principal"
-                        value={objetivo.texto}
-                        onChange={(e) => setObjetivo({ ...objetivo, texto: e.target.value })}
-                        spellCheck="true"
-                      />
-                    </div>
-
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <Label htmlFor="dataAlvo">Data Alvo</Label>
-                        <Input
-                          id="dataAlvo"
-                          type="date"
-                          value={objetivo.dataAlvo}
-                          onChange={(e) => setObjetivo({ ...objetivo, dataAlvo: e.target.value })}
-                        />
-                      </div>
-
-                      <div className="space-y-2">
-                        <Label htmlFor="status">Status</Label>
-                        <Select
-                          value={objetivo.status}
-                          onValueChange={(value) => setObjetivo({ ...objetivo, status: value })}
-                        >
-                          <SelectTrigger>
-                            <SelectValue placeholder="Selecione o status" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="a-iniciar">A iniciar</SelectItem>
-                            <SelectItem value="em-andamento">Em andamento</SelectItem>
-                            <SelectItem value="concluido">Concluído</SelectItem>
-                            <SelectItem value="pendente">Pendente</SelectItem>
-                            <SelectItem value="pausado">Pausado</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                    </div>
-
-                    <div className="space-y-2">
-                      <Label htmlFor="conexaoVvd">Conexão com o VVD</Label>
-                      <Textarea
-                        id="conexaoVvd"
-                        placeholder="Como este objetivo se conecta com sua visão de vida?"
-                        value={objetivo.conexaoVvd}
-                        onChange={(e) => setObjetivo({ ...objetivo, conexaoVvd: e.target.value })}
-                        rows={3}
-                        spellCheck="true"
-                      />
-                    </div>
-
-                    <Button onClick={handleSaveObjetivo} className="w-full text-sm">
-                      <Plus className="w-4 h-4 mr-1 sm:mr-2" />
-                      <span className="sm:hidden">Cadastrar</span>
-                      <span className="hidden sm:inline">Cadastrar Objetivo</span>
-                    </Button>
-                  </div>
-
-                  {/* Lista de objetivos cadastrados */}
-                  {objetivos.length > 0 ? (
+                  {/* Lista de objetivos cadastrados - agora primeiro */}
+                  {objetivos.length > 0 && (
                     <div className="space-y-3 max-w-full overflow-hidden">
                       <h4 className="font-medium text-sm">Objetivos Cadastrados</h4>
                       {/* Mobile - Cards */}
@@ -545,7 +480,89 @@ const PlanoVidaParaOnde = () => {
                         </Table>
                       </div>
                     </div>
-                  ) : null}
+                  )}
+
+                  {/* Formulário de cadastro em Collapsible */}
+                  <Collapsible>
+                    <CollapsibleTrigger asChild>
+                      <Button variant="outline" className="w-full justify-between gap-2">
+                        <div className="flex items-center gap-2">
+                          <Plus className="w-4 h-4" />
+                          <span>+ Objetivos</span>
+                        </div>
+                        <ChevronDown className="w-4 h-4 transition-transform duration-200 data-[state=open]:rotate-180" />
+                      </Button>
+                    </CollapsibleTrigger>
+                    <CollapsibleContent className="mt-4">
+                      <div className="space-y-4 p-4 border rounded-lg bg-muted/30">
+                        <h4 className="font-medium text-sm">"Quem muito quer, pouco consegue"</h4>
+                        <p className="text-xs text-muted-foreground">Sugestão: Tenha um único grande objetivo, quebrado em metas e ações!</p>
+                        
+                        <div className="space-y-2">
+                          <Label htmlFor="objetivo">Objetivo em Foco</Label>
+                          <Input
+                            id="objetivo"
+                            placeholder="Descreva seu objetivo principal"
+                            value={objetivo.texto}
+                            onChange={(e) => setObjetivo({ ...objetivo, texto: e.target.value })}
+                            spellCheck="true"
+                          />
+                        </div>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                          <div className="space-y-2">
+                            <Label htmlFor="dataAlvo">Data Alvo</Label>
+                            <Input
+                              id="dataAlvo"
+                              type="date"
+                              value={objetivo.dataAlvo}
+                              onChange={(e) => setObjetivo({ ...objetivo, dataAlvo: e.target.value })}
+                            />
+                          </div>
+
+                          <div className="space-y-2">
+                            <Label htmlFor="status">Status</Label>
+                            <Select
+                              value={objetivo.status}
+                              onValueChange={(value) => setObjetivo({ ...objetivo, status: value })}
+                            >
+                              <SelectTrigger>
+                                <SelectValue placeholder="Selecione o status" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="a-iniciar">A iniciar</SelectItem>
+                                <SelectItem value="em-andamento">Em andamento</SelectItem>
+                                <SelectItem value="concluido">Concluído</SelectItem>
+                                <SelectItem value="pendente">Pendente</SelectItem>
+                                <SelectItem value="pausado">Pausado</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </div>
+                        </div>
+
+                        <div className="space-y-2">
+                          <Label htmlFor="conexaoVvd">Conexão com o VVD</Label>
+                          <Textarea
+                            id="conexaoVvd"
+                            placeholder="Como este objetivo se conecta com sua visão de vida?"
+                            value={objetivo.conexaoVvd}
+                            onChange={(e) => setObjetivo({ ...objetivo, conexaoVvd: e.target.value })}
+                            rows={3}
+                            spellCheck="true"
+                          />
+                        </div>
+
+                        <Button onClick={handleSaveObjetivo} className="w-full text-sm">
+                          Salvar
+                        </Button>
+                      </div>
+                    </CollapsibleContent>
+                  </Collapsible>
+
+                  {/* Texto motivacional */}
+                  <p className="text-sm text-muted-foreground italic text-center pt-4 border-t">
+                    "Um objetivo é norte - a conquista virá com a execução"
+                  </p>
                 </div>
               </>
             )}
