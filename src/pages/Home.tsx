@@ -6,10 +6,11 @@ import { Badge } from "@/components/ui/badge";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Link, useNavigate } from "react-router-dom";
-import { Target, TrendingUp, BookOpen, MessagesSquare, Book, Sparkles, User, Zap, Star, Shield, Lock, ChevronDown, AlertCircle, Link2, Users, Bell, HelpCircle, FileText, ClipboardCheck } from "lucide-react";
+import { Target, TrendingUp, BookOpen, MessagesSquare, Book, Sparkles, User, Zap, Star, Shield, Lock, ChevronDown, AlertCircle, Link2, Users, Bell, HelpCircle, FileText, ClipboardCheck, Focus } from "lucide-react";
 import { DailyCheckout } from "@/components/gamification/DailyCheckout";
 import StoicReflectionCard from "@/components/home/StoicReflectionCard";
 import ProgressSection from "@/components/home/ProgressSection";
+import { usePDIData } from "@/hooks/usePDIQueries";
 
 import PlanoDeVida from "@/components/home/PlanoDeVida";
 import LanguageSelector from "@/components/LanguageSelector";
@@ -52,6 +53,10 @@ const Home = () => {
   
   const { showSurvey, setShowSurvey, completedSection, markSectionCompleted } = useSatisfactionSurvey();
   const { newAchievement, dismissNewAchievement, checkAndUnlockAchievements } = useGamification();
+  
+  // Carregar objetivos do usuário
+  const { data: pdiData } = usePDIData();
+  const objetivos = pdiData?.objetivos || [];
 
   // Preload stoic audio in background with low priority
   useStoicAudioPreload();
@@ -346,6 +351,38 @@ const Home = () => {
       <main className="container mx-auto px-3 sm:px-4 py-4 sm:py-8 space-y-4 sm:space-y-8">
         {/* Trial Status Banner */}
         <TrialStatusBanner />
+
+        {/* Objetivos em Foco - Exibição no topo */}
+        {objetivos.length > 0 && (
+          <section className="animate-slide-up">
+            <div className="rounded-xl border-2 border-accent/30 bg-gradient-to-r from-accent/10 via-accent/5 to-transparent p-4 sm:p-5">
+              <div className="flex items-center gap-2 mb-3">
+                <div className="w-8 h-8 rounded-lg bg-accent/20 flex items-center justify-center">
+                  <Focus className="w-4 h-4 text-accent" />
+                </div>
+                <h2 className="text-sm sm:text-base font-semibold text-foreground">
+                  Seus Objetivos em Foco
+                </h2>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {objetivos.map((objetivo: any) => (
+                  <div
+                    key={objetivo.id}
+                    className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-background/80 border border-accent/20 shadow-sm"
+                  >
+                    <Target className="w-3.5 h-3.5 text-accent flex-shrink-0" />
+                    <span className="text-xs sm:text-sm font-medium text-foreground line-clamp-1">
+                      {objetivo.texto}
+                    </span>
+                  </div>
+                ))}
+              </div>
+              <p className="text-xs text-muted-foreground mt-3 italic">
+                Mantenha o foco. Cada ação te aproxima dos seus objetivos.
+              </p>
+            </div>
+          </section>
+        )}
 
         {/* Daily Checkout Section */}
         <section className="animate-slide-up">
