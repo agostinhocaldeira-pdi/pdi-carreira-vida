@@ -349,28 +349,27 @@ const StoicReflectionSection = () => {
   const capitalizedShortDate = shortDate.charAt(0).toUpperCase() + shortDate.slice(1);
 
   return (
-    <Card className="shadow-medium border-primary/20 bg-gradient-to-br from-card to-primary/5">
-      <CardHeader className="pb-3">
-        <div className="flex items-center justify-between">
-          <h3 className="text-lg font-semibold flex items-center gap-2">
-            <PenLine className="w-5 h-5 text-primary" />
-            Diário & Reflexão
-          </h3>
-          <CollapsibleTrigger asChild>
-            <Button 
-              variant="secondary" 
-              size="sm" 
-              className="hover:bg-primary hover:text-primary-foreground transition-all shadow-sm min-w-[44px] border border-border"
-            >
-              <ChevronDown className={`w-4 h-4 transition-transform duration-300 ${isDiaryOpen ? "rotate-180" : ""}`} />
-            </Button>
-          </CollapsibleTrigger>
-        </div>
-      </CardHeader>
-      <CardContent className="space-y-4">
-        {/* Diary & Stoic Reflection Section - Collapsible */}
-        <Collapsible open={isDiaryOpen} onOpenChange={setIsDiaryOpen}>
-          <CollapsibleContent className="pt-0">
+    <Collapsible open={isDiaryOpen} onOpenChange={setIsDiaryOpen}>
+      <Card className="shadow-medium border-primary/20 bg-gradient-to-br from-card to-primary/5">
+        <CardHeader className="pb-3">
+          <div className="flex items-center justify-between">
+            <h3 className="text-lg font-semibold flex items-center gap-2">
+              <PenLine className="w-5 h-5 text-primary" />
+              Diário & Reflexão
+            </h3>
+            <CollapsibleTrigger asChild>
+              <Button 
+                variant="secondary" 
+                size="sm" 
+                className="hover:bg-primary hover:text-primary-foreground transition-all shadow-sm min-w-[44px] border border-border"
+              >
+                <ChevronDown className={`w-4 h-4 transition-transform duration-300 ${isDiaryOpen ? "rotate-180" : ""}`} />
+              </Button>
+            </CollapsibleTrigger>
+          </div>
+        </CardHeader>
+        <CollapsibleContent>
+          <CardContent className="space-y-4">
             <Badge variant="secondary" className="gap-1.5 mb-4">
               <CalendarIcon className="w-3 h-3" />
               <span className="text-xs">{capitalizedDate}</span>
@@ -700,10 +699,10 @@ const StoicReflectionSection = () => {
                 </div>
               </div>
             )}
-          </CollapsibleContent>
-        </Collapsible>
-      </CardContent>
-    </Card>
+          </CardContent>
+        </CollapsibleContent>
+      </Card>
+    </Collapsible>
   );
 };
 
