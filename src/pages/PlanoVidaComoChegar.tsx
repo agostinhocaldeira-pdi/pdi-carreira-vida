@@ -82,7 +82,7 @@ const PlanoVidaComoChegar = () => {
     return () => {
       window.removeEventListener("habilidadesUpdated", syncHabilidades);
     };
-  }, [storage]);
+  }, [storage.isAuthenticated]);
 
   // Funções para gerenciar habilidades
   const handleAddHabilidade = () => {
