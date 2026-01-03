@@ -351,43 +351,30 @@ const StoicReflectionSection = () => {
   return (
     <Card className="shadow-medium border-primary/20 bg-gradient-to-br from-card to-primary/5">
       <CardHeader className="pb-3">
-        <div className="flex items-center justify-between flex-wrap gap-2">
-          <Badge variant="secondary" className="gap-1.5">
-            <CalendarIcon className="w-3 h-3" />
-            <span className="text-xs">{capitalizedDate}</span>
-          </Badge>
+        <div className="flex items-center justify-between">
+          <h3 className="text-lg font-semibold flex items-center gap-2">
+            <PenLine className="w-5 h-5 text-primary" />
+            Diário & Reflexão
+          </h3>
+          <CollapsibleTrigger asChild>
+            <Button 
+              variant="secondary" 
+              size="sm" 
+              className="hover:bg-primary hover:text-primary-foreground transition-all shadow-sm min-w-[44px] border border-border"
+            >
+              <ChevronDown className={`w-4 h-4 transition-transform duration-300 ${isDiaryOpen ? "rotate-180" : ""}`} />
+            </Button>
+          </CollapsibleTrigger>
         </div>
       </CardHeader>
       <CardContent className="space-y-4">
         {/* Diary & Stoic Reflection Section - Collapsible */}
         <Collapsible open={isDiaryOpen} onOpenChange={setIsDiaryOpen}>
-          <div>
-            <div className="flex items-center justify-between">
-              <div className="space-y-1">
-                <h3 className="text-lg font-semibold flex items-center gap-2">
-                  <PenLine className="w-5 h-5 text-primary" />
-                  Diário & Reflexão
-                </h3>
-                <p className="text-sm text-muted-foreground">
-                  {capitalizedShortDate}
-                </p>
-              </div>
-              <CollapsibleTrigger asChild>
-                <Button 
-                  variant="secondary" 
-                  size="sm" 
-                  className="gap-1.5 hover:bg-primary hover:text-primary-foreground transition-all shadow-sm min-w-[44px] border border-border"
-                >
-                  {!isDiaryOpen && (
-                    <span className="text-xs font-medium">Abrir</span>
-                  )}
-                  <ChevronDown className={`w-4 h-4 transition-transform duration-300 ${isDiaryOpen ? "rotate-180" : ""}`} />
-                </Button>
-              </CollapsibleTrigger>
-            </div>
-          </div>
-
-          <CollapsibleContent className="pt-4">
+          <CollapsibleContent className="pt-0">
+            <Badge variant="secondary" className="gap-1.5 mb-4">
+              <CalendarIcon className="w-3 h-3" />
+              <span className="text-xs">{capitalizedDate}</span>
+            </Badge>
             {/* Toggle de Modo */}
             <div className="pb-4">
               <div className="flex rounded-lg bg-muted p-1 gap-1">

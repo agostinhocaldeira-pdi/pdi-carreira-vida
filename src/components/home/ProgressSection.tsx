@@ -199,24 +199,18 @@ const ProgressSection = () => {
       />
       <Collapsible open={isOpen} onOpenChange={setIsOpen}>
       <Card className="shadow-medium">
-        <CardHeader>
+        <CardHeader className="pb-3">
           <div className="flex items-center justify-between">
-            <div>
-              <CardTitle className="text-xl sm:text-2xl flex items-center gap-2">
-                <TrendingUp className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
-                Seu Progresso
-              </CardTitle>
-              <CardDescription className="text-xs sm:text-sm">Acompanhe o desenvolvimento do seu PDI</CardDescription>
-            </div>
+            <CardTitle className="text-lg font-semibold flex items-center gap-2">
+              <TrendingUp className="w-5 h-5 text-primary" />
+              Seu Progresso
+            </CardTitle>
             <CollapsibleTrigger asChild>
               <Button 
                 variant="secondary" 
                 size="sm" 
-                className="gap-1.5 hover:bg-primary hover:text-primary-foreground transition-all shadow-sm min-w-[44px] border border-border"
+                className="hover:bg-primary hover:text-primary-foreground transition-all shadow-sm min-w-[44px] border border-border"
               >
-                {!isOpen && (
-                  <span className="text-xs font-medium">Abrir</span>
-                )}
                 <ChevronDown className={`w-4 h-4 transition-transform duration-300 ${isOpen ? "rotate-180" : ""}`} />
               </Button>
             </CollapsibleTrigger>
