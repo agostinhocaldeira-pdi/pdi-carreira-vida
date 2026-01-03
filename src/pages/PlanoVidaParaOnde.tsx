@@ -255,29 +255,38 @@ const PlanoVidaParaOnde = () => {
 
         {/* Insight Inicial - Read Only */}
         {insightInicial && (
-          <Card className="border-accent/30 bg-gradient-to-br from-accent/5 to-background">
-            <CardHeader className="pb-3">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-accent to-accent/60 flex items-center justify-center shadow-md">
-                  <Lightbulb className="w-5 h-5 text-accent-foreground" />
-                </div>
-                <div>
-                  <CardTitle className="text-base sm:text-lg">Seu Insight Inicial</CardTitle>
-                  <CardDescription className="text-xs">Quem você é - baseado no seu VVD, valores e áreas da vida</CardDescription>
-                </div>
-              </div>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              <div className="rounded-lg border bg-muted/30 p-4">
-                <p className="text-sm text-foreground/80 whitespace-pre-line leading-relaxed">
-                  {insightInicial}
-                </p>
-              </div>
-              <p className="text-xs sm:text-sm text-muted-foreground italic text-center">
-                Crie objetivos que te conectam a quem você é. Utilize o insight acima para refletir sobre isso.
-              </p>
-            </CardContent>
-          </Card>
+          <Collapsible defaultOpen>
+            <Card className="border-accent/30 bg-gradient-to-br from-accent/5 to-background">
+              <CollapsibleTrigger asChild>
+                <CardHeader className="pb-3 cursor-pointer hover:bg-muted/30 transition-colors">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-accent to-accent/60 flex items-center justify-center shadow-md">
+                        <Lightbulb className="w-5 h-5 text-accent-foreground" />
+                      </div>
+                      <div>
+                        <CardTitle className="text-base sm:text-lg">Seu Insight Inicial</CardTitle>
+                        <CardDescription className="text-xs">Quem você é - baseado no seu VVD, valores e áreas da vida</CardDescription>
+                      </div>
+                    </div>
+                    <ChevronDown className="w-5 h-5 text-muted-foreground transition-transform duration-200 data-[state=open]:rotate-180" />
+                  </div>
+                </CardHeader>
+              </CollapsibleTrigger>
+              <CollapsibleContent>
+                <CardContent className="space-y-3 pt-0">
+                  <div className="rounded-lg border bg-muted/30 p-4">
+                    <p className="text-sm text-foreground/80 whitespace-pre-line leading-relaxed">
+                      {insightInicial}
+                    </p>
+                  </div>
+                  <p className="text-xs sm:text-sm text-muted-foreground italic text-center">
+                    Crie objetivos que te conectam a quem você é. Utilize o insight acima para refletir sobre isso.
+                  </p>
+                </CardContent>
+              </CollapsibleContent>
+            </Card>
+          </Collapsible>
         )}
 
         <Card className="shadow-medium overflow-hidden">
