@@ -81,14 +81,15 @@ async function fetchUserRoleData(): Promise<UserRoleData> {
  * - Never blocks component rendering
  */
 export function useUserRole() {
-  const { data, isLoading, isFetched } = useQuery({
+  const { data, isLoading, isFetched, refetch } = useQuery({
     queryKey: USER_ROLE_KEY,
     queryFn: fetchUserRoleData,
     staleTime: ROLE_CACHE_TIME,
     gcTime: ROLE_CACHE_TIME * 2,
     // Don't refetch on window focus - roles don't change often
     refetchOnWindowFocus: false,
-    refetchOnMount: false,
+    // Allow refetch on mount to get fresh data after login
+    refetchOnMount: 'always',
     // Return immediately even if loading
     placeholderData: {
       userId: null,
