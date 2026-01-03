@@ -516,7 +516,7 @@ const Home = () => {
                     <span className="font-semibold text-sm sm:text-base">Quem sou eu</span>
                   </div>
                   <p className="text-xs text-muted-foreground text-left">
-                    VVD, Valores e Roda da Vida
+                    Clique aqui para iniciar sua jornada de autoconhecimento e obter clareza do que realmente deseja para sua vida
                   </p>
                 </Button>
 
@@ -533,7 +533,7 @@ const Home = () => {
                     <span className="font-semibold text-sm sm:text-base">Para onde vou</span>
                   </div>
                   <p className="text-xs text-muted-foreground text-left">
-                    Objetivos e Metas
+                    Clique aqui para registrar os objetivos que você quer alcançar na vida pessoal ou profissional
                   </p>
                 </Button>
 
@@ -550,7 +550,7 @@ const Home = () => {
                     <span className="font-semibold text-sm sm:text-base">Como chegar lá</span>
                   </div>
                   <p className="text-xs text-muted-foreground text-left">
-                    Habilidades e Ações
+                    Clique aqui para cadastrar metas e objetivos que te levarão a alcançar seus objetivos
                   </p>
                 </Button>
               </div>
