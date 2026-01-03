@@ -5,12 +5,16 @@ import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Link, useNavigate } from "react-router-dom";
-import { Target, TrendingUp, BookOpen, MessagesSquare, Book, Sparkles, User, Zap, Star, Shield, Lock, ChevronDown, AlertCircle, Link2, Users, Bell, HelpCircle, FileText, ClipboardCheck, Focus } from "lucide-react";
+import { Target, TrendingUp, BookOpen, MessagesSquare, Book, Sparkles, User, Zap, Star, Shield, Lock, ChevronDown, AlertCircle, Link2, Users, Bell, HelpCircle, FileText, ClipboardCheck, Focus, Loader2 } from "lucide-react";
 import { DailyCheckout } from "@/components/gamification/DailyCheckout";
 import StoicReflectionCard from "@/components/home/StoicReflectionCard";
 import ProgressSection from "@/components/home/ProgressSection";
 import { usePDIData } from "@/hooks/usePDIQueries";
+import { useAIUsage } from "@/hooks/useAIUsage";
+import { AIUsageLimitModal } from "@/components/AIUsageLimitModal";
+import { usePDIStorage } from "@/hooks/usePDIStorage";
 
 
 import LanguageSelector from "@/components/LanguageSelector";
@@ -55,6 +59,75 @@ const Home = () => {
   // Carregar objetivos do usuário
   const { data: pdiData } = usePDIData();
   const objetivos = pdiData?.objetivos || [];
+  
+  // AI Usage e Insight
+  const storage = usePDIStorage();
+  const aiUsage = useAIUsage('insight');
+  const [showAILimitModal, setShowAILimitModal] = useState(false);
+  const [insight, setInsight] = useState<string | null>(null);
+  const [isGeneratingInsight, setIsGeneratingInsight] = useState(false);
+  const [insightOpen, setInsightOpen] = useState(true);
+  
+  // Carregar insight salvo
+  useEffect(() => {
+    const loadInsight = async () => {
+      try {
+        const { data: session } = await supabase.auth.getSession();
+        if (!session.session) return;
+        
+        const { data } = await supabase
+          .from('user_insights')
+          .select('insight_text')
+          .eq('user_id', session.session.user.id)
+          .maybeSingle();
+        
+        if (data?.insight_text) {
+          setInsight(data.insight_text);
+        }
+      } catch (error) {
+        console.error("Erro ao carregar insight:", error);
+      }
+    };
+    loadInsight();
+  }, []);
+  
+  // Verificar se pode gerar insight
+  const canGenerateInsight = isAdmin || aiUsage.hasAvailablePurchase;
+  
+  // Função para gerar insight
+  const handleGenerateInsight = async () => {
+    if (!canGenerateInsight && !isAdmin) {
+      setShowAILimitModal(true);
+      return;
+    }
+    
+    setIsGeneratingInsight(true);
+    try {
+      const vvd = await storage.getVvd();
+      const valores = await storage.getValores();
+      const areasVida = await storage.getAreasVida();
+      
+      const response = await supabase.functions.invoke('generate-insight', {
+        body: { vvd, valores, areasVida, objetivos }
+      });
+      
+      if (response.error) throw response.error;
+      
+      const newInsight = response.data?.insight;
+      if (newInsight) {
+        setInsight(newInsight);
+        
+        // Consumir uso se não for admin
+        if (!isAdmin && aiUsage.hasAvailablePurchase) {
+          await aiUsage.consumePurchase();
+        }
+      }
+    } catch (error) {
+      console.error("Erro ao gerar insight:", error);
+    } finally {
+      setIsGeneratingInsight(false);
+    }
+  };
 
   // Preload stoic audio in background with low priority
   useStoicAudioPreload();
@@ -204,6 +277,20 @@ const Home = () => {
         open={showSurvey}
         onOpenChange={setShowSurvey}
         sectionCompleted={completedSection}
+      />
+
+      {/* Modal de Limite de AI */}
+      <AIUsageLimitModal
+        isOpen={showAILimitModal}
+        onClose={() => setShowAILimitModal(false)}
+        onPurchase={async () => {
+          const url = await aiUsage.createPurchase('/home');
+          if (url) window.open(url, '_blank');
+          setShowAILimitModal(false);
+        }}
+        isLoading={aiUsage.isLoading}
+        featureType="insight"
+        featureName="Insight Personalizado"
       />
 
       {/* Modal de Aviso do Diário */}
@@ -471,6 +558,139 @@ const Home = () => {
           </Card>
         </section>
 
+        {/* Insight Personalizado Section */}
+        <section className="animate-slide-up" style={{ animationDelay: "0.3s" }}>
+          <Collapsible open={insightOpen} onOpenChange={setInsightOpen}>
+            <div className="rounded-xl border-2 border-primary/30 bg-gradient-to-br from-primary/5 to-primary/10 overflow-hidden">
+              <CollapsibleTrigger asChild>
+                <div className="flex items-center justify-between p-4 sm:p-6 cursor-pointer hover:bg-primary/5 transition-colors">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center shadow-lg">
+                      <Sparkles className="w-5 h-5 sm:w-6 sm:h-6 text-primary-foreground" />
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-semibold">Insight Personalizado</h3>
+                      <p className="text-xs sm:text-sm text-muted-foreground">
+                        Análise baseada no seu Plano de Vida
+                      </p>
+                    </div>
+                  </div>
+                  <ChevronDown className={`w-6 h-6 sm:w-5 sm:h-5 text-muted-foreground transition-transform duration-200 ${insightOpen ? 'rotate-180' : ''}`} />
+                </div>
+              </CollapsibleTrigger>
+              
+              <CollapsibleContent>
+                <div className="px-4 sm:px-6 pb-4 sm:pb-6 space-y-4">
+                  {!isAdmin && !aiUsage.hasAvailablePurchase && insight && (
+                    <div className="bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-800 rounded-lg p-3">
+                      <p className="text-xs sm:text-sm text-amber-900 dark:text-amber-200">
+                        Para gerar um novo insight,{' '}
+                        <button 
+                          onClick={() => setShowAILimitModal(true)}
+                          className="underline font-semibold hover:text-amber-700 dark:hover:text-amber-300"
+                        >
+                          compre um insight avulso por R$ 10,00
+                        </button>.
+                      </p>
+                    </div>
+                  )}
+                  
+                  {!isAdmin && aiUsage.hasAvailablePurchase && (
+                    <div className="bg-green-50 dark:bg-green-950/20 border border-green-200 dark:border-green-800 rounded-lg p-3">
+                      <p className="text-xs sm:text-sm text-green-900 dark:text-green-200">
+                        <strong>Você tem 1 insight disponível!</strong> Clique no botão abaixo para gerar seu insight personalizado.
+                      </p>
+                    </div>
+                  )}
+                  
+                  {isAdmin && (
+                    <div className="bg-primary/10 border border-primary/20 rounded-lg p-3">
+                      <p className="text-xs sm:text-sm text-primary">
+                        <strong>Acesso Admin:</strong> Você tem insights ilimitados como administrador.
+                      </p>
+                    </div>
+                  )}
+                  
+                  {insight ? (
+                    <div className="space-y-4">
+                      <div className="bg-card rounded-lg p-4 border shadow-sm">
+                        <div className="prose prose-sm max-w-none whitespace-pre-line text-sm">
+                          {insight}
+                        </div>
+                      </div>
+                      {/* Botão Gerar novo insight */}
+                      {!isAdmin && !aiUsage.hasAvailablePurchase ? (
+                        <Button 
+                          onClick={() => setShowAILimitModal(true)} 
+                          size="sm" 
+                          variant="outline"
+                          className="w-full sm:w-auto"
+                        >
+                          <Sparkles className="w-4 h-4 mr-2" />
+                          Gerar novo insight
+                        </Button>
+                      ) : (
+                        <Button 
+                          onClick={() => handleGenerateInsight()} 
+                          size="sm" 
+                          variant="outline"
+                          disabled={isGeneratingInsight}
+                          className="w-full sm:w-auto"
+                        >
+                          {isGeneratingInsight ? (
+                            <>
+                              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                              Gerando novo insight...
+                            </>
+                          ) : (
+                            <>
+                              <Sparkles className="w-4 h-4 mr-2" />
+                              Gerar novo insight
+                            </>
+                          )}
+                        </Button>
+                      )}
+                    </div>
+                  ) : (
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <div className="inline-block w-full">
+                            <Button 
+                              onClick={() => handleGenerateInsight()} 
+                              disabled={isGeneratingInsight || objetivos.length === 0}
+                              className="w-full"
+                              size="lg"
+                            >
+                              {isGeneratingInsight ? (
+                                <>
+                                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                                  Gerando insight...
+                                </>
+                              ) : (
+                                <>
+                                  <Sparkles className="w-4 h-4 mr-2" />
+                                  Gerar Insight
+                                </>
+                              )}
+                            </Button>
+                          </div>
+                        </TooltipTrigger>
+                        {objetivos.length === 0 && (
+                          <TooltipContent>
+                            <p className="text-sm">
+                              Para gerar insights, preencha seu Plano de Vida
+                            </p>
+                          </TooltipContent>
+                        )}
+                      </Tooltip>
+                    </TooltipProvider>
+                  )}
+                </div>
+              </CollapsibleContent>
+            </div>
+          </Collapsible>
+        </section>
 
         {/* Recursos Section */}
         <section className="animate-slide-up" style={{ animationDelay: "0.4s" }}>
