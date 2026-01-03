@@ -5,19 +5,22 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Heart, ArrowRight, Edit, ArrowLeft, Home } from "lucide-react";
+import { Heart, ArrowRight, Edit, ArrowLeft, Home, Sparkles, Lightbulb, Compass, Target } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { PDILoader } from "@/components/ui/pdi-loader";
 import { toast } from "sonner";
-import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { usePDIStorage } from "@/hooks/usePDIStorage";
 import { RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, Legend, ResponsiveContainer } from "recharts";
 import { useRoleProtection } from "@/hooks/useRoleProtection";
 import LogoutButton from "@/components/LogoutButton";
+import { useAIUsage } from "@/hooks/useAIUsage";
+import { AIUsageLimitModal } from "@/components/AIUsageLimitModal";
+import { useUserRole } from "@/hooks/useUserRole";
 
 const PlanoVidaQuemSou = () => {
   const { isLoading: roleLoading, userRole } = useRoleProtection({ allowedRoles: ["user", "gestor"] });
+  const { isAdmin } = useUserRole();
   const storage = usePDIStorage();
   const navigate = useNavigate();
   const isMobile = useIsMobile();
@@ -33,6 +36,15 @@ const PlanoVidaQuemSou = () => {
   }>>([]);
   const [isEditingAreas, setIsEditingAreas] = useState(true);
   const [isLoading, setIsLoading] = useState(true);
+  
+  // Insight states
+  const [insightInicial, setInsightInicial] = useState("");
+  const [hasGeneratedInsight, setHasGeneratedInsight] = useState(false);
+  const [isGeneratingInsight, setIsGeneratingInsight] = useState(false);
+  const [showAILimitModal, setShowAILimitModal] = useState(false);
+  
+  // AI Usage hook
+  const aiUsage = useAIUsage('insight');
 
   // Sincronizar valores com a página de exercício
   useEffect(() => {
@@ -130,6 +142,14 @@ const PlanoVidaQuemSou = () => {
             setIsEditingAreas(false);
           }
         }
+
+        // Load insight inicial
+        const savedInsightInicial = localStorage.getItem("insightInicial");
+        if (savedInsightInicial) {
+          const parsed = JSON.parse(savedInsightInicial);
+          setInsightInicial(parsed.insight || "");
+          setHasGeneratedInsight(!!parsed.insight);
+        }
       } catch (error) {
         console.error("Error loading data:", error);
       } finally {
@@ -204,16 +224,98 @@ const PlanoVidaQuemSou = () => {
   };
 
   const isValoresComplete = valores.some((valor) => valor.trim() !== "");
+  const isAreasComplete = areasVida.length > 0 && areasVida.every(
+    (area) => String(area.notaAtual).trim() !== "" && String(area.notaDesejada).trim() !== ""
+  );
 
   // Calcular progresso
   const calculateProgress = () => {
     let count = 0;
     if (vvd && vvd.trim()) count++;
     if (isValoresComplete) count++;
-    if (areasVida.length > 0 && areasVida.every(
-      (area) => String(area.notaAtual).trim() !== "" && String(area.notaDesejada).trim() !== ""
-    )) count++;
+    if (isAreasComplete) count++;
     return Math.round((count / 3) * 100);
+  };
+
+  // Handle generate insight
+  const handleGenerateInsight = async (fromPurchase = false) => {
+    // Administradores não têm limite
+    if (!isAdmin && hasGeneratedInsight && !fromPurchase && !aiUsage.hasAvailablePurchase) {
+      setShowAILimitModal(true);
+      return;
+    }
+
+    // Se estiver usando uma compra paga, consumir primeiro
+    if (!isAdmin && hasGeneratedInsight && !fromPurchase && aiUsage.hasAvailablePurchase) {
+      const consumed = await aiUsage.consumePurchase();
+      if (!consumed) {
+        toast.error("Erro ao processar sua compra. Tente novamente.");
+        return;
+      }
+    }
+
+    // Validar requisitos mínimos
+    const missingItems: string[] = [];
+    if (!vvd || vvd.trim() === "") {
+      missingItems.push("VVD (Visão de Vida Desejada)");
+    }
+    if (!isValoresComplete) {
+      missingItems.push("Valores pessoais");
+    }
+    if (!isAreasComplete) {
+      missingItems.push("Roda da Vida (Áreas da Vida)");
+    }
+
+    if (missingItems.length > 0) {
+      toast.error(
+        `Para gerar o insight inicial, preencha: ${missingItems.join(", ")}`,
+        { duration: 6000 }
+      );
+      return;
+    }
+
+    setIsGeneratingInsight(true);
+
+    try {
+      const surveyData = JSON.parse(localStorage.getItem("userSurvey") || "{}");
+      const onboardingData = JSON.parse(localStorage.getItem("onboarding") || "{}");
+
+      const { data, error } = await supabase.functions.invoke('generate-insight', {
+        body: { vvd, valores, areasVida, surveyData, onboardingData }
+      });
+
+      if (error) {
+        console.error("Error generating insight:", error);
+        toast.error(error.message || "Erro ao gerar insight");
+        return;
+      }
+
+      if (data?.insight) {
+        setInsightInicial(data.insight);
+        setHasGeneratedInsight(true);
+        
+        // Save to localStorage
+        localStorage.setItem("insightInicial", JSON.stringify({
+          insight: data.insight,
+          date: new Date().toISOString()
+        }));
+        
+        toast.success("Insight inicial gerado com sucesso!");
+      }
+    } catch (error) {
+      console.error("Error generating insight:", error);
+      toast.error("Erro ao gerar insight. Tente novamente.");
+    } finally {
+      setIsGeneratingInsight(false);
+    }
+  };
+
+  // Handle AI purchase
+  const handleAIPurchase = async () => {
+    const url = await aiUsage.createPurchase('/plano-vida/quem-sou');
+    if (url) {
+      window.open(url, '_blank');
+    }
   };
 
   if (roleLoading) {
@@ -235,6 +337,32 @@ const PlanoVidaQuemSou = () => {
           </Button>
           <LogoutButton />
         </div>
+
+        {/* Inspirational Message Card */}
+        <Card className="border-primary/20 bg-gradient-to-br from-primary/5 via-background to-accent/5 shadow-lg">
+          <CardContent className="p-5 sm:p-6">
+            <div className="flex flex-col sm:flex-row items-start gap-4">
+              <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center flex-shrink-0">
+                <Compass className="w-6 h-6 text-primary-foreground" />
+              </div>
+              <div className="space-y-3">
+                <h2 className="text-lg sm:text-xl font-semibold text-foreground">
+                  A jornada começa por dentro
+                </h2>
+                <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">
+                  Antes de traçar seu caminho, é preciso <strong className="text-foreground">saber quem você é</strong>. 
+                  O autoconhecimento é a fundação que sustenta seus sonhos. Quando você entende seus valores, 
+                  sua essência e o que realmente importa, tudo fica mais claro: seus <strong className="text-foreground">objetivos</strong> ganham 
+                  propósito, suas <strong className="text-foreground">metas</strong> ganham direção, suas <strong className="text-foreground">ações</strong> ganham 
+                  força, e cada <strong className="text-foreground">passo</strong> se torna uma conquista rumo à vida que você deseja.
+                </p>
+                <p className="text-sm text-primary font-medium italic">
+                  "Conhece-te a ti mesmo e conhecerás o universo." — Oráculo de Delfos
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
 
         <Card className="shadow-medium overflow-hidden">
           <CardHeader className="pb-4">
@@ -283,13 +411,15 @@ const PlanoVidaQuemSou = () => {
                     className="text-sm"
                   />
                   <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                    <Link 
-                      to="/ferramentas/metodo-vvd" 
-                      className="flex items-center gap-2 text-xs sm:text-sm text-primary hover:underline"
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      onClick={() => navigate("/ferramentas/metodo-vvd")}
+                      className="gap-2 text-xs sm:text-sm"
                     >
-                      <span className="truncate">Construir VVD (Ferramenta)</span>
-                      <ArrowRight className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0" />
-                    </Link>
+                      <Target className="w-4 h-4" />
+                      Meu VVD
+                    </Button>
                     <div className="flex gap-2 w-full sm:w-auto justify-end">
                       {!isEditingVvd && (
                         <Button onClick={handleEditVvd} size="sm" variant="outline" className="text-xs sm:text-sm px-2 sm:px-3">
@@ -327,13 +457,15 @@ const PlanoVidaQuemSou = () => {
                     ))}
                   </div>
                   <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                    <Link 
-                      to="/ferramentas/valores" 
-                      className="flex items-center gap-2 text-xs sm:text-sm text-primary hover:underline max-w-full truncate"
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      onClick={() => navigate("/ferramentas/valores")}
+                      className="gap-2 text-xs sm:text-sm"
                     >
-                      <span className="truncate">Descobrir valores</span>
-                      <ArrowRight className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0" />
-                    </Link>
+                      <Heart className="w-4 h-4" />
+                      Descobrir valores
+                    </Button>
                     
                     <div className="flex gap-2 w-full sm:w-auto justify-end">
                       {!isEditingValores && (
@@ -404,13 +536,15 @@ const PlanoVidaQuemSou = () => {
                   )}
 
                   <div className="flex items-center justify-start">
-                    <Link 
-                      to="/roda-da-vida" 
-                      className="flex items-center gap-2 text-xs sm:text-sm text-primary hover:underline"
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      onClick={() => navigate("/roda-da-vida")}
+                      className="gap-2 text-xs sm:text-sm"
                     >
-                      <span className="truncate">Acessar Roda da Vida</span>
-                      <ArrowRight className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0" />
-                    </Link>
+                      <Sparkles className="w-4 h-4" />
+                      Roda da Vida
+                    </Button>
                   </div>
                 </div>
               </>
@@ -418,18 +552,120 @@ const PlanoVidaQuemSou = () => {
           </CardContent>
         </Card>
 
-        {/* Navigation to next step */}
+        {/* Insight Inicial Section */}
+        <Card className="shadow-medium overflow-hidden border-accent/30">
+          <CardHeader className="pb-3">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-accent to-accent/60 flex items-center justify-center shadow-md">
+                <Lightbulb className="w-5 h-5 text-accent-foreground" />
+              </div>
+              <div>
+                <CardTitle className="text-lg sm:text-xl">Seu Insight Inicial</CardTitle>
+                <CardDescription className="text-xs sm:text-sm">
+                  Uma análise sobre quem você é, baseada no seu VVD, valores e áreas da vida
+                </CardDescription>
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {insightInicial ? (
+              <div className="rounded-lg border bg-muted/30 p-4">
+                <p className="text-sm sm:text-base text-foreground whitespace-pre-line leading-relaxed">
+                  {insightInicial}
+                </p>
+              </div>
+            ) : (
+              <div className="rounded-lg border bg-muted/20 p-6 text-center">
+                <Lightbulb className="w-10 h-10 text-muted-foreground/50 mx-auto mb-3" />
+                <p className="text-sm text-muted-foreground mb-4">
+                  Gere seu insight inicial para descobrir um pouco mais sobre você, 
+                  baseado nas informações que você forneceu.
+                </p>
+              </div>
+            )}
+
+            {/* Warning for users who already generated */}
+            {!isAdmin && hasGeneratedInsight && !aiUsage.hasAvailablePurchase && (
+              <div className="bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-800 rounded-lg p-3">
+                <p className="text-xs sm:text-sm text-amber-900 dark:text-amber-200">
+                  Você já gerou seu insight inicial gratuito. Para gerar um novo,{' '}
+                  <button 
+                    onClick={() => setShowAILimitModal(true)}
+                    className="underline font-semibold hover:text-amber-700 dark:hover:text-amber-300"
+                  >
+                    adquira um uso adicional por R$ 10,00
+                  </button>.
+                </p>
+              </div>
+            )}
+
+            <Button
+              onClick={() => handleGenerateInsight(false)}
+              disabled={isGeneratingInsight}
+              className="w-full gap-2"
+              variant={hasGeneratedInsight ? "outline" : "default"}
+            >
+              {isGeneratingInsight ? (
+                <>
+                  <Sparkles className="w-4 h-4 animate-spin" />
+                  Gerando insight...
+                </>
+              ) : hasGeneratedInsight ? (
+                <>
+                  <Sparkles className="w-4 h-4" />
+                  Gerar Novo Insight
+                </>
+              ) : (
+                <>
+                  <Sparkles className="w-4 h-4" />
+                  Gerar Insight Inicial
+                </>
+              )}
+            </Button>
+          </CardContent>
+        </Card>
+
+        {/* Next Step Section */}
+        <Card className="shadow-medium border-primary/20 bg-gradient-to-br from-primary/5 to-background">
+          <CardContent className="p-5 sm:p-6 text-center space-y-4">
+            <Button 
+              onClick={() => navigate("/plano-vida/para-onde")} 
+              size="lg"
+              className="gap-2 w-full sm:w-auto"
+            >
+              <Target className="w-5 h-5" />
+              Para onde vou
+              <ArrowRight className="w-5 h-5" />
+            </Button>
+            <p className="text-sm text-muted-foreground max-w-lg mx-auto">
+              Agora que você tem mais clareza sobre quem você é, o próximo passo é criar um objetivo 
+              para conquistar o que realmente deseja.
+            </p>
+          </CardContent>
+        </Card>
+
+        {/* Navigation */}
         <div className="flex justify-between">
           <Button variant="outline" onClick={() => navigate("/home")} className="gap-2">
             <Home className="w-4 h-4" />
-            Voltar à Home
+            <span className="hidden sm:inline">Voltar à Home</span>
           </Button>
           <Button onClick={() => navigate("/plano-vida/para-onde")} className="gap-2">
-            Próximo: Para onde vou
+            <span className="hidden sm:inline">Próximo:</span> Para onde vou
             <ArrowRight className="w-4 h-4" />
           </Button>
         </div>
       </div>
+
+      {/* AI Limit Modal */}
+      <AIUsageLimitModal
+        isOpen={showAILimitModal}
+        onClose={() => setShowAILimitModal(false)}
+        onPurchase={handleAIPurchase}
+        isLoading={aiUsage.isLoading}
+        featureType="insight"
+        featureName="Insight Inicial"
+      />
     </div>
   );
 };
