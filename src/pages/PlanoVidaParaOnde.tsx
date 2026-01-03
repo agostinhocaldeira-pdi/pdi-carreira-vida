@@ -570,15 +570,25 @@ const PlanoVidaParaOnde = () => {
         </Card>
 
         {/* Navigation */}
-        <div className="flex justify-between">
-          <Button variant="outline" onClick={() => navigate("/plano-vida/quem-sou")} className="gap-2">
-            <ArrowLeft className="w-4 h-4" />
-            Anterior: Quem sou Eu
-          </Button>
-          <Button onClick={() => navigate("/plano-vida/como-chegar")} className="gap-2">
-            Próximo: Como chegar lá
-            <ArrowRight className="w-4 h-4" />
-          </Button>
+        <div className="flex flex-col gap-4">
+          <div className="text-center">
+            <Button variant="outline" onClick={() => navigate("/plano-vida/quem-sou")} className="gap-2">
+              <ArrowLeft className="w-4 h-4" />
+              Anterior: Quem sou Eu
+            </Button>
+            <p className="text-xs text-muted-foreground mt-2">
+              Retorne caso deseje ajustar algo
+            </p>
+          </div>
+          <div className="text-center">
+            <Button onClick={() => navigate("/plano-vida/como-chegar")} className="gap-2">
+              Próximo: Como chegar lá
+              <ArrowRight className="w-4 h-4" />
+            </Button>
+            <p className="text-xs text-muted-foreground mt-2">
+              Chegou a hora de dizer como você vai por a mão na massa para conquistar o que deseja
+            </p>
+          </div>
         </div>
       </div>
 
