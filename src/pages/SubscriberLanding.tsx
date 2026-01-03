@@ -53,16 +53,7 @@ const SubscriberLanding = () => {
             Cada dia é uma nova oportunidade de transformar seus sonhos em conquistas reais.
           </p>
           
-          <Button 
-            size="lg" 
-            onClick={() => navigate("/login")}
-            className="text-lg sm:text-xl px-10 py-7 bg-primary hover:bg-primary/90 shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105"
-          >
-            Continuar minha jornada
-            <Sparkles className="ml-3 w-5 h-5" />
-          </Button>
-
-          <div className="mt-6 pt-6 border-t border-border/30">
+          <div className="pt-6">
             <p className="text-muted-foreground mb-2">Ainda não é assinante?</p>
             <Button 
               variant="outline"
