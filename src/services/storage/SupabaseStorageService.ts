@@ -872,6 +872,16 @@ class SupabaseStorageService {
     const userId = await this.getUserId();
     if (!userId) return;
 
+    // Check if this is the first insight (no existing insight with email sent)
+    const { data: existingInsight } = await supabase
+      .from('user_insights')
+      .select('id, insight_text, plano_vida_email_sent')
+      .eq('user_id', userId)
+      .maybeSingle();
+
+    const isFirstInsight = !existingInsight?.insight_text;
+    const emailAlreadySent = existingInsight?.plano_vida_email_sent === true;
+
     const { error } = await supabase
       .from('user_insights')
       .upsert({
@@ -880,7 +890,106 @@ class SupabaseStorageService {
         generated_at: new Date().toISOString(),
       }, { onConflict: 'user_id' });
 
-    if (error) console.error('Error saving insight:', error);
+    if (error) {
+      console.error('Error saving insight:', error);
+      return;
+    }
+
+    // If first insight and email not sent yet, check if Plano de Vida is complete and send email
+    if (isFirstInsight && !emailAlreadySent) {
+      await this.checkAndSendPlanoVidaCompleteEmail(userId, insight);
+    }
+  }
+
+  private async checkAndSendPlanoVidaCompleteEmail(userId: string, insight: string): Promise<void> {
+    try {
+      // Get user data
+      const { data: userData } = await supabase.auth.getUser();
+      const userEmail = userData.user?.email;
+      const userName = userData.user?.user_metadata?.name || userData.user?.user_metadata?.full_name || 'Usuário';
+
+      if (!userEmail) {
+        console.log('[PlanoVidaEmail] No user email found, skipping');
+        return;
+      }
+
+      // Check if all 3 steps of Plano de Vida are complete
+      const [vvdRes, valoresRes, areasRes, objetivosRes, goalsRes, actionsRes] = await Promise.all([
+        supabase.from('user_vvd').select('vvd_text').eq('user_id', userId).maybeSingle(),
+        supabase.from('user_valores').select('valores').eq('user_id', userId).maybeSingle(),
+        supabase.from('user_life_areas').select('*').eq('user_id', userId),
+        supabase.from('user_objectives').select('*').eq('user_id', userId),
+        supabase.from('user_goals').select('*').eq('user_id', userId),
+        supabase.from('user_actions').select('*').eq('user_id', userId),
+      ]);
+
+      const vvd = vvdRes.data?.vvd_text || '';
+      const valores = (valoresRes.data?.valores as string[]) || [];
+      const areasVida = areasRes.data || [];
+      const objetivos = objetivosRes.data || [];
+      const metas = goalsRes.data || [];
+      const acoes = actionsRes.data || [];
+
+      // Step 1 "Quem sou eu": VVD OR valores OR areas da vida preenchidos
+      const step1Complete = !!vvd || valores.filter(v => v?.trim()).length > 0 || areasVida.length > 0;
+      
+      // Step 2 "Para onde vou": At least one objective
+      const step2Complete = objetivos.length > 0;
+      
+      // Step 3 "Como chegar lá": At least one goal or action
+      const step3Complete = metas.length > 0 || acoes.length > 0;
+
+      console.log(`[PlanoVidaEmail] Step 1 complete: ${step1Complete}, Step 2 complete: ${step2Complete}, Step 3 complete: ${step3Complete}`);
+
+      // All 3 steps must be complete
+      if (!step1Complete || !step2Complete || !step3Complete) {
+        console.log('[PlanoVidaEmail] Not all steps complete, skipping email');
+        return;
+      }
+
+      // Prepare data for email
+      const emailData = {
+        userId,
+        userName,
+        userEmail,
+        vvd,
+        valores: valores.filter(v => v?.trim()),
+        areasVida: areasVida.map((area: any) => ({
+          area: area.area_name,
+          notaAtual: area.current_score || 0,
+          notaDesejada: area.desired_score || 0,
+        })),
+        objetivos: objetivos.map((obj: any) => ({
+          texto: obj.texto,
+          conexaoVvd: obj.conexao_vvd,
+          dataAlvo: obj.data_alvo,
+        })),
+        metas: metas.map((meta: any) => ({
+          texto: meta.texto,
+          dataAlvo: meta.data_alvo,
+        })),
+        acoes: acoes.map((acao: any) => ({
+          texto: acao.texto,
+          periodicidade: acao.periodicidade,
+        })),
+        insight,
+      };
+
+      console.log('[PlanoVidaEmail] Sending congratulation email...');
+
+      // Call edge function to send email
+      const { error: emailError } = await supabase.functions.invoke('send-plano-vida-complete-email', {
+        body: emailData,
+      });
+
+      if (emailError) {
+        console.error('[PlanoVidaEmail] Error sending email:', emailError);
+      } else {
+        console.log('[PlanoVidaEmail] Email sent successfully!');
+      }
+    } catch (error) {
+      console.error('[PlanoVidaEmail] Error in checkAndSendPlanoVidaCompleteEmail:', error);
+    }
   }
 
   // ============================================
