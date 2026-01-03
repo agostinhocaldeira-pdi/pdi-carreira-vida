@@ -1591,123 +1591,147 @@ const PlanoDeVida = ({ onTabChange, onOpenChange, forcedTab, forcedOpen }: Plano
             </Collapsible>
           </div>
 
-          {/* Insight Card - Sempre visível */}
-          <div className="rounded-xl border-2 border-primary/30 bg-gradient-to-br from-primary/5 to-primary/10 p-4 sm:p-6 mt-4">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center shadow-lg">
-                <Sparkles className="w-5 h-5 sm:w-6 sm:h-6 text-primary-foreground" />
-              </div>
-              <div>
-                <h3 className="text-lg font-semibold">Insight Personalizado</h3>
-                <p className="text-xs sm:text-sm text-muted-foreground">
-                  Análise baseada no seu Plano de Vida
-                </p>
-              </div>
-            </div>
-            
-            {!isAdmin && !canGenerateInsight && !aiUsage.hasAvailablePurchase && (
-              <div className="bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-800 rounded-lg p-3 mb-4">
-                <p className="text-xs sm:text-sm text-amber-900 dark:text-amber-200">
-                  <strong>Limite mensal atingido.</strong> Você poderá gerar um novo insight em {getNextInsightDate()}, ou{' '}
-                  <button 
-                    onClick={() => setShowAILimitModal(true)}
-                    className="underline font-semibold hover:text-amber-700 dark:hover:text-amber-300"
-                  >
-                    compre um insight avulso por R$ 10,00
-                  </button>.
-                </p>
-              </div>
-            )}
-            
-            {!isAdmin && aiUsage.hasAvailablePurchase && (
-              <div className="bg-green-50 dark:bg-green-950/20 border border-green-200 dark:border-green-800 rounded-lg p-3 mb-4">
-                <p className="text-xs sm:text-sm text-green-900 dark:text-green-200">
-                  <strong>Você tem 1 insight disponível!</strong> Clique no botão abaixo para gerar seu insight personalizado.
-                </p>
-              </div>
-            )}
-            
-            {isAdmin && (
-              <div className="bg-primary/10 border border-primary/20 rounded-lg p-3 mb-4">
-                <p className="text-xs sm:text-sm text-primary">
-                  <strong>Acesso Admin:</strong> Você tem insights ilimitados como administrador.
-                </p>
-              </div>
-            )}
-            
-            {insight ? (
-              <div className="space-y-4">
-                <div className="bg-card rounded-lg p-4 border shadow-sm">
-                  <div className="prose prose-sm max-w-none whitespace-pre-line text-sm">
-                    {insight}
-                  </div>
-                </div>
-                <Button 
-                  onClick={() => handleGenerateInsight()} 
-                  size="sm" 
-                  variant="outline"
-                  disabled={isGeneratingInsight}
-                  className="w-full sm:w-auto"
-                >
-                  {isGeneratingInsight ? (
-                    <>
-                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                      Gerando novo insight...
-                    </>
-                  ) : (
-                    <>
-                      <Sparkles className="w-4 h-4 mr-2" />
-                      Gerar novo insight
-                    </>
-                  )}
-                </Button>
-              </div>
-            ) : (
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <div className="inline-block w-full">
-                      <Button 
-                        onClick={() => handleGenerateInsight()} 
-                        disabled={isGeneratingInsight || (!vvd && !isValoresComplete && !isAreasComplete)}
-                        className="w-full"
-                        size="lg"
-                      >
-                        {isGeneratingInsight ? (
-                          <>
-                            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                            Gerando insight...
-                          </>
-                        ) : (
-                          <>
-                            <Sparkles className="w-4 h-4 mr-2" />
-                            Gerar Insight
-                          </>
-                        )}
-                      </Button>
+          {/* Insight Card - Com expandir/minimizar */}
+          <Collapsible defaultOpen={!!insight}>
+            <div className="rounded-xl border-2 border-primary/30 bg-gradient-to-br from-primary/5 to-primary/10 mt-4 overflow-hidden">
+              <CollapsibleTrigger asChild>
+                <div className="flex items-center justify-between p-4 sm:p-6 cursor-pointer hover:bg-primary/5 transition-colors">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center shadow-lg">
+                      <Sparkles className="w-5 h-5 sm:w-6 sm:h-6 text-primary-foreground" />
                     </div>
-                  </TooltipTrigger>
-                  {(!vvd || !isValoresComplete || !isAreasComplete || objetivos.length === 0) && (
-                    <TooltipContent>
-                      <p className="text-sm">
-                        Para gerar insights, preencha:<br />
-                        VVD, Valores, Roda da Vida,<br />
-                        ao menos 1 objetivo, 1 meta e 1 ação
+                    <div>
+                      <h3 className="text-lg font-semibold">Insight Personalizado</h3>
+                      <p className="text-xs sm:text-sm text-muted-foreground">
+                        Análise baseada no seu Plano de Vida
                       </p>
-                    </TooltipContent>
-                  )}
-                  {!isAdmin && !canGenerateInsight && (vvd || isValoresComplete || isAreasComplete) && (
-                    <TooltipContent>
-                      <p className="text-sm">
-                        Limite mensal atingido.<br />
-                        Próxima geração disponível em {getNextInsightDate()}
+                    </div>
+                  </div>
+                  <ChevronDown className="w-6 h-6 sm:w-5 sm:h-5 text-muted-foreground transition-transform duration-200 data-[state=open]:rotate-180" />
+                </div>
+              </CollapsibleTrigger>
+              
+              <CollapsibleContent>
+                <div className="px-4 sm:px-6 pb-4 sm:pb-6 space-y-4">
+                  {!isAdmin && !canGenerateInsight && !aiUsage.hasAvailablePurchase && (
+                    <div className="bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-800 rounded-lg p-3">
+                      <p className="text-xs sm:text-sm text-amber-900 dark:text-amber-200">
+                        <strong>Limite mensal atingido.</strong> Você poderá gerar um novo insight em {getNextInsightDate()}, ou{' '}
+                        <button 
+                          onClick={() => setShowAILimitModal(true)}
+                          className="underline font-semibold hover:text-amber-700 dark:hover:text-amber-300"
+                        >
+                          compre um insight avulso por R$ 10,00
+                        </button>.
                       </p>
-                    </TooltipContent>
+                    </div>
                   )}
-                </Tooltip>
-              </TooltipProvider>
-            )}
-          </div>
+                  
+                  {!isAdmin && aiUsage.hasAvailablePurchase && (
+                    <div className="bg-green-50 dark:bg-green-950/20 border border-green-200 dark:border-green-800 rounded-lg p-3">
+                      <p className="text-xs sm:text-sm text-green-900 dark:text-green-200">
+                        <strong>Você tem 1 insight disponível!</strong> Clique no botão abaixo para gerar seu insight personalizado.
+                      </p>
+                    </div>
+                  )}
+                  
+                  {isAdmin && (
+                    <div className="bg-primary/10 border border-primary/20 rounded-lg p-3">
+                      <p className="text-xs sm:text-sm text-primary">
+                        <strong>Acesso Admin:</strong> Você tem insights ilimitados como administrador.
+                      </p>
+                    </div>
+                  )}
+                  
+                  {insight ? (
+                    <div className="space-y-4">
+                      <div className="bg-card rounded-lg p-4 border shadow-sm">
+                        <div className="prose prose-sm max-w-none whitespace-pre-line text-sm">
+                          {insight}
+                        </div>
+                      </div>
+                      {/* Botão Gerar novo insight - mostra modal de limite se necessário */}
+                      {!isAdmin && !canGenerateInsight && !aiUsage.hasAvailablePurchase ? (
+                        <Button 
+                          onClick={() => setShowAILimitModal(true)} 
+                          size="sm" 
+                          variant="outline"
+                          className="w-full sm:w-auto"
+                        >
+                          <Sparkles className="w-4 h-4 mr-2" />
+                          Gerar novo insight
+                        </Button>
+                      ) : (
+                        <Button 
+                          onClick={() => handleGenerateInsight()} 
+                          size="sm" 
+                          variant="outline"
+                          disabled={isGeneratingInsight}
+                          className="w-full sm:w-auto"
+                        >
+                          {isGeneratingInsight ? (
+                            <>
+                              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                              Gerando novo insight...
+                            </>
+                          ) : (
+                            <>
+                              <Sparkles className="w-4 h-4 mr-2" />
+                              Gerar novo insight
+                            </>
+                          )}
+                        </Button>
+                      )}
+                    </div>
+                  ) : (
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <div className="inline-block w-full">
+                            <Button 
+                              onClick={() => handleGenerateInsight()} 
+                              disabled={isGeneratingInsight || (!vvd && !isValoresComplete && !isAreasComplete)}
+                              className="w-full"
+                              size="lg"
+                            >
+                              {isGeneratingInsight ? (
+                                <>
+                                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                                  Gerando insight...
+                                </>
+                              ) : (
+                                <>
+                                  <Sparkles className="w-4 h-4 mr-2" />
+                                  Gerar Insight
+                                </>
+                              )}
+                            </Button>
+                          </div>
+                        </TooltipTrigger>
+                        {(!vvd || !isValoresComplete || !isAreasComplete || objetivos.length === 0) && (
+                          <TooltipContent>
+                            <p className="text-sm">
+                              Para gerar insights, preencha:<br />
+                              VVD, Valores, Roda da Vida,<br />
+                              ao menos 1 objetivo, 1 meta e 1 ação
+                            </p>
+                          </TooltipContent>
+                        )}
+                        {!isAdmin && !canGenerateInsight && (vvd || isValoresComplete || isAreasComplete) && (
+                          <TooltipContent>
+                            <p className="text-sm">
+                              Limite mensal atingido.<br />
+                              Próxima geração disponível em {getNextInsightDate()}
+                            </p>
+                          </TooltipContent>
+                        )}
+                      </Tooltip>
+                    </TooltipProvider>
+                  )}
+                </div>
+              </CollapsibleContent>
+            </div>
+          </Collapsible>
         </CardContent>
       </Card>
 
