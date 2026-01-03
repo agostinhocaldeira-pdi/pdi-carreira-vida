@@ -970,22 +970,23 @@ const PlanoDeVida = ({ onTabChange, onOpenChange, forcedTab, forcedOpen }: Plano
                   <div className="px-3 sm:px-4 pb-4 pt-2 space-y-6 border-t border-border/50 overflow-x-hidden w-full max-w-full min-w-0 box-border">
                     {/* VVD */}
                     <div className="space-y-2">
-                      <Label htmlFor="vvd">Minha Visão de Vida Desejada</Label>
+                      <Label htmlFor="vvd" className="text-sm">Minha Visão de Vida Desejada</Label>
                       <Textarea
                         id="vvd"
                         placeholder="Clique no link abaixo para fazer seu VVD"
                         value={vvd}
                         onChange={(e) => setVvd(e.target.value)}
-                        rows={4}
+                        rows={3}
                         disabled
                         spellCheck="true"
+                        className="text-sm"
                       />
                       <Link 
                         to="/ferramentas/metodo-vvd" 
-                        className="flex flex-wrap items-center gap-2 text-sm text-primary hover:underline max-w-full"
+                        className="flex items-center gap-2 text-xs sm:text-sm text-primary hover:underline"
                       >
-                        Como criar seu VVD
-                        <ArrowRight className="w-4 h-4" />
+                        <span>Como criar seu VVD</span>
+                        <ArrowRight className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0" />
                       </Link>
                     </div>
 
@@ -1008,17 +1009,17 @@ const PlanoDeVida = ({ onTabChange, onOpenChange, forcedTab, forcedOpen }: Plano
                       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                         <Link 
                           to="/ferramentas/valores" 
-                          className="flex flex-wrap items-center gap-2 text-sm text-primary hover:underline max-w-full"
+                          className="flex items-center gap-2 text-xs sm:text-sm text-primary hover:underline max-w-full truncate"
                         >
-                          Descobrir meus valores
-                          <ArrowRight className="w-4 h-4" />
+                          <span className="truncate">Descobrir valores</span>
+                          <ArrowRight className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0" />
                         </Link>
                         
                         <div className="flex gap-2 w-full sm:w-auto justify-end">
                           {!isEditingValores && (
-                            <Button onClick={handleEditValores} size="sm" variant="outline">
-                              <Edit className="w-4 h-4 mr-2" />
-                              Editar
+                            <Button onClick={handleEditValores} size="sm" variant="outline" className="text-xs sm:text-sm px-2 sm:px-3">
+                              <Edit className="w-3 h-3 sm:w-4 sm:h-4 sm:mr-2" />
+                              <span className="hidden sm:inline">Editar</span>
                             </Button>
                           )}
                           <Button 
@@ -1026,6 +1027,7 @@ const PlanoDeVida = ({ onTabChange, onOpenChange, forcedTab, forcedOpen }: Plano
                             size="sm" 
                             variant="outline"
                             disabled={!isValoresComplete || !isEditingValores}
+                            className="text-xs sm:text-sm px-2 sm:px-3"
                           >
                             Salvar
                           </Button>
@@ -1082,13 +1084,13 @@ const PlanoDeVida = ({ onTabChange, onOpenChange, forcedTab, forcedOpen }: Plano
                         </div>
                       )}
 
-                      <div className="flex items-center justify-start gap-4">
+                      <div className="flex items-center justify-start">
                         <Link 
                           to="/roda-da-vida" 
-                          className="flex flex-wrap items-center gap-2 text-sm text-primary hover:underline max-w-full"
+                          className="flex items-center gap-2 text-xs sm:text-sm text-primary hover:underline"
                         >
-                          Acessar a Roda da Vida para editar
-                          <ArrowRight className="w-4 h-4" />
+                          <span className="truncate">Acessar Roda da Vida</span>
+                          <ArrowRight className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0" />
                         </Link>
                       </div>
                     </div>
@@ -1204,9 +1206,10 @@ const PlanoDeVida = ({ onTabChange, onOpenChange, forcedTab, forcedOpen }: Plano
                           />
                         </div>
 
-                        <Button onClick={handleSaveObjetivo} className="w-full">
-                          <Plus className="w-4 h-4 mr-2" />
-                          Cadastrar Objetivo
+                        <Button onClick={handleSaveObjetivo} className="w-full text-sm">
+                          <Plus className="w-4 h-4 mr-1 sm:mr-2" />
+                          <span className="sm:hidden">Cadastrar</span>
+                          <span className="hidden sm:inline">Cadastrar Objetivo</span>
                         </Button>
                       </div>
 
@@ -1214,7 +1217,7 @@ const PlanoDeVida = ({ onTabChange, onOpenChange, forcedTab, forcedOpen }: Plano
                       {isLoading ? (
                         <div className="py-6">
                           <PDILoader 
-                            text="Carregando seus objetivos..." 
+                            text="Carregando objetivos..." 
                             size="md" 
                             variant="target" 
                           />
@@ -1222,7 +1225,45 @@ const PlanoDeVida = ({ onTabChange, onOpenChange, forcedTab, forcedOpen }: Plano
                       ) : objetivos.length > 0 ? (
                         <div className="space-y-3 max-w-full overflow-hidden">
                           <h4 className="font-medium text-sm">Objetivos Cadastrados</h4>
-                          <div className="rounded-lg border overflow-x-auto max-w-full">
+                          {/* Mobile - Cards */}
+                          <div className="md:hidden space-y-3">
+                            {objetivos.map((obj) => (
+                              <div key={obj.id} className="rounded-lg border p-3 bg-card space-y-2">
+                                <div className="flex items-start justify-between gap-2">
+                                  <p className="text-sm font-medium flex-1 line-clamp-2">{obj.texto}</p>
+                                  <div className="flex gap-1 flex-shrink-0">
+                                    <Button variant="ghost" size="sm" className="h-8 w-8 p-0" onClick={() => handleStartEditObjetivo(obj)}>
+                                      <Pencil className="w-4 h-4" />
+                                    </Button>
+                                    <Button variant="ghost" size="sm" className="h-8 w-8 p-0" onClick={() => handleRemoveObjetivo(obj.id)}>
+                                      <Trash2 className="w-4 h-4 text-red-600" />
+                                    </Button>
+                                  </div>
+                                </div>
+                                <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
+                                  <span>{new Date(obj.dataAlvo).toLocaleDateString("pt-BR")}</span>
+                                  <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${
+                                    obj.status === "concluido" ? "bg-success/15 text-success" :
+                                    obj.status === "em-andamento" ? "bg-primary/15 text-primary" :
+                                    obj.status === "pausado" ? "bg-warning/15 text-warning" :
+                                    obj.status === "a-iniciar" ? "bg-secondary/20 text-secondary" :
+                                    "bg-muted text-muted-foreground"
+                                  }`}>
+                                    {obj.status === "em-andamento" ? "Em andamento" :
+                                     obj.status === "concluido" ? "Concluído" :
+                                     obj.status === "pausado" ? "Pausado" :
+                                     obj.status === "a-iniciar" ? "A iniciar" : "Pendente"}
+                                  </span>
+                                </div>
+                                {obj.conexaoVvd && (
+                                  <p className="text-xs text-muted-foreground line-clamp-2">{obj.conexaoVvd}</p>
+                                )}
+                                <OKRLinkSection objetivoId={obj.id.toString()} objetivoTexto={obj.texto} />
+                              </div>
+                            ))}
+                          </div>
+                          {/* Desktop - Table */}
+                          <div className="hidden md:block rounded-lg border overflow-x-auto max-w-full">
                             <Table>
                               <TableHeader>
                                 <TableRow>
@@ -1450,10 +1491,11 @@ const PlanoDeVida = ({ onTabChange, onOpenChange, forcedTab, forcedOpen }: Plano
                           variant="outline" 
                           size="sm"
                           onClick={handleAddHabilidade}
-                          className="mt-2"
+                          className="mt-2 text-xs sm:text-sm"
                         >
-                          <Plus className="w-4 h-4 mr-2" />
-                          Adicionar Habilidade
+                          <Plus className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
+                          <span className="sm:hidden">Adicionar</span>
+                          <span className="hidden sm:inline">Adicionar Habilidade</span>
                         </Button>
 
                         {habilidades.length > 0 && (
@@ -1531,10 +1573,10 @@ const PlanoDeVida = ({ onTabChange, onOpenChange, forcedTab, forcedOpen }: Plano
 
                         <Link 
                           to="/ferramentas" 
-                          className="flex flex-wrap items-center gap-2 text-sm text-primary hover:underline mt-2 max-w-full"
+                          className="flex items-center gap-2 text-xs sm:text-sm text-primary hover:underline mt-2"
                         >
-                          Ferramenta de Habilidades (FF)
-                          <ExternalLink className="w-4 h-4" />
+                          <span className="truncate">Ferramentas (FF)</span>
+                          <ExternalLink className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0" />
                         </Link>
                       </div>
                     </div>
