@@ -269,7 +269,7 @@ const PlanoVidaParaOnde = () => {
                         <CardDescription className="text-xs font-bold">Crie objetivos que te conectam a quem você é. Utilize o insight acima para refletir sobre isso.</CardDescription>
                       </div>
                     </div>
-                    <ChevronDown className="w-5 h-5 text-muted-foreground transition-transform duration-200 data-[state=open]:rotate-180" />
+                    <ChevronDown className="w-7 h-7 sm:w-6 sm:h-6 text-muted-foreground transition-transform duration-200 data-[state=open]:rotate-180" />
                   </div>
                 </CardHeader>
               </CollapsibleTrigger>
