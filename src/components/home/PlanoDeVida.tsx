@@ -1500,7 +1500,7 @@ const PlanoDeVida = ({ onTabChange, onOpenChange, forcedTab, forcedOpen }: Plano
 
                         {habilidades.length > 0 && (
                           <div className="rounded-lg border overflow-x-auto max-w-full">
-                            <Table>
+                            <Table className="w-full table-fixed">
                               <TableHeader>
                                 <TableRow>
                                   <TableHead className="text-xs sm:text-sm">Habilidade</TableHead>
@@ -1521,7 +1521,7 @@ const PlanoDeVida = ({ onTabChange, onOpenChange, forcedTab, forcedOpen }: Plano
                                             spellCheck="true"
                                           />
                                         ) : (
-                                          habilidade.texto
+                                           <span className="block max-w-full break-words whitespace-normal [overflow-wrap:anywhere]">{habilidade.texto}</span>
                                         )}
                                       </TableCell>
                                       <TableCell>
