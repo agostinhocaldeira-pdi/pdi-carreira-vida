@@ -199,21 +199,6 @@ const Landing = () => {
           <p className="text-base sm:text-lg md:text-xl text-muted-foreground leading-relaxed mb-6">
             Você não está perdido, mas talvez sinta que falta um controle mais firme sobre os próximos passos.
           </p>
-          
-          <ul className="text-left max-w-xl mx-auto space-y-3 text-base sm:text-lg text-muted-foreground">
-            <li className="flex items-start gap-3">
-              <span className="text-primary mt-1">•</span>
-              <span>Decidir prioridades fica mais difícil.</span>
-            </li>
-            <li className="flex items-start gap-3">
-              <span className="text-primary mt-1">•</span>
-              <span>O médio prazo vira algo nebuloso.</span>
-            </li>
-            <li className="flex items-start gap-3">
-              <span className="text-primary mt-1">•</span>
-              <span>E a sensação é de estar sempre resolvendo o agora.</span>
-            </li>
-          </ul>
         </div>
       </section>
 
