@@ -608,11 +608,12 @@ const MaoNaMassa = ({ embedded = false }: MaoNaMassaProps) => {
               <CollapsibleTrigger asChild>
                 <Button 
                   variant="outline" 
-                  className="gap-2 hover:bg-primary/10 hover:border-primary transition-all shadow-sm"
+                  className="gap-2 hover:bg-primary/10 hover:border-primary transition-all shadow-sm text-xs sm:text-sm"
                 >
-                  <Plus className="w-4 h-4" />
-                  {isFormOpen ? "Ocultar Formulário" : "Cadastrar Nova Meta"}
-                  <ChevronDown className={`w-4 h-4 transition-transform duration-300 ${isFormOpen ? "rotate-180" : ""}`} />
+                  <Plus className="w-3 h-3 sm:w-4 sm:h-4" />
+                  <span className="sm:hidden">{isFormOpen ? "Ocultar" : "Nova Meta"}</span>
+                  <span className="hidden sm:inline">{isFormOpen ? "Ocultar Formulário" : "Cadastrar Nova Meta"}</span>
+                  <ChevronDown className={`w-3 h-3 sm:w-4 sm:h-4 transition-transform duration-300 ${isFormOpen ? "rotate-180" : ""}`} />
                 </Button>
               </CollapsibleTrigger>
             </div>
@@ -898,10 +899,11 @@ const MaoNaMassa = ({ embedded = false }: MaoNaMassaProps) => {
                 size="sm"
                 onClick={handleAddAcao}
                 disabled={!objetivoSelecionado}
-                className="mt-2"
+                className="mt-2 text-xs sm:text-sm"
               >
-                <Plus className="w-4 h-4 mr-2" />
-                Adicionar Ação
+                <Plus className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
+                <span className="sm:hidden">Adicionar</span>
+                <span className="hidden sm:inline">Adicionar Ação</span>
               </Button>
             </div>
 
@@ -929,10 +931,11 @@ const MaoNaMassa = ({ embedded = false }: MaoNaMassaProps) => {
                 size="sm"
                 onClick={handleAddPasso}
                 disabled={!objetivoSelecionado}
-                className="mt-2"
+                className="mt-2 text-xs sm:text-sm"
               >
-                <Plus className="w-4 h-4 mr-2" />
-                Cadastrar Mais Passos
+                <Plus className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
+                <span className="sm:hidden">Adicionar</span>
+                <span className="hidden sm:inline">Cadastrar Mais Passos</span>
               </Button>
 
               {passos.length > 0 && (
@@ -1008,8 +1011,12 @@ const MaoNaMassa = ({ embedded = false }: MaoNaMassaProps) => {
               )}
             </div>
 
-                <Button onClick={handleSaveMeta} className="w-full" size="lg" disabled={!objetivoSelecionado}>
-                  {editandoMetaId ? "Atualizar Meta" : "Cadastrar Meta"}
+                <Button onClick={handleSaveMeta} className="w-full text-sm" size="lg" disabled={!objetivoSelecionado || isSaving}>
+                  {isSaving ? (
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  ) : null}
+                  <span className="sm:hidden">{editandoMetaId ? "Atualizar" : "Cadastrar"}</span>
+                  <span className="hidden sm:inline">{editandoMetaId ? "Atualizar Meta" : "Cadastrar Meta"}</span>
                 </Button>
               </div>
             </CollapsibleContent>
@@ -1060,10 +1067,11 @@ const MaoNaMassa = ({ embedded = false }: MaoNaMassaProps) => {
                 setShowSuggestionModal(false);
                 navigate('/ferramentas/eisenhower');
               }}
-              className="w-full sm:w-auto gap-2"
+              className="w-full sm:w-auto gap-2 text-xs sm:text-sm"
             >
               <LayoutGrid className="w-4 h-4" />
-              Ir para Matriz de Eisenhower
+              <span className="sm:hidden">Ir para Matriz</span>
+              <span className="hidden sm:inline">Ir para Matriz de Eisenhower</span>
               <ArrowRight className="w-4 h-4" />
             </Button>
           </DialogFooter>
