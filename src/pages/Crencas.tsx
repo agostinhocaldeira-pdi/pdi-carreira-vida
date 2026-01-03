@@ -584,12 +584,12 @@ const Crencas = () => {
 
       <main className="container mx-auto px-4 py-8 max-w-4xl">
         {/* Link para modal científico */}
-        <div className="mb-4">
+        <div className="mb-6">
           <button
             onClick={() => setIsBeliefsModalOpen(true)}
-            className="inline-flex items-center gap-2 text-sm text-primary hover:text-primary/80 hover:underline transition-colors"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/30 text-primary font-medium text-sm hover:bg-primary/20 hover:border-primary/50 transition-all duration-200 shadow-sm hover:shadow-md"
           >
-            <HelpCircle className="w-4 h-4" />
+            <Sparkles className="w-4 h-4" />
             Entenda a importância de transformar suas crenças limitantes
           </button>
         </div>

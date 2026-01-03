@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Link } from "react-router-dom";
-import { ArrowLeft, Home, TrendingUp, AlertTriangle, Target, Shield, Plus, Trash2, CheckCircle2, Lightbulb, HelpCircle } from "lucide-react";
+import { ArrowLeft, Home, TrendingUp, AlertTriangle, Target, Shield, Plus, Trash2, CheckCircle2, Lightbulb, HelpCircle, Sparkles } from "lucide-react";
 import { toast } from "sonner";
 import LogoutButton from "@/components/LogoutButton";
 import ConfirmDeleteDialog from "@/components/ConfirmDeleteDialog";
@@ -235,9 +235,9 @@ const AnaliseSwot = () => {
               </p>
               <button
                 onClick={() => setIsSwotModalOpen(true)}
-                className="flex items-center gap-1 text-sm text-primary hover:text-primary/80 hover:underline transition-colors mt-2"
+                className="mt-3 inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/30 text-primary font-medium text-sm hover:bg-primary/20 hover:border-primary/50 transition-all duration-200 shadow-sm hover:shadow-md"
               >
-                <HelpCircle className="w-4 h-4" />
+                <Sparkles className="w-4 h-4" />
                 Entenda a importância de saber claramente sobre suas forças e fraquezas
               </button>
             </div>

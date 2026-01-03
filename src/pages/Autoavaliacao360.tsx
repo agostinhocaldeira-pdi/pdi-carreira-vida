@@ -369,9 +369,9 @@ Agora, com base em todas essas respostas acima, faça a análise profunda solici
                 <h1 className="text-2xl font-bold">Autoavaliação + 360º</h1>
                 <button
                   onClick={() => setIsScientificModalOpen(true)}
-                  className="text-sm text-primary hover:text-primary/80 flex items-center gap-1 mt-1"
+                  className="mt-2 inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 border border-primary/30 text-primary font-medium text-sm hover:bg-primary/20 hover:border-primary/50 transition-all duration-200 shadow-sm hover:shadow-md"
                 >
-                  <HelpCircle className="w-4 h-4" />
+                  <Sparkles className="w-4 h-4" />
                   Entenda a importância de uma visão completa de si mesmo
                 </button>
               </div>
