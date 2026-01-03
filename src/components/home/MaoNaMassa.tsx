@@ -945,7 +945,7 @@ const MaoNaMassa = ({ embedded = false }: MaoNaMassaProps) => {
             </div>
 
             <div className="space-y-3">
-              <Label>Passos</Label>
+              <Label>Passos das ações</Label>
 
               <div className="flex gap-2 p-3 sm:p-4 bg-muted/30 rounded-lg">
                 <Input
