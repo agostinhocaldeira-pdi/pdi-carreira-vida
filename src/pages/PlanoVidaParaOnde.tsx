@@ -9,7 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { Target, ArrowRight, ArrowLeft, Home, Plus, Trash2, Pencil, Check, X, ChevronDown } from "lucide-react";
+import { Target, ArrowRight, ArrowLeft, Home, Plus, Trash2, Pencil, Check, X, ChevronDown, Lightbulb } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { PDILoader } from "@/components/ui/pdi-loader";
 import { toast } from "sonner";
@@ -62,6 +62,9 @@ const PlanoVidaParaOnde = () => {
   // Estados para confirmação de exclusão
   const [deleteObjetivoId, setDeleteObjetivoId] = useState<string | number | null>(null);
 
+  // Estado para insight inicial
+  const [insightInicial, setInsightInicial] = useState("");
+
   // Carregar dados salvos
   useEffect(() => {
     const loadData = async () => {
@@ -82,6 +85,13 @@ const PlanoVidaParaOnde = () => {
           if (localObjetivos) {
             setObjetivos(JSON.parse(localObjetivos));
           }
+        }
+
+        // Load insight inicial
+        const savedInsightInicial = localStorage.getItem("insightInicial");
+        if (savedInsightInicial) {
+          const parsed = JSON.parse(savedInsightInicial);
+          setInsightInicial(parsed.insight || "");
         }
       } catch (error) {
         console.error("Error loading data:", error);
@@ -242,6 +252,33 @@ const PlanoVidaParaOnde = () => {
           </Button>
           <LogoutButton />
         </div>
+
+        {/* Insight Inicial - Read Only */}
+        {insightInicial && (
+          <Card className="border-accent/30 bg-gradient-to-br from-accent/5 to-background">
+            <CardHeader className="pb-3">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-accent to-accent/60 flex items-center justify-center shadow-md">
+                  <Lightbulb className="w-5 h-5 text-accent-foreground" />
+                </div>
+                <div>
+                  <CardTitle className="text-base sm:text-lg">Seu Insight Inicial</CardTitle>
+                  <CardDescription className="text-xs">Quem você é - baseado no seu VVD, valores e áreas da vida</CardDescription>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              <div className="rounded-lg border bg-muted/30 p-4">
+                <p className="text-sm text-foreground/80 whitespace-pre-line leading-relaxed">
+                  {insightInicial}
+                </p>
+              </div>
+              <p className="text-xs sm:text-sm text-muted-foreground italic text-center">
+                Crie objetivos que te conectam a quem você é. Utilize o insight acima para refletir sobre isso.
+              </p>
+            </CardContent>
+          </Card>
+        )}
 
         <Card className="shadow-medium overflow-hidden">
           <CardHeader className="pb-4">
