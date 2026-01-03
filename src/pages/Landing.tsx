@@ -110,16 +110,16 @@ const Landing = () => {
         
         <div className="container relative mx-auto max-w-4xl text-center">
           <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-6 text-foreground leading-tight">
-            Em algum momento, a vida cobra{" "}
-            <span className="text-primary">organização</span>.
+            Eu sei que você quer algo a mais{" "}
+            <span className="text-primary">para sua vida</span>.
           </h1>
           
           <p className="text-xl sm:text-2xl md:text-3xl text-muted-foreground mb-6 font-light">
-            A diferença é se você se antecipa… ou reage.
+            e se você deseja muito, vai conseguir
           </p>
           
           <p className="text-base sm:text-lg text-muted-foreground/80 mb-0 italic">
-            Quando tudo depende demais do improviso, até quem é competente começa a sentir o peso.
+            e aqui você vai encontrar todo o apoio que precisa!
           </p>
           
         </div>
