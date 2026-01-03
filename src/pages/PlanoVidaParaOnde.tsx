@@ -266,7 +266,7 @@ const PlanoVidaParaOnde = () => {
                       </div>
                       <div>
                         <CardTitle className="text-base sm:text-lg">Seu Insight Inicial</CardTitle>
-                        <CardDescription className="text-xs">Quem você é - baseado no seu VVD, valores e áreas da vida</CardDescription>
+                        <CardDescription className="text-xs font-bold">Crie objetivos que te conectam a quem você é. Utilize o insight acima para refletir sobre isso.</CardDescription>
                       </div>
                     </div>
                     <ChevronDown className="w-5 h-5 text-muted-foreground transition-transform duration-200 data-[state=open]:rotate-180" />
