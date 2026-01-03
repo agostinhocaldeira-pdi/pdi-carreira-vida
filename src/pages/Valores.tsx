@@ -288,9 +288,9 @@ const Valores = () => {
           {/* Link para modal explicativo */}
           <button
             onClick={() => setIsValuesModalOpen(true)}
-            className="mt-2 inline-flex items-center gap-1.5 text-xs sm:text-sm text-primary hover:text-primary/80 transition-colors underline underline-offset-4"
+            className="mt-3 inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/30 text-primary font-medium text-xs sm:text-sm hover:bg-primary/20 hover:border-primary/50 transition-all duration-200 shadow-sm hover:shadow-md"
           >
-            <HelpCircle className="w-3.5 h-3.5" />
+            <Sparkles className="w-4 h-4" />
             Entenda a importância de saber claramente seus valores
           </button>
         </div>

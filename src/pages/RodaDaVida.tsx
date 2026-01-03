@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowLeft, Edit2, Save, X, Check, Loader2, HelpCircle } from "lucide-react";
+import { ArrowLeft, Edit2, Save, X, Check, Loader2, HelpCircle, Sparkles } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer, Legend } from "recharts";
 import { toast } from "sonner";
@@ -149,9 +149,9 @@ export default function RodaDaVida() {
             </CardDescription>
             <button
               onClick={() => setIsLifeWheelModalOpen(true)}
-              className="flex items-center gap-2 text-primary hover:text-primary/80 text-sm mt-3 transition-colors"
+              className="mt-4 inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/30 text-primary font-medium text-sm hover:bg-primary/20 hover:border-primary/50 transition-all duration-200 shadow-sm hover:shadow-md"
             >
-              <HelpCircle className="h-4 w-4" />
+              <Sparkles className="h-4 w-4" />
               Entenda a importância de saber claramente sobre suas áreas da vida
             </button>
           </CardHeader>
