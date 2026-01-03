@@ -625,25 +625,6 @@ const PlanoVidaQuemSou = () => {
           </CardContent>
         </Card>
 
-        {/* Next Step Section */}
-        <Card className="shadow-medium border-primary/20 bg-gradient-to-br from-primary/5 to-background">
-          <CardContent className="p-5 sm:p-6 text-center space-y-4">
-            <Button 
-              onClick={() => navigate("/plano-vida/para-onde")} 
-              size="lg"
-              className="gap-2 w-full sm:w-auto"
-            >
-              <Target className="w-5 h-5" />
-              Para onde vou
-              <ArrowRight className="w-5 h-5" />
-            </Button>
-            <p className="text-sm text-muted-foreground max-w-lg mx-auto">
-              Agora que você tem mais clareza sobre quem você é, o próximo passo é criar um objetivo 
-              para conquistar o que realmente deseja.
-            </p>
-          </CardContent>
-        </Card>
-
         {/* Navigation */}
         <div className="flex justify-between">
           <Button variant="outline" onClick={() => navigate("/home")} className="gap-2">
