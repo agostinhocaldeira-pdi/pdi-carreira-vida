@@ -61,12 +61,14 @@ const MaoNaMassa = ({ embedded = false }: MaoNaMassaProps) => {
     acao: string;
     periodicidade: string;
     status: string;
+    dataPontual?: string;
   }>>([]);
 
   const [novaAcao, setNovaAcao] = useState({
     acao: "",
     periodicidade: "",
     status: "a-fazer",
+    dataPontual: "",
   });
 
   const [editandoId, setEditandoId] = useState<number | null>(null);
@@ -74,6 +76,7 @@ const MaoNaMassa = ({ embedded = false }: MaoNaMassaProps) => {
     acao: string;
     periodicidade: string;
     status: string;
+    dataPontual?: string;
   } | null>(null);
 
   const [passos, setPassos] = useState<Array<{
@@ -145,7 +148,7 @@ const MaoNaMassa = ({ embedded = false }: MaoNaMassaProps) => {
     }
 
     setAcoes([...acoes, { ...novaAcao, id: Date.now() }]);
-    setNovaAcao({ acao: "", periodicidade: "", status: "a-fazer" });
+    setNovaAcao({ acao: "", periodicidade: "", status: "a-fazer", dataPontual: "" });
     setShowActionCreatedModal(true);
     celebrateAction('action', novaAcao.acao);
   };
@@ -168,6 +171,7 @@ const MaoNaMassa = ({ embedded = false }: MaoNaMassaProps) => {
       acao: acao.acao,
       periodicidade: acao.periodicidade,
       status: acao.status,
+      dataPontual: acao.dataPontual || "",
     });
   };
 
@@ -727,13 +731,14 @@ const MaoNaMassa = ({ embedded = false }: MaoNaMassaProps) => {
                   <Label htmlFor="nova-periodicidade" className="text-xs">Periodicidade</Label>
                   <Select
                     value={novaAcao.periodicidade}
-                    onValueChange={(value) => setNovaAcao({ ...novaAcao, periodicidade: value })}
+                    onValueChange={(value) => setNovaAcao({ ...novaAcao, periodicidade: value, dataPontual: value !== "pontual" ? "" : novaAcao.dataPontual })}
                     disabled={!objetivoSelecionado}
                   >
                     <SelectTrigger id="nova-periodicidade" className="text-sm">
                       <SelectValue placeholder="Selecione" />
                     </SelectTrigger>
                     <SelectContent>
+                      <SelectItem value="pontual">Pontual (única vez)</SelectItem>
                       <SelectItem value="diariamente">Diariamente</SelectItem>
                       <SelectItem value="semanalmente">Semanalmente</SelectItem>
                       <SelectItem value="mensalmente">Mensalmente</SelectItem>
@@ -743,6 +748,20 @@ const MaoNaMassa = ({ embedded = false }: MaoNaMassaProps) => {
                     </SelectContent>
                   </Select>
                 </div>
+
+                {novaAcao.periodicidade === "pontual" && (
+                  <div className="space-y-2">
+                    <Label htmlFor="data-pontual" className="text-xs">Data de execução</Label>
+                    <Input
+                      id="data-pontual"
+                      type="date"
+                      value={novaAcao.dataPontual}
+                      onChange={(e) => setNovaAcao({ ...novaAcao, dataPontual: e.target.value })}
+                      className="text-sm"
+                      disabled={!objetivoSelecionado}
+                    />
+                  </div>
+                )}
 
                 <div className="space-y-2 sm:col-span-2 lg:col-span-1">
                   <Label htmlFor="novo-status" className="text-xs">Status</Label>
@@ -793,24 +812,42 @@ const MaoNaMassa = ({ embedded = false }: MaoNaMassaProps) => {
                             </TableCell>
                             <TableCell>
                               {isEditing ? (
-                                <Select
-                                  value={acaoEditada?.periodicidade || ""}
-                                  onValueChange={(value) => setAcaoEditada({ ...acaoEditada!, periodicidade: value })}
-                                >
-                                  <SelectTrigger>
-                                    <SelectValue />
-                                  </SelectTrigger>
-                                  <SelectContent>
-                                    <SelectItem value="diariamente">Diariamente</SelectItem>
-                                    <SelectItem value="semanalmente">Semanalmente</SelectItem>
-                                    <SelectItem value="mensalmente">Mensalmente</SelectItem>
-                                    <SelectItem value="trimestral">Trimestral</SelectItem>
-                                    <SelectItem value="semestral">Semestral</SelectItem>
-                                    <SelectItem value="anual">Anual</SelectItem>
-                                  </SelectContent>
-                                </Select>
+                                <div className="space-y-2">
+                                  <Select
+                                    value={acaoEditada?.periodicidade || ""}
+                                    onValueChange={(value) => setAcaoEditada({ ...acaoEditada!, periodicidade: value, dataPontual: value !== "pontual" ? "" : acaoEditada?.dataPontual })}
+                                  >
+                                    <SelectTrigger>
+                                      <SelectValue />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                      <SelectItem value="pontual">Pontual (única vez)</SelectItem>
+                                      <SelectItem value="diariamente">Diariamente</SelectItem>
+                                      <SelectItem value="semanalmente">Semanalmente</SelectItem>
+                                      <SelectItem value="mensalmente">Mensalmente</SelectItem>
+                                      <SelectItem value="trimestral">Trimestral</SelectItem>
+                                      <SelectItem value="semestral">Semestral</SelectItem>
+                                      <SelectItem value="anual">Anual</SelectItem>
+                                    </SelectContent>
+                                  </Select>
+                                  {acaoEditada?.periodicidade === "pontual" && (
+                                    <Input
+                                      type="date"
+                                      value={acaoEditada?.dataPontual || ""}
+                                      onChange={(e) => setAcaoEditada({ ...acaoEditada!, dataPontual: e.target.value })}
+                                      className="text-sm"
+                                    />
+                                  )}
+                                </div>
                               ) : (
-                                <span className="capitalize">{acao.periodicidade}</span>
+                                <div className="space-y-1">
+                                  <span className="capitalize">{acao.periodicidade === "pontual" ? "Pontual" : acao.periodicidade}</span>
+                                  {acao.periodicidade === "pontual" && acao.dataPontual && (
+                                    <div className="text-xs text-muted-foreground">
+                                      {new Date(acao.dataPontual + 'T00:00:00').toLocaleDateString('pt-BR')}
+                                    </div>
+                                  )}
+                                </div>
                               )}
                             </TableCell>
                             <TableCell>
