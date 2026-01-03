@@ -6,7 +6,8 @@ import { Badge } from "@/components/ui/badge";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Link, useNavigate } from "react-router-dom";
-import { Target, TrendingUp, BookOpen, MessagesSquare, Book, Sparkles, User, Zap, Star, Shield, Lock, ChevronDown, AlertCircle, Link2, Users, Bell, HelpCircle, FileText } from "lucide-react";
+import { Target, TrendingUp, BookOpen, MessagesSquare, Book, Sparkles, User, Zap, Star, Shield, Lock, ChevronDown, AlertCircle, Link2, Users, Bell, HelpCircle, FileText, ClipboardCheck } from "lucide-react";
+import { DailyCheckout } from "@/components/gamification/DailyCheckout";
 import ProgressSection from "@/components/home/ProgressSection";
 
 import PlanoDeVida from "@/components/home/PlanoDeVida";
@@ -40,6 +41,7 @@ const Home = () => {
   const [motivationalQuote, setMotivationalQuote] = useState("");
   const [recursosOpen, setRecursosOpen] = useState(false);
   const [showDiaryWarningModal, setShowDiaryWarningModal] = useState(false);
+  const [checkoutOpen, setCheckoutOpen] = useState(true);
   
   // Estados para notificações
   const [unreadSupportMessages, setUnreadSupportMessages] = useState(0);
@@ -342,6 +344,30 @@ const Home = () => {
       <main className="container mx-auto px-3 sm:px-4 py-4 sm:py-8 space-y-4 sm:space-y-8">
         {/* Trial Status Banner */}
         <TrialStatusBanner />
+
+        {/* Daily Checkout Section */}
+        <section className="animate-slide-up">
+          <Collapsible open={checkoutOpen} onOpenChange={setCheckoutOpen}>
+            <Card className="border-primary/20 bg-gradient-to-br from-background to-primary/5">
+              <CollapsibleTrigger asChild>
+                <CardHeader className="cursor-pointer hover:bg-primary/5 transition-colors py-3 sm:py-4">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <ClipboardCheck className="h-5 w-5 text-primary" />
+                      <CardTitle className="text-base sm:text-lg">Check-out do Dia</CardTitle>
+                    </div>
+                    <ChevronDown className={`h-5 w-5 text-muted-foreground transition-transform duration-200 ${checkoutOpen ? 'rotate-180' : ''}`} />
+                  </div>
+                </CardHeader>
+              </CollapsibleTrigger>
+              <CollapsibleContent>
+                <CardContent className="pt-0">
+                  <DailyCheckout />
+                </CardContent>
+              </CollapsibleContent>
+            </Card>
+          </Collapsible>
+        </section>
 
         {/* Stoic Reflection Section */}
         <section className="animate-slide-up">
