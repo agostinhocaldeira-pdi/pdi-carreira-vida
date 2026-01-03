@@ -364,17 +364,24 @@ const PlanoVidaComoChegar = () => {
                 <div className="p-4 sm:p-6 rounded-xl border-2 border-accent/30 bg-gradient-to-br from-accent/5 to-transparent max-w-full overflow-hidden w-full box-border">
                   <MaoNaMassa embedded />
                 </div>
+
+                {/* Link para voltar a Para onde vou */}
+                <div className="pt-4 flex flex-col items-center gap-2">
+                  <Button variant="outline" onClick={() => navigate("/plano-vida/para-onde")} className="gap-2">
+                    <ArrowLeft className="w-4 h-4" />
+                    Anterior: Para onde vou
+                  </Button>
+                  <p className="text-sm text-muted-foreground text-center">
+                    Retorne, caso precise fazer algum ajuste em seus objetivos
+                  </p>
+                </div>
               </>
             )}
           </CardContent>
         </Card>
 
         {/* Navigation */}
-        <div className="flex justify-between">
-          <Button variant="outline" onClick={() => navigate("/plano-vida/para-onde")} className="gap-2">
-            <ArrowLeft className="w-4 h-4" />
-            Anterior: Para onde vou
-          </Button>
+        <div className="flex justify-center">
           <Button variant="outline" onClick={() => navigate("/home")} className="gap-2">
             <Home className="w-4 h-4" />
             Voltar à Home
