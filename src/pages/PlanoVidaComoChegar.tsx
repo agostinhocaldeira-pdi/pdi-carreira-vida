@@ -210,7 +210,7 @@ const PlanoVidaComoChegar = () => {
             ) : (
               <>
                 {/* Seção: Habilidades a Desenvolver */}
-                <div className="space-y-4 w-full overflow-hidden">
+                <div className="p-4 sm:p-6 rounded-xl border-2 border-primary/20 bg-gradient-to-br from-primary/5 to-transparent space-y-4 w-full overflow-hidden">
                   <div className="flex items-center gap-2 mb-2">
                     <Lightbulb className="w-5 h-5 text-primary" />
                     <h3 className="text-lg font-semibold">Habilidades a Desenvolver</h3>
@@ -361,11 +361,7 @@ const PlanoVidaComoChegar = () => {
                 </div>
 
                 {/* Seção: Mão na Massa */}
-                <div className="pt-6 border-t border-border/50 max-w-full overflow-hidden w-full box-border">
-                  <div className="flex items-center gap-2 mb-4">
-                    <Lightbulb className="w-5 h-5 text-primary" />
-                    <h3 className="text-lg font-semibold">Mão na Massa</h3>
-                  </div>
+                <div className="p-4 sm:p-6 rounded-xl border-2 border-accent/30 bg-gradient-to-br from-accent/5 to-transparent max-w-full overflow-hidden w-full box-border">
                   <MaoNaMassa embedded />
                 </div>
               </>
