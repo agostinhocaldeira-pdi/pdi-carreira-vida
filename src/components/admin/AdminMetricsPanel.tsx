@@ -28,96 +28,105 @@ const AdminMetricsPanel = () => {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
+  const fetchMetrics = async () => {
+    setLoading(true);
+    try {
+      // Get session for auth header
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      // Fetch all metrics in parallel
+      const [
+        usersResponse,
+        companiesResult,
+        managersResult,
+        employeesResult,
+        objectivesResult,
+        goalsResult,
+        actionsResult,
+        diaryResult
+      ] = await Promise.all([
+        // Total users from edge function (accurate count with email filter)
+        fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/get-admin-users`, {
+          headers: {
+            'Authorization': `Bearer ${session?.access_token}`,
+            'Content-Type': 'application/json'
+          }
+        }).then(res => res.json()),
+        // Total companies
+        supabase.from('companies').select('id', { count: 'exact' }),
+        // All managers
+        supabase.from('company_managers').select('id, accepted_at', { count: 'exact' }),
+        // All employees  
+        supabase.from('company_employees').select('id, accepted_at', { count: 'exact' }),
+        // All objectives
+        supabase.from('user_objectives').select('id, status'),
+        // All goals
+        supabase.from('user_goals').select('id, status'),
+        // All actions
+        supabase.from('user_actions').select('id, status'),
+        // Diary entries last 30 days
+        supabase.from('diary_entries')
+          .select('id, user_id, entry_date')
+          .gte('entry_date', new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0])
+      ]);
+
+      // Calculate metrics
+      const totalUsers = usersResponse?.users?.length || 0;
+      const totalCompanies = companiesResult.count || 0;
+      
+      const managers = managersResult.data || [];
+      const totalManagers = managers.length;
+      const activeManagers = managers.filter(m => m.accepted_at).length;
+      
+      const employees = employeesResult.data || [];
+      const totalEmployees = employees.length;
+      const activeEmployees = employees.filter(e => e.accepted_at).length;
+      
+      const objectives = objectivesResult.data || [];
+      const totalObjectives = objectives.length;
+      const completedObjectives = objectives.filter(o => o.status === 'concluído').length;
+      
+      const goals = goalsResult.data || [];
+      const totalGoals = goals.length;
+      const completedGoals = goals.filter(g => g.status === 'concluído').length;
+      
+      const actions = actionsResult.data || [];
+      const totalActions = actions.length;
+      const completedActions = actions.filter(a => a.status === 'concluído').length;
+
+      const diaryEntries = diaryResult.data || [];
+      const diaryEntriesLast30Days = diaryEntries.length;
+      
+      // Unique users with diary entries in last 7 days
+      const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+      const usersWithDiaryLast7Days = new Set(
+        diaryEntries.filter(d => d.entry_date >= sevenDaysAgo).map(d => d.user_id)
+      ).size;
+
+      setMetrics({
+        totalUsers,
+        totalCompanies,
+        totalManagers,
+        totalEmployees,
+        activeManagers,
+        activeEmployees,
+        totalObjectives,
+        completedObjectives,
+        totalGoals,
+        completedGoals,
+        totalActions,
+        completedActions,
+        diaryEntriesLast30Days,
+        usersWithDiaryLast7Days
+      });
+    } catch (error) {
+      console.error('Error fetching metrics:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const fetchMetrics = async () => {
-      try {
-        // Fetch all metrics in parallel
-        const [
-          usersResult,
-          companiesResult,
-          managersResult,
-          employeesResult,
-          objectivesResult,
-          goalsResult,
-          actionsResult,
-          diaryResult
-        ] = await Promise.all([
-          // Total users (unique user_ids in user_roles)
-          supabase.from('user_roles').select('user_id', { count: 'exact' }),
-          // Total companies
-          supabase.from('companies').select('id', { count: 'exact' }),
-          // All managers
-          supabase.from('company_managers').select('id, accepted_at', { count: 'exact' }),
-          // All employees  
-          supabase.from('company_employees').select('id, accepted_at', { count: 'exact' }),
-          // All objectives
-          supabase.from('user_objectives').select('id, status'),
-          // All goals
-          supabase.from('user_goals').select('id, status'),
-          // All actions
-          supabase.from('user_actions').select('id, status'),
-          // Diary entries last 30 days
-          supabase.from('diary_entries')
-            .select('id, user_id, entry_date')
-            .gte('entry_date', new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0])
-        ]);
-
-        // Calculate metrics
-        const totalUsers = usersResult.count || 0;
-        const totalCompanies = companiesResult.count || 0;
-        
-        const managers = managersResult.data || [];
-        const totalManagers = managers.length;
-        const activeManagers = managers.filter(m => m.accepted_at).length;
-        
-        const employees = employeesResult.data || [];
-        const totalEmployees = employees.length;
-        const activeEmployees = employees.filter(e => e.accepted_at).length;
-        
-        const objectives = objectivesResult.data || [];
-        const totalObjectives = objectives.length;
-        const completedObjectives = objectives.filter(o => o.status === 'concluído').length;
-        
-        const goals = goalsResult.data || [];
-        const totalGoals = goals.length;
-        const completedGoals = goals.filter(g => g.status === 'concluído').length;
-        
-        const actions = actionsResult.data || [];
-        const totalActions = actions.length;
-        const completedActions = actions.filter(a => a.status === 'concluído').length;
-
-        const diaryEntries = diaryResult.data || [];
-        const diaryEntriesLast30Days = diaryEntries.length;
-        
-        // Unique users with diary entries in last 7 days
-        const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
-        const usersWithDiaryLast7Days = new Set(
-          diaryEntries.filter(d => d.entry_date >= sevenDaysAgo).map(d => d.user_id)
-        ).size;
-
-        setMetrics({
-          totalUsers,
-          totalCompanies,
-          totalManagers,
-          totalEmployees,
-          activeManagers,
-          activeEmployees,
-          totalObjectives,
-          completedObjectives,
-          totalGoals,
-          completedGoals,
-          totalActions,
-          completedActions,
-          diaryEntriesLast30Days,
-          usersWithDiaryLast7Days
-        });
-      } catch (error) {
-        console.error('Error fetching metrics:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchMetrics();
   }, []);
 
