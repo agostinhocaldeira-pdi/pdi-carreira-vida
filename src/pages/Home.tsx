@@ -8,6 +8,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 import { Link, useNavigate } from "react-router-dom";
 import { Target, TrendingUp, BookOpen, MessagesSquare, Book, Sparkles, User, Zap, Star, Shield, Lock, ChevronDown, AlertCircle, Link2, Users, Bell, HelpCircle, FileText, ClipboardCheck } from "lucide-react";
 import { DailyCheckout } from "@/components/gamification/DailyCheckout";
+import StoicReflectionCard from "@/components/home/StoicReflectionCard";
 import ProgressSection from "@/components/home/ProgressSection";
 
 import PlanoDeVida from "@/components/home/PlanoDeVida";
@@ -42,6 +43,7 @@ const Home = () => {
   const [recursosOpen, setRecursosOpen] = useState(false);
   const [showDiaryWarningModal, setShowDiaryWarningModal] = useState(false);
   const [checkoutOpen, setCheckoutOpen] = useState(true);
+  const [stoicOpen, setStoicOpen] = useState(true);
   
   // Estados para notificações
   const [unreadSupportMessages, setUnreadSupportMessages] = useState(0);
@@ -369,7 +371,12 @@ const Home = () => {
           </Collapsible>
         </section>
 
-        {/* Stoic Reflection Section */}
+        {/* Stoic Reflection Card - After Checkout */}
+        <section className="animate-slide-up">
+          <StoicReflectionCard isOpen={stoicOpen} onOpenChange={setStoicOpen} />
+        </section>
+
+        {/* Diary & Reflection Section */}
         <section className="animate-slide-up">
           <StoicReflectionSection />
         </section>

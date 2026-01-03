@@ -9,13 +9,10 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Calendar } from "@/components/ui/calendar";
-import { BookOpen, Calendar as CalendarIcon, Save, Check, ChevronDown, PenLine, History, Loader2, Smile, Frown, Meh } from "lucide-react";
-import StoicInteractiveExperience from "./StoicInteractiveExperience";
-import { getTodayReflection } from "@/data/stoicReflections";
+import { Calendar as CalendarIcon, Save, Check, ChevronDown, PenLine, History, Loader2, Smile, Frown, Meh } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import { toast } from "@/hooks/use-toast";
 import { toast as sonnerToast } from "sonner";
 import { useActionCelebration } from "@/contexts/ActionCelebrationContext";
 import { usePDIStorage } from "@/hooks/usePDIStorage";
@@ -25,18 +22,11 @@ import { cn } from "@/lib/utils";
 type DiaryViewMode = "registro" | "historico";
 
 const StoicReflectionSection = () => {
-  const [stoicResponse, setStoicResponse] = useState("");
-  const [originalStoicResponse, setOriginalStoicResponse] = useState("");
-  const [isSavingStoic, setIsSavingStoic] = useState(false);
-  const [isStoicSaved, setIsStoicSaved] = useState(false);
   const { celebrateAction } = useActionCelebration();
   
-  const { date, reflection } = getTodayReflection();
-  const formattedDate = format(date, "EEEE, d 'de' MMMM", { locale: ptBR });
+  const today = new Date();
+  const formattedDate = format(today, "EEEE, d 'de' MMMM", { locale: ptBR });
   const capitalizedDate = formattedDate.charAt(0).toUpperCase() + formattedDate.slice(1);
-
-  const hasStoicChanges = stoicResponse.trim() !== originalStoicResponse.trim();
-  const canSaveStoic = stoicResponse.trim().length > 0 && hasStoicChanges;
 
   // Diary state
   const { getDiario, saveDiarioEntry } = usePDIStorage();
@@ -78,27 +68,6 @@ const StoicReflectionSection = () => {
     );
   }, [diaryEntry]);
 
-  // Load existing stoic response
-  useEffect(() => {
-    const loadStoicResponse = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session?.user) return;
-
-      const today = format(date, "yyyy-MM-dd");
-      const { data } = await supabase
-        .from("user_stoic_reflections")
-        .select("response")
-        .eq("user_id", session.user.id)
-        .eq("reflection_date", today)
-        .maybeSingle();
-
-      if (data) {
-        setStoicResponse(data.response || "");
-        setOriginalStoicResponse(data.response || "");
-      }
-    };
-    loadStoicResponse();
-  }, [date]);
 
   // Load diary entries
   const loadDiaryEntries = useCallback(async () => {
@@ -161,41 +130,6 @@ const StoicReflectionSection = () => {
     }
   }, [diaryViewMode]);
 
-  const handleSaveStoic = async () => {
-    const { data: { session } } = await supabase.auth.getSession();
-    if (!session?.user) return;
-
-    setIsSavingStoic(true);
-    const today = format(date, "yyyy-MM-dd");
-    
-    const { error } = await supabase
-      .from("user_stoic_reflections")
-      .upsert({
-        user_id: session.user.id,
-        reflection_date: today,
-        response: stoicResponse,
-        updated_at: new Date().toISOString()
-      }, { onConflict: "user_id,reflection_date" });
-
-    setIsSavingStoic(false);
-
-    if (error) {
-      toast({
-        title: "Erro ao salvar",
-        description: "Não foi possível salvar sua reflexão.",
-        variant: "destructive"
-      });
-    } else {
-      setOriginalStoicResponse(stoicResponse);
-      setIsStoicSaved(true);
-      setTimeout(() => setIsStoicSaved(false), 2000);
-      celebrateAction('stoic_reflection', 'Reflexão Estóica');
-      toast({
-        title: "Reflexão salva",
-        description: "Sua reflexão foi salva com sucesso."
-      });
-    }
-  };
 
 
   const handleSaveDiary = async () => {
@@ -779,22 +713,6 @@ const StoicReflectionSection = () => {
                 </div>
               </div>
             )}
-            {/* Stoic Reflection Section - Interactive Experience */}
-            <div className="border-t border-primary/20 pt-4">
-              <div className="flex items-center gap-2 mb-4">
-                <BookOpen className="w-5 h-5 text-primary" />
-                <h3 className="text-lg font-semibold">Reflexão Estóica do Dia</h3>
-              </div>
-              <StoicInteractiveExperience
-                reflection={reflection}
-                date={date}
-                stoicResponse={stoicResponse}
-                onStoicResponseChange={setStoicResponse}
-                onSave={handleSaveStoic}
-                isSaving={isSavingStoic}
-                canSave={canSaveStoic}
-              />
-            </div>
           </CollapsibleContent>
         </Collapsible>
       </CardContent>
