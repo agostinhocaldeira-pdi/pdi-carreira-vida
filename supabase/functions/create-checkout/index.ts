@@ -65,6 +65,7 @@ serve(async (req) => {
       subscription_data: {
         trial_period_days: 30,
       },
+      allow_promotion_codes: true,
       success_url: `${req.headers.get("origin")}/onboarding?checkout=success`,
       cancel_url: `${req.headers.get("origin")}/?checkout=canceled`,
       metadata: {
