@@ -217,33 +217,41 @@ const PlanoVidaComoChegar = () => {
                   </div>
 
                   {/* Explicação sobre habilidades */}
-                  <div className="p-4 bg-muted/40 rounded-lg border border-border/50 space-y-3">
+                  <div className="p-4 bg-muted/40 rounded-lg border border-border/50 space-y-4">
                     <p className="text-sm text-muted-foreground leading-relaxed">
                       Um objetivo normalmente dependerá de <strong>novas habilidades</strong>. Para identificar quais são as habilidades necessárias para alcançar seus objetivos, sugerimos utilizar:
                     </p>
-                    <ul className="text-sm text-muted-foreground list-disc list-inside space-y-1 ml-2">
-                      <li><strong>Autoavaliação + 360º</strong> — receba feedbacks estruturados sobre suas competências</li>
-                      <li><strong>Ferramentas (FF)</strong> — explore outras ferramentas de desenvolvimento pessoal</li>
-                    </ul>
-                    <div className="flex flex-wrap gap-2 pt-2">
-                      <Button 
-                        variant="outline" 
-                        size="sm"
-                        onClick={() => navigate("/ferramentas/autoavaliacao-360")}
-                        className="text-xs sm:text-sm"
-                      >
-                        <ExternalLink className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
-                        Autoavaliação + 360º
-                      </Button>
-                      <Button 
-                        variant="outline" 
-                        size="sm"
-                        onClick={() => navigate("/ferramentas")}
-                        className="text-xs sm:text-sm"
-                      >
-                        <ExternalLink className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
-                        Ferramentas (FF)
-                      </Button>
+                    
+                    <div className="space-y-3 ml-2">
+                      <div className="space-y-2">
+                        <p className="text-sm text-muted-foreground">
+                          • <strong>Autoavaliação + 360º</strong> — receba feedbacks estruturados sobre suas competências
+                        </p>
+                        <Button 
+                          variant="outline" 
+                          size="sm"
+                          onClick={() => navigate("/ferramentas/autoavaliacao-360")}
+                          className="text-xs sm:text-sm ml-3"
+                        >
+                          <ExternalLink className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
+                          Autoavaliação + 360º
+                        </Button>
+                      </div>
+                      
+                      <div className="space-y-2">
+                        <p className="text-sm text-muted-foreground">
+                          • <strong>Ferramentas (FF)</strong> — explore outras ferramentas de desenvolvimento pessoal
+                        </p>
+                        <Button 
+                          variant="outline" 
+                          size="sm"
+                          onClick={() => navigate("/ferramentas")}
+                          className="text-xs sm:text-sm ml-3"
+                        >
+                          <ExternalLink className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
+                          Ferramentas (FF)
+                        </Button>
+                      </div>
                     </div>
                   </div>
 
