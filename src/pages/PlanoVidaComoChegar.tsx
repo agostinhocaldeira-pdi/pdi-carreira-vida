@@ -8,7 +8,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Lightbulb, ArrowLeft, Home, Plus, Trash2, Pencil, Check, X, ExternalLink } from "lucide-react";
 import { PDILoader } from "@/components/ui/pdi-loader";
 import { toast } from "sonner";
-import { Link } from "react-router-dom";
+
 import ConfirmDeleteDialog from "@/components/ConfirmDeleteDialog";
 import MaoNaMassa from "@/components/home/MaoNaMassa";
 import { usePDIStorage } from "@/hooks/usePDIStorage";
@@ -209,14 +209,46 @@ const PlanoVidaComoChegar = () => {
               </div>
             ) : (
               <>
+                {/* Seção: Habilidades a Desenvolver */}
                 <div className="space-y-4 w-full overflow-hidden">
-                  <div className="flex items-center gap-2 mb-4">
+                  <div className="flex items-center gap-2 mb-2">
                     <Lightbulb className="w-5 h-5 text-primary" />
-                    <h3 className="text-lg font-semibold">Desenvolvimento</h3>
+                    <h3 className="text-lg font-semibold">Habilidades a Desenvolver</h3>
+                  </div>
+
+                  {/* Explicação sobre habilidades */}
+                  <div className="p-4 bg-muted/40 rounded-lg border border-border/50 space-y-3">
+                    <p className="text-sm text-muted-foreground leading-relaxed">
+                      Um objetivo normalmente dependerá de <strong>novas habilidades</strong>. Para identificar quais são as habilidades necessárias para alcançar seus objetivos, sugerimos utilizar:
+                    </p>
+                    <ul className="text-sm text-muted-foreground list-disc list-inside space-y-1 ml-2">
+                      <li><strong>Autoavaliação + 360º</strong> — receba feedbacks estruturados sobre suas competências</li>
+                      <li><strong>Ferramentas (FF)</strong> — explore outras ferramentas de desenvolvimento pessoal</li>
+                    </ul>
+                    <div className="flex flex-wrap gap-2 pt-2">
+                      <Button 
+                        variant="outline" 
+                        size="sm"
+                        onClick={() => navigate("/ferramentas/autoavaliacao-360")}
+                        className="text-xs sm:text-sm"
+                      >
+                        <ExternalLink className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
+                        Autoavaliação + 360º
+                      </Button>
+                      <Button 
+                        variant="outline" 
+                        size="sm"
+                        onClick={() => navigate("/ferramentas")}
+                        className="text-xs sm:text-sm"
+                      >
+                        <ExternalLink className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
+                        Ferramentas (FF)
+                      </Button>
+                    </div>
                   </div>
 
                   <div className="space-y-3">
-                    <Label>Habilidades a Desenvolver</Label>
+                    <Label>Adicione suas habilidades a desenvolver</Label>
 
                     <div className="flex gap-2 p-3 sm:p-4 bg-muted/30 rounded-lg min-w-0 max-w-full overflow-hidden">
                       <Input
@@ -317,19 +349,15 @@ const PlanoVidaComoChegar = () => {
                         </Table>
                       </div>
                     )}
-
-                    <Link 
-                      to="/ferramentas" 
-                      className="flex items-center gap-2 text-xs sm:text-sm text-primary hover:underline mt-2"
-                    >
-                      <span className="truncate">Ferramentas (FF)</span>
-                      <ExternalLink className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0" />
-                    </Link>
                   </div>
                 </div>
 
-                {/* Mão na Massa - dentro de Como chegar lá */}
-                <div className="pt-4 border-t border-border/50 max-w-full overflow-hidden w-full box-border">
+                {/* Seção: Mão na Massa */}
+                <div className="pt-6 border-t border-border/50 max-w-full overflow-hidden w-full box-border">
+                  <div className="flex items-center gap-2 mb-4">
+                    <Lightbulb className="w-5 h-5 text-primary" />
+                    <h3 className="text-lg font-semibold">Mão na Massa</h3>
+                  </div>
                   <MaoNaMassa embedded />
                 </div>
               </>
