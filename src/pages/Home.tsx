@@ -515,7 +515,7 @@ const Home = () => {
                     </div>
                     <span className="font-semibold text-sm sm:text-base">Quem sou eu</span>
                   </div>
-                  <p className="text-xs text-muted-foreground text-left">
+                  <p className="text-xs text-muted-foreground text-left whitespace-normal break-words">
                     Clique aqui para iniciar sua jornada de autoconhecimento e obter clareza do que realmente deseja para sua vida
                   </p>
                 </Button>
@@ -532,7 +532,7 @@ const Home = () => {
                     </div>
                     <span className="font-semibold text-sm sm:text-base">Para onde vou</span>
                   </div>
-                  <p className="text-xs text-muted-foreground text-left">
+                  <p className="text-xs text-muted-foreground text-left whitespace-normal break-words">
                     Clique aqui para registrar os objetivos que você quer alcançar na vida pessoal ou profissional
                   </p>
                 </Button>
@@ -549,7 +549,7 @@ const Home = () => {
                     </div>
                     <span className="font-semibold text-sm sm:text-base">Como chegar lá</span>
                   </div>
-                  <p className="text-xs text-muted-foreground text-left">
+                  <p className="text-xs text-muted-foreground text-left whitespace-normal break-words">
                     Clique aqui para cadastrar metas e objetivos que te levarão a alcançar seus objetivos
                   </p>
                 </Button>
