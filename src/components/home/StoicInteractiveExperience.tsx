@@ -314,21 +314,44 @@ const StoicInteractiveExperience = ({
           "relative rounded-xl overflow-hidden transition-all duration-500",
           "bg-gradient-to-br from-primary/10 via-card to-primary/5",
           "border border-primary/20",
-          isActive ? "min-h-[350px]" : "min-h-[120px]"
+          isActive ? "min-h-[350px]" : "min-h-[140px] sm:min-h-[120px]"
         )}
       >
-        {/* Title - Always visible */}
+        {/* Title and Button Container - Flex layout for mobile */}
         <div className={cn(
-          "p-6 transition-all duration-500",
-          isActive && "pb-2"
+          "p-4 sm:p-6 transition-all duration-500",
+          isActive && "pb-2",
+          !isActive && "flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
         )}>
           <h4 className={cn(
             "font-bold text-primary transition-all duration-500",
-            isActive ? "text-lg" : "text-xl",
-            phase === "playing" && "animate-pulse"
+            isActive ? "text-lg" : "text-lg sm:text-xl",
+            phase === "playing" && "animate-pulse",
+            !isActive && "pr-0 sm:pr-4 flex-1"
           )}>
             {reflection.title}
           </h4>
+          
+          {/* Mobile Button - Only shown when not active */}
+          {!isActive && (
+            <div className="sm:hidden">
+              <Button
+                onClick={handleStart}
+                disabled={isLoading}
+                size="default"
+                className="w-full shadow-md transition-all duration-300 rounded-lg gap-2"
+              >
+                {isLoading ? (
+                  <Loader2 className="w-5 h-5 animate-spin" />
+                ) : (
+                  <>
+                    <Play className="w-5 h-5" />
+                    <span>Iniciar Reflexão</span>
+                  </>
+                )}
+              </Button>
+            </div>
+          )}
         </div>
 
         {/* Animated Text */}
@@ -393,10 +416,12 @@ const StoicInteractiveExperience = ({
           </div>
         )}
 
-        {/* Play/Pause Button */}
+        {/* Play/Pause Button - Desktop only when not active, always visible when active */}
         <div className={cn(
-          "absolute transition-all duration-300",
-          isActive ? "bottom-4 right-4" : "top-1/2 right-6 -translate-y-1/2"
+          "transition-all duration-300",
+          isActive 
+            ? "absolute bottom-4 right-4" 
+            : "hidden sm:block sm:absolute sm:top-1/2 sm:right-6 sm:-translate-y-1/2"
         )}>
           <div className="flex gap-2">
             {isActive && (
