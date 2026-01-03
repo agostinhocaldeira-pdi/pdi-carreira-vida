@@ -12,7 +12,7 @@ import StoicReflectionCard from "@/components/home/StoicReflectionCard";
 import ProgressSection from "@/components/home/ProgressSection";
 import { usePDIData } from "@/hooks/usePDIQueries";
 
-import PlanoDeVida from "@/components/home/PlanoDeVida";
+
 import LanguageSelector from "@/components/LanguageSelector";
 import LogoutButton from "@/components/LogoutButton";
 import { SatisfactionSurveyModal } from "@/components/SatisfactionSurveyModal";
@@ -38,8 +38,6 @@ const Home = () => {
   });
   
   const [userName, setUserName] = useState("");
-  const [activeTab, setActiveTab] = useState("quem-sou");
-  const [planoDeVidaOpen, setPlanoDeVidaOpen] = useState(false);
   const [motivationalQuote, setMotivationalQuote] = useState("");
   const [recursosOpen, setRecursosOpen] = useState(false);
   const [showDiaryWarningModal, setShowDiaryWarningModal] = useState(false);
@@ -111,27 +109,6 @@ const Home = () => {
   useEffect(() => {
     const { reflection } = getTodayReflection();
     setMotivationalQuote(reflection.title);
-
-    // Escutar evento de navegação para Plano de Vida
-    const handleNavigateToPlanoDeVida = (event: CustomEvent) => {
-      const { tab } = event.detail;
-      setPlanoDeVidaOpen(true);
-      setActiveTab(tab);
-      
-      // Scroll suave até a seção Plano de Vida
-      setTimeout(() => {
-        const planoSection = document.querySelector('[data-section="plano-de-vida"]');
-        if (planoSection) {
-          planoSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }
-      }, 100);
-    };
-
-    window.addEventListener("navigateToPlanoDeVida", handleNavigateToPlanoDeVida as EventListener);
-
-    return () => {
-      window.removeEventListener("navigateToPlanoDeVida", handleNavigateToPlanoDeVida as EventListener);
-    };
   }, []);
   
   const loadUnreadMessages = (userData: any, employeeStatus: boolean) => {
@@ -423,14 +400,75 @@ const Home = () => {
           <ProgressSection />
         </section>
 
-        {/* Plano de Vida Section */}
+        {/* Plano de Vida Section - Navegação para páginas */}
         <section className="animate-slide-up overflow-hidden max-w-full" style={{ animationDelay: "0.2s" }} data-section="plano-de-vida">
-          <PlanoDeVida 
-            onTabChange={setActiveTab} 
-            onOpenChange={setPlanoDeVidaOpen} 
-            forcedTab={activeTab}
-            forcedOpen={planoDeVidaOpen}
-          />
+          <Card className="shadow-medium border-primary/20">
+            <CardHeader className="pb-4">
+              <div className="flex items-center gap-3">
+                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center shadow-lg">
+                  <Target className="w-6 h-6 text-primary-foreground" />
+                </div>
+                <div>
+                  <CardTitle className="text-xl sm:text-2xl">Plano de Vida</CardTitle>
+                  <CardDescription>Construa e acompanhe sua jornada de desenvolvimento</CardDescription>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                {/* Passo 1 - Quem sou eu */}
+                <Button
+                  variant="outline"
+                  className="h-auto py-4 px-4 flex flex-col items-start gap-2 hover:bg-primary/5 hover:border-primary/40 transition-all group"
+                  onClick={() => navigate("/plano-vida/quem-sou")}
+                >
+                  <div className="flex items-center gap-2 w-full">
+                    <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
+                      <span className="text-xs font-bold text-primary">1</span>
+                    </div>
+                    <span className="font-semibold text-sm sm:text-base">Quem sou eu</span>
+                  </div>
+                  <p className="text-xs text-muted-foreground text-left">
+                    VVD, Valores e Roda da Vida
+                  </p>
+                </Button>
+
+                {/* Passo 2 - Para onde vou */}
+                <Button
+                  variant="outline"
+                  className="h-auto py-4 px-4 flex flex-col items-start gap-2 hover:bg-primary/5 hover:border-primary/40 transition-all group"
+                  onClick={() => navigate("/plano-vida/para-onde")}
+                >
+                  <div className="flex items-center gap-2 w-full">
+                    <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
+                      <span className="text-xs font-bold text-primary">2</span>
+                    </div>
+                    <span className="font-semibold text-sm sm:text-base">Para onde vou</span>
+                  </div>
+                  <p className="text-xs text-muted-foreground text-left">
+                    Objetivos e Metas
+                  </p>
+                </Button>
+
+                {/* Passo 3 - Como chegar lá */}
+                <Button
+                  variant="outline"
+                  className="h-auto py-4 px-4 flex flex-col items-start gap-2 hover:bg-primary/5 hover:border-primary/40 transition-all group"
+                  onClick={() => navigate("/plano-vida/como-chegar")}
+                >
+                  <div className="flex items-center gap-2 w-full">
+                    <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
+                      <span className="text-xs font-bold text-primary">3</span>
+                    </div>
+                    <span className="font-semibold text-sm sm:text-base">Como chegar lá</span>
+                  </div>
+                  <p className="text-xs text-muted-foreground text-left">
+                    Habilidades e Ações
+                  </p>
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
         </section>
 
 
