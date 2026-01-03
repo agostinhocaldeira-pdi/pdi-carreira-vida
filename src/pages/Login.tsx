@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
+import { useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -16,9 +17,11 @@ import { LogIn, KeyRound, Eye, EyeOff, Loader2 } from "lucide-react";
 import ManagerRoleModal from "@/components/ManagerRoleModal";
 import { supabase } from "@/integrations/supabase/client";
 import Logo from "@/components/Logo";
+import { USER_ROLE_KEY } from "@/hooks/useUserRole";
 
 const Login = () => {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const [loginData, setLoginData] = useState({
     email: "",
     password: "",
@@ -83,6 +86,9 @@ const Login = () => {
   };
 
   const handleSuccessfulLogin = async (user: any) => {
+    // Invalidar cache de role para garantir dados frescos
+    queryClient.removeQueries({ queryKey: USER_ROLE_KEY });
+    
     const userId = user.id;
     const userEmail = user.email || "";
     const userName = user.user_metadata?.name || userEmail.split('@')[0] || 'Usuário';

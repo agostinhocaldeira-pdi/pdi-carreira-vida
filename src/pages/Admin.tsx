@@ -234,7 +234,9 @@ const Admin = () => {
     }
   };
 
-  if (!isAdmin) {
+  // Não renderizar até confirmar que é admin
+  // O hook já faz redirect se não for admin
+  if (!isAdmin && !roleLoading) {
     return null;
   }
 
