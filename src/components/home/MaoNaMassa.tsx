@@ -500,7 +500,7 @@ const MaoNaMassa = ({ embedded = false }: MaoNaMassaProps) => {
                                 <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
                                   <Target className="w-4 h-4 text-primary" />
                                 </div>
-                                <p className="font-medium text-sm truncate">{metaCadastrada.texto}</p>
+                                <p className="font-medium text-sm break-words [overflow-wrap:anywhere]">{metaCadastrada.texto}</p>
                               </div>
                               <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground ml-10">
                                 <span className="flex items-center gap-1">
@@ -524,7 +524,7 @@ const MaoNaMassa = ({ embedded = false }: MaoNaMassaProps) => {
                             {/* Objetivo */}
                             <div className="bg-muted/30 rounded-lg p-3">
                               <Label className="text-xs text-muted-foreground uppercase tracking-wider">Objetivo Vinculado</Label>
-                              <p className="text-sm font-medium mt-1">{objetivo?.texto || "Objetivo não encontrado"}</p>
+                              <p className="text-sm font-medium mt-1 break-words [overflow-wrap:anywhere]">{objetivo?.texto || "Objetivo não encontrado"}</p>
                             </div>
                             
                             {/* Ações */}
@@ -566,14 +566,14 @@ const MaoNaMassa = ({ embedded = false }: MaoNaMassaProps) => {
                             </div>
                             
                             {/* Botões de Ação */}
-                            <div className="flex gap-2 pt-3 border-t">
+                            <div className="flex flex-col sm:flex-row gap-2 pt-3 border-t">
                               <Button
                                 variant="outline"
                                 size="sm"
                                 onClick={() => handleEditMeta(metaCadastrada.id)}
                                 className="flex-1 h-11"
                               >
-                                <Pencil className="w-4 h-4 mr-2" />
+                                <Pencil className="w-4 h-4 mr-0 sm:mr-2 hidden sm:inline" />
                                 Editar
                               </Button>
                               <Button
@@ -584,9 +584,9 @@ const MaoNaMassa = ({ embedded = false }: MaoNaMassaProps) => {
                                 className="flex-1 h-11 text-destructive hover:text-destructive hover:bg-destructive/10"
                               >
                                 {deletingMetaId === metaCadastrada.id ? (
-                                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                                   <Loader2 className="w-4 h-4 mr-0 sm:mr-2 animate-spin" />
                                 ) : (
-                                  <Trash2 className="w-4 h-4 mr-2" />
+                                  <Trash2 className="w-4 h-4 mr-0 sm:mr-2 hidden sm:inline" />
                                 )}
                                 {deletingMetaId === metaCadastrada.id ? "Excluindo..." : "Excluir"}
                               </Button>
@@ -766,7 +766,7 @@ const MaoNaMassa = ({ embedded = false }: MaoNaMassaProps) => {
 
               {acoes.length > 0 && (
                 <div className="rounded-lg border overflow-x-auto">
-                  <Table className="min-w-[600px]">
+                  <Table className="w-full table-fixed min-w-0 sm:min-w-[600px]">
                     <TableHeader>
                       <TableRow>
                         <TableHead className="text-xs sm:text-sm">Ação</TableHead>
@@ -788,7 +788,7 @@ const MaoNaMassa = ({ embedded = false }: MaoNaMassaProps) => {
                                   onChange={(e) => setAcaoEditada({ ...acaoEditada!, acao: e.target.value })}
                                 />
                               ) : (
-                                acao.acao
+                                 <span className="block max-w-full break-words whitespace-normal [overflow-wrap:anywhere]">{acao.acao}</span>
                               )}
                             </TableCell>
                             <TableCell>
@@ -940,7 +940,7 @@ const MaoNaMassa = ({ embedded = false }: MaoNaMassaProps) => {
 
               {passos.length > 0 && (
                 <div className="rounded-lg border overflow-x-auto">
-                  <Table>
+                  <Table className="w-full table-fixed">
                     <TableHeader>
                       <TableRow>
                         <TableHead className="text-xs sm:text-sm">Passo</TableHead>
@@ -960,7 +960,7 @@ const MaoNaMassa = ({ embedded = false }: MaoNaMassaProps) => {
                                   onChange={(e) => setPassoEditado(e.target.value)}
                                 />
                               ) : (
-                                passo.passo
+                                 <span className="block max-w-full break-words whitespace-normal [overflow-wrap:anywhere]">{passo.passo}</span>
                               )}
                             </TableCell>
                             <TableCell>
@@ -1134,7 +1134,7 @@ const MaoNaMassa = ({ embedded = false }: MaoNaMassaProps) => {
 
   if (embedded) {
     return (
-      <div className="max-w-full overflow-hidden">
+      <div className="w-full max-w-full overflow-hidden min-w-0">
         <div className="flex items-center gap-2 mb-4">
           <Rocket className="w-5 h-5 text-accent" />
           <h3 className="text-lg font-semibold">Mão na Massa</h3>
