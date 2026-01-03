@@ -21,7 +21,6 @@ import { useActionCelebration } from "@/contexts/ActionCelebrationContext";
 import { usePDIStorage } from "@/hooks/usePDIStorage";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 import { cn } from "@/lib/utils";
-import { DailyCheckout } from "@/components/gamification/DailyCheckout";
 
 type DiaryViewMode = "registro" | "historico";
 
@@ -798,11 +797,6 @@ const StoicReflectionSection = () => {
             </div>
           </CollapsibleContent>
         </Collapsible>
-
-        {/* Daily Checkout Section */}
-        <div className="border-t border-primary/20 pt-4">
-          <DailyCheckout />
-        </div>
       </CardContent>
     </Card>
   );
