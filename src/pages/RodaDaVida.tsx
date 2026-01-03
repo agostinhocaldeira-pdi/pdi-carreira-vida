@@ -152,7 +152,8 @@ export default function RodaDaVida() {
               className="mt-4 inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/30 text-primary font-medium text-sm hover:bg-primary/20 hover:border-primary/50 transition-all duration-200 shadow-sm hover:shadow-md"
             >
               <Sparkles className="h-4 w-4" />
-              Entenda a importância de saber claramente sobre suas áreas da vida
+              <span className="sm:hidden">Entenda melhor</span>
+              <span className="hidden sm:inline">Entenda a importância de saber claramente sobre suas áreas da vida</span>
             </button>
           </CardHeader>
         </Card>
