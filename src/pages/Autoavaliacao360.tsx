@@ -372,7 +372,8 @@ Agora, com base em todas essas respostas acima, faça a análise profunda solici
                   className="mt-2 inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 border border-primary/30 text-primary font-medium text-sm hover:bg-primary/20 hover:border-primary/50 transition-all duration-200 shadow-sm hover:shadow-md"
                 >
                   <Sparkles className="w-4 h-4" />
-                  Entenda a importância de uma visão completa de si mesmo
+                  <span className="sm:hidden">Entenda melhor</span>
+                  <span className="hidden sm:inline">Entenda a importância de uma visão completa de si mesmo</span>
                 </button>
               </div>
             </div>
