@@ -5,7 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Heart, ArrowRight, Edit, ArrowLeft, Home, Sparkles, Lightbulb, Compass, Target } from "lucide-react";
+import { Heart, ArrowRight, Edit, ArrowLeft, Home, Sparkles, Lightbulb, Compass, Target, ChevronDown } from "lucide-react";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { PDILoader } from "@/components/ui/pdi-loader";
 import { toast } from "sonner";
@@ -553,77 +554,86 @@ const PlanoVidaQuemSou = () => {
         </Card>
 
         {/* Insight Inicial Section */}
-        <Card className="shadow-medium overflow-hidden border-accent/30">
-          <CardHeader className="pb-3">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-accent to-accent/60 flex items-center justify-center shadow-md">
-                <Lightbulb className="w-5 h-5 text-accent-foreground" />
-              </div>
-              <div>
-                <CardTitle className="text-lg sm:text-xl">Seu Insight Inicial</CardTitle>
-                <CardDescription className="text-xs sm:text-sm">
-                  Uma análise sobre quem você é, baseada no seu VVD, valores e áreas da vida
-                </CardDescription>
-              </div>
-            </div>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            {insightInicial ? (
-              <div className="rounded-lg border bg-muted/30 p-4">
-                <p className="text-sm sm:text-base text-foreground whitespace-pre-line leading-relaxed">
-                  {insightInicial}
-                </p>
-              </div>
-            ) : (
-              <div className="rounded-lg border bg-muted/20 p-6 text-center">
-                <Lightbulb className="w-10 h-10 text-muted-foreground/50 mx-auto mb-3" />
-                <p className="text-sm text-muted-foreground mb-4">
-                  Gere seu insight inicial para descobrir um pouco mais sobre você, 
-                  baseado nas informações que você forneceu.
-                </p>
-              </div>
-            )}
+        <Collapsible defaultOpen={!!insightInicial}>
+          <Card className="shadow-medium overflow-hidden border-accent/30">
+            <CollapsibleTrigger asChild>
+              <CardHeader className="pb-3 cursor-pointer hover:bg-muted/30 transition-colors">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-accent to-accent/60 flex items-center justify-center shadow-md">
+                      <Lightbulb className="w-5 h-5 text-accent-foreground" />
+                    </div>
+                    <div>
+                      <CardTitle className="text-lg sm:text-xl">Seu Insight Inicial</CardTitle>
+                      <CardDescription className="text-xs sm:text-sm">
+                        Uma análise sobre quem você é, baseada no seu VVD, valores e áreas da vida
+                      </CardDescription>
+                    </div>
+                  </div>
+                  <ChevronDown className="w-5 h-5 text-muted-foreground transition-transform duration-200 data-[state=open]:rotate-180" />
+                </div>
+              </CardHeader>
+            </CollapsibleTrigger>
+            <CollapsibleContent>
+              <CardContent className="space-y-4 pt-0">
+                {insightInicial ? (
+                  <div className="rounded-lg border bg-muted/30 p-4">
+                    <p className="text-sm sm:text-base text-foreground whitespace-pre-line leading-relaxed">
+                      {insightInicial}
+                    </p>
+                  </div>
+                ) : (
+                  <div className="rounded-lg border bg-muted/20 p-6 text-center">
+                    <Lightbulb className="w-10 h-10 text-muted-foreground/50 mx-auto mb-3" />
+                    <p className="text-sm text-muted-foreground mb-4">
+                      Gere seu insight inicial para descobrir um pouco mais sobre você, 
+                      baseado nas informações que você forneceu.
+                    </p>
+                  </div>
+                )}
 
-            {/* Warning for users who already generated */}
-            {!isAdmin && hasGeneratedInsight && !aiUsage.hasAvailablePurchase && (
-              <div className="bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-800 rounded-lg p-3">
-                <p className="text-xs sm:text-sm text-amber-900 dark:text-amber-200">
-                  Você já gerou seu insight inicial gratuito. Para gerar um novo,{' '}
-                  <button 
-                    onClick={() => setShowAILimitModal(true)}
-                    className="underline font-semibold hover:text-amber-700 dark:hover:text-amber-300"
-                  >
-                    adquira um uso adicional por R$ 10,00
-                  </button>.
-                </p>
-              </div>
-            )}
+                {/* Warning for users who already generated */}
+                {!isAdmin && hasGeneratedInsight && !aiUsage.hasAvailablePurchase && (
+                  <div className="bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-800 rounded-lg p-3">
+                    <p className="text-xs sm:text-sm text-amber-900 dark:text-amber-200">
+                      Você já gerou seu insight inicial gratuito. Para gerar um novo,{' '}
+                      <button 
+                        onClick={() => setShowAILimitModal(true)}
+                        className="underline font-semibold hover:text-amber-700 dark:hover:text-amber-300"
+                      >
+                        adquira um uso adicional por R$ 10,00
+                      </button>.
+                    </p>
+                  </div>
+                )}
 
-            <Button
-              onClick={() => handleGenerateInsight(false)}
-              disabled={isGeneratingInsight}
-              className="w-full gap-2"
-              variant={hasGeneratedInsight ? "outline" : "default"}
-            >
-              {isGeneratingInsight ? (
-                <>
-                  <Sparkles className="w-4 h-4 animate-spin" />
-                  Gerando insight...
-                </>
-              ) : hasGeneratedInsight ? (
-                <>
-                  <Sparkles className="w-4 h-4" />
-                  Gerar Novo Insight
-                </>
-              ) : (
-                <>
-                  <Sparkles className="w-4 h-4" />
-                  Gerar Insight Inicial
-                </>
-              )}
-            </Button>
-          </CardContent>
-        </Card>
+                <Button
+                  onClick={() => handleGenerateInsight(false)}
+                  disabled={isGeneratingInsight}
+                  className="w-full gap-2"
+                  variant={hasGeneratedInsight ? "outline" : "default"}
+                >
+                  {isGeneratingInsight ? (
+                    <>
+                      <Sparkles className="w-4 h-4 animate-spin" />
+                      Gerando insight...
+                    </>
+                  ) : hasGeneratedInsight ? (
+                    <>
+                      <Sparkles className="w-4 h-4" />
+                      Gerar Novo Insight
+                    </>
+                  ) : (
+                    <>
+                      <Sparkles className="w-4 h-4" />
+                      Gerar Insight Inicial
+                    </>
+                  )}
+                </Button>
+              </CardContent>
+            </CollapsibleContent>
+          </Card>
+        </Collapsible>
 
         {/* Next Step Section */}
         <Card className="shadow-medium border-primary/20 bg-gradient-to-br from-primary/5 to-background">
