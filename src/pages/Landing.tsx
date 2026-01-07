@@ -272,6 +272,23 @@ const Landing = () => {
       {/* ============================================================ */}
       <section className="py-16 sm:py-24 px-4 bg-muted/20">
         <div className="container mx-auto max-w-4xl">
+          {/* Título da seção */}
+          <div className="text-center mb-16">
+            <Badge variant="secondary" className="mb-4 text-xs sm:text-sm">
+              O Sistema PDI não é só um sistema.
+            </Badge>
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground mb-6">
+              É um caminho em 5 passos simples.
+            </h2>
+            <p className="text-base sm:text-lg text-muted-foreground leading-relaxed max-w-2xl mx-auto mb-4">
+              Você não avança na vida por força de vontade.<br />
+              Você avança quando sabe quem é, onde quer chegar e o que fazer todos os dias.
+            </p>
+            <p className="text-base sm:text-lg text-foreground font-medium">
+              O Sistema PDI organiza isso em 5 passos claros:
+            </p>
+          </div>
+
           <div className="space-y-12">
             {/* Passo 1 */}
             <div className="text-center">
