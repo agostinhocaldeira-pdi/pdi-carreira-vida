@@ -176,7 +176,7 @@ const Ebook = () => {
             <div className="space-y-4">
               <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-medium">
                 <BookOpen className="w-4 h-4" />
-                E-book Gratuito
+                Guia de Autodesenvolvimento
               </div>
               <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold leading-tight">
                 Pequeno Manual para{" "}
