@@ -215,7 +215,7 @@ const Landing = () => {
       {/* ============================================================ */}
       {/* O QUE O PDI REALMENTE ENTREGA */}
       {/* ============================================================ */}
-      <section className="py-16 sm:py-24 px-4 bg-gradient-to-b from-background to-muted/10">
+      <section className="py-10 sm:py-14 px-4 bg-gradient-to-b from-background to-muted/10">
         <div className="container mx-auto max-w-4xl">
           {/* Título Principal */}
           <div className="text-center mb-12">
