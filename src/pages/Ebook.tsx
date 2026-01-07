@@ -9,6 +9,7 @@ import { toast } from "sonner";
 import { z } from "zod";
 import Logo from "@/components/Logo";
 import { Link } from "react-router-dom";
+import ebookCover from "@/assets/ebook-conquistas-cover.png";
 
 const leadSchema = z.object({
   name: z.string().trim().min(2, "Nome deve ter pelo menos 2 caracteres").max(100),
@@ -171,8 +172,20 @@ const Ebook = () => {
 
       <div className="container mx-auto px-4 pt-24 pb-12">
         <div className="grid lg:grid-cols-2 gap-12 items-center max-w-6xl mx-auto">
-          {/* Left Column - Benefits */}
+          {/* Left Column - Cover + Benefits */}
           <div className="space-y-8">
+            {/* E-book Cover */}
+            <div className="flex justify-center lg:justify-start">
+              <div className="relative">
+                <div className="absolute inset-0 bg-primary/20 blur-3xl rounded-full" />
+                <img
+                  src={ebookCover}
+                  alt="Capa do E-book Pequeno Manual para Grandes Conquistas"
+                  className="relative w-56 sm:w-64 lg:w-72 h-auto rounded-lg shadow-2xl"
+                />
+              </div>
+            </div>
+
             <div className="space-y-4">
               <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-medium">
                 <BookOpen className="w-4 h-4" />
