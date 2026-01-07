@@ -195,13 +195,11 @@ const Landing = () => {
           
           <Card className="border-none shadow-lg bg-gradient-to-br from-card to-muted/30">
             <CardContent className="p-8 sm:p-12">
-              <p className="text-base sm:text-lg md:text-xl text-muted-foreground leading-relaxed text-center">
-                Muitas vezes, o que nos impede não é a falta de esforço ou capacidade, mas a{" "}
-                <strong className="text-foreground">ausência de um sistema confiável</strong>. 
-                Um método que ofereça <span className="text-primary font-medium">estrutura para suas decisões</span>, 
-                {" "}<span className="text-primary font-medium">clareza para seu foco</span> e{" "}
-                <span className="text-primary font-medium">constância para suas ações</span>, dia após dia.
-              </p>
+              <div className="text-base sm:text-lg md:text-xl text-muted-foreground leading-relaxed text-center space-y-4">
+                <p>Os dias passam entre urgências resolvidas e incêndios apagados.</p>
+                <p>Tudo se mistura na cabeça: planos, responsabilidades, ideias e cobranças que vêm de fora e de dentro.</p>
+                <p>No fim do dia vem o cansaço — e a percepção de que o tempo avança, enquanto decisões importantes sobre crescimento, estabilidade e autonomia seguem sendo adiadas.</p>
+              </div>
             </CardContent>
           </Card>
         </div>
