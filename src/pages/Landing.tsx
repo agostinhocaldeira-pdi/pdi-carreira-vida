@@ -161,7 +161,7 @@ const Landing = () => {
             </Button>
             <div className="mt-6 p-6 rounded-xl border border-border/50 bg-muted/20">
               <p className="text-sm sm:text-base text-muted-foreground">
-                Você não precisa decidir agora.<br />
+                <strong>Você não precisa pagar agora.</strong><br />
                 Use o sistema por 30 dias e veja como ele se encaixa na sua rotina.
               </p>
               <div className="mt-4 flex flex-wrap justify-center gap-4 text-xs sm:text-sm text-muted-foreground">
