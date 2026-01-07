@@ -116,7 +116,7 @@ const Landing = () => {
           </h1>
           
           <p className="text-xl sm:text-2xl md:text-3xl text-muted-foreground mb-6 font-light">
-            O PDI é o sistema que transforma intenção em direção, decisões em ação e esforço em progresso real.
+            Você vai saber para onde vai, o que fazer e dormir em paz sabendo que está no caminho certo.
           </p>
           
           <p className="text-base sm:text-lg text-muted-foreground/80 mt-8 mb-0">
