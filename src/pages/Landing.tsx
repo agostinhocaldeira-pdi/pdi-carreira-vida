@@ -115,7 +115,7 @@ const Landing = () => {
             No fundo, todo ser humano só quer viver uma vida que faça sentido — e ter certeza de que está fazendo a própria parte para construí-la.
           </h1>
           
-          <p className="text-xl sm:text-2xl md:text-3xl text-muted-foreground mb-6 font-light">
+          <p className="text-base sm:text-xl md:text-2xl text-muted-foreground mb-6 font-light">
             Você vai saber para onde vai, o que fazer e dormir em paz sabendo que está no caminho certo.
           </p>
           
