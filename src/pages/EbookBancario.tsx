@@ -190,15 +190,16 @@ const EbookBancario = () => {
             <div className="space-y-4">
               <div className="inline-flex items-center gap-2 bg-blue-500/10 text-blue-600 px-4 py-2 rounded-full text-sm font-medium">
                 <BookOpen className="w-4 h-4" />
-                E-book Gratuito
+                Guia de Carreira em Bancos
               </div>
               <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold leading-tight">
                 Manual do{" "}
                 <span className="text-blue-600">Bancário</span>
               </h1>
               <p className="text-lg text-muted-foreground leading-relaxed">
-                O guia completo para conquistar seu primeiro emprego em banco e construir uma carreira 
-                de sucesso no mercado financeiro. Do processo seletivo às certificações que você precisa.
+                Tudo que você precisa saber para conseguir seu primeiro emprego e crescer dentro de um banco, até se tornar um líder.
+                <br />
+                <span className="text-base">Um passo-a-passo criado por profissionais com mais de 30 anos de carreira bancária.</span>
               </p>
             </div>
 
