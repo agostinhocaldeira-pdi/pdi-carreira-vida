@@ -111,6 +111,15 @@ const Landing = () => {
         <div className="absolute bottom-0 left-0 w-80 h-80 bg-accent/5 rounded-full blur-3xl" />
         
         <div className="container relative mx-auto max-w-4xl text-center">
+          <Button 
+            size="lg" 
+            className="text-base sm:text-lg px-8 py-6 bg-primary hover:bg-primary/90 transition-all duration-300 mb-8"
+            onClick={() => navigate("/signup")}
+          >
+            Experimente Grátis
+            <ArrowRight className="ml-2 h-5 w-5" />
+          </Button>
+          
           <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-6 text-foreground leading-tight">
             Eu sei que você quer algo a mais{" "}
             <span className="text-primary">para sua vida</span>.
