@@ -9,7 +9,7 @@ import { toast } from "sonner";
 import { z } from "zod";
 import Logo from "@/components/Logo";
 import { Link } from "react-router-dom";
-import ebookCover from "@/assets/ebook-bancario-cover.png";
+import ebookCover from "@/assets/ebook-bancario-cover-new.png";
 
 const leadSchema = z.object({
   name: z.string().trim().min(2, "Nome deve ter pelo menos 2 caracteres").max(100),
