@@ -519,6 +519,39 @@ export type Database = {
           },
         ]
       }
+      satisfaction_surveys: {
+        Row: {
+          created_at: string
+          feedback: string | null
+          id: string
+          rating: number
+          section: string
+          survey_type: string
+          user_email: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          feedback?: string | null
+          id?: string
+          rating: number
+          section: string
+          survey_type: string
+          user_email?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          feedback?: string | null
+          id?: string
+          rating?: number
+          section?: string
+          survey_type?: string
+          user_email?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       stoic_reflection_audio: {
         Row: {
           audio_url: string
