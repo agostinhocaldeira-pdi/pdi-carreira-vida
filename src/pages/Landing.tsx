@@ -119,8 +119,8 @@ const Landing = () => {
             e finalmente dê vida àquele objetivo que você engavetou, começou, parou — e quase esqueceu que ainda importava.
           </p>
           
-          <p className="text-base sm:text-lg text-muted-foreground/80 mb-0 italic">
-            que gera insights e te acompanha em toda jornada.
+          <p className="text-base sm:text-lg text-muted-foreground/80 mt-8 mb-0">
+            entenda como o Sistema PDI funciona
           </p>
           
         </div>
@@ -129,7 +129,7 @@ const Landing = () => {
       {/* ============================================================ */}
       {/* SEÇÃO DE VÍDEO */}
       {/* ============================================================ */}
-      <section id="video-section" className="py-4 sm:py-6 px-4">
+      <section id="video-section" className="pt-0 pb-4 sm:pb-6 px-4">
         <div className="container mx-auto max-w-4xl">
           <div className="aspect-video rounded-xl overflow-hidden shadow-2xl border border-border/30 bg-muted/50">
             <iframe
