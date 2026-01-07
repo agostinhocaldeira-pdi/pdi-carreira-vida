@@ -105,7 +105,7 @@ const Landing = () => {
       {/* ============================================================ */}
       {/* 1) HERO SECTION - ABERTURA REFLEXIVA */}
       {/* ============================================================ */}
-      <section className="pt-28 sm:pt-36 pb-16 sm:pb-24 px-4 relative overflow-hidden">
+      <section className="pt-28 sm:pt-36 pb-4 sm:pb-6 px-4 relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-muted/10" />
         <div className="absolute top-20 right-0 w-96 h-96 bg-primary/5 rounded-full blur-3xl" />
         <div className="absolute bottom-0 left-0 w-80 h-80 bg-accent/5 rounded-full blur-3xl" />
