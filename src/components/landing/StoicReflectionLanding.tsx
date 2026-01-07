@@ -127,13 +127,13 @@ export const StoicReflectionLanding = () => {
               </p>
             </div>
 
-            <div className="flex flex-col sm:flex-row gap-4">
+            <div className="flex flex-col gap-4">
               <Button
                 variant="outline"
                 size="lg"
                 onClick={handlePlayAudio}
                 disabled={isLoading}
-                className="flex items-center gap-2"
+                className="flex items-center gap-2 w-fit"
               >
                 {isLoading ? (
                   <>
@@ -154,15 +154,12 @@ export const StoicReflectionLanding = () => {
                 <Volume2 className="h-4 w-4 ml-1 text-muted-foreground" />
               </Button>
 
-              <Button
-                variant="cta"
-                size="lg"
+              <button
                 onClick={() => setShowPhilosophyModal(true)}
-                className="flex items-center gap-2"
+                className="text-primary hover:text-primary/80 underline underline-offset-4 text-sm font-medium transition-colors text-left"
               >
-                <BookOpen className="h-5 w-5" />
-                <span>Filosofia Estóica</span>
-              </Button>
+                Entenda mais sobre a Filosofia Estóica aqui
+              </button>
             </div>
           </div>
         </div>
