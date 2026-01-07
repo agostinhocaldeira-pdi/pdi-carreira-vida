@@ -206,7 +206,7 @@ const Landing = () => {
               <div className="text-base sm:text-lg md:text-xl text-muted-foreground leading-relaxed text-center space-y-4">
                 <p>Os dias passam entre urgências resolvidas e incêndios apagados.</p>
                 <p>Tudo se mistura na cabeça: planos, responsabilidades, ideias e cobranças que vêm de fora e de dentro.</p>
-                <p>No fim do dia vem o cansaço — e a percepção de que o tempo avança, enquanto decisões importantes sobre crescimento, estabilidade e autonomia seguem sendo adiadas.</p>
+                <p>No fim do dia vem o cansaço — no meio do ano o desânimo — no final do ano a frustração. E a percepção de que o tempo avança, e a gente continua na mesma, sem avanço. Bate o medo, a ansiedade, a angústia, e nos sentimos perdidos, sem saber o que fazer.</p>
               </div>
             </CardContent>
           </Card>
