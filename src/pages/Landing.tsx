@@ -112,15 +112,15 @@ const Landing = () => {
         
         <div className="container relative mx-auto max-w-4xl text-center">
           <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold mb-6 text-foreground leading-tight">
-            Transformar objetivos em ações práticas, organizando metas, prioridades e rotina de forma simples e sustentável
+            Transforme objetivos em ações práticas, organizando metas, prioridades e rotina de forma simples e sustentável
           </h1>
           
           <p className="text-xl sm:text-2xl md:text-3xl text-muted-foreground mb-6 font-light">
-            e se você deseja muito, vai conseguir
+            Com suporte de um especialista e apoio da IA
           </p>
           
           <p className="text-base sm:text-lg text-muted-foreground/80 mb-0 italic">
-            e aqui você vai encontrar todo o apoio que precisa!
+            que gera insights e te acompanha em toda jornada.
           </p>
           
         </div>
