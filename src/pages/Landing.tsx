@@ -268,6 +268,109 @@ const Landing = () => {
       </section>
 
       {/* ============================================================ */}
+      {/* SEÇÃO DOS 5 PASSOS DO SISTEMA PDI */}
+      {/* ============================================================ */}
+      <section className="py-16 sm:py-24 px-4 bg-muted/20">
+        <div className="container mx-auto max-w-4xl">
+          <div className="space-y-12">
+            {/* Passo 1 */}
+            <div className="text-center">
+              <span className="text-3xl sm:text-4xl mb-4 block">1️⃣</span>
+              <h3 className="text-xl sm:text-2xl font-bold text-foreground mb-2">Quem sou eu</h3>
+              <p className="text-primary font-medium text-base sm:text-lg mb-4">Autoconhecimento</p>
+              <p className="text-muted-foreground text-base sm:text-lg leading-relaxed max-w-2xl mx-auto">
+                Antes de decidir o futuro, você entende o presente:<br />
+                seus valores, seus limites, seus pontos fortes e o que não faz mais sentido.
+              </p>
+              <p className="text-sm text-muted-foreground/70 mt-3 italic">
+                Sem isso, qualquer caminho serve — e nenhum funciona.
+              </p>
+            </div>
+
+            {/* Passo 2 */}
+            <div className="text-center">
+              <span className="text-3xl sm:text-4xl mb-4 block">2️⃣</span>
+              <h3 className="text-xl sm:text-2xl font-bold text-foreground mb-2">Pra onde vou</h3>
+              <p className="text-primary font-medium text-base sm:text-lg mb-4">Clareza do que você quer</p>
+              <p className="text-muted-foreground text-base sm:text-lg leading-relaxed max-w-2xl mx-auto">
+                Você define um destino claro.<br />
+                Não um sonho vago, mas algo que você consegue explicar em poucas palavras.
+              </p>
+              <p className="text-sm text-muted-foreground/70 mt-3 italic">
+                Quem não sabe pra onde vai, se perde em qualquer rotina.
+              </p>
+            </div>
+
+            {/* Passo 3 */}
+            <div className="text-center">
+              <span className="text-3xl sm:text-4xl mb-4 block">3️⃣</span>
+              <h3 className="text-xl sm:text-2xl font-bold text-foreground mb-2">O que eu quero conquistar</h3>
+              <p className="text-primary font-medium text-base sm:text-lg mb-4">Objetivos certos</p>
+              <p className="text-muted-foreground text-base sm:text-lg leading-relaxed max-w-2xl mx-auto">
+                Aqui você escolhe o que realmente importa agora,<br />
+                em vez de tentar abraçar tudo ao mesmo tempo.
+              </p>
+              <p className="text-sm text-muted-foreground/70 mt-3 italic">
+                Menos objetivos. Mais avanço.
+              </p>
+            </div>
+
+            {/* Passo 4 */}
+            <div className="text-center">
+              <span className="text-3xl sm:text-4xl mb-4 block">4️⃣</span>
+              <h3 className="text-xl sm:text-2xl font-bold text-foreground mb-2">Como vou chegar lá</h3>
+              <p className="text-primary font-medium text-base sm:text-lg mb-4">Planejamento simples</p>
+              <p className="text-muted-foreground text-base sm:text-lg leading-relaxed max-w-2xl mx-auto">
+                Você transforma o objetivo em um plano possível,<br />
+                do tamanho da sua rotina real — não da rotina perfeita.
+              </p>
+              <p className="text-sm text-muted-foreground/70 mt-3 italic">
+                Sem plano, todo objetivo vira frustração.
+              </p>
+            </div>
+
+            {/* Passo 5 */}
+            <div className="text-center">
+              <span className="text-3xl sm:text-4xl mb-4 block">5️⃣</span>
+              <h3 className="text-xl sm:text-2xl font-bold text-foreground mb-2">Como vou manter</h3>
+              <p className="text-primary font-medium text-base sm:text-lg mb-4">Execução guiada</p>
+              <p className="text-muted-foreground text-base sm:text-lg leading-relaxed max-w-2xl mx-auto">
+                Você executa com constância, mesmo nos dias difíceis,<br />
+                porque sabe exatamente o próximo passo.
+              </p>
+              <p className="text-sm text-muted-foreground/70 mt-3 italic">
+                Não é sobre motivação. É sobre direção.
+              </p>
+            </div>
+          </div>
+
+          {/* Conclusão */}
+          <div className="mt-16 text-center">
+            <Card className="border-primary/20 bg-gradient-to-br from-card to-primary/5">
+              <CardContent className="p-8 sm:p-10">
+                <h3 className="text-xl sm:text-2xl font-bold text-foreground mb-4">
+                  O PDI funciona porque respeita a vida real
+                </h3>
+                <p className="text-muted-foreground text-base sm:text-lg mb-6">
+                  Rotina cheia. Cansaço. Dúvidas. Pausas.<br />
+                  O Sistema PDI foi feito para funcionar mesmo assim.
+                </p>
+                <Button 
+                  variant="outline"
+                  size="lg"
+                  onClick={() => scrollToSection("video-section")}
+                  className="text-primary border-primary/30 hover:bg-primary/10"
+                >
+                  <Play className="mr-2 h-4 w-4" />
+                  Entenda como o Sistema PDI pode organizar sua vida e seus objetivos
+                </Button>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </section>
+
+      {/* ============================================================ */}
       {/* SEÇÃO DE FERRAMENTAS */}
       {/* ============================================================ */}
       <ToolsSection />
