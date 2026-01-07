@@ -220,6 +220,12 @@ const Landing = () => {
               desenvolvido para oferecer clareza e direção. Com acompanhamento contínuo e o apoio da inteligência artificial, 
               ele foi criado para te ajudar a navegar pelas complexidades do dia a dia com mais segurança e propósito.
             </p>
+            
+            <p className="text-lg sm:text-xl md:text-2xl text-foreground font-medium leading-relaxed mt-8">
+              Não é algo que você configura uma vez e esquece.
+              <br />
+              <span className="text-primary">É um sistema que acompanha decisões reais, semana após semana.</span>
+            </p>
           </div>
 
           {/* 3 Pilares do Método */}
@@ -262,15 +268,6 @@ const Landing = () => {
           <div className="space-y-16 sm:space-y-24">
             {platformFeatures.map((feature, index) => (
               <div key={index}>
-                {index === 1 && (
-                  <div className="text-center py-8 max-w-3xl mx-auto mb-16 sm:mb-24">
-                    <p className="text-lg sm:text-xl md:text-2xl text-foreground font-medium leading-relaxed">
-                      Não é algo que você configura uma vez e esquece.
-                      <br />
-                      <span className="text-primary">É um sistema que acompanha decisões reais, semana após semana.</span>
-                    </p>
-                  </div>
-                )}
                 <div 
                   className={`grid lg:grid-cols-2 gap-8 lg:gap-12 items-center ${
                     index % 2 === 1 ? 'lg:flex-row-reverse' : ''
