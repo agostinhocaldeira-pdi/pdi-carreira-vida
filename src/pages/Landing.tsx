@@ -535,52 +535,16 @@ const Landing = () => {
       <section className="py-16 sm:py-24 px-4">
         <div className="container mx-auto max-w-4xl">
           <div className="text-center mb-10">
-            <Badge className="mb-4 bg-accent/10 text-accent border-accent/20">
-              <Users className="w-4 h-4 mr-2 inline" />
-              Convite Especial
-            </Badge>
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-6 text-foreground">
-              Torne-se um Fundador do PDI
+              Convite Especial
             </h2>
           </div>
 
           <Card className="border border-accent/30 shadow-lg bg-gradient-to-br from-card to-accent/5">
             <CardContent className="p-8 sm:p-12">
-              <p className="text-base sm:text-lg text-muted-foreground leading-relaxed mb-8 text-center">
-                Convidamos você a fazer parte de um <strong className="text-foreground">grupo seleto de 100 pessoas</strong> para 
-                integrar o <strong className="text-foreground">Laboratório de Fundadores</strong>. Como fundador, você terá:
+              <p className="text-base sm:text-lg text-muted-foreground leading-relaxed text-center">
+                Estamos mantendo o valor de lançamento do produto (R$ 67,00), para tornar o produto acessível. Além de você ter 30 dias para usar e testar. Essas condições são por pouco tempo.
               </p>
-
-              <div className="grid sm:grid-cols-2 gap-6 mb-8">
-                {[
-                  "Acesso completo ao sistema por 12 meses",
-                  "Participação ativa na validação do método",
-                  "Contribuição direta no aprimoramento do PDI",
-                  "Possibilidade de condições especiais futuras"
-                ].map((item, index) => (
-                  <div key={index} className="flex items-start gap-3">
-                    <div className="w-6 h-6 rounded-full bg-accent/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                      <CheckCircle2 className="w-4 h-4 text-accent" />
-                    </div>
-                    <p className="text-foreground text-sm sm:text-base">{item}</p>
-                  </div>
-                ))}
-              </div>
-
-              <div className="text-center pt-6 border-t border-border/50">
-                <p className="text-muted-foreground mb-2">Valor simbólico para fundadores:</p>
-                <div className="text-3xl sm:text-4xl font-bold text-foreground mb-2">
-                  R$ 67
-                </div>
-                <p className="text-sm text-muted-foreground mb-4">
-                  Pagamento único • Não renovável • Acesso por 12 meses
-                </p>
-                <p className="text-xs sm:text-sm text-accent italic">
-                  Este laboratório existe apenas nesta fase do PDI.
-                  <br />
-                  Ele não será reaberto neste formato no futuro.
-                </p>
-              </div>
             </CardContent>
           </Card>
         </div>
