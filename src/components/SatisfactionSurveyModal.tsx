@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Star, Zap } from "lucide-react";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
 
 interface SatisfactionSurveyModalProps {
   open: boolean;
@@ -16,6 +17,7 @@ export const SatisfactionSurveyModal = ({ open, onOpenChange, sectionCompleted }
   const [rating, setRating] = useState<number>(0);
   const [comment, setComment] = useState("");
   const [hoveredRating, setHoveredRating] = useState<number>(0);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     if (open) {
@@ -28,12 +30,62 @@ export const SatisfactionSurveyModal = ({ open, onOpenChange, sectionCompleted }
     }
   }, [open]);
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (rating === 0) {
       toast.error("Por favor, selecione uma avaliação");
       return;
     }
 
+    setIsSubmitting(true);
+
+    try {
+      // Get current user
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      if (user) {
+        // Save to Supabase database
+        const { error } = await supabase
+          .from('satisfaction_surveys')
+          .insert({
+            user_id: user.id,
+            user_email: user.email,
+            section: sectionCompleted,
+            survey_type: surveyType,
+            rating,
+            feedback: comment || null,
+          });
+
+        if (error) {
+          console.error("Error saving survey:", error);
+          // Fall back to localStorage if database fails
+          saveToLocalStorage();
+        }
+      } else {
+        // User not logged in, save to localStorage only
+        saveToLocalStorage();
+      }
+
+      // Update last survey date in localStorage
+      const completedSections = JSON.parse(localStorage.getItem("completed_sections") || "{}");
+      completedSections[sectionCompleted] = {
+        ...completedSections[sectionCompleted],
+        lastSurveyDate: new Date().toISOString()
+      };
+      localStorage.setItem("completed_sections", JSON.stringify(completedSections));
+
+      toast.success("Obrigado pelo seu feedback! 🙏");
+      onOpenChange(false);
+    } catch (error) {
+      console.error("Error submitting survey:", error);
+      saveToLocalStorage();
+      toast.success("Obrigado pelo seu feedback! 🙏");
+      onOpenChange(false);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const saveToLocalStorage = () => {
     const survey = {
       id: Date.now().toString(),
       type: surveyType,
@@ -47,17 +99,6 @@ export const SatisfactionSurveyModal = ({ open, onOpenChange, sectionCompleted }
     const surveys = JSON.parse(localStorage.getItem("satisfaction_surveys") || "[]");
     surveys.push(survey);
     localStorage.setItem("satisfaction_surveys", JSON.stringify(surveys));
-
-    // Atualizar último envio de pesquisa
-    const completedSections = JSON.parse(localStorage.getItem("completed_sections") || "{}");
-    completedSections[sectionCompleted] = {
-      ...completedSections[sectionCompleted],
-      lastSurveyDate: new Date().toISOString()
-    };
-    localStorage.setItem("completed_sections", JSON.stringify(completedSections));
-
-    toast.success("Obrigado pelo seu feedback! 🙏");
-    onOpenChange(false);
   };
 
   const csatQuestion = "Quão satisfeito você está com a funcionalidade que acabou de usar?";
@@ -133,11 +174,11 @@ export const SatisfactionSurveyModal = ({ open, onOpenChange, sectionCompleted }
 
           {/* Actions */}
           <div className="flex gap-2 justify-end">
-            <Button variant="outline" onClick={() => onOpenChange(false)}>
+            <Button variant="outline" onClick={() => onOpenChange(false)} disabled={isSubmitting}>
               Pular
             </Button>
-            <Button onClick={handleSubmit}>
-              Enviar Feedback
+            <Button onClick={handleSubmit} disabled={isSubmitting}>
+              {isSubmitting ? "Enviando..." : "Enviar Feedback"}
             </Button>
           </div>
         </div>

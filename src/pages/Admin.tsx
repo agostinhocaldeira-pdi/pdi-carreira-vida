@@ -11,6 +11,7 @@ import FinancialDashboard from "@/components/admin/FinancialDashboard";
 import AdminMetricsPanel from "@/components/admin/AdminMetricsPanel";
 import LeadsManagement from "@/components/admin/LeadsManagement";
 import AdminBroadcastPanel from "@/components/admin/AdminBroadcastPanel";
+import { SatisfactionSurveyPanel } from "@/components/admin/SatisfactionSurveyPanel";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { toast } from "sonner";
 
@@ -447,6 +448,9 @@ const Admin = () => {
 
         {/* Gestão de Leads */}
         <LeadsManagement />
+
+        {/* Pesquisas de Satisfação */}
+        <SatisfactionSurveyPanel />
 
         {/* Cadastro de Administradores */}
         <Card className="shadow-medium">
