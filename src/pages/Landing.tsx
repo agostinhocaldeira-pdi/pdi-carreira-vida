@@ -262,7 +262,7 @@ const Landing = () => {
       {/* ============================================================ */}
       {/* 5) FUNCIONALIDADES DA PLATAFORMA (VISUAL FIRST) */}
       {/* ============================================================ */}
-      <section className="py-16 sm:py-24 px-4">
+      <section className="py-8 sm:py-12 px-4">
         <div className="container mx-auto max-w-6xl">
 
           <div className="space-y-16 sm:space-y-24">
