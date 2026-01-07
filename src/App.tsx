@@ -74,9 +74,9 @@ const App = () => (
               <BrowserRouter>
               <ScrollToTop />
               <Routes>
-                <Route path="/" element={<SubscriberLanding />} />
+                <Route path="/" element={<Landing />} />
+                <Route path="/news" element={<SubscriberLanding />} />
                 <Route path="/leadp2" element={<Index />} />
-                <Route path="/leadp" element={<Landing />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/signup" element={<Signup />} />
                 <Route path="/onboarding" element={<Onboarding />} />
