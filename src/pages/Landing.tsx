@@ -22,6 +22,7 @@ import {
   Play
 } from "lucide-react";
 import Logo from "@/components/Logo";
+import ToolsSection from "@/components/landing/ToolsSection";
 
 // Import platform images
 import planoDeVidaScreenshot from "@/assets/plano-de-vida-screenshot.png";
@@ -326,6 +327,11 @@ const Landing = () => {
           </div>
         </div>
       </section>
+
+      {/* ============================================================ */}
+      {/* SEÇÃO DE FERRAMENTAS */}
+      {/* ============================================================ */}
+      <ToolsSection />
 
       {/* ============================================================ */}
       {/* 6) SEGURANÇA DE USO — GARANTIA DE 30 DIAS */}
