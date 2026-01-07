@@ -532,16 +532,16 @@ const Landing = () => {
       {/* ============================================================ */}
       {/* 7) APRESENTAÇÃO DO LABORATÓRIO DE FUNDADORES */}
       {/* ============================================================ */}
-      <section className="py-16 sm:py-24 px-4">
+      <section className="py-8 sm:py-12 px-4">
         <div className="container mx-auto max-w-4xl">
-          <div className="text-center mb-10">
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-6 text-foreground">
+          <div className="text-center mb-4">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 text-foreground">
               Convite Especial
             </h2>
           </div>
 
           <Card className="border border-accent/30 shadow-lg bg-gradient-to-br from-card to-accent/5">
-            <CardContent className="p-8 sm:p-12">
+            <CardContent className="p-6 sm:p-8">
               <p className="text-base sm:text-lg text-muted-foreground leading-relaxed text-center">
                 Estamos mantendo o valor de lançamento do produto (R$ 67,00), para tornar o produto acessível. Além de você ter 30 dias para usar e testar. Essas condições são por pouco tempo.
               </p>
