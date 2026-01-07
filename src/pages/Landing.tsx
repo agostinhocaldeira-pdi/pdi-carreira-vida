@@ -111,9 +111,8 @@ const Landing = () => {
         <div className="absolute bottom-0 left-0 w-80 h-80 bg-accent/5 rounded-full blur-3xl" />
         
         <div className="container relative mx-auto max-w-4xl text-center">
-          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-6 text-foreground leading-tight">
-            Eu sei que você quer algo a mais{" "}
-            <span className="text-primary">para sua vida</span>.
+          <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold mb-6 text-foreground leading-tight">
+            Transformar objetivos em ações práticas, organizando metas, prioridades e rotina de forma simples e sustentável
           </h1>
           
           <p className="text-xl sm:text-2xl md:text-3xl text-muted-foreground mb-6 font-light">
