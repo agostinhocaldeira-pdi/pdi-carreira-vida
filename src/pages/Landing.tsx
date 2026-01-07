@@ -151,23 +151,25 @@ const Landing = () => {
               Quero experimentar
               <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
-            <p className="mt-4 text-sm sm:text-base text-muted-foreground">
-              Você não precisa decidir agora.<br />
-              Use o sistema por 30 dias e veja como ele se encaixa na sua rotina.
-            </p>
-            <div className="mt-4 flex flex-wrap justify-center gap-4 text-xs sm:text-sm text-muted-foreground">
-              <span className="flex items-center gap-2">
-                <CheckCircle2 className="h-4 w-4 text-primary" />
-                30 dias de uso real
-              </span>
-              <span className="flex items-center gap-2">
-                <CheckCircle2 className="h-4 w-4 text-primary" />
-                cancelamento livre
-              </span>
-              <span className="flex items-center gap-2">
-                <CheckCircle2 className="h-4 w-4 text-primary" />
-                cobrança só após esse período
-              </span>
+            <div className="mt-6 p-6 rounded-xl border border-border/50 bg-muted/20">
+              <p className="text-sm sm:text-base text-muted-foreground">
+                Você não precisa decidir agora.<br />
+                Use o sistema por 30 dias e veja como ele se encaixa na sua rotina.
+              </p>
+              <div className="mt-4 flex flex-wrap justify-center gap-4 text-xs sm:text-sm text-muted-foreground">
+                <span className="flex items-center gap-2">
+                  <CheckCircle2 className="h-4 w-4 text-primary" />
+                  30 dias de uso real
+                </span>
+                <span className="flex items-center gap-2">
+                  <CheckCircle2 className="h-4 w-4 text-primary" />
+                  cancelamento livre
+                </span>
+                <span className="flex items-center gap-2">
+                  <CheckCircle2 className="h-4 w-4 text-primary" />
+                  cobrança só após esse período
+                </span>
+              </div>
             </div>
           </div>
         </div>
