@@ -141,6 +141,9 @@ const Landing = () => {
               allowFullScreen
             />
           </div>
+          <p className="text-center text-base sm:text-lg text-muted-foreground mt-4 italic">
+            Finalmente dê vida àquele objetivo que você engavetou, começou, parou — e quase esqueceu que ainda importava.
+          </p>
           
           {/* CTA após vídeo */}
           <div className="text-center mt-10">
