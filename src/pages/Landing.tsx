@@ -181,20 +181,16 @@ const Landing = () => {
       {/* ============================================================ */}
       <section id="contexto" className="py-10 sm:py-14 px-4 bg-muted/20">
         <div className="container mx-auto max-w-3xl text-center">
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-2 text-foreground">
-            Você não consegue colocar seus planos em prática?
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground">
+            Você não consegue colocar seus planos em prática, porque manter constância é difícil.
           </h2>
-          
-          <p className="text-lg sm:text-xl md:text-2xl text-muted-foreground">
-            Por que manter constância é difícil, mesmo querendo
-          </p>
         </div>
       </section>
 
       {/* ============================================================ */}
       {/* 3) SEÇÃO DO PROBLEMA REAL */}
       {/* ============================================================ */}
-      <section className="py-16 sm:py-24 px-4">
+      <section className="pt-0 pb-16 sm:pb-24 px-4 -mt-6">
         <div className="container mx-auto max-w-4xl">
           
           <Card className="border-none shadow-lg bg-gradient-to-br from-card to-muted/30">
