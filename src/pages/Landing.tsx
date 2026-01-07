@@ -222,11 +222,9 @@ const Landing = () => {
             <Badge variant="secondary" className="mb-4 text-xs sm:text-sm">
               O QUE O PDI REALMENTE ENTREGA
             </Badge>
-            <div className="text-lg sm:text-xl md:text-2xl text-muted-foreground leading-relaxed space-y-1">
-              <p>O PDI não entrega organização,</p>
-              <p>não entrega metas,</p>
-              <p>não entrega produtividade.</p>
-            </div>
+            <p className="text-lg sm:text-xl md:text-2xl text-muted-foreground leading-relaxed">
+              O PDI não entrega organização, não entrega metas, não entrega produtividade.
+            </p>
             <p className="text-base sm:text-lg text-foreground font-medium mt-6">
               Essas são ferramentas intermediárias.
             </p>
