@@ -290,13 +290,9 @@ const Landing = () => {
             </p>
             <Card className="border-none shadow-md bg-muted/30">
               <CardContent className="p-6 sm:p-8">
-                <p className="text-base sm:text-lg text-muted-foreground mb-4">Quando não há direção:</p>
-                <div className="text-base sm:text-lg text-muted-foreground space-y-2">
-                  <p>qualquer esforço cansa,</p>
-                  <p>qualquer rotina pesa,</p>
-                  <p>qualquer decisão gera ansiedade,</p>
-                  <p>qualquer futuro assusta.</p>
-                </div>
+              <p className="text-base sm:text-lg text-muted-foreground">
+                Quando não há direção: qualquer esforço cansa, qualquer rotina pesa, qualquer decisão gera ansiedade, qualquer futuro assusta.
+              </p>
               </CardContent>
             </Card>
           </div>
