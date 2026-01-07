@@ -213,6 +213,154 @@ const Landing = () => {
       </section>
 
       {/* ============================================================ */}
+      {/* O QUE O PDI REALMENTE ENTREGA */}
+      {/* ============================================================ */}
+      <section className="py-16 sm:py-24 px-4 bg-gradient-to-b from-background to-muted/10">
+        <div className="container mx-auto max-w-4xl">
+          {/* Título Principal */}
+          <div className="text-center mb-12">
+            <Badge variant="secondary" className="mb-4 text-xs sm:text-sm">
+              O QUE O PDI REALMENTE ENTREGA
+            </Badge>
+            <div className="text-lg sm:text-xl md:text-2xl text-muted-foreground leading-relaxed space-y-1">
+              <p>O PDI não entrega organização,</p>
+              <p>não entrega metas,</p>
+              <p>não entrega produtividade.</p>
+            </div>
+            <p className="text-base sm:text-lg text-foreground font-medium mt-6">
+              Essas são ferramentas intermediárias.
+            </p>
+            <p className="text-xl sm:text-2xl text-primary font-bold mt-4">
+              O resultado final é outro.
+            </p>
+          </div>
+
+          {/* O QUE VOCÊ VAI CONQUISTAR */}
+          <div className="mt-16">
+            <h3 className="text-2xl sm:text-3xl font-bold text-center text-foreground mb-6">
+              O QUE VOCÊ VAI CONQUISTAR
+            </h3>
+            <p className="text-lg sm:text-xl text-center text-primary font-medium mb-4">
+              O direito de viver uma vida que faz sentido — e a segurança de saber que está construindo isso conscientemente.
+            </p>
+            <p className="text-base sm:text-lg text-center text-muted-foreground mb-8">
+              O que isso significa? O que todo ser humano quer, lá no fundo!
+            </p>
+
+            <Card className="border-none shadow-lg bg-gradient-to-br from-card to-muted/30">
+              <CardContent className="p-8 sm:p-12">
+                <ul className="space-y-4 text-base sm:text-lg text-muted-foreground">
+                  <li className="flex items-start gap-3">
+                    <CheckCircle2 className="w-5 h-5 text-primary mt-1 flex-shrink-0" />
+                    <span>Sentir que a própria vida está indo para algum lugar</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <CheckCircle2 className="w-5 h-5 text-primary mt-1 flex-shrink-0" />
+                    <span>Ter controle sobre as próprias escolhas</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <CheckCircle2 className="w-5 h-5 text-primary mt-1 flex-shrink-0" />
+                    <span>Viver sem o medo constante de estar desperdiçando a própria vida</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <CheckCircle2 className="w-5 h-5 text-primary mt-1 flex-shrink-0" />
+                    <span>Construir um futuro melhor do que o presente</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <CheckCircle2 className="w-5 h-5 text-primary mt-1 flex-shrink-0" />
+                    <span>Sentir orgulho do caminho que está trilhando</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <CheckCircle2 className="w-5 h-5 text-primary mt-1 flex-shrink-0" />
+                    <span>Ter paz interna por saber que está fazendo o que precisa ser feito</span>
+                  </li>
+                </ul>
+                <div className="mt-8 text-center">
+                  <p className="text-base sm:text-lg text-foreground font-medium">
+                    Nada disso depende de sorte.<br />
+                    <span className="text-primary">Tudo isso depende de hábitos, decisões e execução consciente.</span>
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* O SER HUMANO NÃO SOFRE... */}
+          <div className="mt-16 text-center">
+            <p className="text-xl sm:text-2xl md:text-3xl font-bold text-foreground mb-8">
+              O ser humano não sofre por falta de capacidade. Sofre por viver sem direção.
+            </p>
+            <Card className="border-none shadow-md bg-muted/30">
+              <CardContent className="p-6 sm:p-8">
+                <p className="text-base sm:text-lg text-muted-foreground mb-4">Quando não há direção:</p>
+                <div className="text-base sm:text-lg text-muted-foreground space-y-2">
+                  <p>qualquer esforço cansa,</p>
+                  <p>qualquer rotina pesa,</p>
+                  <p>qualquer decisão gera ansiedade,</p>
+                  <p>qualquer futuro assusta.</p>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* ENTÃO, O "ALGO" É ISSO */}
+          <div className="mt-16 text-center">
+            <Badge variant="secondary" className="mb-4 text-xs sm:text-sm">
+              ENTÃO, O "ALGO" É ISSO:
+            </Badge>
+            <h3 className="text-2xl sm:text-3xl md:text-4xl font-bold text-primary mb-6">
+              Direção + Autoria + Paz Mental
+            </h3>
+            <p className="text-base sm:text-lg text-muted-foreground mb-4">
+              De forma ainda mais clara:
+            </p>
+            <p className="text-lg sm:text-xl text-foreground font-medium leading-relaxed max-w-3xl mx-auto">
+              Você conquista a tranquilidade de saber quem você é de verdade (profundamente, sua essência), 
+              para onde está indo e o que precisa fazer todos os dias para chegar lá.
+            </p>
+            <p className="text-base sm:text-lg text-muted-foreground mt-4 italic">
+              Isso é o que todo ser humano quer, mesmo que nunca tenha colocado em palavras.
+            </p>
+          </div>
+
+          {/* O PAPEL DO PDI NESSA CONQUISTA */}
+          <div className="mt-16">
+            <h3 className="text-2xl sm:text-3xl font-bold text-center text-foreground mb-8">
+              O PAPEL DO PDI NESSA CONQUISTA
+            </h3>
+            <Card className="border-none shadow-lg bg-gradient-to-br from-primary/5 to-card">
+              <CardContent className="p-8 sm:p-12">
+                <p className="text-base sm:text-lg text-muted-foreground mb-6 text-center">
+                  O PDI é o que transforma:
+                </p>
+                <div className="space-y-3 text-base sm:text-lg text-center">
+                  <p><span className="text-muted-foreground">desejo</span> <ArrowRight className="inline w-4 h-4 mx-2 text-primary" /> <span className="text-foreground font-medium">direção</span></p>
+                  <p><span className="text-muted-foreground">confusão</span> <ArrowRight className="inline w-4 h-4 mx-2 text-primary" /> <span className="text-foreground font-medium">clareza</span></p>
+                  <p><span className="text-muted-foreground">vontade</span> <ArrowRight className="inline w-4 h-4 mx-2 text-primary" /> <span className="text-foreground font-medium">plano</span></p>
+                  <p><span className="text-muted-foreground">plano</span> <ArrowRight className="inline w-4 h-4 mx-2 text-primary" /> <span className="text-foreground font-medium">execução</span></p>
+                  <p><span className="text-muted-foreground">execução</span> <ArrowRight className="inline w-4 h-4 mx-2 text-primary" /> <span className="text-foreground font-medium">resultado</span></p>
+                  <p><span className="text-muted-foreground">resultado</span> <ArrowRight className="inline w-4 h-4 mx-2 text-primary" /> <span className="text-primary font-bold">orgulho pessoal</span></p>
+                </div>
+                <div className="mt-8 text-center">
+                  <p className="text-base sm:text-lg text-muted-foreground italic">
+                    E esse orgulho não vem do que ele "conquistou fora".<br />
+                    <span className="text-foreground font-medium">Vem do que ele se tornou no processo.</span>
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Frase de fechamento */}
+          <div className="mt-16 text-center">
+            <p className="text-xl sm:text-2xl md:text-3xl font-bold text-foreground leading-relaxed">
+              No fundo, todo ser humano só quer viver uma vida que faça sentido — e ter certeza de que está fazendo a própria parte para construí-la.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* ============================================================ */}
       {/* 4) APRESENTAÇÃO DO MÉTODO PDI */}
       {/* ============================================================ */}
       <section className="py-8 sm:py-12 px-4 bg-gradient-to-b from-muted/10 to-background">
