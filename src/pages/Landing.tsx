@@ -142,16 +142,10 @@ const Landing = () => {
       <section id="video-section" className="py-4 sm:py-6 px-4">
         <div className="container mx-auto max-w-4xl">
           <div className="text-center mb-6">
-            <Button 
-              size="lg" 
-              variant="outline"
-              className="text-base sm:text-lg px-8 py-6 border-2 border-primary/30 hover:bg-primary/10 hover:border-primary/50 transition-all duration-300"
-              onClick={handlePlayVideo}
-            >
-              Entender como funciona
-              <ArrowRight className="ml-2 h-5 w-5" />
-            </Button>
-            <p className="mt-4 text-sm sm:text-base text-muted-foreground italic">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 text-foreground">
+              Entenda como funciona
+            </h2>
+            <p className="text-sm sm:text-base text-muted-foreground italic mb-6">
               A melhor forma de entender o PDI não é lendo. É vendo como ele funciona no dia a dia.
             </p>
           </div>
