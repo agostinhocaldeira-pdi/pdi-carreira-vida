@@ -23,6 +23,7 @@ import {
 } from "lucide-react";
 import Logo from "@/components/Logo";
 import ToolsSection from "@/components/landing/ToolsSection";
+import { StoicReflectionLanding } from "@/components/landing/StoicReflectionLanding";
 
 // Import platform images
 import planoDeVidaScreenshot from "@/assets/plano-de-vida-screenshot.png";
@@ -332,6 +333,11 @@ const Landing = () => {
       {/* SEÇÃO DE FERRAMENTAS */}
       {/* ============================================================ */}
       <ToolsSection />
+
+      {/* ============================================================ */}
+      {/* SEÇÃO DE REFLEXÃO ESTÓICA */}
+      {/* ============================================================ */}
+      <StoicReflectionLanding />
 
       {/* ============================================================ */}
       {/* 6) SEGURANÇA DE USO — GARANTIA DE 30 DIAS */}
