@@ -131,14 +131,6 @@ const Landing = () => {
       {/* ============================================================ */}
       <section id="video-section" className="py-4 sm:py-6 px-4">
         <div className="container mx-auto max-w-4xl">
-          <div className="text-center mb-6">
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 text-foreground">
-              Entenda como funciona
-            </h2>
-            <p className="text-sm sm:text-base text-muted-foreground italic mb-6">
-              A melhor forma de entender o PDI não é lendo. É vendo como ele funciona no dia a dia.
-            </p>
-          </div>
           <div className="aspect-video rounded-xl overflow-hidden shadow-2xl border border-border/30 bg-muted/50">
             <iframe
               className="w-full h-full"
