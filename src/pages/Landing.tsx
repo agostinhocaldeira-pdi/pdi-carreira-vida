@@ -622,6 +622,20 @@ const Landing = () => {
         </div>
       </section>
 
+      {/* CTA Final */}
+      <section className="py-12 sm:py-16 px-4 bg-gradient-to-t from-primary/5 to-background">
+        <div className="container mx-auto max-w-3xl text-center">
+          <Button 
+            size="lg" 
+            className="text-base sm:text-lg px-10 py-6 bg-primary hover:bg-primary/90 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
+            onClick={() => navigate("/signup")}
+          >
+            Comece agora
+            <Sparkles className="ml-3 w-5 h-5" />
+          </Button>
+        </div>
+      </section>
+
       {/* Footer */}
       <footer className="py-8 border-t bg-muted/20">
         <div className="container mx-auto px-4 text-center text-sm text-muted-foreground">
