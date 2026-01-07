@@ -182,11 +182,11 @@ const Landing = () => {
       <section id="contexto" className="py-10 sm:py-14 px-4 bg-muted/20">
         <div className="container mx-auto max-w-3xl text-center">
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 text-foreground">
-            Onde você se encontra?
+            Você não consegue colocar seus planos em prática?
           </h2>
           
           <p className="text-base sm:text-lg md:text-xl text-muted-foreground leading-relaxed">
-            Você não está perdido, mas talvez sinta que falta um controle mais firme sobre os próximos passos.
+            E o ciclo se repete, ano após ano
           </p>
         </div>
       </section>
