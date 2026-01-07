@@ -112,11 +112,12 @@ const Landing = () => {
         
         <div className="container relative mx-auto max-w-4xl text-center">
           <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold mb-6 text-foreground leading-tight">
-            Execute seus planos com constância, clareza e direção — mesmo com a rotina cheia e os desafios do dia-a-dia.
+            Não é falta de força de vontade.<br />
+            É falta de um sistema.
           </h1>
           
           <p className="text-xl sm:text-2xl md:text-3xl text-muted-foreground mb-6 font-light">
-            e finalmente dê vida àquele objetivo que você engavetou, começou, parou — e quase esqueceu que ainda importava.
+            O Sistema PDI organiza seus planos, sua rotina e suas decisões para que você avance com clareza, mesmo nos dias difíceis.
           </p>
           
           <p className="text-base sm:text-lg text-muted-foreground/80 mt-8 mb-0">
