@@ -210,13 +210,13 @@ const ToolsSection = () => {
               <Button
                 key={tool.id}
                 variant="outline"
-                className="h-auto py-4 sm:py-6 px-3 sm:px-4 flex flex-col items-center gap-2 sm:gap-3 hover:border-primary/50 hover:bg-primary/5 transition-all duration-300 group"
+                className="h-auto py-4 sm:py-6 px-2 sm:px-4 flex flex-col items-center gap-2 sm:gap-3 hover:border-primary/50 hover:bg-primary/5 transition-all duration-300 group min-w-0"
                 onClick={() => setSelectedTool(tool)}
               >
-                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors flex-shrink-0">
                   <Icon className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
                 </div>
-                <span className="text-xs sm:text-sm font-medium text-center leading-tight">
+                <span className="text-[11px] sm:text-sm font-medium text-center leading-tight break-words hyphens-auto w-full">
                   {tool.name}
                 </span>
               </Button>
