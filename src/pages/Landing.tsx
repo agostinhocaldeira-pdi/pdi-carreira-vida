@@ -112,12 +112,11 @@ const Landing = () => {
         
         <div className="container relative mx-auto max-w-4xl text-center">
           <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold mb-6 text-foreground leading-tight">
-            Não é falta de força de vontade.<br />
-            É falta de um sistema.
+            No fundo, todo ser humano só quer viver uma vida que faça sentido — e ter certeza de que está fazendo a própria parte para construí-la.
           </h1>
           
           <p className="text-xl sm:text-2xl md:text-3xl text-muted-foreground mb-6 font-light">
-            O Sistema PDI organiza seus planos, sua rotina e suas decisões para que você avance com clareza, mesmo nos dias difíceis.
+            O PDI é o sistema que transforma intenção em direção, decisões em ação e esforço em progresso real.
           </p>
           
           <p className="text-base sm:text-lg text-muted-foreground/80 mt-8 mb-0">
