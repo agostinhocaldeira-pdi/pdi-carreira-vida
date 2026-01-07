@@ -143,6 +143,10 @@ const Landing = () => {
           
           {/* CTA após vídeo */}
           <div className="text-center mt-10">
+            <div className="mb-4">
+              <span className="text-2xl sm:text-3xl font-bold text-foreground">R$ 67,00</span>
+              <span className="text-muted-foreground">/ano</span>
+            </div>
             <Button 
               size="lg" 
               className="text-base sm:text-lg px-8 py-6 bg-primary hover:bg-primary/90 transition-all duration-300"
@@ -596,6 +600,10 @@ const Landing = () => {
             Lembre-se: você tem <strong className="text-foreground">30 dias para experimentar o PDI sem risco</strong>.
           </p>
 
+          <div className="mb-4">
+            <span className="text-2xl sm:text-3xl font-bold text-foreground">R$ 67,00</span>
+            <span className="text-muted-foreground">/ano</span>
+          </div>
           <Button 
             size="lg" 
             className="text-base sm:text-lg px-8 sm:px-12 py-6 sm:py-8 bg-primary hover:bg-primary/90 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
