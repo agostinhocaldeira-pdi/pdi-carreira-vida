@@ -181,12 +181,12 @@ const Landing = () => {
       {/* ============================================================ */}
       <section id="contexto" className="py-10 sm:py-14 px-4 bg-muted/20">
         <div className="container mx-auto max-w-3xl text-center">
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 text-foreground">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-2 text-foreground">
             Você não consegue colocar seus planos em prática?
           </h2>
           
-          <p className="text-base sm:text-lg md:text-xl text-muted-foreground leading-relaxed">
-            E o ciclo se repete, ano após ano
+          <p className="text-lg sm:text-xl md:text-2xl text-muted-foreground">
+            Por que manter constância é difícil, mesmo querendo
           </p>
         </div>
       </section>
@@ -196,11 +196,6 @@ const Landing = () => {
       {/* ============================================================ */}
       <section className="py-16 sm:py-24 px-4">
         <div className="container mx-auto max-w-4xl">
-          <div className="text-center mb-10">
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-6 text-foreground">
-              Por que manter constância é tão difícil, mesmo querendo
-            </h2>
-          </div>
           
           <Card className="border-none shadow-lg bg-gradient-to-br from-card to-muted/30">
             <CardContent className="p-8 sm:p-12">
