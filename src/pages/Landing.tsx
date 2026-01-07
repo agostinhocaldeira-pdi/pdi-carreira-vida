@@ -208,13 +208,9 @@ const Landing = () => {
       {/* ============================================================ */}
       {/* 4) APRESENTAÇÃO DO MÉTODO PDI */}
       {/* ============================================================ */}
-      <section className="py-16 sm:py-24 px-4 bg-gradient-to-b from-muted/10 to-background">
+      <section className="py-8 sm:py-12 px-4 bg-gradient-to-b from-muted/10 to-background">
         <div className="container mx-auto max-w-5xl">
           <div className="text-center mb-12">
-            <Badge className="mb-4 bg-primary/10 text-primary border-primary/20">
-              <Compass className="w-4 h-4 mr-2 inline" />
-              O Método
-            </Badge>
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-6 text-foreground">
               O PDI: Seu Sistema de Organização Pessoal
             </h2>
