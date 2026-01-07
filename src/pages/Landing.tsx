@@ -19,7 +19,8 @@ import {
   Calendar,
   Compass,
   Star,
-  Play
+  Play,
+  X
 } from "lucide-react";
 import Logo from "@/components/Logo";
 import ToolsSection from "@/components/landing/ToolsSection";
@@ -883,6 +884,146 @@ const Landing = () => {
                 </div>
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ============================================================ */}
+      {/* PARA QUEM É / PARA QUEM NÃO É */}
+      {/* ============================================================ */}
+      <section className="py-12 sm:py-16 px-4 bg-muted/20">
+        <div className="container mx-auto max-w-5xl">
+          <div className="text-center mb-10">
+            <Badge variant="secondary" className="mb-4 text-xs sm:text-sm">
+              Transparência total
+            </Badge>
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 text-foreground">
+              O PDI é para você?
+            </h2>
+            <p className="text-muted-foreground max-w-2xl mx-auto text-sm sm:text-base">
+              Antes de decidir, veja se o PDI faz sentido para o seu momento.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-6 sm:gap-8">
+            {/* PARA QUEM É */}
+            <Card className="border-primary/30 bg-gradient-to-br from-primary/5 to-card">
+              <CardContent className="p-6 sm:p-8">
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center">
+                    <CheckCircle2 className="h-5 w-5 text-primary" />
+                  </div>
+                  <h3 className="text-xl font-bold text-foreground">O PDI é para você se:</h3>
+                </div>
+                <ul className="space-y-4">
+                  <li className="flex items-start gap-3">
+                    <CheckCircle2 className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
+                    <span className="text-muted-foreground text-sm sm:text-base">Você sente que pode mais, mas não sabe por onde começar</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <CheckCircle2 className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
+                    <span className="text-muted-foreground text-sm sm:text-base">Sua rotina virou um ciclo automático sem propósito claro</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <CheckCircle2 className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
+                    <span className="text-muted-foreground text-sm sm:text-base">Você quer organizar vida e carreira com método, não com motivação passageira</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <CheckCircle2 className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
+                    <span className="text-muted-foreground text-sm sm:text-base">Você está disposto a dedicar alguns minutos por dia à sua evolução</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <CheckCircle2 className="w-5 h-5 text-primary mt-0.5 flex-shrink-0" />
+                    <span className="text-muted-foreground text-sm sm:text-base">Você quer ter clareza sobre quem é, onde quer chegar e o que fazer</span>
+                  </li>
+                </ul>
+              </CardContent>
+            </Card>
+
+            {/* PARA QUEM NÃO É */}
+            <Card className="border-destructive/30 bg-gradient-to-br from-destructive/5 to-card">
+              <CardContent className="p-6 sm:p-8">
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="w-10 h-10 rounded-full bg-destructive/20 flex items-center justify-center">
+                    <X className="h-5 w-5 text-destructive" />
+                  </div>
+                  <h3 className="text-xl font-bold text-foreground">O PDI não é para você se:</h3>
+                </div>
+                <ul className="space-y-4">
+                  <li className="flex items-start gap-3">
+                    <X className="w-5 h-5 text-destructive mt-0.5 flex-shrink-0" />
+                    <span className="text-muted-foreground text-sm sm:text-base">Você busca resultados mágicos sem esforço pessoal</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <X className="w-5 h-5 text-destructive mt-0.5 flex-shrink-0" />
+                    <span className="text-muted-foreground text-sm sm:text-base">Você espera que alguém faça o trabalho por você</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <X className="w-5 h-5 text-destructive mt-0.5 flex-shrink-0" />
+                    <span className="text-muted-foreground text-sm sm:text-base">Você não está disposto a olhar para dentro com honestidade</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <X className="w-5 h-5 text-destructive mt-0.5 flex-shrink-0" />
+                    <span className="text-muted-foreground text-sm sm:text-base">Você quer uma solução motivacional e não um sistema de organização</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <X className="w-5 h-5 text-destructive mt-0.5 flex-shrink-0" />
+                    <span className="text-muted-foreground text-sm sm:text-base">Você não tem 5 minutos por dia para investir em você mesmo</span>
+                  </li>
+                </ul>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </section>
+
+      {/* ============================================================ */}
+      {/* FAQ - PERGUNTAS FREQUENTES */}
+      {/* ============================================================ */}
+      <section className="py-12 sm:py-16 px-4">
+        <div className="container mx-auto max-w-3xl">
+          <div className="text-center mb-8">
+            <h2 className="text-xl sm:text-2xl font-bold text-foreground">
+              Perguntas frequentes
+            </h2>
+          </div>
+          <div className="space-y-4">
+            <div className="p-4 rounded-lg bg-muted/30">
+              <p className="font-medium mb-2 text-sm sm:text-base text-foreground">Preciso de experiência com desenvolvimento pessoal?</p>
+              <p className="text-muted-foreground text-xs sm:text-sm">
+                Não. O PDI foi feito para qualquer pessoa que queira mais clareza e direção na vida — 
+                iniciantes ou experientes.
+              </p>
+            </div>
+            <div className="p-4 rounded-lg bg-muted/30">
+              <p className="font-medium mb-2 text-sm sm:text-base text-foreground">Quanto tempo preciso dedicar por dia?</p>
+              <p className="text-muted-foreground text-xs sm:text-sm">
+                5 a 10 minutos são suficientes para manter seu diário e acompanhar seu progresso.
+              </p>
+            </div>
+            <div className="p-4 rounded-lg bg-muted/30">
+              <p className="font-medium mb-2 text-sm sm:text-base text-foreground">Posso cancelar a qualquer momento?</p>
+              <p className="text-muted-foreground text-xs sm:text-sm">
+                Sim. Sem burocracia, sem perguntas. Mas apostamos que você vai querer ficar.
+              </p>
+            </div>
+            <div className="p-4 rounded-lg bg-muted/30">
+              <p className="font-medium mb-2 text-sm sm:text-base text-foreground">Como funciona o período de teste?</p>
+              <p className="text-muted-foreground text-xs sm:text-sm">
+                Você tem 30 dias para usar o sistema completo. Se não gostar, basta não continuar — você não paga nada.
+              </p>
+            </div>
+            <div className="p-4 rounded-lg bg-muted/30">
+              <p className="font-medium mb-2 text-sm sm:text-base text-foreground">O PDI funciona em celular?</p>
+              <p className="text-muted-foreground text-xs sm:text-sm">
+                Sim! O sistema é 100% responsivo e funciona perfeitamente em celular, tablet ou computador.
+              </p>
+            </div>
+          </div>
+          <div className="text-center mt-6">
+            <Button variant="link" onClick={() => navigate("/faq")}>
+              Ver todas as perguntas →
+            </Button>
           </div>
         </div>
       </section>
