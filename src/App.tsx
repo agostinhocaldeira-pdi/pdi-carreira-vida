@@ -50,6 +50,7 @@ import PaymentSuccess from "./pages/PaymentSuccess";
 import PlanoVidaQuemSou from "./pages/PlanoVidaQuemSou";
 import PlanoVidaParaOnde from "./pages/PlanoVidaParaOnde";
 import PlanoVidaComoChegar from "./pages/PlanoVidaComoChegar";
+import Reflexao from "./pages/Reflexao";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -115,7 +116,9 @@ const App = () => (
                 <Route path="/plano-vida/quem-sou" element={<PlanoVidaQuemSou />} />
                 <Route path="/plano-vida/para-onde" element={<PlanoVidaParaOnde />} />
                 <Route path="/plano-vida/como-chegar" element={<PlanoVidaComoChegar />} />
+                <Route path="/reflexao" element={<Reflexao />} />
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+                <Route path="*" element={<NotFound />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
               </BrowserRouter>
