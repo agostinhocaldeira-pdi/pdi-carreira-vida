@@ -8,7 +8,8 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Compass, Heart, Target, Lightbulb, ChevronDown, ArrowRight, Edit, Sparkles, Loader2, ExternalLink, Plus, Trash2, Pencil, Check, X, Building2, Monitor, Smartphone } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Compass, Heart, Target, Lightbulb, ChevronDown, ArrowRight, Edit, Sparkles, Loader2, ExternalLink, Plus, Trash2, Pencil, Check, X, Building2, Monitor, Smartphone, Lock } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { PDILoader } from "@/components/ui/pdi-loader";
 import { toast } from "sonner";
@@ -920,13 +921,48 @@ const PlanoDeVida = ({ onTabChange, onOpenChange, forcedTab, forcedOpen }: Plano
               <Compass className="w-6 h-6 text-primary-foreground" />
             </div>
             <div>
-              <CardTitle className="text-xl sm:text-2xl">Plano de Vida</CardTitle>
+              <CardTitle className="text-xl sm:text-2xl">Os 3 passos para sua transformação e conquistas</CardTitle>
               <CardDescription>Construa sua visão e defina seus objetivos</CardDescription>
             </div>
           </div>
         </CardHeader>
 
         <CardContent className="space-y-4 overflow-hidden w-full px-3 sm:px-6">
+          {/* Transformation Step Message */}
+          {(() => {
+            const step1Done = quemSouProgress() === 100;
+            const step2Done = paraOndeProgress() === 100;
+            const step3Done = comoChecarProgress() === 100;
+            
+            if (step1Done && step2Done && step3Done) return null;
+            
+            let stepNumber = 1;
+            let stepTitle = "O primeiro passo da sua transformação";
+            let stepDescription = "Antes de mudar sua vida, você precisa se enxergar com clareza. Nesta etapa, você vai construir seu VVD, definir seus Valores e avaliar sua Roda da Vida.";
+            
+            if (step1Done && !step2Done) {
+              stepNumber = 2;
+              stepTitle = "O segundo passo da sua transformação";
+              stepDescription = "Agora que você se conhece melhor, é hora de definir seu destino. Visualize onde quer chegar e transforme sonhos em objetivos concretos.";
+            } else if (step1Done && step2Done && !step3Done) {
+              stepNumber = 3;
+              stepTitle = "O terceiro passo da sua transformação";
+              stepDescription = "Você sabe quem é e para onde vai. Falta criar o plano de ação com metas claras para conquistar seus objetivos.";
+            }
+            
+            return (
+              <div className="p-4 rounded-xl border-2 border-primary/20 bg-gradient-to-br from-primary/5 to-transparent mb-2">
+                <div className="flex items-center gap-2 mb-2">
+                  <Badge variant="outline" className="text-xs bg-primary/10 text-primary border-primary/30">
+                    Passo {stepNumber} de 3
+                  </Badge>
+                </div>
+                <h3 className="text-lg font-semibold text-primary mb-1">{stepTitle}</h3>
+                <p className="text-sm text-muted-foreground">{stepDescription}</p>
+              </div>
+            );
+          })()}
+          
           {/* Step Cards */}
           <div className="grid gap-3 w-full overflow-hidden box-border">
             {/* Passo 1 - Quem sou Eu */}
@@ -1100,41 +1136,42 @@ const PlanoDeVida = ({ onTabChange, onOpenChange, forcedTab, forcedOpen }: Plano
             </Collapsible>
 
             {/* Passo 2 - Para onde vou */}
-            <Collapsible open={paraOndeOpen} onOpenChange={(open) => handleSectionOpen("para-onde", open)}>
-              <div className={`rounded-xl border-2 transition-all duration-300 overflow-hidden w-full box-border ${paraOndeOpen ? 'border-primary bg-primary/5' : 'border-border hover:border-primary/50 hover:bg-muted/30'}`}>
-                <CollapsibleTrigger asChild>
-                  <button className="w-full p-4 flex items-center justify-between text-left group">
-                    <div className="flex items-center gap-3 sm:gap-4 flex-1 min-w-0">
-                      <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center flex-shrink-0 transition-all duration-300 ${paraOndeOpen ? 'bg-primary text-primary-foreground shadow-lg scale-105' : 'bg-primary/10 text-primary group-hover:bg-primary/20'}`}>
-                        <Target className="w-5 h-5 sm:w-6 sm:h-6" />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2 mb-0.5">
-                          <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-primary">Passo 2</span>
-                          {paraOndeProgress() === 100 && (
-                            <span className="w-4 h-4 sm:w-5 sm:h-5 rounded-full bg-green-500 flex items-center justify-center">
-                              <Check className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-white" />
-                            </span>
-                          )}
+            {quemSouProgress() === 100 ? (
+              <Collapsible open={paraOndeOpen} onOpenChange={(open) => handleSectionOpen("para-onde", open)}>
+                <div className={`rounded-xl border-2 transition-all duration-300 overflow-hidden w-full box-border ${paraOndeOpen ? 'border-primary bg-primary/5' : 'border-border hover:border-primary/50 hover:bg-muted/30'}`}>
+                  <CollapsibleTrigger asChild>
+                    <button className="w-full p-4 flex items-center justify-between text-left group">
+                      <div className="flex items-center gap-3 sm:gap-4 flex-1 min-w-0">
+                        <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center flex-shrink-0 transition-all duration-300 ${paraOndeOpen ? 'bg-primary text-primary-foreground shadow-lg scale-105' : 'bg-primary/10 text-primary group-hover:bg-primary/20'}`}>
+                          <Target className="w-5 h-5 sm:w-6 sm:h-6" />
                         </div>
-                        <h3 className="font-semibold text-sm sm:text-base truncate">Para onde vou</h3>
-                        <p className="text-[10px] sm:text-xs text-muted-foreground hidden sm:block">Defina seus objetivos</p>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
-                      <div className="hidden sm:flex items-center gap-2 bg-muted/50 rounded-full px-3 py-1">
-                        <div className="w-16 h-1.5 bg-muted rounded-full overflow-hidden">
-                          <div 
-                            className="h-full bg-primary rounded-full transition-all duration-500" 
-                            style={{ width: `${paraOndeProgress()}%` }}
-                          />
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 mb-0.5">
+                            <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-primary">Passo 2</span>
+                            {paraOndeProgress() === 100 && (
+                              <span className="w-4 h-4 sm:w-5 sm:h-5 rounded-full bg-green-500 flex items-center justify-center">
+                                <Check className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-white" />
+                              </span>
+                            )}
+                          </div>
+                          <h3 className="font-semibold text-sm sm:text-base truncate">Para onde vou</h3>
+                          <p className="text-[10px] sm:text-xs text-muted-foreground hidden sm:block">Defina seus objetivos</p>
                         </div>
-                        <span className="text-xs font-medium text-muted-foreground">{paraOndeProgress()}%</span>
                       </div>
-                      <ChevronDown className={`w-5 h-5 text-muted-foreground transition-transform duration-300 ${paraOndeOpen ? 'rotate-180' : ''}`} />
-                    </div>
-                  </button>
-                </CollapsibleTrigger>
+                      <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
+                        <div className="hidden sm:flex items-center gap-2 bg-muted/50 rounded-full px-3 py-1">
+                          <div className="w-16 h-1.5 bg-muted rounded-full overflow-hidden">
+                            <div 
+                              className="h-full bg-primary rounded-full transition-all duration-500" 
+                              style={{ width: `${paraOndeProgress()}%` }}
+                            />
+                          </div>
+                          <span className="text-xs font-medium text-muted-foreground">{paraOndeProgress()}%</span>
+                        </div>
+                        <ChevronDown className={`w-5 h-5 text-muted-foreground transition-transform duration-300 ${paraOndeOpen ? 'rotate-180' : ''}`} />
+                      </div>
+                    </button>
+                  </CollapsibleTrigger>
                 
                 <CollapsibleContent>
                   <div className="px-3 sm:px-4 pb-4 pt-2 space-y-4 border-t border-border/50 overflow-x-hidden w-full max-w-full min-w-0 box-border">
@@ -1422,8 +1459,28 @@ const PlanoDeVida = ({ onTabChange, onOpenChange, forcedTab, forcedOpen }: Plano
                 </CollapsibleContent>
               </div>
             </Collapsible>
+            ) : (
+              <div className="rounded-xl border-2 border-border/50 bg-muted/30 opacity-60 cursor-not-allowed overflow-hidden w-full box-border">
+                <div className="w-full p-4 flex items-center justify-between text-left">
+                  <div className="flex items-center gap-3 sm:gap-4 flex-1 min-w-0">
+                    <div className="relative w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-muted/50 flex items-center justify-center flex-shrink-0">
+                      <Target className="w-5 h-5 sm:w-6 sm:h-6 text-muted-foreground/50" />
+                      <Lock className="absolute -top-1 -right-1 w-4 h-4 text-muted-foreground" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 mb-0.5">
+                        <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-muted-foreground/50">Passo 2</span>
+                      </div>
+                      <h3 className="font-semibold text-sm sm:text-base truncate text-muted-foreground/50">Para onde vou</h3>
+                      <p className="text-[10px] sm:text-xs text-muted-foreground/50 hidden sm:block">Complete o Passo 1 primeiro</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
 
             {/* Passo 3 - Como chegar lá */}
+            {quemSouProgress() === 100 && paraOndeProgress() === 100 ? (
             <Collapsible open={comoChegarOpen} onOpenChange={(open) => handleSectionOpen("como-chegar", open)}>
               <div className={`rounded-xl border-2 transition-all duration-300 overflow-hidden w-full box-border ${comoChegarOpen ? 'border-primary bg-primary/5' : 'border-border hover:border-primary/50 hover:bg-muted/30'}`}>
                 <CollapsibleTrigger asChild>
@@ -1589,6 +1646,25 @@ const PlanoDeVida = ({ onTabChange, onOpenChange, forcedTab, forcedOpen }: Plano
                 </CollapsibleContent>
               </div>
             </Collapsible>
+            ) : (
+              <div className="rounded-xl border-2 border-border/50 bg-muted/30 opacity-60 cursor-not-allowed overflow-hidden w-full box-border">
+                <div className="w-full p-4 flex items-center justify-between text-left">
+                  <div className="flex items-center gap-3 sm:gap-4 flex-1 min-w-0">
+                    <div className="relative w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-muted/50 flex items-center justify-center flex-shrink-0">
+                      <Lightbulb className="w-5 h-5 sm:w-6 sm:h-6 text-muted-foreground/50" />
+                      <Lock className="absolute -top-1 -right-1 w-4 h-4 text-muted-foreground" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 mb-0.5">
+                        <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-muted-foreground/50">Passo 3</span>
+                      </div>
+                      <h3 className="font-semibold text-sm sm:text-base truncate text-muted-foreground/50">Como chegar lá</h3>
+                      <p className="text-[10px] sm:text-xs text-muted-foreground/50 hidden sm:block">Complete os Passos 1 e 2 primeiro</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Insight Card - Com expandir/minimizar */}
