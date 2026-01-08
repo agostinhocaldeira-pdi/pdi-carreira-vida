@@ -34,6 +34,7 @@ import { FirstStepsModal } from "@/components/FirstStepsModal";
 import { getTodayReflection } from "@/data/stoicReflections";
 import { useStoicAudioPreload } from "@/hooks/useStoicAudioPreload";
 import { QuickAccessNav } from "@/components/home/QuickAccessNav";
+import TransformationStepsSection from "@/components/home/TransformationStepsSection";
 
 const Home = () => {
   const navigate = useNavigate();
@@ -581,6 +582,9 @@ const Home = () => {
           </Collapsible>
         </section>
 
+
+        {/* Os 3 Passos da Transformação */}
+        <TransformationStepsSection />
 
         {/* Plano de Vida Section - Navegação para páginas */}
         <section className="animate-slide-up overflow-hidden max-w-full" style={{ animationDelay: "0.2s" }} data-section="plano-de-vida">
