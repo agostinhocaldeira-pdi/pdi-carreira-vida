@@ -514,15 +514,6 @@ const Landing = () => {
                   Rotina cheia. Cansaço. Dúvidas. Pausas.<br />
                   O Sistema PDI foi feito para funcionar mesmo assim.
                 </p>
-                <Button 
-                  variant="outline"
-                  size="lg"
-                  onClick={() => scrollToSection("video-section")}
-                  className="text-primary border-primary/30 hover:bg-primary/10"
-                >
-                  <Play className="mr-2 h-4 w-4" />
-                  Entenda como o Sistema PDI pode organizar sua vida e seus objetivos
-                </Button>
               </CardContent>
             </Card>
           </div>

@@ -165,7 +165,7 @@ const tools: Tool[] = [
   },
   {
     id: "crencas",
-    name: "Transformação de Crenças",
+    name: "Transformação\nde Crenças",
     icon: Brain,
     shortDescription: "Identifique e transforme crenças limitantes",
     fullDescription: "Crenças limitantes são pensamentos internalizados que nos impedem de alcançar nosso potencial. Esta ferramenta ajuda você a identificar essas crenças, questionar sua validade e substituí-las por crenças fortalecedoras.",
@@ -216,7 +216,7 @@ const ToolsSection = () => {
                 <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors flex-shrink-0">
                   <Icon className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
                 </div>
-                <span className="text-[11px] sm:text-sm font-medium text-center leading-tight break-words hyphens-auto w-full">
+                <span className="text-[11px] sm:text-sm font-medium text-center leading-tight break-words hyphens-auto w-full whitespace-pre-line">
                   {tool.name}
                 </span>
               </Button>
