@@ -1139,6 +1139,7 @@ export type Database = {
           created_at: string | null
           data_alvo: string | null
           id: string
+          is_principal: boolean | null
           status: string | null
           texto: string
           updated_at: string | null
@@ -1149,6 +1150,7 @@ export type Database = {
           created_at?: string | null
           data_alvo?: string | null
           id?: string
+          is_principal?: boolean | null
           status?: string | null
           texto: string
           updated_at?: string | null
@@ -1159,6 +1161,7 @@ export type Database = {
           created_at?: string | null
           data_alvo?: string | null
           id?: string
+          is_principal?: boolean | null
           status?: string | null
           texto?: string
           updated_at?: string | null
