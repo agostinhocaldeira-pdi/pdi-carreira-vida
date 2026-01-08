@@ -68,11 +68,21 @@ export const QuickAccessNav = ({ isGestor = false }: QuickAccessNavProps) => {
           <div className="flex gap-3 py-3 pr-8">
             {visibleItems.map((item) => (
               <Link key={item.path} to={item.path} className="flex-shrink-0">
-                <div className="w-20 sm:w-24 h-20 sm:h-24 rounded-xl border-2 border-border bg-card hover:bg-primary/5 hover:border-primary/40 transition-all flex flex-col items-center justify-center gap-2 p-2 cursor-pointer group">
-                  <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
+                <div className={`w-20 sm:w-24 h-20 sm:h-24 rounded-xl border-2 transition-all flex flex-col items-center justify-center gap-2 p-2 cursor-pointer group ${
+                  item.path === "/reflexao" 
+                    ? "border-primary bg-primary/10 hover:bg-primary/20 hover:border-primary" 
+                    : "border-border bg-card hover:bg-primary/5 hover:border-primary/40"
+                }`}>
+                  <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-lg flex items-center justify-center transition-colors ${
+                    item.path === "/reflexao"
+                      ? "bg-primary/20 group-hover:bg-primary/30"
+                      : "bg-primary/10 group-hover:bg-primary/20"
+                  }`}>
                     <item.icon className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
                   </div>
-                  <span className="text-[10px] sm:text-xs font-medium text-center leading-tight text-foreground/80 line-clamp-2">
+                  <span className={`text-[10px] sm:text-xs font-medium text-center leading-tight line-clamp-2 ${
+                    item.path === "/reflexao" ? "text-primary" : "text-foreground/80"
+                  }`}>
                     {item.label}
                   </span>
                 </div>
