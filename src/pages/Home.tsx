@@ -10,7 +10,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { Target, TrendingUp, BookOpen, MessagesSquare, Book, Sparkles, User, Zap, Star, Shield, Lock, ChevronDown, AlertCircle, Link2, Users, Bell, HelpCircle, FileText, ClipboardCheck, Focus, Loader2, Crosshair, Play, Footprints } from "lucide-react";
 import { DailyCheckout } from "@/components/gamification/DailyCheckout";
 
-import ProgressSection from "@/components/home/ProgressSection";
+
 import { usePDIData } from "@/hooks/usePDIQueries";
 import { useAIUsage } from "@/hooks/useAIUsage";
 import { AIUsageLimitModal } from "@/components/AIUsageLimitModal";
@@ -555,10 +555,6 @@ const Home = () => {
           </Collapsible>
         </section>
 
-        {/* Progresso Section */}
-        <section className="animate-slide-up" style={{ animationDelay: "0.05s" }}>
-          <ProgressSection />
-        </section>
 
         {/* Plano de Vida Section - Navegação para páginas */}
         <section className="animate-slide-up overflow-hidden max-w-full" style={{ animationDelay: "0.2s" }} data-section="plano-de-vida">
