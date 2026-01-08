@@ -117,7 +117,7 @@ const Landing = () => {
           </h1>
           
           <p className="text-base sm:text-xl md:text-2xl text-muted-foreground mb-6 font-light">
-            Você vai saber para onde vai, o que fazer e dormir em paz sabendo que está no caminho certo.
+            Você vai saber para onde vai, o que fazer, ter paz no caminho, e conquistar seus objetivos.
           </p>
           
           <p className="text-base sm:text-lg text-muted-foreground/80 mt-8 mb-0">
