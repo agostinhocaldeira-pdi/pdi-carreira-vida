@@ -1,6 +1,5 @@
 import { Link } from "react-router-dom";
-import { BookOpen, Target, MessagesSquare, Link2, HelpCircle, FileText, Users } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { BookOpen, Target, MessagesSquare, Link2, HelpCircle, FileText, Users, ChevronRight } from "lucide-react";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 
 interface QuickAccessNavProps {
@@ -57,25 +56,32 @@ export const QuickAccessNav = ({ isGestor = false }: QuickAccessNavProps) => {
   const visibleItems = navItems.filter(item => item.showAlways || (item.gestorOnly && isGestor));
 
   return (
-    <div className="w-full bg-white border-b border-border">
+    <div className="w-full bg-white border-b border-border relative">
       <div className="container mx-auto px-3 sm:px-4">
-        <ScrollArea className="w-full whitespace-nowrap">
-          <div className="flex gap-2 py-3">
+        <ScrollArea className="w-full">
+          <div className="flex gap-3 py-3 pr-8">
             {visibleItems.map((item) => (
-              <Link key={item.path} to={item.path}>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="flex items-center gap-2 flex-shrink-0 hover:bg-primary/5 hover:border-primary/40 transition-all"
-                >
-                  <item.icon className="w-4 h-4 text-primary" />
-                  <span className="text-sm font-medium">{item.label}</span>
-                </Button>
+              <Link key={item.path} to={item.path} className="flex-shrink-0">
+                <div className="w-20 sm:w-24 h-20 sm:h-24 rounded-xl border-2 border-border bg-card hover:bg-primary/5 hover:border-primary/40 transition-all flex flex-col items-center justify-center gap-2 p-2 cursor-pointer group">
+                  <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
+                    <item.icon className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
+                  </div>
+                  <span className="text-[10px] sm:text-xs font-medium text-center leading-tight text-foreground/80 line-clamp-2">
+                    {item.label}
+                  </span>
+                </div>
               </Link>
             ))}
           </div>
-          <ScrollBar orientation="horizontal" />
+          <ScrollBar orientation="horizontal" className="h-2" />
         </ScrollArea>
+      </div>
+      
+      {/* Indicador visual de scroll */}
+      <div className="absolute right-0 top-0 bottom-0 w-12 bg-gradient-to-l from-white via-white/80 to-transparent pointer-events-none flex items-center justify-end pr-2">
+        <div className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center animate-pulse">
+          <ChevronRight className="w-4 h-4 text-primary" />
+        </div>
       </div>
     </div>
   );
