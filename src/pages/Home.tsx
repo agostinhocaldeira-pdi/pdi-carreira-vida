@@ -7,7 +7,7 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Link, useNavigate } from "react-router-dom";
-import { Target, TrendingUp, BookOpen, MessagesSquare, Book, Sparkles, User, Zap, Star, Shield, Lock, ChevronDown, AlertCircle, Link2, Users, Bell, HelpCircle, FileText, ClipboardCheck, Focus, Loader2 } from "lucide-react";
+import { Target, TrendingUp, BookOpen, MessagesSquare, Book, Sparkles, User, Zap, Star, Shield, Lock, ChevronDown, AlertCircle, Link2, Users, Bell, HelpCircle, FileText, ClipboardCheck, Focus, Loader2, Crosshair, Play, Footprints } from "lucide-react";
 import { DailyCheckout } from "@/components/gamification/DailyCheckout";
 import StoicReflectionCard from "@/components/home/StoicReflectionCard";
 import ProgressSection from "@/components/home/ProgressSection";
@@ -61,6 +61,7 @@ const Home = () => {
   // Carregar objetivos do usuário
   const { data: pdiData } = usePDIData();
   const objetivos = pdiData?.objetivos || [];
+  const metas = pdiData?.metas || [];
   
   // AI Usage e Insight
   const storage = usePDIStorage();
@@ -426,7 +427,7 @@ const Home = () => {
         {/* Trial Status Banner */}
         <TrialStatusBanner />
 
-        {/* Objetivo Principal - Exibição no topo */}
+        {/* Seu Objetivo Principal - Exibição no topo */}
         {objetivos.some((obj: any) => obj.is_principal || obj.isPrincipal) && (
           <section className="animate-slide-up">
             <div className="rounded-xl border-2 border-accent/30 bg-gradient-to-r from-accent/10 via-accent/5 to-transparent p-4 sm:p-5">
@@ -435,24 +436,51 @@ const Home = () => {
                   <Focus className="w-4 h-4 text-accent" />
                 </div>
                 <h2 className="text-sm sm:text-base font-semibold text-foreground">
-                  Objetivo Principal
+                  Seu Objetivo Principal
                 </h2>
               </div>
-              <div className="flex flex-wrap gap-2">
-                {objetivos
-                  .filter((objetivo: any) => objetivo.is_principal || objetivo.isPrincipal)
-                  .map((objetivo: any) => (
-                    <div
-                      key={objetivo.id}
-                      className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-background/80 border border-accent/20 shadow-sm"
-                    >
-                      <Target className="w-3.5 h-3.5 text-accent flex-shrink-0" />
-                      <span className="text-xs sm:text-sm font-medium text-foreground line-clamp-1">
-                        {objetivo.texto}
-                      </span>
+              {objetivos
+                .filter((objetivo: any) => objetivo.is_principal || objetivo.isPrincipal)
+                .map((objetivo: any) => {
+                  // Contar metas, ações e passos para este objetivo
+                  const objetivoMetas = metas.filter((m: any) => 
+                    m.objetivo_id === objetivo.id || m.objetivoId === objetivo.id
+                  );
+                  const metasCount = objetivoMetas.length;
+                  const acoesCount = objetivoMetas.reduce((acc: number, m: any) => 
+                    acc + (m.acoes?.length || 0), 0
+                  );
+                  const passosCount = objetivoMetas.reduce((acc: number, m: any) => 
+                    acc + (m.passos?.length || 0), 0
+                  );
+                  
+                  return (
+                    <div key={objetivo.id} className="space-y-3">
+                      <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-background/80 border border-accent/20 shadow-sm">
+                        <Target className="w-3.5 h-3.5 text-accent flex-shrink-0" />
+                        <span className="text-xs sm:text-sm font-medium text-foreground line-clamp-1">
+                          {objetivo.texto}
+                        </span>
+                      </div>
+                      
+                      {/* Contadores de metas, ações e passos */}
+                      <div className="flex flex-wrap gap-3 sm:gap-4">
+                        <div className="flex items-center gap-1.5 text-muted-foreground">
+                          <Crosshair className="w-3.5 h-3.5 text-primary" />
+                          <span className="text-xs font-medium">{metasCount} {metasCount === 1 ? 'meta' : 'metas'}</span>
+                        </div>
+                        <div className="flex items-center gap-1.5 text-muted-foreground">
+                          <Play className="w-3.5 h-3.5 text-primary" />
+                          <span className="text-xs font-medium">{acoesCount} {acoesCount === 1 ? 'ação' : 'ações'}</span>
+                        </div>
+                        <div className="flex items-center gap-1.5 text-muted-foreground">
+                          <Footprints className="w-3.5 h-3.5 text-primary" />
+                          <span className="text-xs font-medium">{passosCount} {passosCount === 1 ? 'passo' : 'passos'}</span>
+                        </div>
+                      </div>
                     </div>
-                  ))}
-              </div>
+                  );
+                })}
               <p className="text-xs text-muted-foreground mt-3 italic">
                 Mantenha o foco. Cada ação te aproxima do seu objetivo.
               </p>
