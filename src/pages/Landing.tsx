@@ -349,7 +349,7 @@ const Landing = () => {
           {/* Frase de fechamento */}
           <div className="mt-16 text-center">
             <p className="text-xl sm:text-2xl md:text-3xl font-bold text-foreground leading-relaxed">
-              No fundo, todo ser humano quer viver uma vida que faça sentido — e ter certeza de que está fazendo a própria parte para construí-la.
+            Conquiste a vida que faz sentido para você, com método, ferramentas e suporte personalizado.
             </p>
           </div>
         </div>
