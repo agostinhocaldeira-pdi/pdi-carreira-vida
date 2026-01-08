@@ -5,11 +5,10 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Calendar } from "@/components/ui/calendar";
-import { Calendar as CalendarIcon, Save, Check, ChevronDown, PenLine, History, Loader2, Smile, Frown, Meh } from "lucide-react";
+import { Calendar as CalendarIcon, Save, Check, PenLine, History, Loader2, Smile, Frown, Meh } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
@@ -30,7 +29,6 @@ const StoicReflectionSection = () => {
 
   // Diary state
   const { getDiario, saveDiarioEntry } = usePDIStorage();
-  const [isDiaryOpen, setIsDiaryOpen] = useState(false);
   const [diaryViewMode, setDiaryViewMode] = useState<DiaryViewMode>("registro");
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [isLoadingDiary, setIsLoadingDiary] = useState(false);
@@ -349,27 +347,16 @@ const StoicReflectionSection = () => {
   const capitalizedShortDate = shortDate.charAt(0).toUpperCase() + shortDate.slice(1);
 
   return (
-    <Collapsible open={isDiaryOpen} onOpenChange={setIsDiaryOpen}>
-      <Card className="shadow-medium border-primary/20 bg-gradient-to-br from-card to-primary/5">
-        <CardHeader className="pb-3">
-          <div className="flex items-center justify-between">
-            <h3 className="text-lg font-semibold flex items-center gap-2">
-              <PenLine className="w-5 h-5 text-primary" />
-              Diário & Reflexão
-            </h3>
-            <CollapsibleTrigger asChild>
-              <Button 
-                variant="secondary" 
-                size="sm" 
-                className="hover:bg-primary hover:text-primary-foreground transition-all shadow-sm min-w-[44px] border border-border"
-              >
-                <ChevronDown className={`w-4 h-4 transition-transform duration-300 ${isDiaryOpen ? "rotate-180" : ""}`} />
-              </Button>
-            </CollapsibleTrigger>
-          </div>
-        </CardHeader>
-        <CollapsibleContent>
-          <CardContent className="space-y-4">
+    <Card className="shadow-medium border-primary/20 bg-gradient-to-br from-card to-primary/5">
+      <CardHeader className="pb-3">
+        <div className="flex items-center justify-between">
+          <h3 className="text-lg font-semibold flex items-center gap-2">
+            <PenLine className="w-5 h-5 text-primary" />
+            Diário & Reflexão
+          </h3>
+        </div>
+      </CardHeader>
+      <CardContent className="space-y-4">
             <Badge variant="secondary" className="gap-1.5 mb-4">
               <CalendarIcon className="w-3 h-3" />
               <span className="text-xs">{capitalizedDate}</span>
@@ -700,9 +687,7 @@ const StoicReflectionSection = () => {
               </div>
             )}
           </CardContent>
-        </CollapsibleContent>
       </Card>
-    </Collapsible>
   );
 };
 

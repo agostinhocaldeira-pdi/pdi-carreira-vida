@@ -1,4 +1,3 @@
-import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
@@ -6,8 +5,6 @@ import StoicReflectionCard from "@/components/home/StoicReflectionCard";
 import StoicReflectionSection from "@/components/home/StoicReflectionSection";
 
 const Reflexao = () => {
-  const [stoicOpen, setStoicOpen] = useState(true);
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5">
       {/* Header */}
@@ -33,7 +30,7 @@ const Reflexao = () => {
       <main className="container mx-auto px-4 py-6 space-y-6">
         {/* Stoic Reflection Card */}
         <section className="animate-slide-up">
-          <StoicReflectionCard isOpen={stoicOpen} onOpenChange={setStoicOpen} />
+          <StoicReflectionCard />
         </section>
 
         {/* Diary & Reflection Section */}
