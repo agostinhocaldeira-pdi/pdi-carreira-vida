@@ -5,7 +5,9 @@ import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Check, X, AlertCircle, PartyPopper, HeadphonesIcon, ClipboardCheck, Zap, Target, ListTodo, Footprints, Save } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Check, X, AlertCircle, PartyPopper, HeadphonesIcon, ClipboardCheck, Zap, Target, ListTodo, Footprints, Save, Plus, Sparkles } from "lucide-react";
 import { PDILoader } from "@/components/ui/pdi-loader";
 import { usePDIStorage } from "@/hooks/usePDIStorage";
 import { useNavigate } from "react-router-dom";
@@ -14,7 +16,7 @@ import { supabase } from "@/integrations/supabase/client";
 interface CheckoutItem {
   id: string;
   text: string;
-  type: 'action' | 'step' | 'expired' | 'priority';
+  type: 'action' | 'step' | 'expired' | 'priority' | 'extra';
   category: string;
   done: boolean | null;
   originalData?: any;
@@ -28,6 +30,8 @@ export const DailyCheckout = () => {
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [showHelpModal, setShowHelpModal] = useState(false);
   const [hasChanges, setHasChanges] = useState(false);
+  const [showExtraModal, setShowExtraModal] = useState(false);
+  const [extraActivity, setExtraActivity] = useState("");
 
   // Load saved checkout status from localStorage on mount
   useEffect(() => {
@@ -54,6 +58,73 @@ export const DailyCheckout = () => {
     } catch {
       return loadedItems;
     }
+  };
+
+  // Get today's extras key for localStorage
+  const getTodayExtrasKey = () => {
+    const today = new Date();
+    return `checkout-extras-${today.toISOString().split('T')[0]}`;
+  };
+
+  // Load extra activities from localStorage
+  const loadExtraActivities = (): CheckoutItem[] => {
+    const savedExtras = localStorage.getItem(getTodayExtrasKey());
+    if (!savedExtras) return [];
+    
+    try {
+      const extras: { id: string; text: string }[] = JSON.parse(savedExtras);
+      return extras.map(extra => ({
+        id: extra.id,
+        text: extra.text,
+        type: 'extra' as const,
+        category: 'Extra',
+        done: null,
+        originalData: extra
+      }));
+    } catch {
+      return [];
+    }
+  };
+
+  // Save extra activity
+  const saveExtraActivity = (text: string) => {
+    const savedExtras = localStorage.getItem(getTodayExtrasKey());
+    let extras: { id: string; text: string }[] = [];
+    
+    try {
+      if (savedExtras) {
+        extras = JSON.parse(savedExtras);
+      }
+    } catch {}
+    
+    const newExtra = {
+      id: `extra-${Date.now()}`,
+      text: text.trim()
+    };
+    
+    extras.push(newExtra);
+    localStorage.setItem(getTodayExtrasKey(), JSON.stringify(extras));
+    
+    return newExtra;
+  };
+
+  const handleAddExtraActivity = () => {
+    if (!extraActivity.trim()) return;
+    
+    const newExtra = saveExtraActivity(extraActivity);
+    
+    const newItem: CheckoutItem = {
+      id: newExtra.id,
+      text: newExtra.text,
+      type: 'extra',
+      category: 'Extra',
+      done: null,
+      originalData: newExtra
+    };
+    
+    setItems(prev => [...prev, newItem]);
+    setExtraActivity("");
+    setShowExtraModal(false);
   };
 
   const loadCheckoutItems = async () => {
@@ -196,6 +267,10 @@ export const DailyCheckout = () => {
         }
       }
 
+      // 6. Load extra activities from localStorage
+      const extraActivities = loadExtraActivities();
+      checkoutItems.push(...extraActivities);
+
       // Apply saved status from localStorage
       const itemsWithSavedStatus = loadSavedStatus(checkoutItems);
       setItems(itemsWithSavedStatus);
@@ -251,6 +326,7 @@ export const DailyCheckout = () => {
       case 'step': return <Footprints className="w-4 h-4 text-green-500" />;
       case 'expired': return <AlertCircle className="w-4 h-4 text-destructive" />;
       case 'priority': return <Target className="w-4 h-4 text-amber-500" />;
+      case 'extra': return <Sparkles className="w-4 h-4 text-purple-500" />;
       default: return <ListTodo className="w-4 h-4" />;
     }
   };
@@ -261,6 +337,7 @@ export const DailyCheckout = () => {
       case 'step': return 'bg-green-500/10 text-green-700 border-green-500/30';
       case 'expired': return 'bg-destructive/10 text-destructive border-destructive/30';
       case 'priority': return 'bg-amber-500/10 text-amber-700 border-amber-500/30';
+      case 'extra': return 'bg-purple-500/10 text-purple-700 border-purple-500/30';
       default: return '';
     }
   };
@@ -295,11 +372,26 @@ export const DailyCheckout = () => {
         </CardHeader>
         <CardContent className="space-y-3">
           {items.length === 0 ? (
-            <div className="text-center py-4">
-              <PartyPopper className="w-8 h-8 text-amber-500 mx-auto mb-2" />
-              <p className="text-sm text-muted-foreground">
-                Nenhuma tarefa pendente para hoje!
-              </p>
+            <div className="text-center py-6 space-y-4">
+              <div className="w-12 h-12 rounded-full bg-purple-500/10 flex items-center justify-center mx-auto">
+                <Sparkles className="w-6 h-6 text-purple-500" />
+              </div>
+              <div className="space-y-1">
+                <p className="text-sm font-medium text-foreground">
+                  Nenhuma tarefa pendente para hoje!
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  Que tal criar uma atividade extra?
+                </p>
+              </div>
+              <Button 
+                onClick={() => setShowExtraModal(true)}
+                variant="outline"
+                className="gap-2"
+              >
+                <Plus className="w-4 h-4" />
+                Criar ação para hoje
+              </Button>
             </div>
           ) : (
             <>
@@ -467,6 +559,57 @@ export const DailyCheckout = () => {
               className="w-full sm:w-auto"
             >
               Plano de Vida
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Extra Activity Modal */}
+      <Dialog open={showExtraModal} onOpenChange={setShowExtraModal}>
+        <DialogContent className="max-w-md w-[95vw] sm:w-full">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Sparkles className="w-5 h-5 text-purple-500 flex-shrink-0" />
+              Crie uma ação para hoje
+            </DialogTitle>
+            <DialogDescription className="pt-2 text-sm">
+              O que você pode fazer hoje, que te aproxima do seu objetivo?
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label htmlFor="extra-activity">Atividade</Label>
+              <Input
+                id="extra-activity"
+                placeholder="Ex: Ler 10 páginas de um livro sobre liderança"
+                value={extraActivity}
+                onChange={(e) => setExtraActivity(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && extraActivity.trim()) {
+                    handleAddExtraActivity();
+                  }
+                }}
+              />
+            </div>
+          </div>
+          <DialogFooter className="flex-col sm:flex-row gap-2">
+            <Button 
+              variant="outline" 
+              onClick={() => {
+                setShowExtraModal(false);
+                setExtraActivity("");
+              }}
+              className="w-full sm:w-auto"
+            >
+              Cancelar
+            </Button>
+            <Button 
+              onClick={handleAddExtraActivity}
+              disabled={!extraActivity.trim()}
+              className="w-full sm:w-auto gap-2"
+            >
+              <Plus className="w-4 h-4" />
+              Adicionar
             </Button>
           </DialogFooter>
         </DialogContent>
