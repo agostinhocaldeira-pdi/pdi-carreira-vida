@@ -113,7 +113,7 @@ const Landing = () => {
         
         <div className="container relative mx-auto max-w-4xl text-center">
           <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold mb-6 text-foreground leading-tight">
-            No fundo, todo ser humano só quer viver uma vida que faça sentido — e ter certeza de que está fazendo a própria parte para construí-la.
+            No fundo, todo ser humano quer viver uma vida que faça sentido — e ter certeza de que está fazendo a própria parte para construí-la.
           </h1>
           
           <p className="text-base sm:text-xl md:text-2xl text-muted-foreground mb-6 font-light">
@@ -349,7 +349,7 @@ const Landing = () => {
           {/* Frase de fechamento */}
           <div className="mt-16 text-center">
             <p className="text-xl sm:text-2xl md:text-3xl font-bold text-foreground leading-relaxed">
-              No fundo, todo ser humano só quer viver uma vida que faça sentido — e ter certeza de que está fazendo a própria parte para construí-la.
+              No fundo, todo ser humano quer viver uma vida que faça sentido — e ter certeza de que está fazendo a própria parte para construí-la.
             </p>
           </div>
         </div>
