@@ -120,7 +120,6 @@ const Login = () => {
         companyId: companyData?.id,
       }));
 
-      toast.success("Login realizado com sucesso!");
       navigate("/dashboard-empresa");
       return;
     }
@@ -159,7 +158,6 @@ const Login = () => {
           managerId: managerData.id,
         }));
 
-        toast.success("Login realizado com sucesso!");
         setShowManagerModal(true);
         return;
       }
@@ -198,7 +196,6 @@ const Login = () => {
         employeeId: employeeData.id,
       }));
 
-      toast.success("Login realizado com sucesso!");
       navigate("/home");
       return;
     }
@@ -214,7 +211,6 @@ const Login = () => {
         role: "admin",
       }));
 
-      toast.success("Login realizado com sucesso!");
       navigate("/admin");
       return;
     }
@@ -267,7 +263,6 @@ const Login = () => {
       role: userRole,
     }));
 
-    toast.success("Login realizado com sucesso!");
     navigate("/home");
   };
 
