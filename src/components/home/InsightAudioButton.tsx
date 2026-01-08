@@ -9,14 +9,18 @@ import { useInsightAudio } from '@/hooks/useInsightAudio';
 
 interface InsightAudioButtonProps {
   insight: string | null;
+  onClick?: (e: React.MouseEvent) => void;
+  className?: string;
 }
 
-export function InsightAudioButton({ insight }: InsightAudioButtonProps) {
+export function InsightAudioButton({ insight, onClick, className }: InsightAudioButtonProps) {
   const { isPlaying, isGenerating, playAudio, stopAudio, audioUrl } = useInsightAudio(insight);
 
   if (!insight) return null;
 
-  const handleClick = () => {
+  const handleClick = (e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent triggering parent click (e.g., collapsible)
+    if (onClick) onClick(e);
     if (isPlaying) {
       stopAudio();
     } else {
@@ -32,7 +36,7 @@ export function InsightAudioButton({ insight }: InsightAudioButtonProps) {
           size="icon"
           onClick={handleClick}
           disabled={isGenerating}
-          className={`h-8 w-8 ${isPlaying ? 'bg-primary/10 border-primary' : ''}`}
+          className={`h-8 w-8 ${isPlaying ? 'bg-primary/10 border-primary' : ''} ${className || ''}`}
         >
           {isGenerating ? (
             <Loader2 className="h-4 w-4 animate-spin" />

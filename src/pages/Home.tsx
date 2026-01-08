@@ -71,7 +71,7 @@ const Home = () => {
   const [showAILimitModal, setShowAILimitModal] = useState(false);
   const [insight, setInsight] = useState<string | null>(null);
   const [isGeneratingInsight, setIsGeneratingInsight] = useState(false);
-  const [insightOpen, setInsightOpen] = useState(true);
+  const [insightOpen, setInsightOpen] = useState(() => window.innerWidth >= 640); // Start collapsed on mobile
   
   // Profile picture
   const { profilePictureUrl } = useProfilePicture();
@@ -658,9 +658,9 @@ const Home = () => {
         <section className="animate-slide-up" style={{ animationDelay: "0.3s" }}>
           <Collapsible open={insightOpen} onOpenChange={setInsightOpen}>
             <div className="rounded-xl border-2 border-primary/30 bg-gradient-to-br from-primary/5 to-primary/10 overflow-hidden">
-              <CollapsibleTrigger asChild>
-                <div className="flex items-center justify-between p-4 sm:p-6 cursor-pointer hover:bg-primary/5 transition-colors">
-                  <div className="flex items-center gap-3">
+              <div className="flex items-center justify-between p-4 sm:p-6">
+                <CollapsibleTrigger asChild>
+                  <div className="flex items-center gap-3 cursor-pointer hover:opacity-80 transition-opacity flex-1">
                     <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center shadow-lg">
                       <Sparkles className="w-5 h-5 sm:w-6 sm:h-6 text-primary-foreground" />
                     </div>
@@ -671,9 +671,21 @@ const Home = () => {
                       </p>
                     </div>
                   </div>
-                  <ChevronDown className={`w-6 h-6 sm:w-5 sm:h-5 text-muted-foreground transition-transform duration-200 ${insightOpen ? 'rotate-180' : ''}`} />
+                </CollapsibleTrigger>
+                <div className="flex items-center gap-2">
+                  {/* Mobile: Show audio button even when collapsed */}
+                  {insight && !insightOpen && (
+                    <div className="sm:hidden">
+                      <InsightAudioButton insight={insight} />
+                    </div>
+                  )}
+                  <CollapsibleTrigger asChild>
+                    <Button variant="ghost" size="icon" className="h-8 w-8">
+                      <ChevronDown className={`w-5 h-5 text-muted-foreground transition-transform duration-200 ${insightOpen ? 'rotate-180' : ''}`} />
+                    </Button>
+                  </CollapsibleTrigger>
                 </div>
-              </CollapsibleTrigger>
+              </div>
               
               <CollapsibleContent>
                 <div className="px-4 sm:px-6 pb-4 sm:pb-6 space-y-4">
