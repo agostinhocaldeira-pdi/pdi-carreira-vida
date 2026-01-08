@@ -226,6 +226,13 @@ const PlanoVidaParaOnde = () => {
       return;
     }
 
+    // Verificar se já existe algum objetivo e nenhum está marcado como principal
+    // Se o usuário está criando o segundo objetivo e o primeiro não é principal, e o novo também não é
+    if (objetivos.length >= 1 && !hasExistingPrincipal() && !objetivo.isPrincipal) {
+      toast.error("É obrigatório ter um objetivo marcado como principal. Marque este objetivo ou um dos existentes como principal.");
+      return;
+    }
+
     const novoObjetivo = { ...objetivo, id: Date.now() };
     
     // Se o novo objetivo é principal, desmarcar os outros
