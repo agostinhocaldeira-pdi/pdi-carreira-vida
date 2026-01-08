@@ -36,18 +36,22 @@ export function usePDIData() {
       
       if (isAuthenticated) {
         // Get from Supabase (batch query)
-        const data = await supabaseStorageService.getPDIData();
-        
-        // Update localStorage as backup
-        localStorage.setItem('objetivos', JSON.stringify(data.objetivos));
-        localStorage.setItem('metas', JSON.stringify(data.metas));
-        if (data.vvd) localStorage.setItem('vvd', data.vvd);
-        if (data.valores.length > 0) localStorage.setItem('valores', JSON.stringify(data.valores));
-        if (data.areasVida.length > 0) localStorage.setItem('areasVida', JSON.stringify(data.areasVida));
-        
-        return data;
+        try {
+          const data = await supabaseStorageService.getPDIData();
+
+          // Update localStorage as backup (only on successful fetch)
+          localStorage.setItem('objetivos', JSON.stringify(data.objetivos));
+          localStorage.setItem('metas', JSON.stringify(data.metas));
+          if (data.vvd) localStorage.setItem('vvd', data.vvd);
+          if (data.valores.length > 0) localStorage.setItem('valores', JSON.stringify(data.valores));
+          if (data.areasVida.length > 0) localStorage.setItem('areasVida', JSON.stringify(data.areasVida));
+
+          return data;
+        } catch (error) {
+          console.error('Erro ao sincronizar PDI (usando backup local):', error);
+        }
       }
-      
+
       // Fallback to localStorage
       return {
         objetivos: JSON.parse(localStorage.getItem('objetivos') || '[]'),
