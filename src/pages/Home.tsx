@@ -15,7 +15,7 @@ import { usePDIData } from "@/hooks/usePDIQueries";
 import { useAIUsage } from "@/hooks/useAIUsage";
 import { AIUsageLimitModal } from "@/components/AIUsageLimitModal";
 import { usePDIStorage } from "@/hooks/usePDIStorage";
-
+import { InsightAudioButton } from "@/components/home/InsightAudioButton";
 
 import LanguageSelector from "@/components/LanguageSelector";
 import LogoutButton from "@/components/LogoutButton";
@@ -601,8 +601,11 @@ const Home = () => {
                   {insight ? (
                     <div className="space-y-4">
                       <div className="bg-card rounded-lg p-4 border shadow-sm">
-                        <div className="prose prose-sm max-w-none whitespace-pre-line text-sm">
-                          {insight}
+                        <div className="flex items-start justify-between gap-2">
+                          <div className="prose prose-sm max-w-none whitespace-pre-line text-sm flex-1">
+                            {insight}
+                          </div>
+                          <InsightAudioButton insight={insight} />
                         </div>
                       </div>
                       {/* Botão Gerar novo insight */}
