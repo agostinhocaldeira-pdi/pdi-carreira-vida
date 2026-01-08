@@ -426,8 +426,8 @@ const Home = () => {
         {/* Trial Status Banner */}
         <TrialStatusBanner />
 
-        {/* Objetivos em Foco - Exibição no topo */}
-        {objetivos.length > 0 && (
+        {/* Objetivo Principal - Exibição no topo */}
+        {objetivos.some((obj: any) => obj.is_principal || obj.isPrincipal) && (
           <section className="animate-slide-up">
             <div className="rounded-xl border-2 border-accent/30 bg-gradient-to-r from-accent/10 via-accent/5 to-transparent p-4 sm:p-5">
               <div className="flex items-center gap-2 mb-3">
@@ -435,24 +435,26 @@ const Home = () => {
                   <Focus className="w-4 h-4 text-accent" />
                 </div>
                 <h2 className="text-sm sm:text-base font-semibold text-foreground">
-                  Seus Objetivos em Foco
+                  Objetivo Principal
                 </h2>
               </div>
               <div className="flex flex-wrap gap-2">
-                {objetivos.map((objetivo: any) => (
-                  <div
-                    key={objetivo.id}
-                    className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-background/80 border border-accent/20 shadow-sm"
-                  >
-                    <Target className="w-3.5 h-3.5 text-accent flex-shrink-0" />
-                    <span className="text-xs sm:text-sm font-medium text-foreground line-clamp-1">
-                      {objetivo.texto}
-                    </span>
-                  </div>
-                ))}
+                {objetivos
+                  .filter((objetivo: any) => objetivo.is_principal || objetivo.isPrincipal)
+                  .map((objetivo: any) => (
+                    <div
+                      key={objetivo.id}
+                      className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-background/80 border border-accent/20 shadow-sm"
+                    >
+                      <Target className="w-3.5 h-3.5 text-accent flex-shrink-0" />
+                      <span className="text-xs sm:text-sm font-medium text-foreground line-clamp-1">
+                        {objetivo.texto}
+                      </span>
+                    </div>
+                  ))}
               </div>
               <p className="text-xs text-muted-foreground mt-3 italic">
-                Mantenha o foco. Cada ação te aproxima dos seus objetivos.
+                Mantenha o foco. Cada ação te aproxima do seu objetivo.
               </p>
             </div>
           </section>
