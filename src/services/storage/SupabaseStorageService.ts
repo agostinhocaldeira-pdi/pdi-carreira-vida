@@ -23,8 +23,9 @@ class SupabaseStorageService {
   // ============================================
   
   private async getUserId(): Promise<string | null> {
-    const { data: { user } } = await supabase.auth.getUser();
-    return user?.id || null;
+    // Use getSession (local, fast) instead of getUser (network) to avoid intermittent null user
+    const { data: { session } } = await supabase.auth.getSession();
+    return session?.user?.id || null;
   }
 
   // ============================================
@@ -53,6 +54,21 @@ class SupabaseStorageService {
       supabase.from('user_valores').select('valores').eq('user_id', userId).maybeSingle(),
       supabase.from('user_life_areas').select('*').eq('user_id', userId).order('position'),
     ]);
+
+    // If any request failed, throw to let callers fallback to local backup (prevents wiping localStorage)
+    const firstError =
+      objetivosRes.error ||
+      goalsRes.error ||
+      actionsRes.error ||
+      stepsRes.error ||
+      vvdRes.error ||
+      valoresRes.error ||
+      areasRes.error;
+
+    if (firstError) {
+      console.error('Error fetching PDI data (batch):', firstError);
+      throw firstError;
+    }
 
     // Map objetivos
     const objetivos: Objetivo[] = (objetivosRes.data || []).map((obj: any) => ({
@@ -300,7 +316,8 @@ class SupabaseStorageService {
         data_alvo: obj.data_alvo || null,
         conexao_vvd: obj.conexao_vvd || null,
         status: obj.status?.replace('-', ' ') || 'a fazer',
-        is_principal: obj.is_principal || false,
+        // Accept both snake_case and camelCase for compatibility
+        is_principal: obj.is_principal ?? (obj as any).isPrincipal ?? false,
       })));
 
     if (error) console.error('Error saving objetivos:', error);

@@ -21,6 +21,7 @@ export interface Objetivo {
   conexao_vvd?: string;
   status: 'a-fazer' | 'pendente' | 'em-andamento' | 'concluido';
   is_principal?: boolean;
+  isPrincipal?: boolean; // camelCase alias for compatibility
   created_at?: string;
   updated_at?: string;
 }
