@@ -9,7 +9,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { Link, useNavigate } from "react-router-dom";
 import { Target, TrendingUp, BookOpen, MessagesSquare, Book, Sparkles, User, Zap, Star, Shield, Lock, ChevronDown, AlertCircle, Link2, Users, Bell, HelpCircle, FileText, ClipboardCheck, Focus, Loader2, Crosshair, Play, Footprints } from "lucide-react";
 import { DailyCheckout } from "@/components/gamification/DailyCheckout";
-import StoicReflectionCard from "@/components/home/StoicReflectionCard";
+
 import ProgressSection from "@/components/home/ProgressSection";
 import { usePDIData } from "@/hooks/usePDIQueries";
 import { useAIUsage } from "@/hooks/useAIUsage";
@@ -30,7 +30,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { TrialStatusBanner } from "@/components/subscription/TrialStatusBanner";
 import Logo from "@/components/Logo";
 import { FirstStepsModal } from "@/components/FirstStepsModal";
-import StoicReflectionSection from "@/components/home/StoicReflectionSection";
+
 import { getTodayReflection } from "@/data/stoicReflections";
 import { useStoicAudioPreload } from "@/hooks/useStoicAudioPreload";
 import { QuickAccessNav } from "@/components/home/QuickAccessNav";
@@ -49,7 +49,7 @@ const Home = () => {
   
   const [showDiaryWarningModal, setShowDiaryWarningModal] = useState(false);
   const [checkoutOpen, setCheckoutOpen] = useState(true);
-  const [stoicOpen, setStoicOpen] = useState(true);
+  
   
   // Estados para notificações
   const [unreadSupportMessages, setUnreadSupportMessages] = useState(0);
@@ -553,16 +553,6 @@ const Home = () => {
               </CollapsibleContent>
             </Card>
           </Collapsible>
-        </section>
-
-        {/* Stoic Reflection Card - After Checkout */}
-        <section className="animate-slide-up">
-          <StoicReflectionCard isOpen={stoicOpen} onOpenChange={setStoicOpen} />
-        </section>
-
-        {/* Diary & Reflection Section */}
-        <section className="animate-slide-up">
-          <StoicReflectionSection />
         </section>
 
         {/* Progresso Section */}
