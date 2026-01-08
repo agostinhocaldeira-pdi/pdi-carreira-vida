@@ -61,6 +61,7 @@ class SupabaseStorageService {
       data_alvo: obj.data_alvo || '',
       conexao_vvd: obj.conexao_vvd || '',
       status: obj.status || 'em-andamento',
+      is_principal: obj.is_principal || false,
     }));
 
     // Build actions map and steps map for efficient lookup
