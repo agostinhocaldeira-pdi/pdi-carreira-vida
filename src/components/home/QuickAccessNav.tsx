@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { BookOpen, Target, MessagesSquare, Link2, HelpCircle, FileText, Users, ChevronRight, Sparkles } from "lucide-react";
+import { BookOpen, Target, MessagesSquare, Link2, HelpCircle, FileText, Users, ChevronRight, Sparkles, TrendingUp } from "lucide-react";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 
 interface QuickAccessNavProps {
@@ -14,6 +14,12 @@ const navItems = [
     showAlways: true 
   },
   { 
+    label: "Progresso", 
+    icon: TrendingUp, 
+    path: "/progresso",
+    showAlways: true 
+  },
+  {
     label: "Construção Guiada", 
     icon: BookOpen, 
     path: "/construcao-guiada",
