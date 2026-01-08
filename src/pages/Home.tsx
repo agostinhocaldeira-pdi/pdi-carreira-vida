@@ -457,6 +457,20 @@ const Home = () => {
                   const passosCount = objetivoMetas.reduce((acc: number, m: any) => 
                     acc + (m.passos?.length || 0), 0
                   );
+
+                  // Calcular dias restantes até o prazo
+                  const calcularDiasRestantes = () => {
+                    if (!objetivo.data_alvo && !objetivo.dataAlvo) return null;
+                    const dataAlvo = objetivo.data_alvo || objetivo.dataAlvo;
+                    const hoje = new Date();
+                    hoje.setHours(0, 0, 0, 0);
+                    const prazo = new Date(dataAlvo);
+                    prazo.setHours(0, 0, 0, 0);
+                    const diffTime = prazo.getTime() - hoje.getTime();
+                    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                    return diffDays;
+                  };
+                  const diasRestantes = calcularDiasRestantes();
                   
                   return (
                     <div key={objetivo.id} className="space-y-3">
@@ -485,9 +499,34 @@ const Home = () => {
                     </div>
                   );
                 })}
-              <p className="text-xs text-muted-foreground mt-3 italic">
-                Mantenha o foco. Cada ação te aproxima do seu objetivo.
-              </p>
+              {(() => {
+                const principalObjetivo = objetivos.find((obj: any) => obj.is_principal || obj.isPrincipal);
+                if (!principalObjetivo) return null;
+                const dataAlvo = principalObjetivo.data_alvo || principalObjetivo.dataAlvo;
+                if (!dataAlvo) return (
+                  <p className="text-xs text-muted-foreground mt-3 italic">
+                    Cada ação te aproxima do seu objetivo. Mantenha o foco.
+                  </p>
+                );
+                const hoje = new Date();
+                hoje.setHours(0, 0, 0, 0);
+                const prazo = new Date(dataAlvo);
+                prazo.setHours(0, 0, 0, 0);
+                const diffTime = prazo.getTime() - hoje.getTime();
+                const diasRestantes = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                
+                return (
+                  <p className="text-xs text-muted-foreground mt-3 italic">
+                    {diasRestantes > 0 
+                      ? `Faltam ${diasRestantes} ${diasRestantes === 1 ? 'dia' : 'dias'} para concluir o objetivo. `
+                      : diasRestantes === 0 
+                        ? 'Hoje é o prazo final do seu objetivo! '
+                        : `O prazo do objetivo passou há ${Math.abs(diasRestantes)} ${Math.abs(diasRestantes) === 1 ? 'dia' : 'dias'}. `
+                    }
+                    Cada ação te aproxima do seu objetivo. Mantenha o foco.
+                  </p>
+                );
+              })()}
             </div>
           </section>
         )}
