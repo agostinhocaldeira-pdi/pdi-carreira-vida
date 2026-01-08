@@ -932,6 +932,33 @@ export type Database = {
           },
         ]
       }
+      user_insight_audio: {
+        Row: {
+          audio_url: string
+          created_at: string
+          id: string
+          insight_text: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          audio_url: string
+          created_at?: string
+          id?: string
+          insight_text: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          audio_url?: string
+          created_at?: string
+          id?: string
+          insight_text?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_insights: {
         Row: {
           created_at: string | null
