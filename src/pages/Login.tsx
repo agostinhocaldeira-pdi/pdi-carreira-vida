@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useNavigate, Link, useLocation } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -21,6 +21,7 @@ import { USER_ROLE_KEY } from "@/hooks/useUserRole";
 
 const Login = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const queryClient = useQueryClient();
   const [loginData, setLoginData] = useState({
     email: "",
@@ -30,6 +31,11 @@ const Login = () => {
   const [forgotPasswordEmail, setForgotPasswordEmail] = useState("");
   const [showManagerModal, setShowManagerModal] = useState(false);
   const [showNewPasswordModal, setShowNewPasswordModal] = useState(false);
+  const [showResetPasswordModal, setShowResetPasswordModal] = useState(false);
+  const [resetPasswordData, setResetPasswordData] = useState({
+    newPassword: "",
+    confirmPassword: "",
+  });
   const [newPasswordData, setNewPasswordData] = useState({
     newPassword: "",
     confirmPassword: "",
@@ -44,10 +50,80 @@ const Login = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isResetting, setIsResetting] = useState(false);
   const [isChangingPassword, setIsChangingPassword] = useState(false);
+  const [isSavingNewPassword, setIsSavingNewPassword] = useState(false);
 
   const [showPassword, setShowPassword] = useState(false);
   const [showNewPw, setShowNewPw] = useState(false);
   const [showConfirmPw, setShowConfirmPw] = useState(false);
+  const [showResetNewPw, setShowResetNewPw] = useState(false);
+  const [showResetConfirmPw, setShowResetConfirmPw] = useState(false);
+
+  // Detectar se veio de um link de reset de senha
+  useEffect(() => {
+    const handlePasswordRecovery = async () => {
+      // Verificar hash na URL (Supabase usa fragmento de hash para tokens)
+      const hashParams = new URLSearchParams(window.location.hash.substring(1));
+      const accessToken = hashParams.get('access_token');
+      const type = hashParams.get('type');
+      
+      if (accessToken && type === 'recovery') {
+        // Definir a sessão com o token de recuperação
+        const { data, error } = await supabase.auth.setSession({
+          access_token: accessToken,
+          refresh_token: hashParams.get('refresh_token') || '',
+        });
+        
+        if (!error && data.session) {
+          setShowResetPasswordModal(true);
+          // Limpar o hash da URL
+          window.history.replaceState(null, '', window.location.pathname);
+        } else {
+          toast.error("Link de recuperação expirado ou inválido. Solicite um novo.");
+        }
+      }
+    };
+
+    handlePasswordRecovery();
+  }, []);
+
+  // Função para salvar a nova senha após reset
+  const handleSaveNewPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (resetPasswordData.newPassword.length < 6) {
+      toast.error("A senha deve ter pelo menos 6 caracteres");
+      return;
+    }
+
+    if (resetPasswordData.newPassword !== resetPasswordData.confirmPassword) {
+      toast.error("As senhas não coincidem");
+      return;
+    }
+
+    setIsSavingNewPassword(true);
+
+    try {
+      const { error } = await supabase.auth.updateUser({
+        password: resetPasswordData.newPassword
+      });
+
+      if (error) {
+        toast.error("Erro ao atualizar senha: " + error.message);
+        return;
+      }
+
+      toast.success("Senha atualizada com sucesso! Faça login com sua nova senha.");
+      setShowResetPasswordModal(false);
+      setResetPasswordData({ newPassword: "", confirmPassword: "" });
+      
+      // Fazer logout para forçar novo login com a senha atualizada
+      await supabase.auth.signOut();
+    } catch (error) {
+      toast.error("Erro ao atualizar senha");
+    } finally {
+      setIsSavingNewPassword(false);
+    }
+  };
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -488,6 +564,63 @@ const Login = () => {
                 {isResetting ? "Enviando..." : "Enviar Link"}
               </Button>
             </div>
+          </form>
+        </DialogContent>
+      </Dialog>
+
+      {/* Modal de Redefinição de senha (após clicar no link do email) */}
+      <Dialog open={showResetPasswordModal} onOpenChange={() => {}}>
+        <DialogContent className="sm:max-w-md" onPointerDownOutside={(e) => e.preventDefault()}>
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <KeyRound className="w-5 h-5 text-primary" />
+              Redefinir sua senha
+            </DialogTitle>
+            <DialogDescription>
+              Digite sua nova senha abaixo.
+            </DialogDescription>
+          </DialogHeader>
+          <form onSubmit={handleSaveNewPassword} className="space-y-4 mt-4">
+            <div className="space-y-2">
+              <Label htmlFor="reset-new-pw">Nova senha</Label>
+              <div className="relative">
+                <Input
+                  id="reset-new-pw"
+                  type={showResetNewPw ? "text" : "password"}
+                  placeholder="Mínimo 6 caracteres"
+                  value={resetPasswordData.newPassword}
+                  onChange={(e) => setResetPasswordData({ ...resetPasswordData, newPassword: e.target.value })}
+                  required
+                  className="pr-10"
+                  disabled={isSavingNewPassword}
+                />
+                <PasswordToggle show={showResetNewPw} onToggle={() => setShowResetNewPw(!showResetNewPw)} />
+              </div>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="reset-confirm-pw">Confirmar nova senha</Label>
+              <div className="relative">
+                <Input
+                  id="reset-confirm-pw"
+                  type={showResetConfirmPw ? "text" : "password"}
+                  placeholder="Confirme sua nova senha"
+                  value={resetPasswordData.confirmPassword}
+                  onChange={(e) => setResetPasswordData({ ...resetPasswordData, confirmPassword: e.target.value })}
+                  required
+                  className="pr-10"
+                  disabled={isSavingNewPassword}
+                />
+                <PasswordToggle show={showResetConfirmPw} onToggle={() => setShowResetConfirmPw(!showResetConfirmPw)} />
+              </div>
+            </div>
+            <Button type="submit" className="w-full" disabled={isSavingNewPassword}>
+              {isSavingNewPassword ? (
+                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+              ) : (
+                <KeyRound className="w-4 h-4 mr-2" />
+              )}
+              {isSavingNewPassword ? "Salvando..." : "Salvar nova senha"}
+            </Button>
           </form>
         </DialogContent>
       </Dialog>
