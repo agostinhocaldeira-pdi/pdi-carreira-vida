@@ -434,15 +434,7 @@ const Home = () => {
         {/* Seu Objetivo Principal - Exibição no topo */}
         {objetivos.some((obj: any) => obj.is_principal || obj.isPrincipal) && (
           <section className="animate-slide-up">
-            <div className="rounded-xl border-2 border-accent/30 bg-gradient-to-r from-accent/10 via-accent/5 to-transparent p-4 sm:p-5">
-              <div className="flex items-center gap-2 mb-3">
-                <div className="w-8 h-8 rounded-lg bg-accent/20 flex items-center justify-center">
-                  <Focus className="w-4 h-4 text-accent" />
-                </div>
-                <h2 className="text-sm sm:text-base font-semibold text-foreground">
-                  Seu Objetivo Principal
-                </h2>
-              </div>
+            <div className="rounded-xl border-2 border-accent/30 bg-gradient-to-r from-accent/10 via-accent/5 to-transparent p-4 sm:p-5 lg:p-6">
               {objetivos
                 .filter((objetivo: any) => objetivo.is_principal || objetivo.isPrincipal)
                 .map((objetivo: any) => {
@@ -459,74 +451,108 @@ const Home = () => {
                   );
 
                   // Calcular dias restantes até o prazo
-                  const calcularDiasRestantes = () => {
-                    if (!objetivo.data_alvo && !objetivo.dataAlvo) return null;
-                    const dataAlvo = objetivo.data_alvo || objetivo.dataAlvo;
+                  const dataAlvo = objetivo.data_alvo || objetivo.dataAlvo;
+                  let diasRestantes: number | null = null;
+                  if (dataAlvo) {
                     const hoje = new Date();
                     hoje.setHours(0, 0, 0, 0);
                     const prazo = new Date(dataAlvo);
                     prazo.setHours(0, 0, 0, 0);
                     const diffTime = prazo.getTime() - hoje.getTime();
-                    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-                    return diffDays;
-                  };
-                  const diasRestantes = calcularDiasRestantes();
+                    diasRestantes = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                  }
                   
                   return (
-                    <div key={objetivo.id} className="space-y-3">
-                      <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-background/80 border border-accent/20 shadow-sm">
-                        <Target className="w-3.5 h-3.5 text-accent flex-shrink-0" />
-                        <span className="text-xs sm:text-sm font-medium text-foreground line-clamp-1">
-                          {objetivo.texto}
-                        </span>
+                    <div key={objetivo.id} className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+                      {/* Left side - Header and Objective */}
+                      <div className="flex-1 space-y-3">
+                        <div className="flex items-center gap-2">
+                          <div className="w-8 h-8 rounded-lg bg-accent/20 flex items-center justify-center">
+                            <Focus className="w-4 h-4 text-accent" />
+                          </div>
+                          <h2 className="text-sm sm:text-base font-semibold text-foreground">
+                            Seu Objetivo Principal
+                          </h2>
+                        </div>
+                        
+                        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-background/80 border border-accent/20 shadow-sm">
+                          <Target className="w-3.5 h-3.5 text-accent flex-shrink-0" />
+                          <span className="text-xs sm:text-sm font-medium text-foreground line-clamp-1">
+                            {objetivo.texto}
+                          </span>
+                        </div>
+                        
+                        {/* Motivational text - mobile only */}
+                        <p className="text-xs text-muted-foreground italic lg:hidden">
+                          {diasRestantes !== null && diasRestantes > 0 
+                            ? `Faltam ${diasRestantes} ${diasRestantes === 1 ? 'dia' : 'dias'}. `
+                            : diasRestantes === 0 
+                              ? 'Hoje é o prazo final! '
+                              : diasRestantes !== null 
+                                ? `Prazo passou há ${Math.abs(diasRestantes)} ${Math.abs(diasRestantes) === 1 ? 'dia' : 'dias'}. `
+                                : ''
+                          }
+                          Cada ação te aproxima do seu objetivo.
+                        </p>
                       </div>
                       
-                      {/* Contadores de metas, ações e passos */}
-                      <div className="flex flex-wrap gap-3 sm:gap-4">
-                        <div className="flex items-center gap-1.5 text-muted-foreground">
-                          <Crosshair className="w-3.5 h-3.5 text-primary" />
-                          <span className="text-xs font-medium">{metasCount} {metasCount === 1 ? 'meta' : 'metas'}</span>
+                      {/* Right side - Stats (desktop) */}
+                      <div className="flex flex-wrap gap-3 sm:gap-4 lg:flex-nowrap lg:gap-6">
+                        <div className="flex items-center gap-2 lg:flex-col lg:items-center lg:gap-1 lg:px-4 lg:py-2 lg:bg-background/50 lg:rounded-lg lg:border lg:border-border/50">
+                          <Crosshair className="w-3.5 h-3.5 lg:w-5 lg:h-5 text-primary" />
+                          <span className="text-xs lg:text-sm font-medium text-muted-foreground lg:text-foreground">
+                            <span className="lg:hidden">{metasCount} {metasCount === 1 ? 'meta' : 'metas'}</span>
+                            <span className="hidden lg:inline">{metasCount}</span>
+                          </span>
+                          <span className="hidden lg:block text-xs text-muted-foreground">{metasCount === 1 ? 'meta' : 'metas'}</span>
                         </div>
-                        <div className="flex items-center gap-1.5 text-muted-foreground">
-                          <Play className="w-3.5 h-3.5 text-primary" />
-                          <span className="text-xs font-medium">{acoesCount} {acoesCount === 1 ? 'ação' : 'ações'}</span>
+                        <div className="flex items-center gap-2 lg:flex-col lg:items-center lg:gap-1 lg:px-4 lg:py-2 lg:bg-background/50 lg:rounded-lg lg:border lg:border-border/50">
+                          <Play className="w-3.5 h-3.5 lg:w-5 lg:h-5 text-primary" />
+                          <span className="text-xs lg:text-sm font-medium text-muted-foreground lg:text-foreground">
+                            <span className="lg:hidden">{acoesCount} {acoesCount === 1 ? 'ação' : 'ações'}</span>
+                            <span className="hidden lg:inline">{acoesCount}</span>
+                          </span>
+                          <span className="hidden lg:block text-xs text-muted-foreground">{acoesCount === 1 ? 'ação' : 'ações'}</span>
                         </div>
-                        <div className="flex items-center gap-1.5 text-muted-foreground">
-                          <Footprints className="w-3.5 h-3.5 text-primary" />
-                          <span className="text-xs font-medium">{passosCount} {passosCount === 1 ? 'passo' : 'passos'}</span>
+                        <div className="flex items-center gap-2 lg:flex-col lg:items-center lg:gap-1 lg:px-4 lg:py-2 lg:bg-background/50 lg:rounded-lg lg:border lg:border-border/50">
+                          <Footprints className="w-3.5 h-3.5 lg:w-5 lg:h-5 text-primary" />
+                          <span className="text-xs lg:text-sm font-medium text-muted-foreground lg:text-foreground">
+                            <span className="lg:hidden">{passosCount} {passosCount === 1 ? 'passo' : 'passos'}</span>
+                            <span className="hidden lg:inline">{passosCount}</span>
+                          </span>
+                          <span className="hidden lg:block text-xs text-muted-foreground">{passosCount === 1 ? 'passo' : 'passos'}</span>
                         </div>
+                        {diasRestantes !== null && (
+                          <div className={`hidden lg:flex flex-col items-center gap-1 px-4 py-2 rounded-lg border ${
+                            diasRestantes > 7 
+                              ? 'bg-success/10 border-success/30' 
+                              : diasRestantes > 0 
+                                ? 'bg-warning/10 border-warning/30' 
+                                : 'bg-destructive/10 border-destructive/30'
+                          }`}>
+                            <span className={`text-sm font-bold ${
+                              diasRestantes > 7 
+                                ? 'text-success' 
+                                : diasRestantes > 0 
+                                  ? 'text-warning' 
+                                  : 'text-destructive'
+                            }`}>
+                              {diasRestantes > 0 ? diasRestantes : diasRestantes === 0 ? 'Hoje' : Math.abs(diasRestantes)}
+                            </span>
+                            <span className="text-xs text-muted-foreground">
+                              {diasRestantes > 0 
+                                ? diasRestantes === 1 ? 'dia restante' : 'dias restantes'
+                                : diasRestantes === 0 
+                                  ? 'é o prazo!'
+                                  : diasRestantes === -1 ? 'dia atrasado' : 'dias atrasados'
+                              }
+                            </span>
+                          </div>
+                        )}
                       </div>
                     </div>
                   );
                 })}
-              {(() => {
-                const principalObjetivo = objetivos.find((obj: any) => obj.is_principal || obj.isPrincipal);
-                if (!principalObjetivo) return null;
-                const dataAlvo = principalObjetivo.data_alvo || principalObjetivo.dataAlvo;
-                if (!dataAlvo) return (
-                  <p className="text-xs text-muted-foreground mt-3 italic">
-                    Cada ação te aproxima do seu objetivo. Mantenha o foco.
-                  </p>
-                );
-                const hoje = new Date();
-                hoje.setHours(0, 0, 0, 0);
-                const prazo = new Date(dataAlvo);
-                prazo.setHours(0, 0, 0, 0);
-                const diffTime = prazo.getTime() - hoje.getTime();
-                const diasRestantes = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-                
-                return (
-                  <p className="text-xs text-muted-foreground mt-3 italic">
-                    {diasRestantes > 0 
-                      ? `Faltam ${diasRestantes} ${diasRestantes === 1 ? 'dia' : 'dias'} para concluir o objetivo. `
-                      : diasRestantes === 0 
-                        ? 'Hoje é o prazo final do seu objetivo! '
-                        : `O prazo do objetivo passou há ${Math.abs(diasRestantes)} ${Math.abs(diasRestantes) === 1 ? 'dia' : 'dias'}. `
-                    }
-                    Cada ação te aproxima do seu objetivo. Mantenha o foco.
-                  </p>
-                );
-              })()}
             </div>
           </section>
         )}
