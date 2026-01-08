@@ -519,6 +519,30 @@ export type Database = {
           },
         ]
       }
+      profiles: {
+        Row: {
+          created_at: string
+          full_name: string | null
+          id: string
+          profile_picture_url: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          full_name?: string | null
+          id: string
+          profile_picture_url?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          full_name?: string | null
+          id?: string
+          profile_picture_url?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       satisfaction_surveys: {
         Row: {
           created_at: string

@@ -16,6 +16,8 @@ import { useAIUsage } from "@/hooks/useAIUsage";
 import { AIUsageLimitModal } from "@/components/AIUsageLimitModal";
 import { usePDIStorage } from "@/hooks/usePDIStorage";
 import { InsightAudioButton } from "@/components/home/InsightAudioButton";
+import { ProfilePictureAvatar } from "@/components/profile/ProfilePictureAvatar";
+import { useProfilePicture } from "@/hooks/useProfilePicture";
 
 import LanguageSelector from "@/components/LanguageSelector";
 import LogoutButton from "@/components/LogoutButton";
@@ -67,6 +69,9 @@ const Home = () => {
   const [insight, setInsight] = useState<string | null>(null);
   const [isGeneratingInsight, setIsGeneratingInsight] = useState(false);
   const [insightOpen, setInsightOpen] = useState(true);
+  
+  // Profile picture
+  const { profilePictureUrl } = useProfilePicture();
   
   // Carregar insight salvo
   useEffect(() => {
@@ -385,7 +390,12 @@ const Home = () => {
                 className="gap-1 sm:gap-2 px-2 sm:px-3" 
                 onClick={() => navigate("/perfil")}
               >
-                <User className="w-4 h-4" />
+                <ProfilePictureAvatar 
+                  profilePictureUrl={profilePictureUrl}
+                  userName={userName}
+                  size="sm"
+                  className="h-6 w-6"
+                />
                 <span className="hidden sm:inline">Perfil</span>
               </Button>
               <LogoutButton />

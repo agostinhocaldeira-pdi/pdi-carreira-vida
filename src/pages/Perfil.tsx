@@ -6,11 +6,12 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
-import { ArrowLeft, User, Building2, Eye, EyeOff, Save, Crown, Sparkles, Star, Check, Loader2 } from "lucide-react";
+import { ArrowLeft, User, Building2, Eye, EyeOff, Save, Crown, Sparkles, Star, Check, Loader2, Camera } from "lucide-react";
 import { NotificationPreferences } from "@/components/notifications/NotificationPreferences";
 import { LGPDDataSection } from "@/components/lgpd/LGPDDataSection";
 import { supabase } from "@/integrations/supabase/client";
 import { useSubscription } from "@/hooks/useSubscription";
+import { ProfilePictureEditor } from "@/components/profile/ProfilePictureEditor";
 
 
 interface UserData {
@@ -259,6 +260,24 @@ const Perfil = () => {
             </div>
           </div>
         </div>
+
+        {/* Foto de Perfil */}
+        <Card className="shadow-large">
+          <CardHeader>
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-primary/10 rounded-full">
+                <Camera className="h-6 w-6 text-primary" />
+              </div>
+              <div>
+                <CardTitle>Foto de Perfil</CardTitle>
+                <CardDescription>Personalize sua conta com uma foto</CardDescription>
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <ProfilePictureEditor userName={userData.name} />
+          </CardContent>
+        </Card>
 
         {/* Dados do Usuário */}
         <Card className="shadow-large">
