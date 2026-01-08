@@ -33,6 +33,7 @@ import { FirstStepsModal } from "@/components/FirstStepsModal";
 import StoicReflectionSection from "@/components/home/StoicReflectionSection";
 import { getTodayReflection } from "@/data/stoicReflections";
 import { useStoicAudioPreload } from "@/hooks/useStoicAudioPreload";
+import { QuickAccessNav } from "@/components/home/QuickAccessNav";
 
 const Home = () => {
   const navigate = useNavigate();
@@ -421,6 +422,9 @@ const Home = () => {
           </div>
         </div>
       </header>
+
+      {/* Quick Access Navigation - Horizontal Scroll */}
+      <QuickAccessNav isGestor={isGestor} />
 
       {/* Main Content */}
       <main className="container mx-auto px-3 sm:px-4 py-4 sm:py-8 space-y-4 sm:space-y-8">
