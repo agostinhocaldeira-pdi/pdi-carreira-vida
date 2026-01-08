@@ -144,33 +144,110 @@ export function useInsightAudio(insight: string | null) {
   }, [insight]);
 
   const playAudio = useCallback(async () => {
-    // If no audio URL or insight changed, generate new audio
-    if (!audioUrl) {
-      await generateAudio();
+    // If currently playing, stop
+    if (isPlaying && audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current.currentTime = 0;
+      setIsPlaying(false);
       return;
     }
 
-    if (audioRef.current) {
-      if (isPlaying) {
-        audioRef.current.pause();
-        setIsPlaying(false);
-      } else {
-        try {
-          await audioRef.current.play();
-          setIsPlaying(true);
-        } catch (error) {
-          console.error('Error playing audio:', error);
-          toast.error('Erro ao reproduzir áudio');
+    // If no audio URL or insight changed, generate new audio and auto-play
+    if (!audioUrl) {
+      setIsGenerating(true);
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user || !insight) {
+          setIsGenerating(false);
+          return;
         }
+
+        // Call ElevenLabs TTS edge function
+        const response = await fetch(
+          `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/elevenlabs-tts`,
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'apikey': import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
+              'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+            },
+            body: JSON.stringify({ text: insight }),
+          }
+        );
+
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({}));
+          throw new Error(errorData.error || 'Erro ao gerar áudio');
+        }
+
+        const audioBlob = await response.blob();
+        const audioFile = new File([audioBlob], 'insight.mp3', { type: 'audio/mpeg' });
+
+        // Upload to storage
+        await supabase.storage
+          .from('insight-audio')
+          .upload(`${user.id}/insight.mp3`, audioFile, { upsert: true });
+
+        // Save/update record in database
+        await supabase
+          .from('user_insight_audio')
+          .upsert({
+            user_id: user.id,
+            audio_url: `${user.id}/insight.mp3`,
+            insight_text: insight,
+          }, { onConflict: 'user_id' });
+
+        // Get signed URL for playback
+        const { data: signedData } = await supabase
+          .storage
+          .from('insight-audio')
+          .createSignedUrl(`${user.id}/insight.mp3`, 3600);
+
+        if (signedData?.signedUrl) {
+          setAudioUrl(signedData.signedUrl);
+          
+          // Auto-play after generation
+          const audio = new Audio(signedData.signedUrl);
+          audio.playbackRate = 1.05; // 5% faster
+          audioRef.current = audio;
+          
+          audio.onended = () => setIsPlaying(false);
+          audio.onerror = () => {
+            setIsPlaying(false);
+            toast.error('Erro ao reproduzir áudio');
+          };
+
+          await audio.play();
+          setIsPlaying(true);
+          toast.success('Áudio gerado com sucesso!');
+        }
+      } catch (error) {
+        console.error('Error generating audio:', error);
+        toast.error(error instanceof Error ? error.message : 'Erro ao gerar áudio');
+      } finally {
+        setIsGenerating(false);
+      }
+      return;
+    }
+
+    // Play existing audio
+    if (audioRef.current) {
+      audioRef.current.currentTime = 0;
+      audioRef.current.playbackRate = 1.05; // 5% faster
+      try {
+        await audioRef.current.play();
+        setIsPlaying(true);
+      } catch (error) {
+        console.error('Error playing audio:', error);
+        toast.error('Erro ao reproduzir áudio');
       }
     } else {
       const audio = new Audio(audioUrl);
+      audio.playbackRate = 1.05; // 5% faster
       audioRef.current = audio;
       
-      audio.onended = () => {
-        setIsPlaying(false);
-      };
-      
+      audio.onended = () => setIsPlaying(false);
       audio.onerror = () => {
         setIsPlaying(false);
         toast.error('Erro ao reproduzir áudio');
@@ -184,7 +261,7 @@ export function useInsightAudio(insight: string | null) {
         toast.error('Erro ao reproduzir áudio');
       }
     }
-  }, [audioUrl, isPlaying, generateAudio]);
+  }, [audioUrl, isPlaying, insight]);
 
   const stopAudio = useCallback(() => {
     if (audioRef.current) {

@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Play, Pause, Loader2, Send, RotateCcw } from "lucide-react";
+import { Play, Pause, Loader2, Send, RotateCcw, Volume2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
@@ -347,6 +347,7 @@ const StoicInteractiveExperience = ({
                   <>
                     <Play className="w-5 h-5" />
                     <span>Iniciar Reflexão</span>
+                    <Volume2 className="w-4 h-4 ml-1" />
                   </>
                 )}
               </Button>
@@ -451,6 +452,7 @@ const StoicInteractiveExperience = ({
                 <>
                   <Play className="w-5 h-5" />
                   <span>Iniciar Reflexão</span>
+                  <Volume2 className="w-4 h-4 ml-1" />
                 </>
               )}
             </Button>
