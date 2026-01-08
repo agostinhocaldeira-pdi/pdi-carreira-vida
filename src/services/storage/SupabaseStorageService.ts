@@ -277,6 +277,7 @@ class SupabaseStorageService {
       data_alvo: obj.data_alvo,
       conexao_vvd: obj.conexao_vvd,
       status: obj.status?.replace(' ', '-') as any || 'a-fazer',
+      is_principal: obj.is_principal || false,
     }));
   }
 
@@ -298,6 +299,7 @@ class SupabaseStorageService {
         data_alvo: obj.data_alvo || null,
         conexao_vvd: obj.conexao_vvd || null,
         status: obj.status?.replace('-', ' ') || 'a fazer',
+        is_principal: obj.is_principal || false,
       })));
 
     if (error) console.error('Error saving objetivos:', error);

@@ -9,7 +9,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { Target, ArrowRight, ArrowLeft, Home, Plus, Trash2, Pencil, Check, X, ChevronDown, Lightbulb } from "lucide-react";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Target, ArrowRight, ArrowLeft, Home, Plus, Trash2, Pencil, Check, X, ChevronDown, Lightbulb, Star } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { PDILoader } from "@/components/ui/pdi-loader";
 import { toast } from "sonner";
@@ -37,6 +39,7 @@ const PlanoVidaParaOnde = () => {
     dataAlvo: "",
     conexaoVvd: "",
     status: "em-andamento",
+    isPrincipal: false,
   });
 
   const [objetivos, setObjetivos] = useState<Array<{
@@ -45,6 +48,7 @@ const PlanoVidaParaOnde = () => {
     dataAlvo: string;
     conexaoVvd: string;
     status: string;
+    isPrincipal: boolean;
   }>>([]);
 
   const [editandoObjetivoId, setEditandoObjetivoId] = useState<number | null>(null);
@@ -53,7 +57,12 @@ const PlanoVidaParaOnde = () => {
     dataAlvo: string;
     conexaoVvd: string;
     status: string;
+    isPrincipal: boolean;
   } | null>(null);
+
+  // Estado para confirmação de alteração de objetivo principal
+  const [showPrincipalConfirm, setShowPrincipalConfirm] = useState(false);
+  const [pendingPrincipalAction, setPendingPrincipalAction] = useState<{ type: 'new' | 'edit' | 'toggle', objetivoId?: number } | null>(null);
 
   // Estado para modal de cadastro de meta
   const [showMetaModal, setShowMetaModal] = useState(false);
@@ -79,6 +88,7 @@ const PlanoVidaParaOnde = () => {
             dataAlvo: obj.data_alvo || obj.dataAlvo || "",
             conexaoVvd: obj.conexao_vvd || obj.conexaoVvd || "",
             status: obj.status || "em-andamento",
+            isPrincipal: obj.is_principal || obj.isPrincipal || false,
           })));
         } else {
           const localObjetivos = localStorage.getItem("objetivos");
@@ -113,10 +123,102 @@ const PlanoVidaParaOnde = () => {
           dataAlvo: obj.data_alvo || obj.dataAlvo || "",
           conexaoVvd: obj.conexao_vvd || obj.conexaoVvd || "",
           status: obj.status || "em-andamento",
+          isPrincipal: obj.is_principal || obj.isPrincipal || false,
         }))
       );
     }
   }, [pdiData?.objetivos]);
+
+  // Verificar se já existe objetivo principal
+  const hasExistingPrincipal = () => {
+    return objetivos.some(obj => obj.isPrincipal);
+  };
+
+  // Handler para mudança do checkbox de objetivo principal no formulário
+  const handlePrincipalChange = (checked: boolean) => {
+    if (checked && hasExistingPrincipal()) {
+      setPendingPrincipalAction({ type: 'new' });
+      setShowPrincipalConfirm(true);
+    } else {
+      setObjetivo({ ...objetivo, isPrincipal: checked });
+    }
+  };
+
+  // Handler para mudança do checkbox de objetivo principal na edição
+  const handleEditPrincipalChange = (checked: boolean) => {
+    if (checked && hasExistingPrincipal() && !objetivoEditado?.isPrincipal) {
+      setPendingPrincipalAction({ type: 'edit', objetivoId: editandoObjetivoId! });
+      setShowPrincipalConfirm(true);
+    } else {
+      setObjetivoEditado({ ...objetivoEditado!, isPrincipal: checked });
+    }
+  };
+
+  // Handler para toggle de objetivo principal na lista
+  const handleTogglePrincipal = (objetivoId: number, currentValue: boolean) => {
+    if (!currentValue && hasExistingPrincipal()) {
+      setPendingPrincipalAction({ type: 'toggle', objetivoId });
+      setShowPrincipalConfirm(true);
+    } else {
+      const novosObjetivos = objetivos.map(obj => ({
+        ...obj,
+        isPrincipal: obj.id === objetivoId ? !currentValue : false,
+      }));
+      setObjetivos(novosObjetivos);
+      saveObjetivosToStorage(novosObjetivos);
+      toast.success(currentValue ? "Objetivo desmarcado como principal" : "Objetivo marcado como principal!");
+    }
+  };
+
+  // Confirmar alteração de objetivo principal
+  const confirmPrincipalChange = () => {
+    if (!pendingPrincipalAction) return;
+
+    if (pendingPrincipalAction.type === 'new') {
+      // Desmarcar o objetivo principal atual e marcar o novo
+      const novosObjetivos = objetivos.map(obj => ({ ...obj, isPrincipal: false }));
+      setObjetivos(novosObjetivos);
+      setObjetivo({ ...objetivo, isPrincipal: true });
+    } else if (pendingPrincipalAction.type === 'edit') {
+      // Na edição, desmarcar outros e marcar o atual
+      const novosObjetivos = objetivos.map(obj => ({
+        ...obj,
+        isPrincipal: obj.id === pendingPrincipalAction.objetivoId ? false : obj.isPrincipal,
+      }));
+      setObjetivos(novosObjetivos.map(obj => ({ ...obj, isPrincipal: false })));
+      setObjetivoEditado({ ...objetivoEditado!, isPrincipal: true });
+    } else if (pendingPrincipalAction.type === 'toggle') {
+      // No toggle, desmarcar outros e marcar o selecionado
+      const novosObjetivos = objetivos.map(obj => ({
+        ...obj,
+        isPrincipal: obj.id === pendingPrincipalAction.objetivoId,
+      }));
+      setObjetivos(novosObjetivos);
+      saveObjetivosToStorage(novosObjetivos);
+      toast.success("Objetivo principal alterado!");
+    }
+
+    setShowPrincipalConfirm(false);
+    setPendingPrincipalAction(null);
+  };
+
+  // Função auxiliar para salvar objetivos no storage
+  const saveObjetivosToStorage = (objetivosToUpdate: typeof objetivos) => {
+    localStorage.setItem("objetivos", JSON.stringify(objetivosToUpdate));
+    const objetivosToSave = objetivosToUpdate.map(obj => ({
+      id: obj.id,
+      texto: obj.texto,
+      data_alvo: obj.dataAlvo,
+      conexao_vvd: obj.conexaoVvd,
+      status: obj.status?.replace('-', ' ') || 'a fazer',
+      is_principal: obj.isPrincipal,
+    }));
+    storage.saveObjetivos(objetivosToSave as any).then(() => {
+      queryClient.invalidateQueries({ queryKey: PDI_QUERY_KEYS.pdiData() });
+    }).catch(error => {
+      console.error("Background objetivos sync error:", error);
+    });
+  };
 
   const handleSaveObjetivo = async () => {
     if (!objetivo.texto || !objetivo.dataAlvo) {
@@ -125,7 +227,12 @@ const PlanoVidaParaOnde = () => {
     }
 
     const novoObjetivo = { ...objetivo, id: Date.now() };
-    const novosObjetivos = [...objetivos, novoObjetivo];
+    
+    // Se o novo objetivo é principal, desmarcar os outros
+    const novosObjetivos = objetivo.isPrincipal 
+      ? [...objetivos.map(obj => ({ ...obj, isPrincipal: false })), novoObjetivo]
+      : [...objetivos, novoObjetivo];
+    
     setObjetivos(novosObjetivos);
     
     localStorage.setItem("objetivos", JSON.stringify(novosObjetivos));
@@ -137,11 +244,12 @@ const PlanoVidaParaOnde = () => {
       data_alvo: obj.dataAlvo,
       conexao_vvd: obj.conexaoVvd,
       status: obj.status?.replace('-', ' ') || 'a fazer',
+      is_principal: obj.isPrincipal,
     }));
     storage.saveObjetivos(objetivosToSave as any).catch(error => {
       console.error("Background objetivos sync error:", error);
     });
-    setObjetivo({ texto: "", dataAlvo: "", conexaoVvd: "", status: "em-andamento" });
+    setObjetivo({ texto: "", dataAlvo: "", conexaoVvd: "", status: "em-andamento", isPrincipal: false });
     
     setObjetivoRecemCriado(novoObjetivo.id);
     setShowMetaModal(true);
@@ -188,6 +296,7 @@ const PlanoVidaParaOnde = () => {
       data_alvo: obj.dataAlvo,
       conexao_vvd: obj.conexaoVvd,
       status: obj.status || 'a fazer',
+      is_principal: obj.isPrincipal,
     }));
     storage.saveObjetivos(objetivosToSave as any).then(() => {
       queryClient.invalidateQueries({ queryKey: PDI_QUERY_KEYS.pdiData() });
@@ -203,6 +312,7 @@ const PlanoVidaParaOnde = () => {
       dataAlvo: obj.dataAlvo,
       conexaoVvd: obj.conexaoVvd,
       status: obj.status,
+      isPrincipal: obj.isPrincipal || false,
     });
   };
 
@@ -214,14 +324,25 @@ const PlanoVidaParaOnde = () => {
   const handleSaveEditObjetivo = (id: number) => {
     if (!objetivoEditado) return;
 
-    const novosObjetivos = objetivos.map((obj) => 
-      obj.id === id ? { ...obj, ...objetivoEditado } : obj
-    );
+    // Se o objetivo editado é principal, desmarcar os outros
+    const novosObjetivos = objetivoEditado.isPrincipal
+      ? objetivos.map((obj) => 
+          obj.id === id 
+            ? { ...obj, ...objetivoEditado } 
+            : { ...obj, isPrincipal: false }
+        )
+      : objetivos.map((obj) => 
+          obj.id === id ? { ...obj, ...objetivoEditado } : obj
+        );
+    
     setObjetivos(novosObjetivos);
     localStorage.setItem("objetivos", JSON.stringify(novosObjetivos));
     setEditandoObjetivoId(null);
     setObjetivoEditado(null);
     toast.success("Objetivo atualizado!");
+    
+    // Salvar no storage
+    saveObjetivosToStorage(novosObjetivos);
     
     if (typeof window !== 'undefined' && (window as any).markSectionCompleted) {
       (window as any).markSectionCompleted("Meus Objetivos");
@@ -338,10 +459,24 @@ const PlanoVidaParaOnde = () => {
                       {/* Mobile - Cards */}
                       <div className="md:hidden space-y-3">
                         {objetivos.map((obj) => (
-                          <div key={obj.id} className="rounded-lg border p-3 bg-card space-y-2">
+                          <div key={obj.id} className={`rounded-lg border p-3 bg-card space-y-2 ${obj.isPrincipal ? 'ring-2 ring-warning border-warning/50' : ''}`}>
                             <div className="flex items-start justify-between gap-2">
-                              <p className="text-sm font-medium flex-1 line-clamp-2">{obj.texto}</p>
+                              <div className="flex items-center gap-2 flex-1">
+                                {obj.isPrincipal && (
+                                  <Star className="w-4 h-4 text-warning fill-warning flex-shrink-0" />
+                                )}
+                                <p className="text-sm font-medium line-clamp-2">{obj.texto}</p>
+                              </div>
                               <div className="flex gap-1 flex-shrink-0">
+                                <Button 
+                                  variant="ghost" 
+                                  size="sm" 
+                                  className="h-8 w-8 p-0" 
+                                  onClick={() => handleTogglePrincipal(obj.id, obj.isPrincipal)}
+                                  title={obj.isPrincipal ? "Desmarcar como principal" : "Marcar como principal"}
+                                >
+                                  <Star className={`w-4 h-4 ${obj.isPrincipal ? 'text-warning fill-warning' : 'text-muted-foreground'}`} />
+                                </Button>
                                 <Button variant="ghost" size="sm" className="h-8 w-8 p-0" onClick={() => handleStartEditObjetivo(obj)}>
                                   <Pencil className="w-4 h-4" />
                                 </Button>
@@ -372,11 +507,13 @@ const PlanoVidaParaOnde = () => {
                           </div>
                         ))}
                       </div>
-                      {/* Desktop - Table */}
                       <div className="hidden md:block rounded-lg border overflow-x-auto max-w-full">
                         <Table>
                           <TableHeader>
                             <TableRow>
+                              <TableHead className="text-xs sm:text-sm w-10">
+                                <Star className="w-4 h-4 text-warning" />
+                              </TableHead>
                               <TableHead className="text-xs sm:text-sm">Objetivo</TableHead>
                               <TableHead className="text-xs sm:text-sm">Data Alvo</TableHead>
                               <TableHead className="text-xs sm:text-sm">Status</TableHead>
@@ -386,7 +523,25 @@ const PlanoVidaParaOnde = () => {
                           </TableHeader>
                           <TableBody>
                             {objetivos.map((obj) => (
-                              <TableRow key={obj.id}>
+                              <TableRow key={obj.id} className={obj.isPrincipal ? 'bg-warning/5' : ''}>
+                                <TableCell className="text-center">
+                                  {editandoObjetivoId === obj.id ? (
+                                    <Checkbox
+                                      checked={objetivoEditado?.isPrincipal || false}
+                                      onCheckedChange={(checked) => handleEditPrincipalChange(checked as boolean)}
+                                    />
+                                  ) : (
+                                    <Button
+                                      variant="ghost"
+                                      size="sm"
+                                      className="h-8 w-8 p-0"
+                                      onClick={() => handleTogglePrincipal(obj.id, obj.isPrincipal)}
+                                      title={obj.isPrincipal ? "Desmarcar como principal" : "Marcar como principal"}
+                                    >
+                                      <Star className={`w-4 h-4 ${obj.isPrincipal ? 'text-warning fill-warning' : 'text-muted-foreground'}`} />
+                                    </Button>
+                                  )}
+                                </TableCell>
                                 <TableCell className="text-xs sm:text-sm">
                                   {editandoObjetivoId === obj.id ? (
                                     <Input
@@ -598,6 +753,20 @@ const PlanoVidaParaOnde = () => {
                           />
                         </div>
 
+                        <div className="flex items-center space-x-3 p-3 rounded-lg border bg-accent/5">
+                          <Checkbox
+                            id="isPrincipal"
+                            checked={objetivo.isPrincipal}
+                            onCheckedChange={(checked) => handlePrincipalChange(checked as boolean)}
+                          />
+                          <div className="flex items-center gap-2">
+                            <Star className="w-4 h-4 text-warning" />
+                            <Label htmlFor="isPrincipal" className="font-medium cursor-pointer">
+                              Este é meu objetivo principal
+                            </Label>
+                          </div>
+                        </div>
+
                         <Button onClick={handleSaveObjetivo} className="w-full text-sm">
                           Salvar
                         </Button>
@@ -666,6 +835,26 @@ const PlanoVidaParaOnde = () => {
         title="Excluir Objetivo"
         description="Tem certeza que deseja excluir este objetivo? Esta ação não pode ser desfeita."
       />
+
+      {/* AlertDialog para confirmar alteração de objetivo principal */}
+      <AlertDialog open={showPrincipalConfirm} onOpenChange={setShowPrincipalConfirm}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Alterar objetivo principal?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Você já possui um objetivo marcado como principal. Deseja alterar o objetivo principal para este?
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => setPendingPrincipalAction(null)}>
+              Cancelar
+            </AlertDialogCancel>
+            <AlertDialogAction onClick={confirmPrincipalChange}>
+              Sim, alterar
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };

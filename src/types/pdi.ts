@@ -20,6 +20,7 @@ export interface Objetivo {
   data_alvo?: string;
   conexao_vvd?: string;
   status: 'a-fazer' | 'pendente' | 'em-andamento' | 'concluido';
+  is_principal?: boolean;
   created_at?: string;
   updated_at?: string;
 }
