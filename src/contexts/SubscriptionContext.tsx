@@ -18,23 +18,16 @@ export const SubscriptionProvider = ({ children }: { children: ReactNode }) => {
   const subscription = useSubscription();
   const [showModal, setShowModal] = useState(false);
   const [forceModal, setForceModal] = useState(false);
-  const [forcePaymentModal] = useState(() => {
-    try {
-      return new URLSearchParams(window.location.search).get('forcePaymentModal') === '1';
-    } catch {
-      return false;
-    }
-  });
 
   // Show modal when trial expires - force it open and prevent closing
   useEffect(() => {
-    if (subscription.status === 'expired' || forcePaymentModal) {
+    if (subscription.status === 'expired') {
       setShowModal(true);
       setForceModal(true);
     } else {
       setForceModal(false);
     }
-  }, [subscription.status, forcePaymentModal]);
+  }, [subscription.status]);
 
   const showUpgradeModal = () => {
     setShowModal(true);
