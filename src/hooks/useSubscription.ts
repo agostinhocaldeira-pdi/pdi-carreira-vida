@@ -16,6 +16,15 @@ const TRIAL_DAYS = 30;
 // Stripe product ID for Plano Básico
 const PLANO_BASICO_PRODUCT_ID = "prod_TXWvEwloGWytPs";
 
+// Helper to calculate days remaining in trial
+const calculateTrialDaysRemaining = (createdAt: string): number => {
+  const created = new Date(createdAt);
+  const now = new Date();
+  const diffTime = now.getTime() - created.getTime();
+  const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+  return Math.max(0, TRIAL_DAYS - diffDays);
+};
+
 export const useSubscription = () => {
   const [state, setState] = useState<SubscriptionState>({
     status: 'loading',
@@ -112,13 +121,30 @@ export const useSubscription = () => {
       console.error('Error checking Stripe subscription:', error);
     }
 
-    // Plano Gratuito: acesso completo, apenas com limitações de IA
-    // No futuro, quando o plano Básico for cobrado, vamos limitar o Gratuito
+    // No active Stripe subscription - check trial period based on user creation date
+    const userCreatedAt = user.created_at;
+    if (userCreatedAt) {
+      const daysRemaining = calculateTrialDaysRemaining(userCreatedAt);
+      
+      if (daysRemaining > 0) {
+        // User is still in trial period
+        setState({
+          status: 'trial',
+          plan: 'gratuito',
+          daysRemaining,
+          canEdit: true,
+          subscriptionEnd: null,
+        });
+        return;
+      }
+    }
+
+    // Trial expired and no subscription - user must pay
     setState({
-      status: 'active',
-      plan: 'gratuito',
-      daysRemaining: null,
-      canEdit: true,
+      status: 'expired',
+      plan: null,
+      daysRemaining: 0,
+      canEdit: false,
       subscriptionEnd: null,
     });
   }, []);

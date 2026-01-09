@@ -17,18 +17,27 @@ const SubscriptionContext = createContext<SubscriptionContextType | undefined>(u
 export const SubscriptionProvider = ({ children }: { children: ReactNode }) => {
   const subscription = useSubscription();
   const [showModal, setShowModal] = useState(false);
-  const [hasShownExpiredModal, setHasShownExpiredModal] = useState(false);
+  const [forceModal, setForceModal] = useState(false);
 
-  // Show modal automatically when trial expires (once per session)
+  // Show modal when trial expires - force it open and prevent closing
   useEffect(() => {
-    if (subscription.status === 'expired' && !hasShownExpiredModal) {
+    if (subscription.status === 'expired') {
       setShowModal(true);
-      setHasShownExpiredModal(true);
+      setForceModal(true);
+    } else {
+      setForceModal(false);
     }
-  }, [subscription.status, hasShownExpiredModal]);
+  }, [subscription.status]);
 
   const showUpgradeModal = () => {
     setShowModal(true);
+  };
+
+  const handleModalChange = (open: boolean) => {
+    // Only allow closing if not in expired state
+    if (!forceModal) {
+      setShowModal(open);
+    }
   };
 
   const refreshSubscription = () => {
@@ -48,7 +57,11 @@ export const SubscriptionProvider = ({ children }: { children: ReactNode }) => {
       }}
     >
       {children}
-      <TrialExpiredModal open={showModal} onOpenChange={setShowModal} />
+      <TrialExpiredModal 
+        open={showModal} 
+        onOpenChange={handleModalChange} 
+        forceOpen={forceModal}
+      />
     </SubscriptionContext.Provider>
   );
 };
