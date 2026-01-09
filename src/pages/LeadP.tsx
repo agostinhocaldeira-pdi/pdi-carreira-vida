@@ -537,16 +537,20 @@ const LeadP = () => {
 
           <div className="grid sm:grid-cols-2 gap-4 sm:gap-6">
             {/* Depoimento 1 - Eric */}
-            <Card className="border-border/50 bg-card/50 backdrop-blur-sm">
-              <CardContent className="p-5 sm:p-6">
+            <Card className="border-border/50 bg-card/50 backdrop-blur-sm relative overflow-hidden">
+              {/* Balão de destaque */}
+              <div className="absolute top-0 left-0 right-0 bg-gradient-to-r from-primary to-primary/80 text-primary-foreground px-3 py-1.5 text-xs font-medium text-center">
+                🚀 Preparando-se para assumir cargo de Coordenador em grande banco
+              </div>
+              <CardContent className="p-5 sm:p-6 pt-10">
                 <div className="flex justify-center gap-1 mb-4">
                   {[...Array(5)].map((_, i) => (
                     <Star key={i} className="h-4 w-4 fill-yellow-400 text-yellow-400" />
                   ))}
                 </div>
                 <p className="text-sm sm:text-base text-muted-foreground italic mb-4 leading-relaxed">
-                  "Participar do PDI foi extremamente importante para mim. Além de sair com um plano de execução 
-                  muito bem estruturado, ganhei conhecimento para repetir sozinho o ciclo de reflexão, planejamento 
+                  "Participar do PDI foi extremamente importante para mim. Além de sair com um plano de execução muito 
+                  bem estruturado, ganhei conhecimento para repetir sozinho o ciclo de reflexão, planejamento 
                   e ação."
                 </p>
                 <div className="flex items-center justify-center gap-3">
@@ -581,8 +585,12 @@ const LeadP = () => {
             </Card>
 
             {/* Depoimento 2 - Gabriele */}
-            <Card className="border-border/50 bg-card/50 backdrop-blur-sm">
-              <CardContent className="p-5 sm:p-6">
+            <Card className="border-border/50 bg-card/50 backdrop-blur-sm relative overflow-hidden">
+              {/* Balão de destaque */}
+              <div className="absolute top-0 left-0 right-0 bg-gradient-to-r from-green-600 to-green-500 text-white px-3 py-1.5 text-xs font-medium text-center">
+                🎉 Efetivada como Analista em grande banco após o estágio
+              </div>
+              <CardContent className="p-5 sm:p-6 pt-10">
                 <div className="flex justify-center gap-1 mb-4">
                   {[...Array(5)].map((_, i) => (
                     <Star key={i} className="h-4 w-4 fill-yellow-400 text-yellow-400" />
