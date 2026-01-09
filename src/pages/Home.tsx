@@ -434,20 +434,13 @@ const Home = () => {
           </div>
 
           {/* Bottom row - Motivational quote and progress */}
-          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4 p-3 sm:p-4 bg-muted/50 rounded-lg border border-border">
-            <div className="flex items-center gap-2 sm:gap-3 flex-1 w-full">
-              <div className="w-7 h-7 sm:w-8 sm:h-8 bg-primary/20 rounded-full flex items-center justify-center flex-shrink-0">
-                <Zap className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-primary" />
-              </div>
-              <p className="text-xs sm:text-sm font-bold text-primary line-clamp-2">
-                {isDailyQuoteLoading ? '...' : motivationalQuote}
-              </p>
+          <div className="flex items-center gap-2 sm:gap-3 p-3 sm:p-4 bg-muted/50 rounded-lg border border-border">
+            <div className="w-7 h-7 sm:w-8 sm:h-8 bg-primary/20 rounded-full flex items-center justify-center flex-shrink-0">
+              <Zap className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-primary" />
             </div>
-            
-            <Badge className="gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1 whitespace-nowrap self-start sm:self-auto bg-secondary text-secondary-foreground">
-              <TrendingUp className="w-3 h-3" />
-              <span className="text-xs">Em progresso</span>
-            </Badge>
+            <p className="text-xs sm:text-sm font-bold text-primary line-clamp-2">
+              {isDailyQuoteLoading ? '...' : motivationalQuote}
+            </p>
           </div>
         </div>
       </header>
