@@ -641,7 +641,7 @@ const Home = () => {
             const step2Locked = !step1Done;
             const step3Locked = !step1Done || !step2Done;
 
-            // Mensagem dinâmica do passo atual
+            // Mensagem dinâmica do passo atual (sempre visível para evitar “piscar” no mobile)
             let stepNumber = 1;
             let stepTitle = "O primeiro passo da sua transformação";
             let stepDescription = "Antes de mudar sua vida, você precisa se enxergar com clareza. Nesta etapa, você vai construir seu VVD, definir seus Valores e avaliar sua Roda da Vida.";
@@ -654,6 +654,10 @@ const Home = () => {
               stepNumber = 3;
               stepTitle = "O terceiro passo da sua transformação";
               stepDescription = "Você sabe quem é e para onde vai. Falta criar o plano de ação com metas claras para conquistar seus objetivos.";
+            } else if (step1Done && step2Done && step3Done) {
+              stepNumber = 3;
+              stepTitle = "Parabéns — seu Plano de Vida está completo";
+              stepDescription = "Agora é manter o ritmo: revise seus objetivos, ajuste suas metas e acompanhe seu progresso para continuar evoluindo.";
             }
 
             return (
@@ -672,13 +676,11 @@ const Home = () => {
 
                 <CardContent className="space-y-3">
                   {/* Mensagem do passo atual */}
-                  {!(step1Done && step2Done && step3Done) && (
-                    <div className="rounded-lg bg-muted/40 p-3">
-                      <p className="text-sm font-semibold text-primary">{stepTitle}</p>
-                      <p className="text-xs text-muted-foreground mt-1">{stepDescription}</p>
-                      <p className="text-[11px] text-muted-foreground mt-2">Passo {stepNumber} de 3</p>
-                    </div>
-                  )}
+                  <div className="rounded-lg bg-muted/40 p-3">
+                    <p className="text-sm font-semibold text-primary">{stepTitle}</p>
+                    <p className="text-xs text-muted-foreground mt-1">{stepDescription}</p>
+                    <p className="text-[11px] text-muted-foreground mt-2">Passo {stepNumber} de 3</p>
+                  </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                     {/* Passo 1 - Quem sou eu */}
