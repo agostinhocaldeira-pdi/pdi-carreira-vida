@@ -120,11 +120,13 @@ const LeadP = () => {
             </div>
             <Button 
               size="lg" 
-              className="text-base sm:text-lg px-8 py-6 bg-primary hover:bg-primary/90 transition-all duration-300"
+              className="text-sm sm:text-lg px-6 sm:px-8 py-5 sm:py-6 bg-primary hover:bg-primary/90 transition-all duration-300 whitespace-normal leading-tight max-w-full"
               onClick={() => navigate("/signup")}
             >
-              👉 Quero experimentar agora
-              <ArrowRight className="ml-2 h-5 w-5" />
+              <span className="flex items-center justify-center gap-2 flex-wrap">
+                <span>👉 Quero experimentar agora</span>
+                <ArrowRight className="h-5 w-5 flex-shrink-0" />
+              </span>
             </Button>
             
             <div className="mt-6 p-6 rounded-xl border border-border/50 bg-muted/20 max-w-lg mx-auto">
@@ -514,11 +516,13 @@ const LeadP = () => {
             </p>
             <Button 
               size="lg" 
-              className="text-base sm:text-lg px-8 py-6 bg-primary hover:bg-primary/90"
+              className="text-sm sm:text-lg px-6 sm:px-8 py-5 sm:py-6 bg-primary hover:bg-primary/90 whitespace-normal leading-tight max-w-full"
               onClick={() => navigate("/signup")}
             >
-              Quero experimentar o PDI
-              <ArrowRight className="ml-2 h-5 w-5" />
+              <span className="flex items-center justify-center gap-2 flex-wrap">
+                <span>Quero experimentar o PDI</span>
+                <ArrowRight className="h-5 w-5 flex-shrink-0" />
+              </span>
             </Button>
           </div>
         </div>
@@ -777,11 +781,13 @@ const LeadP = () => {
               
               <Button 
                 size="lg" 
-                className="text-base sm:text-lg px-8 py-6 bg-primary hover:bg-primary/90"
+                className="text-sm sm:text-lg px-6 sm:px-8 py-5 sm:py-6 bg-primary hover:bg-primary/90 whitespace-normal leading-tight max-w-full"
                 onClick={() => navigate("/signup")}
               >
-                👉 Experimentar agora
-                <ArrowRight className="ml-2 h-5 w-5" />
+                <span className="flex items-center justify-center gap-2 flex-wrap">
+                  <span>👉 Experimentar agora</span>
+                  <ArrowRight className="h-5 w-5 flex-shrink-0" />
+                </span>
               </Button>
             </CardContent>
           </Card>
@@ -849,11 +855,13 @@ const LeadP = () => {
             </p>
             <Button 
               size="lg" 
-              className="text-base sm:text-lg px-8 py-6 bg-primary hover:bg-primary/90"
+              className="text-sm sm:text-lg px-6 sm:px-8 py-5 sm:py-6 bg-primary hover:bg-primary/90 whitespace-normal leading-tight max-w-full"
               onClick={() => navigate("/signup")}
             >
-              👉 Começar agora
-              <ArrowRight className="ml-2 h-5 w-5" />
+              <span className="flex items-center justify-center gap-2 flex-wrap">
+                <span>👉 Começar agora</span>
+                <ArrowRight className="h-5 w-5 flex-shrink-0" />
+              </span>
             </Button>
           </div>
         </div>
@@ -902,11 +910,13 @@ const LeadP = () => {
 
           <Button 
             size="lg" 
-            className="text-base sm:text-lg px-8 py-6 bg-primary hover:bg-primary/90"
+            className="text-sm sm:text-lg px-6 sm:px-8 py-5 sm:py-6 bg-primary hover:bg-primary/90 whitespace-normal leading-tight max-w-full"
             onClick={() => navigate("/signup")}
           >
-            👉 Assumir o comando da minha vida
-            <ArrowRight className="ml-2 h-5 w-5" />
+            <span className="flex items-center justify-center gap-2 flex-wrap">
+              <span>👉 Assumir o comando da minha vida</span>
+              <ArrowRight className="h-5 w-5 flex-shrink-0" />
+            </span>
           </Button>
           
           <p className="text-sm text-muted-foreground mt-6">
