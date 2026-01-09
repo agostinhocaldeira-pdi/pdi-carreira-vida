@@ -367,6 +367,27 @@ export type Database = {
           },
         ]
       }
+      daily_quotes: {
+        Row: {
+          created_at: string
+          day_of_year: number
+          id: string
+          quote: string
+        }
+        Insert: {
+          created_at?: string
+          day_of_year: number
+          id?: string
+          quote: string
+        }
+        Update: {
+          created_at?: string
+          day_of_year?: number
+          id?: string
+          quote?: string
+        }
+        Relationships: []
+      }
       data_deletion_requests: {
         Row: {
           id: string

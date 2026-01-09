@@ -33,6 +33,7 @@ import { FirstStepsModal } from "@/components/FirstStepsModal";
 
 import { getTodayReflection } from "@/data/stoicReflections";
 import { useStoicAudioPreload } from "@/hooks/useStoicAudioPreload";
+import { useDailyQuote } from "@/hooks/useDailyQuote";
 import { QuickAccessNav } from "@/components/home/QuickAccessNav";
 
 
@@ -46,7 +47,9 @@ const Home = () => {
   });
   
   const [userName, setUserName] = useState("");
-  const [motivationalQuote, setMotivationalQuote] = useState("");
+  
+  // Daily quote from database (365 phrases)
+  const { quote: dailyQuote, isLoading: isDailyQuoteLoading } = useDailyQuote();
   
   const [showDiaryWarningModal, setShowDiaryWarningModal] = useState(false);
   const [checkoutOpen, setCheckoutOpen] = useState(true);
@@ -186,11 +189,11 @@ const Home = () => {
     }
   }, [roleLoading, userRole, isEmployee]);
 
-  // Usa o título da reflexão estoica do dia como frase motivacional
-  useEffect(() => {
+  // Fallback to stoic reflection title if daily quote is not available
+  const motivationalQuote = dailyQuote || (() => {
     const { reflection } = getTodayReflection();
-    setMotivationalQuote(reflection.title);
-  }, []);
+    return reflection.title;
+  })();
   
   const loadUnreadMessages = (userData: any, employeeStatus: boolean) => {
     // 1. Mensagens do suporte (admin para usuário)
@@ -408,11 +411,11 @@ const Home = () => {
           {/* Bottom row - Motivational quote and progress */}
           <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4 p-3 sm:p-4 bg-muted/50 rounded-lg border border-border">
             <div className="flex items-center gap-2 sm:gap-3 flex-1 w-full">
-              <div className="w-7 h-7 sm:w-8 sm:h-8 bg-warning/20 rounded-full flex items-center justify-center flex-shrink-0">
-                <Zap className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-warning" />
+              <div className="w-7 h-7 sm:w-8 sm:h-8 bg-primary/20 rounded-full flex items-center justify-center flex-shrink-0">
+                <Zap className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-primary" />
               </div>
-              <p className="text-xs sm:text-sm font-medium text-foreground/80 line-clamp-2">
-                {motivationalQuote}
+              <p className="text-xs sm:text-sm font-bold text-primary line-clamp-2">
+                {isDailyQuoteLoading ? '...' : motivationalQuote}
               </p>
             </div>
             
