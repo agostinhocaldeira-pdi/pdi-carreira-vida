@@ -40,7 +40,7 @@ const PlanoDeVida = ({ onTabChange, onOpenChange, forcedTab, forcedOpen }: Plano
 
   // DEBUG: if this logs, some page is still mounting the legacy PlanoDeVida component
   useEffect(() => {
-    console.info("[PlanoDeVida component] mounted (legacy)");
+    console.warn("[PlanoDeVida component] mounted (legacy)");
   }, []);
   
   // AI Usage hook for insight purchases

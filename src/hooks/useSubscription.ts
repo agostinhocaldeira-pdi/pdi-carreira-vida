@@ -62,13 +62,19 @@ export const useSubscription = () => {
     }
 
     // Check if user is a company employee (exempt from subscription)
-    const { data: employeeData } = await supabase
+    // IMPORTANT: do NOT use .single() here, because "no rows" or "multiple rows" can trigger 406 and spam the console.
+    const { data: employeeRows, error: employeeError } = await supabase
       .from('company_employees')
       .select('is_subscription_exempt')
       .eq('user_id', user.id)
-      .single();
+      .eq('is_active', true)
+      .limit(1);
 
-    if (employeeData?.is_subscription_exempt) {
+    if (employeeError) {
+      console.warn('[useSubscription] company_employees check failed:', employeeError);
+    }
+
+    if (employeeRows?.[0]?.is_subscription_exempt) {
       setState({
         status: 'active',
         plan: 'completo',

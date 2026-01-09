@@ -42,7 +42,7 @@ const Home = () => {
 
   // DEBUG: helps confirm which build is running on device/browser
   useEffect(() => {
-    console.info("[Home] build=2026-01-09 planovida=v2");
+    console.warn("[Home] build=2026-01-09 planovida=v2");
   }, []);
   
   // Optimized role protection - uses cached role data (no blocking RPC)
