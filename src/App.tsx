@@ -12,6 +12,7 @@ import Index from "./pages/Index";
 import SubscriberLanding from "./pages/SubscriberLanding";
 import NotFound from "./pages/NotFound";
 import Landing from "./pages/Landing";
+import LeadP from "./pages/LeadP";
 import Signup from "./pages/Signup";
 import Login from "./pages/Login";
 import Onboarding from "./pages/Onboarding";
@@ -78,6 +79,7 @@ const App = () => (
               <Routes>
                 <Route path="/" element={<Landing />} />
                 <Route path="/news" element={<SubscriberLanding />} />
+                <Route path="/leadp" element={<LeadP />} />
                 <Route path="/leadp2" element={<Index />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/signup" element={<Signup />} />
