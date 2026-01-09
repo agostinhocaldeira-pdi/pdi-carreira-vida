@@ -103,7 +103,7 @@ const LeadP = () => {
             <div className="aspect-video rounded-xl overflow-hidden shadow-2xl border border-border/30 bg-muted/50">
               <iframe
                 className="w-full h-full"
-                src="https://www.youtube.com/embed/R4oKexScqXU"
+                src="https://www.youtube.com/embed/q1ordLyFNpg"
                 title="Apresentação PDI"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                 allowFullScreen
