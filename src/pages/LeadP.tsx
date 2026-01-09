@@ -123,8 +123,9 @@ const LeadP = () => {
               className="text-sm sm:text-lg px-6 sm:px-8 py-5 sm:py-6 bg-primary hover:bg-primary/90 transition-all duration-300 whitespace-normal leading-tight max-w-full"
               onClick={() => navigate("/signup")}
             >
-              <span className="flex items-center justify-center gap-2 flex-wrap">
-                <span>👉 Quero experimentar agora</span>
+              <span className="sm:hidden">Quero Experimentar</span>
+              <span className="hidden sm:flex items-center gap-2">
+                👉 Quero experimentar agora
                 <ArrowRight className="h-5 w-5 flex-shrink-0" />
               </span>
             </Button>
@@ -410,6 +411,23 @@ const LeadP = () => {
           </div>
         </div>
       </section>
+
+      {/* CTA INTERMEDIÁRIO */}
+      <div className="py-8 px-4 text-center">
+        <div className="container mx-auto max-w-4xl">
+          <Button 
+            size="lg" 
+            className="text-sm sm:text-lg px-6 sm:px-8 py-5 sm:py-6 bg-primary hover:bg-primary/90 whitespace-normal leading-tight max-w-full"
+            onClick={() => navigate("/signup")}
+          >
+            <span className="sm:hidden">Quero Experimentar</span>
+            <span className="hidden sm:flex items-center gap-2">
+              👉 Quero experimentar agora
+              <ArrowRight className="h-5 w-5 flex-shrink-0" />
+            </span>
+          </Button>
+        </div>
+      </div>
 
       {/* ============================================================ */}
       {/* COMO O PDI FUNCIONA - 3 PASSOS */}
@@ -785,7 +803,7 @@ const LeadP = () => {
                 onClick={() => navigate("/signup")}
               >
                 <span className="flex items-center justify-center gap-2 flex-wrap">
-                  <span>👉 Experimentar agora</span>
+                  <span>Experimentar agora</span>
                   <ArrowRight className="h-5 w-5 flex-shrink-0" />
                 </span>
               </Button>
@@ -914,7 +932,7 @@ const LeadP = () => {
             onClick={() => navigate("/signup")}
           >
             <span className="flex items-center justify-center gap-2 flex-wrap">
-              <span>👉 Assumir o comando da minha vida</span>
+              <span>Assumir o Controle</span>
               <ArrowRight className="h-5 w-5 flex-shrink-0" />
             </span>
           </Button>
