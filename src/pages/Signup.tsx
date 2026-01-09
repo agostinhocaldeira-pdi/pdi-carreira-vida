@@ -115,39 +115,10 @@ const Signup = () => {
           console.error('Error sending welcome email:', emailError);
         }
 
-        toast.success("Cadastro Efetuado. Registre forma de pagamento após 30 dias");
+        toast.success("Cadastro realizado! Você tem 30 dias de acesso gratuito.");
         
-        // Direcionar direto para checkout do Stripe
-        try {
-          const { data: session } = await supabase.auth.getSession();
-          
-          if (!session?.session?.access_token) {
-            toast.error("Sessão expirada. Por favor, faça login novamente.");
-            navigate("/login");
-            return;
-          }
-
-          const { data: checkoutData, error: checkoutError } = await supabase.functions.invoke('create-checkout', {
-            headers: {
-              Authorization: `Bearer ${session.session.access_token}`,
-            },
-          });
-
-          if (checkoutError) {
-            console.error('Checkout error:', checkoutError);
-            toast.error("Erro ao iniciar checkout. Tente novamente.");
-            return;
-          }
-
-          if (checkoutData?.url) {
-            window.location.href = checkoutData.url;
-          } else {
-            toast.error("Erro ao obter URL de checkout.");
-          }
-        } catch (checkoutErr) {
-          console.error('Checkout error:', checkoutErr);
-          toast.error("Erro ao processar pagamento. Tente novamente.");
-        }
+        // Direcionar para onboarding (sem Stripe checkout)
+        navigate("/onboarding?signup=success");
       }
     } catch (error: any) {
       console.error("Erro no cadastro:", error);
@@ -273,7 +244,7 @@ const Signup = () => {
               ) : (
                 <UserPlus className="w-4 h-4 mr-2" />
               )}
-              {isLoading ? "Processando..." : "Criar Perfil e Pagar"}
+              {isLoading ? "Processando..." : "Criar Perfil Grátis"}
             </Button>
           </form>
 
