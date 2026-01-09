@@ -121,6 +121,20 @@ export const useSubscription = () => {
       console.error('Error checking Stripe subscription:', error);
     }
 
+    // TEMPORARY: Force expired status for testing the modal
+    // TODO: Remove this block after testing
+    const FORCE_EXPIRED_FOR_TESTING = true;
+    if (FORCE_EXPIRED_FOR_TESTING) {
+      setState({
+        status: 'expired',
+        plan: null,
+        daysRemaining: 0,
+        canEdit: false,
+        subscriptionEnd: null,
+      });
+      return;
+    }
+
     // No active Stripe subscription - check trial period based on user creation date
     const userCreatedAt = user.created_at;
     if (userCreatedAt) {
