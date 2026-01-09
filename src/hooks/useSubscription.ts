@@ -104,9 +104,15 @@ export const useSubscription = () => {
           },
         });
 
-        if (!error && data?.subscribed) {
+        console.log('[useSubscription] check-subscription response:', { data, error });
+
+        if (error) {
+          console.warn('[useSubscription] Error from check-subscription, falling back to trial check:', error);
+          // Don't return here - fall through to trial check
+        } else if (data?.subscribed) {
           // User has active Stripe subscription
           const plan = data.product_id === PLANO_BASICO_PRODUCT_ID ? 'basico' : 'completo';
+          console.log('[useSubscription] User has active subscription:', { plan });
           setState({
             status: 'active',
             plan,
@@ -115,19 +121,26 @@ export const useSubscription = () => {
             subscriptionEnd: data.subscription_end,
           });
           return;
+        } else {
+          console.log('[useSubscription] No active subscription, checking trial period');
         }
       }
     } catch (error) {
-      console.error('Error checking Stripe subscription:', error);
+      console.error('[useSubscription] Error checking Stripe subscription:', error);
+      // Don't return here - fall through to trial check
     }
 
     // No active Stripe subscription - check trial period based on user creation date
     const userCreatedAt = user.created_at;
+    console.log('[useSubscription] Checking trial period:', { userCreatedAt });
+    
     if (userCreatedAt) {
       const daysRemaining = calculateTrialDaysRemaining(userCreatedAt);
+      console.log('[useSubscription] Trial days remaining:', { daysRemaining, userCreatedAt });
       
       if (daysRemaining > 0) {
         // User is still in trial period
+        console.log('[useSubscription] User is in trial period');
         setState({
           status: 'trial',
           plan: 'gratuito',
@@ -140,6 +153,7 @@ export const useSubscription = () => {
     }
 
     // Trial expired and no subscription - user must pay
+    console.log('[useSubscription] Trial expired - showing payment modal');
     setState({
       status: 'expired',
       plan: null,
