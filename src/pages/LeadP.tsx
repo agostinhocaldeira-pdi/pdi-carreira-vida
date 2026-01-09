@@ -1,0 +1,823 @@
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { useNavigate } from "react-router-dom";
+import { 
+  Target, 
+  CheckCircle2, 
+  ArrowRight,
+  User,
+  Compass,
+  Map,
+  Shield,
+  Star,
+  Play,
+  X,
+  AlertTriangle,
+  RefreshCcw,
+  Heart,
+  Brain,
+  Sparkles
+} from "lucide-react";
+import Logo from "@/components/Logo";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+
+// Import testimonial photos
+import ericPereira from "@/assets/testimonials/eric-pereira.jpg";
+import gabrieleCampos from "@/assets/testimonials/gabriele-campos.jpg";
+import larissaSchuartz from "@/assets/testimonials/larissa-schuartz.jpg";
+import lucasSa from "@/assets/testimonials/lucas-sa.jpg";
+
+const LeadP = () => {
+  const navigate = useNavigate();
+  const [videoModalUrl, setVideoModalUrl] = useState<string | null>(null);
+
+  const faqItems = [
+    {
+      question: "Preciso de experiência com desenvolvimento pessoal?",
+      answer: "Não. O PDI foi feito para iniciantes e experientes."
+    },
+    {
+      question: "Quanto tempo por dia?",
+      answer: "5 a 10 minutos."
+    },
+    {
+      question: "Funciona no celular?",
+      answer: "Sim. 100% responsivo."
+    },
+    {
+      question: "Posso cancelar?",
+      answer: "Sim. Sem burocracia."
+    }
+  ];
+
+  return (
+    <div className="min-h-screen bg-gradient-to-b from-background via-background to-muted/10">
+      {/* Header */}
+      <header className="fixed top-0 left-0 right-0 z-50 bg-card/95 backdrop-blur-sm shadow-sm border-b border-border/50">
+        <div className="container mx-auto px-4 py-3 sm:py-4 flex items-center justify-between">
+          <Logo size="md" />
+          <Button 
+            variant="outline" 
+            size="sm"
+            onClick={() => navigate("/login")}
+            className="text-primary border-primary/30 hover:bg-primary/10 text-xs sm:text-sm"
+          >
+            Entrar
+          </Button>
+        </div>
+      </header>
+
+      {/* ============================================================ */}
+      {/* HERO SECTION */}
+      {/* ============================================================ */}
+      <section className="pt-28 sm:pt-36 pb-8 sm:pb-12 px-4 relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-muted/10" />
+        <div className="absolute top-20 right-0 w-96 h-96 bg-primary/5 rounded-full blur-3xl" />
+        <div className="absolute bottom-0 left-0 w-80 h-80 bg-accent/5 rounded-full blur-3xl" />
+        
+        <div className="container relative mx-auto max-w-4xl text-center">
+          <Badge variant="secondary" className="mb-4 text-xs sm:text-sm">
+            O PDI
+          </Badge>
+          <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-4 text-foreground leading-tight">
+            Seu Sistema de Organização Pessoal
+          </h1>
+          
+          <p className="text-base sm:text-xl md:text-2xl text-muted-foreground mb-8 font-light max-w-3xl mx-auto">
+            Organize sua vida e carreira sem depender de motivação.
+          </p>
+
+          <p className="text-sm sm:text-base text-muted-foreground mb-8 max-w-2xl mx-auto leading-relaxed">
+            O PDI é um sistema prático de organização pessoal que te ajuda a transformar intenção em ação consistente — com clareza, método e acompanhamento contínuo.
+          </p>
+          
+          {/* Video Placeholder */}
+          <div className="w-full max-w-3xl mx-auto mb-8">
+            <div className="aspect-video rounded-xl overflow-hidden shadow-2xl border border-border/30 bg-muted/50">
+              <iframe
+                className="w-full h-full"
+                src="https://www.youtube.com/embed/R4oKexScqXU"
+                title="Apresentação PDI"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowFullScreen
+              />
+            </div>
+          </div>
+
+          {/* CTA Principal */}
+          <div className="text-center">
+            <p className="text-lg sm:text-xl text-muted-foreground mb-2">Comece sem risco</p>
+            <div className="mb-4">
+              <span className="text-2xl sm:text-3xl font-bold text-foreground">R$ 67,00</span>
+              <span className="text-muted-foreground"> / ano</span>
+            </div>
+            <Button 
+              size="lg" 
+              className="text-base sm:text-lg px-8 py-6 bg-primary hover:bg-primary/90 transition-all duration-300"
+              onClick={() => navigate("/signup")}
+            >
+              👉 Quero experimentar agora
+              <ArrowRight className="ml-2 h-5 w-5" />
+            </Button>
+            
+            <div className="mt-6 p-6 rounded-xl border border-border/50 bg-muted/20 max-w-lg mx-auto">
+              <div className="space-y-2 text-sm sm:text-base text-muted-foreground">
+                <p className="flex items-center justify-center gap-2">
+                  <CheckCircle2 className="h-4 w-4 text-primary" />
+                  Você não paga nada agora
+                </p>
+                <p className="flex items-center justify-center gap-2">
+                  <CheckCircle2 className="h-4 w-4 text-primary" />
+                  Use o sistema por 30 dias reais
+                </p>
+                <p className="flex items-center justify-center gap-2">
+                  <CheckCircle2 className="h-4 w-4 text-primary" />
+                  Cancele quando quiser, sem burocracia
+                </p>
+              </div>
+              <p className="mt-4 text-sm text-foreground font-medium">
+                Clareza primeiro. Decisão depois.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ============================================================ */}
+      {/* O PROBLEMA - 92% das pessoas */}
+      {/* ============================================================ */}
+      <section className="py-12 sm:py-20 px-4 bg-muted/20">
+        <div className="container mx-auto max-w-4xl">
+          <div className="text-center mb-8">
+            <div className="inline-flex items-center gap-2 bg-destructive/10 text-destructive px-4 py-2 rounded-full mb-6">
+              <AlertTriangle className="h-5 w-5" />
+              <span className="font-medium text-sm sm:text-base">A maioria das pessoas não falha por falta de vontade</span>
+            </div>
+            
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground mb-4">
+              92% das pessoas não alcançam os objetivos que definem.
+            </h2>
+            <p className="text-base sm:text-lg text-muted-foreground max-w-2xl mx-auto">
+              Estudos amplamente citados, como os da University of Scranton, mostram que apenas cerca de 8% conseguem sustentar metas ao longo do tempo.
+            </p>
+          </div>
+
+          <Card className="border-none shadow-lg bg-gradient-to-br from-card to-muted/30 mb-8">
+            <CardContent className="p-8 sm:p-12">
+              <div className="text-center space-y-4">
+                <p className="text-base sm:text-lg text-foreground font-medium">
+                  👉 O problema não é querer.
+                </p>
+                <p className="text-base sm:text-lg text-foreground font-medium">
+                  👉 É não ter um sistema que sustente a ação.
+                </p>
+                <p className="text-muted-foreground mt-6">
+                  A maioria até começa…<br />
+                  <span className="text-lg">🗓️ mas desiste nos primeiros meses.</span>
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Por que isso acontece? */}
+          <div className="mb-12">
+            <h3 className="text-xl sm:text-2xl font-bold text-center text-foreground mb-6">
+              Por que isso acontece?
+            </h3>
+            <p className="text-center text-muted-foreground mb-6">Porque, sem estrutura:</p>
+            
+            <div className="grid sm:grid-cols-2 gap-4 max-w-2xl mx-auto">
+              {[
+                "Metas ficam vagas ou genéricas",
+                "Não há prazos, indicadores ou etapas claras",
+                "A intenção não vira ação",
+                "O cérebro prefere alívio imediato à execução contínua",
+                "Maus hábitos vencem boas intenções"
+              ].map((item, i) => (
+                <div key={i} className="flex items-start gap-3 p-4 bg-card rounded-lg border border-border/50">
+                  <X className="h-5 w-5 text-destructive mt-0.5 flex-shrink-0" />
+                  <span className="text-sm sm:text-base text-muted-foreground">{item}</span>
+                </div>
+              ))}
+            </div>
+            
+            <p className="text-center text-muted-foreground mt-6 italic">
+              Mesmo pessoas competentes acabam presas nesse padrão.
+            </p>
+          </div>
+
+          {/* O que acontece quando você tenta... */}
+          <Card className="border-destructive/20 bg-gradient-to-br from-card to-destructive/5 mb-8">
+            <CardContent className="p-8 sm:p-12">
+              <h3 className="text-xl sm:text-2xl font-bold text-center text-foreground mb-6">
+                O que acontece quando você tenta várias vezes e não consegue?
+              </h3>
+              <p className="text-center text-muted-foreground mb-6">Com o tempo, o pensamento muda:</p>
+              
+              <div className="space-y-3 max-w-xl mx-auto">
+                <p className="text-center text-muted-foreground">
+                  "Ainda não consegui" vira <strong className="text-foreground">"eu não consigo"</strong>
+                </p>
+                <p className="text-center text-muted-foreground">Surgem culpa, frustração e dúvida</p>
+                <p className="text-center text-muted-foreground">A pessoa passa a evitar novos compromissos</p>
+                <p className="text-center text-muted-foreground">
+                  <strong className="text-foreground">Procrastinação deixa de ser preguiça — vira autoproteção emocional</strong>
+                </p>
+              </div>
+              
+              <div className="mt-8 text-center">
+                <p className="text-sm text-muted-foreground">Externamente, parece falta de disciplina.</p>
+                <p className="text-sm text-foreground font-medium">Internamente, é medo de confirmar o fracasso.</p>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </section>
+
+      {/* ============================================================ */}
+      {/* CICLO DA ESCASSEZ */}
+      {/* ============================================================ */}
+      <section className="py-12 sm:py-20 px-4">
+        <div className="container mx-auto max-w-4xl">
+          <div className="text-center mb-8">
+            <div className="inline-flex items-center gap-2 mb-4">
+              <RefreshCcw className="h-6 w-6 text-destructive" />
+              <h2 className="text-2xl sm:text-3xl font-bold text-foreground">
+                O ciclo da escassez
+              </h2>
+            </div>
+          </div>
+
+          <Card className="border-none shadow-lg bg-gradient-to-br from-destructive/5 to-card mb-8">
+            <CardContent className="p-8 sm:p-12">
+              <div className="flex flex-wrap justify-center items-center gap-2 sm:gap-4 text-sm sm:text-base text-muted-foreground">
+                <span className="px-3 py-2 bg-card rounded-lg border">Tenta</span>
+                <ArrowRight className="h-4 w-4 text-destructive" />
+                <span className="px-3 py-2 bg-card rounded-lg border">falha ou abandona</span>
+                <ArrowRight className="h-4 w-4 text-destructive" />
+                <span className="px-3 py-2 bg-card rounded-lg border">Sente frustração e culpa</span>
+                <ArrowRight className="h-4 w-4 text-destructive" />
+                <span className="px-3 py-2 bg-card rounded-lg border">Passa a duvidar de si</span>
+                <ArrowRight className="h-4 w-4 text-destructive" />
+                <span className="px-3 py-2 bg-card rounded-lg border">Evita novas tentativas</span>
+                <ArrowRight className="h-4 w-4 text-destructive" />
+                <span className="px-3 py-2 bg-card rounded-lg border">Perde oportunidades</span>
+                <ArrowRight className="h-4 w-4 text-destructive" />
+                <span className="px-3 py-2 bg-destructive/10 rounded-lg border border-destructive/30 font-medium text-destructive">Confirma a crença de incapacidade</span>
+              </div>
+              
+              <p className="text-center text-muted-foreground mt-8 font-medium">
+                Esse ciclo se autoalimenta.
+              </p>
+            </CardContent>
+          </Card>
+
+          <div className="text-center mb-8">
+            <p className="text-muted-foreground mb-4">Se mantido por anos, pode gerar:</p>
+            <div className="flex flex-wrap justify-center gap-4">
+              {[
+                "Estagnação profissional e financeira",
+                "Sensação de \"vida não vivida\"",
+                "Ansiedade e perda de propósito"
+              ].map((item, i) => (
+                <span key={i} className="px-4 py-2 bg-muted rounded-full text-sm text-muted-foreground">
+                  {item}
+                </span>
+              ))}
+            </div>
+            <p className="text-muted-foreground mt-4 italic">
+              Muitas pessoas descrevem isso como <strong>ver a vida passar</strong>.
+            </p>
+          </div>
+
+          {/* Ponto essencial */}
+          <Card className="border-primary/20 bg-gradient-to-br from-primary/5 to-card">
+            <CardContent className="p-8 sm:p-12 text-center">
+              <div className="inline-flex items-center gap-2 mb-4">
+                <AlertTriangle className="h-5 w-5 text-primary" />
+                <span className="font-medium text-primary">Um ponto essencial</span>
+              </div>
+              
+              <p className="text-lg sm:text-xl text-foreground font-bold mb-4">
+                Esse padrão não define quem você é.
+              </p>
+              <p className="text-muted-foreground mb-4">
+                Ele reflete processos aprendidos, crenças construídas e estratégias emocionais que um dia protegeram — mas que hoje não servem mais.
+              </p>
+              <p className="text-primary font-bold text-lg">
+                👉 E tudo que foi aprendido pode ser reconstruído.
+              </p>
+            </CardContent>
+          </Card>
+        </div>
+      </section>
+
+      {/* ============================================================ */}
+      {/* O PDI NÃO É SÓ ORGANIZAÇÃO */}
+      {/* ============================================================ */}
+      <section className="py-12 sm:py-20 px-4 bg-gradient-to-b from-muted/10 to-background">
+        <div className="container mx-auto max-w-4xl">
+          <div className="text-center mb-12">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground mb-4">
+              O PDI não é só organização
+            </h2>
+            <p className="text-xl sm:text-2xl text-primary font-bold">
+              É reconstrução de direção
+            </p>
+          </div>
+
+          <Card className="border-none shadow-lg bg-gradient-to-br from-card to-muted/30 mb-12">
+            <CardContent className="p-8 sm:p-12">
+              <p className="text-center text-muted-foreground mb-6">
+                O PDI entrega organização, controle de objetivos, gestão de tempo e produtividade.<br />
+                Mas essas são <strong className="text-foreground">ferramentas intermediárias</strong>.
+              </p>
+              <p className="text-center text-xl sm:text-2xl text-primary font-bold">
+                O resultado final é outro.
+              </p>
+            </CardContent>
+          </Card>
+
+          {/* O que você vai conquistar */}
+          <div className="mb-12">
+            <h3 className="text-xl sm:text-2xl font-bold text-center text-foreground mb-8">
+              O que você vai conquistar:
+            </h3>
+            
+            <Card className="border-none shadow-lg bg-gradient-to-br from-card to-primary/5">
+              <CardContent className="p-8 sm:p-12">
+                <ul className="space-y-4 text-base sm:text-lg text-muted-foreground">
+                  {[
+                    "Sentir que sua vida está indo para algum lugar",
+                    "Ter controle real sobre suas escolhas",
+                    "Parar de viver com o medo de estar desperdiçando a própria vida",
+                    "Construir um futuro melhor do que o presente",
+                    "Sentir orgulho do caminho que está trilhando",
+                    "Ter paz interna por saber que está fazendo o que precisa ser feito"
+                  ].map((item, i) => (
+                    <li key={i} className="flex items-start gap-3">
+                      <CheckCircle2 className="w-5 h-5 text-primary mt-1 flex-shrink-0" />
+                      <span>{item}</span>
+                    </li>
+                  ))}
+                </ul>
+                
+                <div className="mt-8 text-center">
+                  <p className="text-lg sm:text-xl text-primary font-bold">
+                    👉 Você dá um basta definitivo no ciclo da escassez.
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* O papel do PDI nessa transformação */}
+          <div>
+            <h3 className="text-xl sm:text-2xl font-bold text-center text-foreground mb-8">
+              O papel do PDI nessa transformação
+            </h3>
+            
+            <Card className="border-none shadow-lg bg-gradient-to-br from-primary/5 to-card">
+              <CardContent className="p-8 sm:p-12">
+                <p className="text-base sm:text-lg text-muted-foreground mb-6 text-center">
+                  O PDI transforma:
+                </p>
+                <div className="space-y-3 text-base sm:text-lg text-center">
+                  <p><span className="text-muted-foreground">desejo</span> <ArrowRight className="inline w-4 h-4 mx-2 text-primary" /> <span className="text-foreground font-medium">direção</span></p>
+                  <p><span className="text-muted-foreground">confusão</span> <ArrowRight className="inline w-4 h-4 mx-2 text-primary" /> <span className="text-foreground font-medium">clareza</span></p>
+                  <p><span className="text-muted-foreground">vontade</span> <ArrowRight className="inline w-4 h-4 mx-2 text-primary" /> <span className="text-foreground font-medium">plano</span></p>
+                  <p><span className="text-muted-foreground">plano</span> <ArrowRight className="inline w-4 h-4 mx-2 text-primary" /> <span className="text-foreground font-medium">execução</span></p>
+                  <p><span className="text-muted-foreground">execução</span> <ArrowRight className="inline w-4 h-4 mx-2 text-primary" /> <span className="text-foreground font-medium">resultado</span></p>
+                  <p><span className="text-muted-foreground">resultado</span> <ArrowRight className="inline w-4 h-4 mx-2 text-primary" /> <span className="text-primary font-bold">orgulho pessoal</span></p>
+                </div>
+                <div className="mt-8 text-center">
+                  <p className="text-base sm:text-lg text-muted-foreground italic">
+                    E esse orgulho não vem do que você "conquistou fora".<br />
+                    <span className="text-foreground font-medium">Vem do que você se tornou no processo.</span>
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </section>
+
+      {/* ============================================================ */}
+      {/* COMO O PDI FUNCIONA - 3 PASSOS */}
+      {/* ============================================================ */}
+      <section className="py-12 sm:py-20 px-4 bg-muted/20">
+        <div className="container mx-auto max-w-4xl">
+          <div className="text-center mb-12">
+            <Badge variant="secondary" className="mb-4 text-xs sm:text-sm">
+              Como funciona na prática
+            </Badge>
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground mb-4">
+              Como o PDI funciona na prática
+            </h2>
+            <p className="text-muted-foreground max-w-2xl mx-auto">
+              O PDI não é algo que você configura uma vez e esquece.<br />
+              Ele acompanha decisões reais, semana após semana.
+            </p>
+          </div>
+
+          <h3 className="text-xl sm:text-2xl font-bold text-center text-foreground mb-8">
+            Um caminho claro em 3 passos:
+          </h3>
+
+          <div className="grid gap-6">
+            {/* Passo 1 */}
+            <Card className="border-primary/20 bg-gradient-to-br from-card to-primary/5 overflow-hidden">
+              <CardContent className="p-0">
+                <div className="flex flex-col sm:flex-row">
+                  <div className="bg-primary/10 p-6 sm:p-8 flex items-center justify-center sm:w-24">
+                    <div className="w-12 h-12 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-xl font-bold">
+                      1
+                    </div>
+                  </div>
+                  <div className="p-6 sm:p-8 flex-1">
+                    <div className="flex items-center gap-3 mb-3">
+                      <User className="h-6 w-6 text-primary" />
+                      <h4 className="text-lg sm:text-xl font-bold text-foreground">Quem sou eu</h4>
+                    </div>
+                    <Badge variant="outline" className="mb-3 text-xs">Autoconhecimento</Badge>
+                    <p className="text-muted-foreground mb-4">
+                      Antes de decidir o futuro, você entende o presente: seus valores, limites, forças e o que não faz mais sentido.
+                    </p>
+                    <p className="text-sm text-primary font-medium italic">
+                      Sem isso, qualquer caminho serve — e nenhum funciona.
+                    </p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Passo 2 */}
+            <Card className="border-secondary/20 bg-gradient-to-br from-card to-secondary/5 overflow-hidden">
+              <CardContent className="p-0">
+                <div className="flex flex-col sm:flex-row">
+                  <div className="bg-secondary/10 p-6 sm:p-8 flex items-center justify-center sm:w-24">
+                    <div className="w-12 h-12 rounded-full bg-secondary text-secondary-foreground flex items-center justify-center text-xl font-bold">
+                      2
+                    </div>
+                  </div>
+                  <div className="p-6 sm:p-8 flex-1">
+                    <div className="flex items-center gap-3 mb-3">
+                      <Compass className="h-6 w-6 text-secondary" />
+                      <h4 className="text-lg sm:text-xl font-bold text-foreground">Pra onde vou</h4>
+                    </div>
+                    <Badge variant="outline" className="mb-3 text-xs">Clareza do que realmente importa</Badge>
+                    <p className="text-muted-foreground">
+                      Você define objetivos certos para o momento certo. Menos metas. Mais avanço.
+                    </p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Passo 3 */}
+            <Card className="border-accent/20 bg-gradient-to-br from-card to-accent/5 overflow-hidden">
+              <CardContent className="p-0">
+                <div className="flex flex-col sm:flex-row">
+                  <div className="bg-accent/10 p-6 sm:p-8 flex items-center justify-center sm:w-24">
+                    <div className="w-12 h-12 rounded-full bg-accent text-accent-foreground flex items-center justify-center text-xl font-bold">
+                      3
+                    </div>
+                  </div>
+                  <div className="p-6 sm:p-8 flex-1">
+                    <div className="flex items-center gap-3 mb-3">
+                      <Map className="h-6 w-6 text-accent" />
+                      <h4 className="text-lg sm:text-xl font-bold text-foreground">Como vou chegar lá</h4>
+                    </div>
+                    <Badge variant="outline" className="mb-3 text-xs">Planejamento simples e possível</Badge>
+                    <p className="text-muted-foreground mb-4">
+                      Você transforma objetivos em planos do tamanho da sua rotina real — não da rotina perfeita.
+                    </p>
+                    <p className="text-sm text-accent font-medium italic">
+                      Sem plano, todo objetivo vira frustração.
+                    </p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          <div className="text-center mt-10">
+            <p className="text-muted-foreground mb-4">
+              👉 Esse é o caminho. Quer começar pelo passo 1?
+            </p>
+            <Button 
+              size="lg" 
+              className="text-base sm:text-lg px-8 py-6 bg-primary hover:bg-primary/90"
+              onClick={() => navigate("/signup")}
+            >
+              Quero experimentar o PDI
+              <ArrowRight className="ml-2 h-5 w-5" />
+            </Button>
+          </div>
+        </div>
+      </section>
+
+      {/* ============================================================ */}
+      {/* DEPOIMENTOS */}
+      {/* ============================================================ */}
+      <section className="py-12 sm:py-20 px-4">
+        <div className="container mx-auto max-w-6xl">
+          <div className="text-center mb-8 sm:mb-12">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 sm:mb-4">
+              Pessoas comuns. Resultados reais.
+            </h2>
+          </div>
+
+          <div className="grid sm:grid-cols-2 gap-4 sm:gap-6">
+            {/* Depoimento 1 - Eric */}
+            <Card className="border-border/50 bg-card/50 backdrop-blur-sm">
+              <CardContent className="p-5 sm:p-6">
+                <div className="flex justify-center gap-1 mb-4">
+                  {[...Array(5)].map((_, i) => (
+                    <Star key={i} className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                  ))}
+                </div>
+                <p className="text-sm sm:text-base text-muted-foreground italic mb-4 leading-relaxed">
+                  "Participar do PDI foi extremamente importante para mim. Além de sair com um plano de execução 
+                  muito bem estruturado, ganhei conhecimento para repetir sozinho o ciclo de reflexão, planejamento 
+                  e ação."
+                </p>
+                <div className="flex items-center justify-center gap-3">
+                  <img 
+                    src={ericPereira} 
+                    alt="Eric Pereira" 
+                    className="w-10 h-10 rounded-full object-cover"
+                  />
+                  <p className="text-sm font-medium">Eric Pereira</p>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Depoimento 2 - Gabriele */}
+            <Card className="border-border/50 bg-card/50 backdrop-blur-sm">
+              <CardContent className="p-5 sm:p-6">
+                <div className="flex justify-center gap-1 mb-4">
+                  {[...Array(5)].map((_, i) => (
+                    <Star key={i} className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                  ))}
+                </div>
+                <p className="text-sm sm:text-base text-muted-foreground italic mb-4 leading-relaxed">
+                  "O PDI me ajudou a enxergar padrões que eu mesma criava e que me impediam de avançar. 
+                  Hoje tenho clareza sobre minhas prioridades e ajo com mais consistência."
+                </p>
+                <div className="flex items-center justify-center gap-3">
+                  <img 
+                    src={gabrieleCampos} 
+                    alt="Gabriele Campos" 
+                    className="w-10 h-10 rounded-full object-cover"
+                  />
+                  <p className="text-sm font-medium">Gabriele Campos</p>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Depoimento 3 - Larissa */}
+            <Card className="border-border/50 bg-card/50 backdrop-blur-sm">
+              <CardContent className="p-5 sm:p-6">
+                <div className="flex justify-center gap-1 mb-4">
+                  {[...Array(5)].map((_, i) => (
+                    <Star key={i} className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                  ))}
+                </div>
+                <p className="text-sm sm:text-base text-muted-foreground italic mb-4 leading-relaxed">
+                  "Eu estava travada há muito tempo. O PDI me ajudou a identificar o que me prendia e me deu 
+                  ferramentas práticas para avançar."
+                </p>
+                <div className="flex items-center justify-center gap-3">
+                  <img 
+                    src={larissaSchuartz} 
+                    alt="Larissa Schuartz" 
+                    className="w-10 h-10 rounded-full object-cover"
+                  />
+                  <p className="text-sm font-medium">Larissa Schuartz</p>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Depoimento 4 - Lucas */}
+            <Card className="border-border/50 bg-card/50 backdrop-blur-sm">
+              <CardContent className="p-5 sm:p-6">
+                <div className="flex justify-center gap-1 mb-4">
+                  {[...Array(5)].map((_, i) => (
+                    <Star key={i} className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                  ))}
+                </div>
+                <p className="text-sm sm:text-base text-muted-foreground italic mb-4 leading-relaxed">
+                  "Em 6 meses conquistei mais do que nos últimos 3 anos."
+                </p>
+                <div className="flex items-center justify-center gap-3">
+                  <img 
+                    src={lucasSa} 
+                    alt="Lucas Sá" 
+                    className="w-10 h-10 rounded-full object-cover"
+                  />
+                  <p className="text-sm font-medium">Lucas Sá</p>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </section>
+
+      {/* ============================================================ */}
+      {/* EXPERIMENTE SEM RISCO */}
+      {/* ============================================================ */}
+      <section className="py-16 sm:py-24 px-4 bg-gradient-to-br from-primary/5 via-background to-muted/10">
+        <div className="container mx-auto max-w-4xl">
+          <Card className="border-2 border-primary/20 shadow-xl bg-card">
+            <CardContent className="p-8 sm:p-12 text-center">
+              <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-6">
+                <Shield className="w-8 h-8 text-primary" />
+              </div>
+              
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-6 text-foreground">
+                Experimente sem risco
+              </h2>
+              
+              <div className="mb-6">
+                <span className="text-3xl sm:text-4xl font-bold text-foreground">R$ 67,00</span>
+                <span className="text-muted-foreground"> / ano</span>
+              </div>
+
+              <div className="flex flex-wrap justify-center gap-4 text-sm text-muted-foreground mb-8">
+                <div className="flex items-center gap-2">
+                  <CheckCircle2 className="w-5 h-5 text-primary" />
+                  <span>30 dias de uso completo</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <CheckCircle2 className="w-5 h-5 text-primary" />
+                  <span>Se continuar, ganha mais 30 dias</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <CheckCircle2 className="w-5 h-5 text-primary" />
+                  <span>2 meses grátis no total</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <CheckCircle2 className="w-5 h-5 text-primary" />
+                  <span>Cancele quando quiser</span>
+                </div>
+              </div>
+              
+              <Button 
+                size="lg" 
+                className="text-base sm:text-lg px-8 py-6 bg-primary hover:bg-primary/90"
+                onClick={() => navigate("/signup")}
+              >
+                👉 Experimentar agora
+                <ArrowRight className="ml-2 h-5 w-5" />
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
+      </section>
+
+      {/* ============================================================ */}
+      {/* É PARA VOCÊ? */}
+      {/* ============================================================ */}
+      <section className="py-12 sm:py-20 px-4">
+        <div className="container mx-auto max-w-4xl">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center text-foreground mb-12">
+            O PDI é para você?
+          </h2>
+
+          <div className="grid md:grid-cols-2 gap-6">
+            {/* É para você */}
+            <Card className="border-primary/20 bg-gradient-to-br from-card to-primary/5">
+              <CardContent className="p-6 sm:p-8">
+                <h3 className="text-lg sm:text-xl font-bold text-primary mb-6 flex items-center gap-2">
+                  <CheckCircle2 className="h-6 w-6" />
+                  É para você se:
+                </h3>
+                <ul className="space-y-4">
+                  {[
+                    "Sente que pode mais, mas não sabe por onde começar",
+                    "Quer organizar vida e carreira com método",
+                    "Está disposto a dedicar alguns minutos por dia à sua evolução"
+                  ].map((item, i) => (
+                    <li key={i} className="flex items-start gap-3 text-muted-foreground">
+                      <CheckCircle2 className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
+                      <span>{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              </CardContent>
+            </Card>
+
+            {/* Não é para você */}
+            <Card className="border-muted bg-gradient-to-br from-card to-muted/30">
+              <CardContent className="p-6 sm:p-8">
+                <h3 className="text-lg sm:text-xl font-bold text-muted-foreground mb-6 flex items-center gap-2">
+                  <X className="h-6 w-6" />
+                  Não é para você se:
+                </h3>
+                <ul className="space-y-4">
+                  {[
+                    "Busca resultados mágicos",
+                    "Não quer se comprometer com o processo",
+                    "Não tem 5 minutos por dia para investir em si mesmo"
+                  ].map((item, i) => (
+                    <li key={i} className="flex items-start gap-3 text-muted-foreground">
+                      <X className="h-5 w-5 text-muted-foreground/60 mt-0.5 flex-shrink-0" />
+                      <span>{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              </CardContent>
+            </Card>
+          </div>
+
+          <div className="text-center mt-10">
+            <p className="text-muted-foreground mb-4">
+              Se você se viu aqui, o próximo passo é simples.
+            </p>
+            <Button 
+              size="lg" 
+              className="text-base sm:text-lg px-8 py-6 bg-primary hover:bg-primary/90"
+              onClick={() => navigate("/signup")}
+            >
+              👉 Começar agora
+              <ArrowRight className="ml-2 h-5 w-5" />
+            </Button>
+          </div>
+        </div>
+      </section>
+
+      {/* ============================================================ */}
+      {/* FAQ */}
+      {/* ============================================================ */}
+      <section className="py-12 sm:py-20 px-4 bg-muted/20">
+        <div className="container mx-auto max-w-3xl">
+          <h2 className="text-2xl sm:text-3xl font-bold text-center text-foreground mb-8">
+            Perguntas frequentes
+          </h2>
+
+          <Accordion type="single" collapsible className="w-full">
+            {faqItems.map((item, index) => (
+              <AccordionItem key={index} value={`item-${index}`}>
+                <AccordionTrigger className="text-left text-base sm:text-lg">
+                  {item.question}
+                </AccordionTrigger>
+                <AccordionContent className="text-muted-foreground">
+                  {item.answer}
+                </AccordionContent>
+              </AccordionItem>
+            ))}
+          </Accordion>
+        </div>
+      </section>
+
+      {/* ============================================================ */}
+      {/* CTA FINAL */}
+      {/* ============================================================ */}
+      <section className="py-16 sm:py-24 px-4 bg-gradient-to-t from-primary/5 to-background">
+        <div className="container mx-auto max-w-3xl text-center">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 text-foreground">
+            O melhor momento para começar era ontem
+          </h2>
+          <p className="text-xl sm:text-2xl text-primary font-bold mb-8">
+            O segundo melhor é agora
+          </p>
+          
+          <p className="text-base sm:text-lg text-muted-foreground mb-8 max-w-2xl mx-auto">
+            Você já sabe o que precisa fazer.<br />
+            Nós vamos te ajudar a <strong className="text-foreground">realmente fazer</strong>.
+          </p>
+
+          <Button 
+            size="lg" 
+            className="text-base sm:text-lg px-8 py-6 bg-primary hover:bg-primary/90"
+            onClick={() => navigate("/signup")}
+          >
+            👉 Assumir o comando da minha vida
+            <ArrowRight className="ml-2 h-5 w-5" />
+          </Button>
+          
+          <p className="text-sm text-muted-foreground mt-6">
+            No seu ritmo • Com suporte humano e Inteligência Artificial
+          </p>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="py-8 px-4 border-t border-border/50">
+        <div className="container mx-auto text-center text-sm text-muted-foreground">
+          © {new Date().getFullYear()} PDI - Carreira e Vida. Todos os direitos reservados.
+        </div>
+      </footer>
+    </div>
+  );
+};
+
+export default LeadP;
