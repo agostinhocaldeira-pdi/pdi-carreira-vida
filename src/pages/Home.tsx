@@ -67,7 +67,9 @@ const Home = () => {
   const { data: pdiData } = usePDIData();
   const objetivos = pdiData?.objetivos || [];
   const metas = pdiData?.metas || [];
-  
+  const vvd = pdiData?.vvd || "";
+  const valores = pdiData?.valores || [];
+  const areasVida = pdiData?.areasVida || [];
   // AI Usage e Insight
   const storage = usePDIStorage();
   const aiUsage = useAIUsage('insight');
@@ -75,6 +77,9 @@ const Home = () => {
   const [insight, setInsight] = useState<string | null>(null);
   const [isGeneratingInsight, setIsGeneratingInsight] = useState(false);
   const [insightOpen, setInsightOpen] = useState(() => window.innerWidth >= 640); // Start collapsed on mobile
+
+  // Plano de Vida (passo 3 depende de habilidades)
+  const [habilidadesCount, setHabilidadesCount] = useState(0);
   
   // Profile picture
   const { profilePictureUrl } = useProfilePicture();
@@ -101,6 +106,21 @@ const Home = () => {
     };
     loadInsight();
   }, []);
+
+  // Carregar habilidades (usado para completar o Passo 3)
+  useEffect(() => {
+    const loadHabilidades = async () => {
+      try {
+        const habs = await storage.getHabilidades();
+        setHabilidadesCount(habs?.length || 0);
+      } catch (error) {
+        // Não bloquear a Home por isso
+        console.error("Erro ao carregar habilidades:", error);
+      }
+    };
+
+    loadHabilidades();
+  }, [storage]);
   
   // Verificar se pode gerar insight
   const canGenerateInsight = isAdmin || aiUsage.hasAvailablePurchase;
@@ -586,75 +606,139 @@ const Home = () => {
         </section>
 
 
-        {/* Plano de Vida Section - Navegação para páginas */}
+        {/* Plano de Vida Section */}
         <section className="animate-slide-up overflow-hidden max-w-full" style={{ animationDelay: "0.2s" }} data-section="plano-de-vida">
-          <Card className="shadow-medium border-primary/20">
-            <CardHeader className="pb-4">
-              <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center shadow-lg">
-                  <Target className="w-6 h-6 text-primary-foreground" />
-                </div>
-                <div>
-                  <CardTitle className="text-xl sm:text-2xl">Plano de Vida</CardTitle>
-                  <CardDescription>Construa e acompanhe sua jornada de desenvolvimento</CardDescription>
-                </div>
-              </div>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                {/* Passo 1 - Quem sou eu */}
-                <Button
-                  variant="outline"
-                  className="h-auto py-4 px-4 flex flex-col items-start gap-2 hover:bg-primary/5 hover:border-primary/40 transition-all group"
-                  onClick={() => navigate("/plano-vida/quem-sou")}
-                >
-                  <div className="flex items-center gap-2 w-full">
-                    <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
-                      <span className="text-xs font-bold text-primary">1</span>
-                    </div>
-                    <span className="font-semibold text-sm sm:text-base">Quem sou eu</span>
-                  </div>
-                  <p className="text-xs text-muted-foreground text-left whitespace-normal break-words">
-                    Clique aqui para iniciar sua jornada de autoconhecimento e obter clareza do que realmente deseja para sua vida
-                  </p>
-                </Button>
+          {(() => {
+            const isValoresComplete = valores.some((v: string) => String(v).trim() !== "");
+            const isAreasComplete =
+              areasVida.length > 0 &&
+              areasVida.every((area: any) => {
+                const notaAtual = area?.notaAtual ?? area?.nota_atual;
+                const notaDesejada = area?.notaDesejada ?? area?.nota_desejada;
+                return (
+                  String(notaAtual ?? "").trim() !== "" &&
+                  String(notaDesejada ?? "").trim() !== ""
+                );
+              });
 
-                {/* Passo 2 - Para onde vou */}
-                <Button
-                  variant="outline"
-                  className="h-auto py-4 px-4 flex flex-col items-start gap-2 hover:bg-primary/5 hover:border-primary/40 transition-all group"
-                  onClick={() => navigate("/plano-vida/para-onde")}
-                >
-                  <div className="flex items-center gap-2 w-full">
-                    <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
-                      <span className="text-xs font-bold text-primary">2</span>
-                    </div>
-                    <span className="font-semibold text-sm sm:text-base">Para onde vou</span>
-                  </div>
-                  <p className="text-xs text-muted-foreground text-left whitespace-normal break-words">
-                    Clique aqui para registrar os objetivos que você quer alcançar na vida pessoal ou profissional
-                  </p>
-                </Button>
+            const quemSouProgress = (() => {
+              let count = 0;
+              if (vvd && vvd.trim()) count++;
+              if (isValoresComplete) count++;
+              if (isAreasComplete) count++;
+              return Math.round((count / 3) * 100);
+            })();
 
-                {/* Passo 3 - Como chegar lá */}
-                <Button
-                  variant="outline"
-                  className="h-auto py-4 px-4 flex flex-col items-start gap-2 hover:bg-primary/5 hover:border-primary/40 transition-all group"
-                  onClick={() => navigate("/plano-vida/como-chegar")}
-                >
-                  <div className="flex items-center gap-2 w-full">
-                    <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
-                      <span className="text-xs font-bold text-primary">3</span>
+            const step1Done = quemSouProgress === 100;
+            const step2Done = objetivos.length > 0;
+            const step3Done = habilidadesCount > 0;
+
+            const step2Locked = !step1Done;
+            const step3Locked = !step1Done || !step2Done;
+
+            // Mensagem dinâmica do passo atual
+            let stepNumber = 1;
+            let stepTitle = "O primeiro passo da sua transformação";
+            let stepDescription = "Antes de mudar sua vida, você precisa se enxergar com clareza. Nesta etapa, você vai construir seu VVD, definir seus Valores e avaliar sua Roda da Vida.";
+
+            if (step1Done && !step2Done) {
+              stepNumber = 2;
+              stepTitle = "O segundo passo da sua transformação";
+              stepDescription = "Agora que você se conhece melhor, é hora de definir seu destino. Visualize onde quer chegar e transforme sonhos em objetivos concretos.";
+            } else if (step1Done && step2Done && !step3Done) {
+              stepNumber = 3;
+              stepTitle = "O terceiro passo da sua transformação";
+              stepDescription = "Você sabe quem é e para onde vai. Falta criar o plano de ação com metas claras para conquistar seus objetivos.";
+            }
+
+            return (
+              <Card className="shadow-medium border-primary/20">
+                <CardHeader className="pb-4">
+                  <div className="flex items-center gap-3">
+                    <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center shadow-lg">
+                      <Target className="w-6 h-6 text-primary-foreground" />
                     </div>
-                    <span className="font-semibold text-sm sm:text-base">Como chegar lá</span>
+                    <div>
+                      <CardTitle className="text-xl sm:text-2xl">Os 3 passos para sua transformação e conquistas</CardTitle>
+                      <CardDescription>Construa sua visão e defina seus objetivos</CardDescription>
+                    </div>
                   </div>
-                  <p className="text-xs text-muted-foreground text-left whitespace-normal break-words">
-                    Clique aqui para cadastrar metas e objetivos que te levarão a alcançar seus objetivos
-                  </p>
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
+                </CardHeader>
+
+                <CardContent className="space-y-3">
+                  {/* Mensagem do passo atual */}
+                  {!(step1Done && step2Done && step3Done) && (
+                    <div className="rounded-lg bg-muted/40 p-3">
+                      <p className="text-sm font-semibold text-primary">{stepTitle}</p>
+                      <p className="text-xs text-muted-foreground mt-1">{stepDescription}</p>
+                      <p className="text-[11px] text-muted-foreground mt-2">Passo {stepNumber} de 3</p>
+                    </div>
+                  )}
+
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    {/* Passo 1 - Quem sou eu */}
+                    <Button
+                      variant="outline"
+                      className="h-auto py-4 px-4 flex flex-col items-start gap-2 hover:bg-primary/5 hover:border-primary/40 transition-all group"
+                      onClick={() => navigate("/plano-vida/quem-sou")}
+                    >
+                      <div className="flex items-center gap-2 w-full">
+                        <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
+                          <span className="text-xs font-bold text-primary">1</span>
+                        </div>
+                        <span className="font-semibold text-sm sm:text-base">Quem sou eu</span>
+                      </div>
+                      <p className="text-xs text-muted-foreground text-left whitespace-normal break-words">
+                        VVD, Valores e Roda da Vida
+                      </p>
+                    </Button>
+
+                    {/* Passo 2 - Para onde vou */}
+                    <Button
+                      variant="outline"
+                      disabled={step2Locked}
+                      className={`h-auto py-4 px-4 flex flex-col items-start gap-2 transition-all group ${
+                        step2Locked ? 'opacity-50' : 'hover:bg-primary/5 hover:border-primary/40'
+                      }`}
+                      onClick={() => navigate("/plano-vida/para-onde")}
+                    >
+                      <div className="flex items-center gap-2 w-full">
+                        <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
+                          <span className="text-xs font-bold text-primary">2</span>
+                        </div>
+                        <span className="font-semibold text-sm sm:text-base">Para onde vou</span>
+                        {step2Locked && <Lock className="w-4 h-4 text-muted-foreground ml-auto" />}
+                      </div>
+                      <p className="text-xs text-muted-foreground text-left whitespace-normal break-words">
+                        Objetivos claros e concretos
+                      </p>
+                    </Button>
+
+                    {/* Passo 3 - Como chegar lá */}
+                    <Button
+                      variant="outline"
+                      disabled={step3Locked}
+                      className={`h-auto py-4 px-4 flex flex-col items-start gap-2 transition-all group ${
+                        step3Locked ? 'opacity-50' : 'hover:bg-primary/5 hover:border-primary/40'
+                      }`}
+                      onClick={() => navigate("/plano-vida/como-chegar")}
+                    >
+                      <div className="flex items-center gap-2 w-full">
+                        <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
+                          <span className="text-xs font-bold text-primary">3</span>
+                        </div>
+                        <span className="font-semibold text-sm sm:text-base">Como chegar lá</span>
+                        {step3Locked && <Lock className="w-4 h-4 text-muted-foreground ml-auto" />}
+                      </div>
+                      <p className="text-xs text-muted-foreground text-left whitespace-normal break-words">
+                        Metas e plano de ação
+                      </p>
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            );
+          })()}
         </section>
 
         {/* Insight Personalizado Section */}
