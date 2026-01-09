@@ -37,6 +37,11 @@ const PlanoDeVida = ({ onTabChange, onOpenChange, forcedTab, forcedOpen }: Plano
   const storage = usePDIStorage();
   const queryClient = useQueryClient();
   const isMobile = useIsMobile();
+
+  // DEBUG: if this logs, some page is still mounting the legacy PlanoDeVida component
+  useEffect(() => {
+    console.info("[PlanoDeVida component] mounted (legacy)");
+  }, []);
   
   // AI Usage hook for insight purchases
   const aiUsage = useAIUsage('insight');

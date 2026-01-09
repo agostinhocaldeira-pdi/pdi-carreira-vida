@@ -39,6 +39,11 @@ import { QuickAccessNav } from "@/components/home/QuickAccessNav";
 
 const Home = () => {
   const navigate = useNavigate();
+
+  // DEBUG: helps confirm which build is running on device/browser
+  useEffect(() => {
+    console.info("[Home] build=2026-01-09 planovida=v2");
+  }, []);
   
   // Optimized role protection - uses cached role data (no blocking RPC)
   const { isLoading: roleLoading, userRole, isAdmin, isGestor, isEmployee } = useRoleProtection({
