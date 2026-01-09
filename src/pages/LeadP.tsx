@@ -542,7 +542,7 @@ const LeadP = () => {
               <div className="absolute top-0 left-0 right-0 bg-gradient-to-r from-primary to-primary/80 text-primary-foreground px-3 py-1.5 text-xs font-medium text-center">
                 🚀 Preparando-se para assumir cargo de Coordenador em grande banco
               </div>
-              <CardContent className="p-5 sm:p-6 pt-10">
+              <CardContent className="p-5 sm:p-6 pt-12">
                 <div className="flex justify-center gap-1 mb-4">
                   {[...Array(5)].map((_, i) => (
                     <Star key={i} className="h-4 w-4 fill-yellow-400 text-yellow-400" />
@@ -588,9 +588,9 @@ const LeadP = () => {
             <Card className="border-border/50 bg-card/50 backdrop-blur-sm relative overflow-hidden">
               {/* Balão de destaque */}
               <div className="absolute top-0 left-0 right-0 bg-gradient-to-r from-green-600 to-green-500 text-white px-3 py-1.5 text-xs font-medium text-center">
-                🎉 Efetivada como Analista em grande banco após o estágio
+                🎉 Efetivada como Analista em grande banco após o PDI
               </div>
-              <CardContent className="p-5 sm:p-6 pt-10">
+              <CardContent className="p-5 sm:p-6 pt-12">
                 <div className="flex justify-center gap-1 mb-4">
                   {[...Array(5)].map((_, i) => (
                     <Star key={i} className="h-4 w-4 fill-yellow-400 text-yellow-400" />
