@@ -259,8 +259,26 @@ const LeadP = () => {
           </div>
 
           <Card className="border-none shadow-lg bg-gradient-to-br from-destructive/5 to-card mb-8">
-            <CardContent className="p-8 sm:p-12">
-              <div className="flex flex-wrap justify-center items-center gap-2 sm:gap-4 text-sm sm:text-base text-muted-foreground">
+            <CardContent className="p-6 sm:p-12">
+              {/* Mobile: vertical layout */}
+              <div className="flex sm:hidden flex-col items-center gap-2 text-sm text-muted-foreground">
+                <span className="px-4 py-2 bg-card rounded-lg border w-full text-center">Tenta</span>
+                <ArrowRight className="h-4 w-4 text-destructive rotate-90" />
+                <span className="px-4 py-2 bg-card rounded-lg border w-full text-center">falha ou abandona</span>
+                <ArrowRight className="h-4 w-4 text-destructive rotate-90" />
+                <span className="px-4 py-2 bg-card rounded-lg border w-full text-center">Sente frustração e culpa</span>
+                <ArrowRight className="h-4 w-4 text-destructive rotate-90" />
+                <span className="px-4 py-2 bg-card rounded-lg border w-full text-center">Passa a duvidar de si</span>
+                <ArrowRight className="h-4 w-4 text-destructive rotate-90" />
+                <span className="px-4 py-2 bg-card rounded-lg border w-full text-center">Evita novas tentativas</span>
+                <ArrowRight className="h-4 w-4 text-destructive rotate-90" />
+                <span className="px-4 py-2 bg-card rounded-lg border w-full text-center">Perde oportunidades</span>
+                <ArrowRight className="h-4 w-4 text-destructive rotate-90" />
+                <span className="px-4 py-2 bg-destructive/10 rounded-lg border border-destructive/30 font-medium text-destructive w-full text-center">Confirma a crença de incapacidade</span>
+              </div>
+              
+              {/* Desktop: horizontal layout */}
+              <div className="hidden sm:flex flex-wrap justify-center items-center gap-4 text-base text-muted-foreground">
                 <span className="px-3 py-2 bg-card rounded-lg border">Tenta</span>
                 <ArrowRight className="h-4 w-4 text-destructive" />
                 <span className="px-3 py-2 bg-card rounded-lg border">falha ou abandona</span>
