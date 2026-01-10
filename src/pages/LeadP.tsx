@@ -79,7 +79,7 @@ const LeadP = () => {
             O PDI
           </Badge>
           <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-4 text-foreground leading-tight">
-            Retome o controle da sua vida e evolua com progresso constante.
+            O PDI é um sistema construído para te ajudar a sair de ciclos repetitivos, sair do automático e mudar sua trajetória de vida, para conquistar seus objetivos.
           </h1>
           
           <p className="text-base sm:text-xl md:text-2xl text-muted-foreground mb-8 font-light max-w-3xl mx-auto">
@@ -87,7 +87,7 @@ const LeadP = () => {
           </p>
 
           <p className="text-sm sm:text-base text-muted-foreground mb-8 max-w-2xl mx-auto leading-relaxed">
-            O PDI é um sistema construído para te guiar diariamente, na sua jornada de crescimento.
+            Retome o controle da sua vida e evolua com progresso constante.
           </p>
           
           {/* Video Placeholder */}
