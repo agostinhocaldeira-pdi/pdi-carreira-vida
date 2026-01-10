@@ -95,7 +95,7 @@ const LeadP = () => {
           </p>
 
           <p className="text-sm sm:text-base text-muted-foreground mb-8 max-w-2xl mx-auto leading-relaxed">
-            O PDI é um sistema prático de organização pessoal que te ajuda a transformar intenção em ação consistente — com clareza, método e acompanhamento contínuo.
+            O PDI é um sistema construído para te guiar diariamente, na sua jornada de crescimento.
           </p>
           
           {/* Video Placeholder */}
