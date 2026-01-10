@@ -183,7 +183,7 @@ const LeadP = () => {
                 </p>
                 <p className="text-muted-foreground mt-6">
                   A maioria até começa…<br />
-                  <span className="text-lg">🗓️ mas desiste nos primeiros meses.</span>
+                  <span className="text-lg">mas desiste nos primeiros meses.</span>
                 </p>
               </div>
             </CardContent>
