@@ -91,7 +91,7 @@ const LeadP = () => {
           </h1>
           
           <p className="text-base sm:text-xl md:text-2xl text-muted-foreground mb-8 font-light max-w-3xl mx-auto">
-            Conquiste a vida que faz feliz
+            Conquiste a vida que te faz feliz
           </p>
 
           <p className="text-sm sm:text-base text-muted-foreground mb-8 max-w-2xl mx-auto leading-relaxed">
