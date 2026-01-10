@@ -61,16 +61,8 @@ const LeadP = () => {
     <div className="min-h-screen bg-gradient-to-b from-background via-background to-muted/10">
       {/* Header */}
       <header className="fixed top-0 left-0 right-0 z-50 bg-card/95 backdrop-blur-sm shadow-sm border-b border-border/50">
-        <div className="container mx-auto px-4 py-3 sm:py-4 flex items-center justify-between">
+        <div className="container mx-auto px-4 py-3 sm:py-4 flex items-center justify-center">
           <Logo size="md" />
-          <Button 
-            variant="outline" 
-            size="sm"
-            onClick={() => navigate("/login")}
-            className="text-primary border-primary/30 hover:bg-primary/10 text-xs sm:text-sm"
-          >
-            Entrar
-          </Button>
         </div>
       </header>
 
