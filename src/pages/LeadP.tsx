@@ -87,7 +87,7 @@ const LeadP = () => {
             O PDI
           </Badge>
           <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-4 text-foreground leading-tight">
-            Seu Sistema de Organização Pessoal
+            Retome o controle da sua vida e evolua com progresso constante.
           </h1>
           
           <p className="text-base sm:text-xl md:text-2xl text-muted-foreground mb-8 font-light max-w-3xl mx-auto">
