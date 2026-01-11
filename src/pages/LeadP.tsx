@@ -79,7 +79,7 @@ const LeadP = () => {
             O PDI
           </Badge>
           <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-4 text-foreground leading-tight">
-            O PDI é um sistema construído para te ajudar a sair de ciclos repetitivos, sair do automático e mudar sua trajetória de vida, para conquistar seus objetivos.
+            Saia de ciclos repetitivos, pare de viver no automático, mude sua trajetória de vida e conquiste seus objetivos.
           </h1>
           
           <p className="text-base sm:text-xl md:text-2xl text-muted-foreground mb-8 font-light max-w-3xl mx-auto">
