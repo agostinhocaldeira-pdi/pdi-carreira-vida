@@ -297,14 +297,7 @@ const Ebook = () => {
                     size="lg"
                     disabled={isSubmitting}
                   >
-                    {isSubmitting ? (
-                      "Enviando..."
-                    ) : (
-                      <>
-                        Quero meu e-book grátis
-                        <ArrowRight className="ml-2 w-4 h-4" />
-                      </>
-                    )}
+                    {isSubmitting ? "Enviando..." : "Baixar"}
                   </Button>
 
                   <p className="text-xs text-center text-muted-foreground">
