@@ -126,7 +126,7 @@ const LeadP = () => {
               <div className="space-y-2 text-sm sm:text-base text-muted-foreground">
                 <p className="flex items-center justify-center gap-2">
                   <CheckCircle2 className="h-4 w-4 text-primary" />
-                  Você não paga nada agora
+                  <strong>Você não paga nada agora</strong>
                 </p>
                 <p className="flex items-center justify-center gap-2">
                   <CheckCircle2 className="h-4 w-4 text-primary" />
