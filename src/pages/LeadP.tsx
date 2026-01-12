@@ -146,6 +146,115 @@ const LeadP = () => {
       </section>
 
       {/* ============================================================ */}
+      {/* SEÇÃO: O QUE VOCÊ QUER */}
+      {/* ============================================================ */}
+      <section className="py-12 sm:py-20 px-4 bg-gradient-to-br from-primary/5 via-background to-muted/10">
+        <div className="container mx-auto max-w-3xl">
+          <div className="space-y-6 text-center">
+            <p className="text-base sm:text-lg md:text-xl text-foreground leading-relaxed">
+              Você sonha em crescer profissionalmente, ter mais renda, estabilidade, tempo para a família e a sensação real de estar avançando na vida — não apenas sobrevivendo.
+            </p>
+            
+            <p className="text-base sm:text-lg md:text-xl text-foreground leading-relaxed">
+              Você quer clareza, quer direção, quer sentir que cada esforço está te levando para algum lugar que vale a pena.
+            </p>
+            
+            <div className="py-4">
+              <p className="text-lg sm:text-xl md:text-2xl font-semibold text-primary">
+                Isso não é ambição vazia.
+              </p>
+              <p className="text-base sm:text-lg text-muted-foreground mt-2">
+                É o desejo legítimo de viver uma vida com propósito, segurança e liberdade.
+              </p>
+            </div>
+            
+            <div className="bg-card border border-border/50 rounded-xl p-6 sm:p-8 shadow-sm">
+              <p className="text-base sm:text-lg text-foreground leading-relaxed mb-4">
+                O problema é que, mesmo sendo capaz, dedicado e inteligente, você se sente travado.
+              </p>
+              <p className="text-base sm:text-lg text-muted-foreground leading-relaxed mb-4">
+                Já tentou mudar, já tentou se organizar, já consumiu conteúdos…<br />
+                Mas tudo parece desconectado, confuso e difícil de manter no longo prazo.
+              </p>
+              <p className="text-xl sm:text-2xl font-bold text-primary mt-6">
+                Falta um sistema.
+              </p>
+            </div>
+            
+            <div className="pt-6 space-y-4">
+              <p className="text-lg sm:text-xl font-semibold text-foreground">
+                E é exatamente isso que o PDI – Carreira e Vida se tornou.
+              </p>
+              <p className="text-base sm:text-lg text-muted-foreground leading-relaxed max-w-2xl mx-auto">
+                O PDI não é mais apenas um plano.<br />
+                Ele evoluiu para um <strong className="text-foreground">sistema completo</strong>, que integra vida pessoal, carreira, decisões financeiras e execução prática — tudo no mesmo lugar, de forma simples e aplicável.
+              </p>
+            </div>
+            
+            <div className="py-8">
+              <p className="text-base sm:text-lg text-foreground mb-6">
+                Um método que te ajuda a:
+              </p>
+              <div className="grid sm:grid-cols-3 gap-4 max-w-xl mx-auto">
+                <div className="bg-primary/10 border border-primary/20 rounded-lg p-4">
+                  <p className="font-semibold text-primary">Planejar</p>
+                  <p className="text-sm text-muted-foreground">com clareza</p>
+                </div>
+                <div className="bg-primary/10 border border-primary/20 rounded-lg p-4">
+                  <p className="font-semibold text-primary">Agir</p>
+                  <p className="text-sm text-muted-foreground">com consistência</p>
+                </div>
+                <div className="bg-primary/10 border border-primary/20 rounded-lg p-4">
+                  <p className="font-semibold text-primary">Evoluir</p>
+                  <p className="text-sm text-muted-foreground">com direção</p>
+                </div>
+              </div>
+            </div>
+            
+            <div className="space-y-4 text-base sm:text-lg text-muted-foreground">
+              <p>Sem depender de motivação passageira.</p>
+              <p>Sem fórmulas milagrosas.</p>
+              <p>Sem promessas vazias.</p>
+            </div>
+            
+            <div className="pt-6 space-y-4">
+              <p className="text-base sm:text-lg text-foreground leading-relaxed">
+                A evolução na carreira e na vida não acontece por acaso.<br />
+                Ela é consequência direta de <strong className="text-primary">decisões certas aplicadas de forma contínua</strong>.
+              </p>
+              <p className="text-base sm:text-lg text-muted-foreground leading-relaxed">
+                Continuar fazendo tudo do mesmo jeito só garante o mesmo resultado.<br />
+                Se você quer uma vida diferente, precisa de uma estrutura diferente.
+              </p>
+            </div>
+            
+            <div className="bg-gradient-to-br from-primary/10 to-primary/5 border border-primary/20 rounded-xl p-6 sm:p-8 mt-8">
+              <p className="text-lg sm:text-xl font-semibold text-foreground mb-4">
+                O Sistema PDI – Carreira e Vida existe para isso:
+              </p>
+              <div className="space-y-2 text-base sm:text-lg">
+                <p className="text-foreground">Transformar <span className="text-primary font-medium">confusão</span> em <span className="text-primary font-medium">clareza</span>.</p>
+                <p className="text-foreground"><span className="text-primary font-medium">Intenção</span> em <span className="text-primary font-medium">ação</span>.</p>
+                <p className="text-foreground"><span className="text-primary font-medium">Esforço</span> em <span className="text-primary font-medium">progresso real</span>.</p>
+              </div>
+            </div>
+            
+            <div className="pt-8 space-y-4">
+              <p className="text-lg sm:text-xl font-semibold text-foreground">
+                Prepare-se para assumir o controle da sua trajetória.
+              </p>
+              <p className="text-base sm:text-lg text-muted-foreground leading-relaxed">
+                Porque quando você aplica um plano prático e organizado, a evolução deixa de ser uma promessa e passa a ser <strong className="text-foreground">inevitável</strong>.
+              </p>
+              <p className="text-xl sm:text-2xl font-bold text-primary pt-4">
+                Agora é a sua vez de planejar, agir e alcançar.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ============================================================ */}
       {/* O PROBLEMA - 92% das pessoas */}
       {/* ============================================================ */}
       <section className="py-12 sm:py-20 px-4 bg-muted/20">
