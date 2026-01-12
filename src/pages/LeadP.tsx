@@ -79,7 +79,7 @@ const LeadP = () => {
             O PDI
           </Badge>
           <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-4 text-foreground leading-tight">
-            Saia de ciclos repetitivos, pare de viver no automático, mude sua trajetória de vida e conquiste seus objetivos.
+            Cresça profissionalmente, tenha mais renda, estabilidade, tempo para a família e a sensação real de estar avançando na vida — não apenas sobrevivendo.
           </h1>
           
           <p className="text-base sm:text-xl md:text-2xl text-muted-foreground mb-8 font-light max-w-3xl mx-auto">
