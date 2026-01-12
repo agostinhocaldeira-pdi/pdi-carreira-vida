@@ -249,6 +249,14 @@ const LeadP = () => {
               <p className="text-xl sm:text-2xl font-bold text-primary pt-4">
                 Agora é a sua vez de planejar, agir e alcançar.
               </p>
+              <Button 
+                size="lg" 
+                className="mt-6 text-base sm:text-lg px-8 py-6 bg-primary hover:bg-primary/90"
+                onClick={() => navigate("/signup")}
+              >
+                Começar já
+                <ArrowRight className="ml-2 h-5 w-5" />
+              </Button>
             </div>
           </div>
         </div>
