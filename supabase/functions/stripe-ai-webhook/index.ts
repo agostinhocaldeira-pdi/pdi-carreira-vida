@@ -4,7 +4,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.2";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, stripe-signature",
 };
 
 const logStep = (step: string, details?: any) => {
@@ -32,10 +32,12 @@ serve(async (req) => {
     const signature = req.headers.get("stripe-signature");
     
     if (!signature) {
-      throw new Error("No stripe-signature header found");
+      logStep("Missing stripe-signature header");
+      return new Response(JSON.stringify({ error: "No stripe-signature header found" }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 400,
+      });
     }
-
-    logStep("Verifying webhook signature");
     
     let event: Stripe.Event;
     try {
