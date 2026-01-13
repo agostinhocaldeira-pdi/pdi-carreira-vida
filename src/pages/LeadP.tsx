@@ -151,6 +151,10 @@ const LeadP = () => {
       <section className="py-12 sm:py-20 px-4 bg-gradient-to-br from-primary/5 via-background to-muted/10">
         <div className="container mx-auto max-w-3xl">
           <div className="space-y-6 text-center">
+            <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-foreground leading-tight mb-8">
+              O PDI não é um sistema para planejar a vida.<br />
+              É um sistema para viver a vida com direção.
+            </h2>
             <p className="text-base sm:text-lg md:text-xl text-foreground leading-relaxed">
               Você sonha em crescer profissionalmente, ter mais renda, estabilidade, tempo para a família e a sensação real de estar avançando na vida — não apenas sobrevivendo.
             </p>
