@@ -78,7 +78,7 @@ const LeadP = () => {
           <Badge variant="secondary" className="mb-4 text-xs sm:text-sm">
             O PDI
           </Badge>
-          <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-4 text-foreground leading-tight">
+          <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold mb-4 text-foreground leading-tight">
             O PDI é mais do que um sistema para planejar a vida.<br />
             É um sistema para viver a vida com direção e conquistas.
           </h1>
@@ -100,7 +100,6 @@ const LeadP = () => {
             <div className="mt-6 p-6 rounded-xl border border-border/50 bg-muted/20 max-w-lg mx-auto">
               <div className="space-y-2 text-sm sm:text-base text-muted-foreground">
                 <p className="flex items-center justify-center gap-2">
-                  <CheckCircle2 className="h-4 w-4 text-primary" />
                   <strong>Teste o sistema por 30 dias, e avalie se faz sentido para você</strong>
                 </p>
                 <p className="flex items-center justify-center gap-2">
