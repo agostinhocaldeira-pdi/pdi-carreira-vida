@@ -78,10 +78,23 @@ const LeadP = () => {
           <Badge variant="secondary" className="mb-4 text-xs sm:text-sm">
             O PDI
           </Badge>
-          <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold mb-4 text-foreground leading-tight">
+          <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold mb-6 text-foreground leading-tight">
             O PDI é mais do que um sistema para planejar a vida.<br />
             É um sistema para viver a vida com direção e conquistas.
           </h1>
+
+          {/* Video de Apresentação */}
+          <div className="w-full max-w-3xl mx-auto mb-8">
+            <div className="relative aspect-video rounded-xl overflow-hidden shadow-2xl border border-border/30">
+              <iframe
+                src="https://www.youtube.com/embed/k5xnoCgCuCw"
+                title="Apresentação do PDI"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowFullScreen
+                className="absolute inset-0 w-full h-full"
+              />
+            </div>
+          </div>
 
           {/* CTA Principal */}
           <div className="text-center mt-8">
