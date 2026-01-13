@@ -39,9 +39,12 @@ serve(async (req) => {
       });
     }
     
+    logStep("Verifying webhook signature");
+
     let event: Stripe.Event;
     try {
-      event = stripe.webhooks.constructEvent(body, signature, webhookSecret);
+      // NOTE: In Deno/Edge runtime, Stripe webhook verification must be async
+      event = await stripe.webhooks.constructEventAsync(body, signature, webhookSecret);
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : String(err);
       logStep("Webhook signature verification failed", { error: errorMessage });
