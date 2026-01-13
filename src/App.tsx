@@ -13,6 +13,7 @@ import SubscriberLanding from "./pages/SubscriberLanding";
 import NotFound from "./pages/NotFound";
 import Landing from "./pages/Landing";
 import LeadP from "./pages/LeadP";
+import LeadP3 from "./pages/LeadP3";
 import Signup from "./pages/Signup";
 import Login from "./pages/Login";
 import Onboarding from "./pages/Onboarding";
@@ -81,6 +82,7 @@ const App = () => (
                 <Route path="/news" element={<SubscriberLanding />} />
                 <Route path="/leadp" element={<Landing />} />
                 <Route path="/leadp2" element={<Index />} />
+                <Route path="/leadp3" element={<LeadP3 />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/signup" element={<Signup />} />
                 <Route path="/onboarding" element={<Onboarding />} />
