@@ -119,29 +119,32 @@ const LeadP = () => {
         <div className="container mx-auto max-w-3xl">
           <div className="space-y-6 text-center">
             <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-foreground leading-tight mb-8">
-              O PDI não é um sistema para planejar a vida.<br />
-              É um sistema para viver a vida com direção.
+              Se você quer:
             </h2>
             <p className="text-base sm:text-lg md:text-xl text-foreground leading-relaxed">
-              Você sonha em crescer profissionalmente, ter mais renda, estabilidade, tempo para a família e a sensação real de estar avançando na vida — não apenas sobrevivendo.
+              Crescer profissionalmente, gerar mais renda e sentir-se realizado no trabalho.
             </p>
             
             <p className="text-base sm:text-lg md:text-xl text-foreground leading-relaxed">
-              Você quer clareza, quer direção, quer sentir que cada esforço está te levando para algum lugar que vale a pena.
+              Ter estabilidade financeira, tempo para a família e a sensação real de estar avançando na vida — não apenas sobrevivendo.
+            </p>
+            
+            <p className="text-base sm:text-lg md:text-xl text-foreground leading-relaxed">
+              Sentir que cada esforço está te levando para algum lugar que vale a pena. Não viver ciclos que se repetem, ano após ano.
             </p>
             
             <div className="py-4">
               <p className="text-lg sm:text-xl md:text-2xl font-semibold text-primary">
-                Isso não é ambição vazia.
-              </p>
-              <p className="text-base sm:text-lg text-muted-foreground mt-2">
-                É o desejo legítimo de viver uma vida com propósito, segurança e liberdade.
+                Significa que você tem o desejo legítimo de viver uma vida com propósito, segurança e liberdade.
               </p>
             </div>
             
             <div className="bg-card border border-border/50 rounded-xl p-6 sm:p-8 shadow-sm">
+              <p className="text-lg sm:text-xl font-semibold text-foreground leading-relaxed mb-4">
+                Mas aí, entra o problema:
+              </p>
               <p className="text-base sm:text-lg text-foreground leading-relaxed mb-4">
-                O problema é que, mesmo sendo capaz, dedicado e inteligente, você se sente travado.
+                Mesmo sendo capaz, dedicado e inteligente, você se sente travado.
               </p>
               <p className="text-base sm:text-lg text-muted-foreground leading-relaxed mb-4">
                 Já tentou mudar, já tentou se organizar, já consumiu conteúdos…<br />
