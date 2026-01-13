@@ -79,20 +79,45 @@ const LeadP = () => {
             O PDI
           </Badge>
           <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-4 text-foreground leading-tight">
-            O PDI é mais do que um sistema para planejar a vida.<br />
-            É um sistema para viver a vida com direção e conquistas.
+            Cresça profissionalmente, tenha mais renda, estabilidade, tempo para a família e a sensação real de estar avançando na vida — não apenas sobrevivendo.
           </h1>
+          
+          <p className="text-base sm:text-xl md:text-2xl text-muted-foreground mb-8 font-light max-w-3xl mx-auto">
+            Conquiste a vida que te faz feliz
+          </p>
+
+          <p className="text-sm sm:text-base text-muted-foreground mb-8 max-w-2xl mx-auto leading-relaxed">
+            Retome o controle da sua vida e evolua com progresso constante.
+          </p>
+          
+          {/* Video Placeholder */}
+          <div className="w-full max-w-3xl mx-auto mb-8">
+            <div className="aspect-video rounded-xl overflow-hidden shadow-2xl border border-border/30 bg-muted/50">
+              <iframe
+                className="w-full h-full"
+                src="https://www.youtube.com/embed/q1ordLyFNpg"
+                title="Apresentação PDI"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowFullScreen
+              />
+            </div>
+          </div>
 
           {/* CTA Principal */}
-          <div className="text-center mt-8">
+          <div className="text-center">
+            <p className="text-lg sm:text-xl text-muted-foreground mb-2">Comece sem risco</p>
+            <div className="mb-4">
+              <span className="text-2xl sm:text-3xl font-bold text-foreground">R$ 67,00</span>
+              <span className="text-muted-foreground"> / ano</span>
+            </div>
             <Button 
               size="lg" 
               className="text-sm sm:text-lg px-6 sm:px-8 py-5 sm:py-6 bg-primary hover:bg-primary/90 transition-all duration-300 whitespace-normal leading-tight max-w-full"
               onClick={() => navigate("/signup")}
             >
-              <span className="sm:hidden">Acesse Grátis</span>
+              <span className="sm:hidden">Quero Experimentar</span>
               <span className="hidden sm:flex items-center gap-2">
-                👉 Acesse Grátis
+                👉 Quero experimentar agora
                 <ArrowRight className="h-5 w-5 flex-shrink-0" />
               </span>
             </Button>
@@ -101,13 +126,20 @@ const LeadP = () => {
               <div className="space-y-2 text-sm sm:text-base text-muted-foreground">
                 <p className="flex items-center justify-center gap-2">
                   <CheckCircle2 className="h-4 w-4 text-primary" />
-                  <strong>Teste o sistema por 30 dias, e avalie se faz sentido para você</strong>
+                  <strong>Você não paga nada agora</strong>
                 </p>
                 <p className="flex items-center justify-center gap-2">
                   <CheckCircle2 className="h-4 w-4 text-primary" />
-                  Depois de 30 dias, se você quiser continuar, é só efetivar sua assinatura por apenas R$ 67,00, garante o acesso de um ano, e ganha + 30 dias para pagar.
+                  Use o sistema por 30 dias reais
+                </p>
+                <p className="flex items-center justify-center gap-2">
+                  <CheckCircle2 className="h-4 w-4 text-primary" />
+                  Cancele quando quiser, sem burocracia
                 </p>
               </div>
+              <p className="mt-4 text-sm text-foreground font-medium">
+                Clareza primeiro. Decisão depois.
+              </p>
             </div>
           </div>
         </div>
@@ -519,9 +551,9 @@ const LeadP = () => {
             className="text-sm sm:text-lg px-6 sm:px-8 py-5 sm:py-6 bg-primary hover:bg-primary/90 whitespace-normal leading-tight max-w-full"
             onClick={() => navigate("/signup")}
           >
-            <span className="sm:hidden">Acesse Grátis</span>
+            <span className="sm:hidden">Quero Experimentar</span>
             <span className="hidden sm:flex items-center gap-2">
-              👉 Acesse Grátis
+              👉 Quero experimentar agora
               <ArrowRight className="h-5 w-5 flex-shrink-0" />
             </span>
           </Button>
@@ -660,17 +692,19 @@ const LeadP = () => {
             {/* Depoimento 1 - Eric */}
             <Card className="border-border/50 bg-card/50 backdrop-blur-sm relative overflow-hidden">
               {/* Balão de destaque */}
-              <div className="absolute -top-1 -right-1 bg-primary text-primary-foreground text-[10px] font-bold px-3 py-1 rounded-bl-lg rounded-tr-lg shadow-lg z-10">
-                Em Destaque
+              <div className="absolute top-0 left-0 right-0 bg-gradient-to-r from-primary to-primary/80 text-primary-foreground px-3 py-1.5 text-xs font-medium text-center">
+                🚀 Preparando-se para assumir cargo de Coordenador em grande banco
               </div>
-              <CardContent className="p-5 sm:p-6">
+              <CardContent className="p-5 sm:p-6 pt-12">
                 <div className="flex justify-center gap-1 mb-4">
                   {[...Array(5)].map((_, i) => (
                     <Star key={i} className="h-4 w-4 fill-yellow-400 text-yellow-400" />
                   ))}
                 </div>
                 <p className="text-sm sm:text-base text-muted-foreground italic mb-4 leading-relaxed">
-                  "Em poucos meses, consegui dar clareza ao que eu queria da vida e do trabalho. O PDI me ajudou a me organizar, definir prioridades e agir com consistência."
+                  "Participar do PDI foi extremamente importante para mim. Além de sair com um plano de execução muito 
+                  bem estruturado, ganhei conhecimento para repetir sozinho o ciclo de reflexão, planejamento 
+                  e ação."
                 </p>
                 <div className="flex items-center justify-center gap-3">
                   <img 
@@ -681,7 +715,7 @@ const LeadP = () => {
                   <div className="flex items-center gap-2">
                     <p className="text-sm font-medium">Eric Pereira</p>
                     <a 
-                      href="https://www.linkedin.com/in/ericqsf/" 
+                      href="https://www.linkedin.com/in/eric-pereira-b05a5611b/" 
                       target="_blank" 
                       rel="noopener noreferrer"
                       className="text-[#0A66C2] hover:opacity-80 transition-opacity"
@@ -694,7 +728,7 @@ const LeadP = () => {
                   </div>
                 </div>
                 <button
-                  onClick={() => setVideoModalUrl("zMF2q2c4fRU")}
+                  onClick={() => setVideoModalUrl("i1VgEBOW4PI")}
                   className="flex items-center justify-center gap-2 text-xs text-primary hover:text-primary/80 transition-colors mt-3 w-full"
                 >
                   <Play className="h-4 w-4" />
@@ -704,8 +738,12 @@ const LeadP = () => {
             </Card>
 
             {/* Depoimento 2 - Gabriele */}
-            <Card className="border-border/50 bg-card/50 backdrop-blur-sm">
-              <CardContent className="p-5 sm:p-6">
+            <Card className="border-border/50 bg-card/50 backdrop-blur-sm relative overflow-hidden">
+              {/* Balão de destaque */}
+              <div className="absolute top-0 left-0 right-0 bg-gradient-to-r from-green-600 to-green-500 text-white px-3 py-1.5 text-xs font-medium text-center">
+                🎉 Efetivada como Analista em grande banco após o PDI
+              </div>
+              <CardContent className="p-5 sm:p-6 pt-12">
                 <div className="flex justify-center gap-1 mb-4">
                   {[...Array(5)].map((_, i) => (
                     <Star key={i} className="h-4 w-4 fill-yellow-400 text-yellow-400" />
@@ -865,6 +903,11 @@ const LeadP = () => {
               <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-6 text-foreground">
                 Experimente sem risco
               </h2>
+              
+              <div className="mb-6">
+                <span className="text-3xl sm:text-4xl font-bold text-foreground">R$ 67,00</span>
+                <span className="text-muted-foreground"> / ano</span>
+              </div>
 
               <div className="flex flex-wrap justify-center gap-4 text-sm text-muted-foreground mb-8">
                 <div className="flex items-center gap-2">
@@ -891,7 +934,7 @@ const LeadP = () => {
                 onClick={() => navigate("/signup")}
               >
                 <span className="flex items-center justify-center gap-2 flex-wrap">
-                  <span>Acesse Grátis</span>
+                  <span>Experimentar agora</span>
                   <ArrowRight className="h-5 w-5 flex-shrink-0" />
                 </span>
               </Button>
