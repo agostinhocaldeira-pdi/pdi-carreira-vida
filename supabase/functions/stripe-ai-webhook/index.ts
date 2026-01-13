@@ -21,10 +21,19 @@ serve(async (req) => {
     logStep("Webhook received");
 
     const stripeKey = Deno.env.get("STRIPE_SECRET_KEY");
-    const webhookSecret = Deno.env.get("STRIPE_WEBHOOK_SECRET");
-    
+    const webhookSecretRaw = Deno.env.get("STRIPE_WEBHOOK_SECRET");
+
     if (!stripeKey) throw new Error("STRIPE_SECRET_KEY is not set");
-    if (!webhookSecret) throw new Error("STRIPE_WEBHOOK_SECRET is not set");
+    if (!webhookSecretRaw) throw new Error("STRIPE_WEBHOOK_SECRET is not set");
+
+    // Support secret rotation / multiple Stripe accounts by allowing comma-separated secrets
+    // Example: "whsec_live_... , whsec_old_..."
+    const webhookSecrets = webhookSecretRaw
+      .split(",")
+      .map((s) => s.trim().replace(/^['"]|['"]$/g, ""))
+      .filter(Boolean);
+
+    if (webhookSecrets.length === 0) throw new Error("STRIPE_WEBHOOK_SECRET is empty");
 
     const stripe = new Stripe(stripeKey, { apiVersion: "2025-08-27.basil" });
     
@@ -39,15 +48,28 @@ serve(async (req) => {
       });
     }
     
-    logStep("Verifying webhook signature");
+    logStep("Verifying webhook signature", { secretsConfigured: webhookSecrets.length });
 
-    let event: Stripe.Event;
-    try {
-      // NOTE: In Deno/Edge runtime, Stripe webhook verification must be async
-      event = await stripe.webhooks.constructEventAsync(body, signature, webhookSecret);
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : String(err);
-      logStep("Webhook signature verification failed", { error: errorMessage });
+    let event: Stripe.Event | null = null;
+    let lastVerifyError: unknown = null;
+
+    for (let i = 0; i < webhookSecrets.length; i++) {
+      try {
+        // NOTE: In Deno/Edge runtime, Stripe webhook verification must be async
+        event = await stripe.webhooks.constructEventAsync(body, signature, webhookSecrets[i]);
+        logStep("Webhook signature verified", { secretIndex: i });
+        break;
+      } catch (err) {
+        lastVerifyError = err;
+      }
+    }
+
+    if (!event) {
+      const errorMessage = lastVerifyError instanceof Error ? lastVerifyError.message : String(lastVerifyError);
+      logStep("Webhook signature verification failed", {
+        error: errorMessage,
+        hint: "Check the LIVE signing secret (whsec_...) for this exact webhook endpoint; you can also set multiple secrets comma-separated.",
+      });
       return new Response(JSON.stringify({ error: `Webhook Error: ${errorMessage}` }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
         status: 400,
