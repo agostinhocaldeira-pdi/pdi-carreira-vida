@@ -53,6 +53,66 @@ export type Database = {
         }
         Relationships: []
       }
+      agenda_events: {
+        Row: {
+          completed_at: string | null
+          created_at: string
+          description: string | null
+          id: string
+          is_completed: boolean
+          is_recurring: boolean
+          label: string | null
+          label_color: string | null
+          recurrence_type: string | null
+          scheduled_date: string
+          scheduled_time: string
+          source_id: string | null
+          source_quadrant: string | null
+          source_type: string
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          completed_at?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_completed?: boolean
+          is_recurring?: boolean
+          label?: string | null
+          label_color?: string | null
+          recurrence_type?: string | null
+          scheduled_date: string
+          scheduled_time?: string
+          source_id?: string | null
+          source_quadrant?: string | null
+          source_type?: string
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          completed_at?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_completed?: boolean
+          is_recurring?: boolean
+          label?: string | null
+          label_color?: string | null
+          recurrence_type?: string | null
+          scheduled_date?: string
+          scheduled_time?: string
+          source_id?: string | null
+          source_quadrant?: string | null
+          source_type?: string
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       audit_logs: {
         Row: {
           action: string
