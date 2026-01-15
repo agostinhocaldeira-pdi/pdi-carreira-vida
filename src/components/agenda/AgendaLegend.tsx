@@ -24,12 +24,10 @@ const sourceTypes = [
   { icon: Calendar, label: 'Objetivo', color: 'bg-purple-500', description: 'Objetivo principal' },
 ];
 
-// Quadrantes Eisenhower
+// Quadrantes Eisenhower (apenas os que aparecem na agenda)
 const eisenhowerQuadrants = [
-  { color: 'bg-red-500', label: 'Fazer Agora', description: 'Urgente + Importante' },
-  { color: 'bg-orange-500', label: 'Agendar', description: 'Importante, não urgente' },
-  { color: 'bg-cyan-500', label: 'Delegar', description: 'Urgente, não importante' },
-  { color: 'bg-gray-500', label: 'Eliminar', description: 'Nem urgente nem importante' },
+  { color: 'bg-red-500', label: 'Urgente + Importante', description: 'Fazer imediatamente' },
+  { color: 'bg-orange-500', label: 'Importante, não urgente', description: 'Agendar para depois' },
 ];
 
 interface AgendaLegendProps {
@@ -94,22 +92,7 @@ const LegendModal = ({ open, onOpenChange }: LegendModalProps) => {
         </DialogHeader>
 
         <div className="space-y-6 py-4">
-          {/* Categorias de tarefas manuais */}
-          <div>
-            <h3 className="text-sm font-semibold mb-3 text-foreground">
-              Categorias (Tarefas Manuais)
-            </h3>
-            <div className="grid grid-cols-2 gap-2">
-              {categoryColors.map((item) => (
-                <div key={item.label} className="flex items-center gap-2 p-2 rounded-lg bg-muted/50">
-                  <div className={cn("w-3 h-3 rounded-full flex-shrink-0", item.color)} />
-                  <span className="text-sm">{item.label}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Origem das tarefas */}
+          {/* Origem das tarefas - PRIMEIRO */}
           <div>
             <h3 className="text-sm font-semibold mb-3 text-foreground">
               Origem das Tarefas
@@ -129,6 +112,21 @@ const LegendModal = ({ open, onOpenChange }: LegendModalProps) => {
                   </div>
                 );
               })}
+            </div>
+          </div>
+
+          {/* Categorias de tarefas manuais */}
+          <div>
+            <h3 className="text-sm font-semibold mb-3 text-foreground">
+              Categorias (Tarefas Manuais)
+            </h3>
+            <div className="grid grid-cols-2 gap-2">
+              {categoryColors.map((item) => (
+                <div key={item.label} className="flex items-center gap-2 p-2 rounded-lg bg-muted/50">
+                  <div className={cn("w-3 h-3 rounded-full flex-shrink-0", item.color)} />
+                  <span className="text-sm">{item.label}</span>
+                </div>
+              ))}
             </div>
           </div>
 

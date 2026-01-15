@@ -214,21 +214,23 @@ export const useAgenda = () => {
         }
       });
 
-      // Sync Eisenhower tasks (all quadrants)
+      // Sync Eisenhower tasks (apenas urgent-important e not-urgent-important)
+      // Exclui "Delegar" e "Eliminar" da agenda
       eisenhowerTasks?.forEach(task => {
+        // Só sincroniza quadrantes importantes (exclui delegate e eliminate)
+        if (task.quadrant !== 'urgent-important' && task.quadrant !== 'not-urgent-important') {
+          return;
+        }
+        
         const key = `eisenhower-${task.id}`;
         if (!existingSourceIds.has(key)) {
           const quadrantMap: Record<string, { label: string; shortLabel: string }> = {
-            'urgent-important': { label: 'Fazer Agora', shortLabel: 'do' },
-            'not-urgent-important': { label: 'Agendar', shortLabel: 'schedule' },
-            'urgent-not-important': { label: 'Delegar', shortLabel: 'delegate' },
-            'not-urgent-not-important': { label: 'Eliminar', shortLabel: 'eliminate' },
+            'urgent-important': { label: 'Urgente + Importante', shortLabel: 'do' },
+            'not-urgent-important': { label: 'Importante, não urgente', shortLabel: 'schedule' },
           };
           const colorMap: Record<string, string> = {
             'urgent-important': 'red',
             'not-urgent-important': 'orange',
-            'urgent-not-important': 'cyan',
-            'not-urgent-not-important': 'gray',
           };
           
           const quadrantInfo = quadrantMap[task.quadrant] || { label: 'Eisenhower', shortLabel: 'do' };
@@ -243,7 +245,7 @@ export const useAgenda = () => {
             source_quadrant: quadrantInfo.shortLabel,
             label: quadrantInfo.label,
             label_color: colorMap[task.quadrant] || 'orange',
-            is_recurring: task.quadrant === 'urgent-important' || task.quadrant === 'not-urgent-important',
+            is_recurring: true,
             recurrence_type: task.quadrant === 'urgent-important' ? 'daily' : undefined,
           });
         }
