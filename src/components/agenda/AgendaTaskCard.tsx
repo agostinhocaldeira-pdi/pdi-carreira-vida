@@ -1,5 +1,6 @@
 import { Check, Zap, Footprints, Target, ClipboardList, Calendar, Sparkles, ListTodo } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 export interface AgendaTask {
   id: string;
@@ -63,6 +64,7 @@ const dotColorClasses = {
 };
 
 export const AgendaTaskCard = ({ task, onToggleComplete, onClick }: AgendaTaskCardProps) => {
+  const isMobile = useIsMobile();
   const config = sourceConfig[task.source_type] || sourceConfig.manual;
   const Icon = config.icon;
   
@@ -91,7 +93,8 @@ export const AgendaTaskCard = ({ task, onToggleComplete, onClick }: AgendaTaskCa
   return (
     <div
       className={cn(
-        "relative flex items-start gap-3 p-3 rounded-lg border-l-4 transition-all cursor-pointer",
+        "relative flex items-start gap-2 sm:gap-3 rounded-lg border-l-4 transition-all cursor-pointer",
+        isMobile ? "p-2" : "p-3",
         colorClasses[displayColor],
         task.is_completed && "opacity-60"
       )}
@@ -104,41 +107,62 @@ export const AgendaTaskCard = ({ task, onToggleComplete, onClick }: AgendaTaskCa
           onToggleComplete(task.id, !task.is_completed);
         }}
         className={cn(
-          "flex-shrink-0 w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all",
+          "flex-shrink-0 rounded-full border-2 flex items-center justify-center transition-all",
+          isMobile ? "w-5 h-5" : "w-6 h-6",
           task.is_completed
             ? "bg-green-500 border-green-500 text-white"
             : "border-muted-foreground/30 hover:border-primary"
         )}
       >
-        {task.is_completed && <Check className="w-4 h-4" />}
+        {task.is_completed && <Check className={cn(isMobile ? "w-3 h-3" : "w-4 h-4")} />}
       </button>
 
       {/* Content */}
       <div className="flex-1 min-w-0">
-        <div className="flex items-start justify-between gap-2">
+        <div className="flex items-start justify-between gap-1.5 sm:gap-2">
           <h4 className={cn(
             "font-medium text-foreground line-clamp-2",
+            isMobile ? "text-xs leading-tight" : "text-sm",
             task.is_completed && "line-through"
           )}>
             {task.title}
           </h4>
-          <span className="text-sm font-medium text-muted-foreground flex-shrink-0">
+          <span className={cn(
+            "font-medium text-muted-foreground flex-shrink-0",
+            isMobile ? "text-[10px]" : "text-sm"
+          )}>
             {formatTime(task.scheduled_time)}
           </span>
         </div>
 
         {task.description && (
-          <p className="text-sm text-muted-foreground mt-1 line-clamp-1">
+          <p className={cn(
+            "text-muted-foreground mt-0.5 sm:mt-1 line-clamp-1",
+            isMobile ? "text-[10px]" : "text-sm"
+          )}>
             {task.description}
           </p>
         )}
 
         {/* Label */}
-        <div className="flex items-center gap-1.5 mt-2">
-          <div className={cn("w-2 h-2 rounded-full", dotColorClasses[displayColor])} />
-          <span className="text-xs text-muted-foreground">{displayLabel}</span>
+        <div className={cn(
+          "flex items-center gap-1 sm:gap-1.5",
+          isMobile ? "mt-1" : "mt-2"
+        )}>
+          <div className={cn(
+            "rounded-full",
+            isMobile ? "w-1.5 h-1.5" : "w-2 h-2",
+            dotColorClasses[displayColor]
+          )} />
+          <span className={cn(
+            "text-muted-foreground",
+            isMobile ? "text-[9px]" : "text-xs"
+          )}>{displayLabel}</span>
           {task.is_recurring && (
-            <span className="text-xs text-muted-foreground ml-1">
+            <span className={cn(
+              "text-muted-foreground ml-0.5 sm:ml-1",
+              isMobile ? "text-[9px]" : "text-xs"
+            )}>
               • {task.recurrence_type === 'daily' ? 'Diária' : 'Semanal'}
             </span>
           )}
