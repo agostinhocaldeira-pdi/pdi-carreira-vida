@@ -23,7 +23,7 @@ export const PendingTasksModal = ({ open, onOpenChange }: PendingTasksModalProps
           </DialogTitle>
         </DialogHeader>
         <div className="overflow-y-auto max-h-[calc(85vh-100px)]">
-          <PendingTasksKanban compact />
+          <PendingTasksKanban compact showLink />
         </div>
       </DialogContent>
     </Dialog>
