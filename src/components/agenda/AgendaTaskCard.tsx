@@ -9,7 +9,7 @@ export interface AgendaTask {
   source_type: 'manual' | 'action' | 'step' | 'eisenhower' | 'goal' | 'objective';
   source_quadrant?: 'do' | 'schedule' | 'delegate' | 'eliminate';
   label?: string;
-  label_color?: 'green' | 'yellow' | 'orange' | 'red' | 'blue' | 'purple' | 'gray';
+  label_color?: 'green' | 'yellow' | 'orange' | 'red' | 'blue' | 'purple' | 'gray' | 'cyan';
   is_completed: boolean;
   is_recurring?: boolean;
   recurrence_type?: 'daily' | 'weekly';
@@ -45,6 +45,7 @@ const colorClasses = {
   blue: 'bg-blue-100 border-l-blue-500 dark:bg-blue-900/30',
   purple: 'bg-purple-100 border-l-purple-500 dark:bg-purple-900/30',
   gray: 'bg-gray-100 border-l-gray-500 dark:bg-gray-900/30',
+  cyan: 'bg-cyan-100 border-l-cyan-500 dark:bg-cyan-900/30',
 };
 
 const dotColorClasses = {
@@ -55,6 +56,7 @@ const dotColorClasses = {
   blue: 'bg-blue-500',
   purple: 'bg-purple-500',
   gray: 'bg-gray-500',
+  cyan: 'bg-cyan-500',
 };
 
 export const AgendaTaskCard = ({ task, onToggleComplete, onClick }: AgendaTaskCardProps) => {
@@ -72,7 +74,7 @@ export const AgendaTaskCard = ({ task, onToggleComplete, onClick }: AgendaTaskCa
     const quadrantColors = {
       do: 'red' as const,
       schedule: 'orange' as const,
-      delegate: 'blue' as const,
+      delegate: 'cyan' as const,
       eliminate: 'gray' as const,
     };
     displayColor = quadrantColors[task.source_quadrant] || displayColor;

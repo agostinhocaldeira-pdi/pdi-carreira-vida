@@ -51,7 +51,7 @@ export const useAgenda = () => {
     }
   }, []);
 
-  // Sync tasks from other sources (actions, steps, eisenhower, goals)
+  // Sync tasks from other sources (objectives, goals, actions, steps, eisenhower)
   const syncFromSources = useCallback(async () => {
     setSyncing(true);
     try {
@@ -60,7 +60,23 @@ export const useAgenda = () => {
 
       const today = format(startOfDay(new Date()), 'yyyy-MM-dd');
 
-      // Fetch actions with daily recurrence
+      // Fetch objectives with target dates
+      const { data: objectives } = await supabase
+        .from('user_objectives')
+        .select('*')
+        .eq('user_id', user.id)
+        .neq('status', 'concluido')
+        .not('data_alvo', 'is', null);
+
+      // Fetch goals with target dates
+      const { data: goals } = await supabase
+        .from('user_goals')
+        .select('*')
+        .eq('user_id', user.id)
+        .neq('status', 'concluido')
+        .not('data_alvo', 'is', null);
+
+      // Fetch all actions (not just daily)
       const { data: actions } = await supabase
         .from('user_actions')
         .select('*')
@@ -74,20 +90,11 @@ export const useAgenda = () => {
         .eq('user_id', user.id)
         .eq('concluido', false);
 
-      // Fetch eisenhower tasks (urgent-important and not-urgent-important)
+      // Fetch all eisenhower tasks (all quadrants)
       const { data: eisenhowerTasks } = await supabase
         .from('user_eisenhower_tasks')
         .select('*')
-        .eq('user_id', user.id)
-        .in('quadrant', ['urgent-important', 'not-urgent-important']);
-
-      // Fetch goals with target dates
-      const { data: goals } = await supabase
-        .from('user_goals')
-        .select('*')
-        .eq('user_id', user.id)
-        .neq('status', 'concluido')
-        .not('data_alvo', 'is', null);
+        .eq('user_id', user.id);
 
       // Check existing synced events
       const { data: existingEvents } = await supabase
@@ -115,25 +122,74 @@ export const useAgenda = () => {
         description?: string;
       }> = [];
 
-      // Sync daily actions
+      // Sync objectives with target dates
+      objectives?.forEach(objective => {
+        const key = `objective-${objective.id}`;
+        if (!existingSourceIds.has(key) && objective.data_alvo) {
+          eventsToCreate.push({
+            user_id: user.id,
+            title: objective.texto,
+            description: objective.is_principal ? 'Objetivo Principal' : undefined,
+            scheduled_date: objective.data_alvo,
+            scheduled_time: '08:00:00',
+            source_type: 'objective',
+            source_id: objective.id,
+            label: objective.is_principal ? 'Objetivo Principal' : 'Objetivo',
+            label_color: 'purple',
+            is_recurring: false,
+          });
+        }
+      });
+
+      // Sync goals with target dates
+      goals?.forEach(goal => {
+        const key = `goal-${goal.id}`;
+        if (!existingSourceIds.has(key) && goal.data_alvo) {
+          eventsToCreate.push({
+            user_id: user.id,
+            title: goal.texto,
+            scheduled_date: goal.data_alvo,
+            scheduled_time: '09:00:00',
+            source_type: 'goal',
+            source_id: goal.id,
+            label: 'Meta',
+            label_color: 'blue',
+            is_recurring: false,
+          });
+        }
+      });
+
+      // Sync actions based on recurrence
       actions?.forEach(action => {
-        const periodicidade = action.periodicidade?.toLowerCase() || '';
-        if (periodicidade.includes('diária') || periodicidade.includes('diario') || periodicidade.includes('diariamente')) {
-          const key = `action-${action.id}`;
-          if (!existingSourceIds.has(key)) {
-            eventsToCreate.push({
-              user_id: user.id,
-              title: action.texto,
-              scheduled_date: today,
-              scheduled_time: '06:00:00',
-              source_type: 'action',
-              source_id: action.id,
-              label: 'Ação Diária',
-              label_color: 'green',
-              is_recurring: true,
-              recurrence_type: 'daily',
-            });
+        const key = `action-${action.id}`;
+        if (!existingSourceIds.has(key)) {
+          const periodicidade = action.periodicidade?.toLowerCase() || '';
+          let isRecurring = false;
+          let recurrenceType: string | undefined = undefined;
+          let label = 'Ação';
+          
+          if (periodicidade.includes('diária') || periodicidade.includes('diario') || periodicidade.includes('diariamente')) {
+            isRecurring = true;
+            recurrenceType = 'daily';
+            label = 'Ação Diária';
+          } else if (periodicidade.includes('semanal') || periodicidade.includes('semanalmente')) {
+            isRecurring = true;
+            recurrenceType = 'weekly';
+            label = 'Ação Semanal';
           }
+
+          eventsToCreate.push({
+            user_id: user.id,
+            title: action.texto,
+            scheduled_date: today,
+            scheduled_time: '06:00:00',
+            source_type: 'action',
+            source_id: action.id,
+            label,
+            label_color: 'green',
+            is_recurring: isRecurring,
+            recurrence_type: recurrenceType,
+          });
         }
       });
 
@@ -157,51 +213,37 @@ export const useAgenda = () => {
         }
       });
 
-      // Sync Eisenhower tasks
+      // Sync Eisenhower tasks (all quadrants)
       eisenhowerTasks?.forEach(task => {
         const key = `eisenhower-${task.id}`;
         if (!existingSourceIds.has(key)) {
-          const quadrantMap: Record<string, string> = {
-            'urgent-important': 'do',
-            'not-urgent-important': 'schedule',
-            'urgent-not-important': 'delegate',
-            'not-urgent-not-important': 'eliminate',
+          const quadrantMap: Record<string, { label: string; shortLabel: string }> = {
+            'urgent-important': { label: 'Fazer Agora', shortLabel: 'do' },
+            'not-urgent-important': { label: 'Agendar', shortLabel: 'schedule' },
+            'urgent-not-important': { label: 'Delegar', shortLabel: 'delegate' },
+            'not-urgent-not-important': { label: 'Eliminar', shortLabel: 'eliminate' },
           };
           const colorMap: Record<string, string> = {
             'urgent-important': 'red',
             'not-urgent-important': 'orange',
-            'urgent-not-important': 'blue',
+            'urgent-not-important': 'cyan',
             'not-urgent-not-important': 'gray',
           };
+          
+          const quadrantInfo = quadrantMap[task.quadrant] || { label: 'Eisenhower', shortLabel: 'do' };
+          
           eventsToCreate.push({
             user_id: user.id,
             title: task.task_text,
             scheduled_date: today,
-            scheduled_time: '06:00:00',
+            scheduled_time: task.quadrant === 'urgent-important' ? '05:00:00' : '07:00:00',
             source_type: 'eisenhower',
             source_id: task.id,
-            source_quadrant: quadrantMap[task.quadrant] || 'do',
+            source_quadrant: quadrantInfo.shortLabel,
+            label: quadrantInfo.label,
             label_color: colorMap[task.quadrant] || 'orange',
-            is_recurring: true,
-            recurrence_type: 'daily',
-          });
-        }
-      });
-
-      // Sync goals with target dates
-      goals?.forEach(goal => {
-        const key = `goal-${goal.id}`;
-        if (!existingSourceIds.has(key) && goal.data_alvo) {
-          eventsToCreate.push({
-            user_id: user.id,
-            title: goal.texto,
-            scheduled_date: goal.data_alvo,
-            scheduled_time: '09:00:00',
-            source_type: 'goal',
-            source_id: goal.id,
-            label: 'Meta',
-            label_color: 'blue',
-            is_recurring: false,
+            is_recurring: task.quadrant === 'urgent-important' || task.quadrant === 'not-urgent-important',
+            recurrence_type: task.quadrant === 'urgent-important' ? 'daily' : undefined,
           });
         }
       });
