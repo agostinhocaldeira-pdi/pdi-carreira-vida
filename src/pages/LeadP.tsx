@@ -130,17 +130,20 @@ const LeadP = () => {
             <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-foreground leading-tight mb-8">
               Se você quer:
             </h2>
-            <p className="text-base sm:text-lg md:text-xl text-foreground leading-relaxed">
-              Crescer profissionalmente, gerar mais renda e sentir-se realizado no trabalho.
-            </p>
-            
-            <p className="text-base sm:text-lg md:text-xl text-foreground leading-relaxed">
-              Ter estabilidade financeira, tempo para a família e a sensação real de estar avançando na vida — não apenas sobrevivendo.
-            </p>
-            
-            <p className="text-base sm:text-lg md:text-xl text-foreground leading-relaxed">
-              Sentir que cada esforço está te levando para algum lugar que vale a pena. Não viver ciclos que se repetem, ano após ano.
-            </p>
+            <ul className="space-y-4 text-left max-w-2xl mx-auto">
+              <li className="flex items-start gap-3 text-base sm:text-lg md:text-xl text-foreground leading-relaxed">
+                <span className="text-primary mt-1">•</span>
+                <span>Crescer profissionalmente, gerar mais renda e sentir-se realizado no trabalho.</span>
+              </li>
+              <li className="flex items-start gap-3 text-base sm:text-lg md:text-xl text-foreground leading-relaxed">
+                <span className="text-primary mt-1">•</span>
+                <span>Ter estabilidade financeira, tempo para a família e a sensação real de estar avançando na vida — não apenas sobrevivendo.</span>
+              </li>
+              <li className="flex items-start gap-3 text-base sm:text-lg md:text-xl text-foreground leading-relaxed">
+                <span className="text-primary mt-1">•</span>
+                <span>Sentir que cada esforço está te levando para algum lugar que vale a pena. Não viver ciclos que se repetem, ano após ano.</span>
+              </li>
+            </ul>
             
             <div className="py-4">
               <p className="text-lg sm:text-xl md:text-2xl font-semibold text-primary">
