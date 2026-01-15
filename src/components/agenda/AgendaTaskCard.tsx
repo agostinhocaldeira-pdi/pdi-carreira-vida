@@ -31,8 +31,8 @@ const sourceConfig = {
 };
 
 const quadrantLabels = {
-  do: 'Fazer Agora',
-  schedule: 'Agendar',
+  do: 'Urgente + Importante',
+  schedule: 'Importante, não urgente',
   delegate: 'Delegar',
   eliminate: 'Eliminar',
 };
