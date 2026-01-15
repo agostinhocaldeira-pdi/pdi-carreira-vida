@@ -91,24 +91,12 @@ export const Agenda = () => {
 
           {/* Tasks list */}
           {tasks.length === 0 ? (
-            <div className="text-center py-8 space-y-4">
-              <div className="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center mx-auto">
-                <Sparkles className="w-7 h-7 text-primary" />
-              </div>
-              <div className="space-y-1">
-                <p className="text-sm font-medium text-foreground">
-                  {isToday(selectedDate)
-                    ? "Nenhuma tarefa para hoje!"
-                    : `Nenhuma tarefa para ${format(selectedDate, "d 'de' MMMM", { locale: ptBR })}`}
-                </p>
-                <p className="text-xs text-muted-foreground">
-                  Que tal adicionar uma atividade?
-                </p>
-              </div>
-              <Button onClick={handleAddClick} variant="outline" className="gap-2">
-                <Plus className="w-4 h-4" />
-                Criar tarefa
-              </Button>
+            <div className="text-center py-8">
+              <p className="text-sm text-muted-foreground">
+                {isToday(selectedDate)
+                  ? "Sem tarefas para hoje"
+                  : format(selectedDate, "d 'de' MMMM", { locale: ptBR })}
+              </p>
             </div>
           ) : (
             <ScrollArea className="h-[280px] sm:h-[320px] -mx-4 px-4">
