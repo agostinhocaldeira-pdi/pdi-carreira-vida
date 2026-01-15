@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { HelpCircle, X, Zap, Footprints, Target, ClipboardList, Calendar, Sparkles, ListTodo } from "lucide-react";
+import { HelpCircle, X, Zap, Footprints, Target, ClipboardList, Calendar, Sparkles, ListTodo, Info } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
@@ -53,8 +53,9 @@ export const AgendaLegend = ({ variant = 'compact' }: AgendaLegendProps) => {
         ))}
         <button
           onClick={() => setModalOpen(true)}
-          className="text-primary hover:underline"
+          className="text-primary hover:underline flex items-center gap-1"
         >
+          <Info className="w-3 h-3" />
           Ver todas
         </button>
         <span className="text-muted-foreground/50">|</span>
