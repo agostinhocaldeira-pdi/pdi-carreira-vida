@@ -102,18 +102,15 @@ const Signup = () => {
         localStorage.setItem('lgpd_consent_accepted', 'true');
         localStorage.setItem('lgpd_consent_date', new Date().toISOString());
 
-        // Enviar e-mail de boas-vindas
-        try {
-          await supabase.functions.invoke('send-welcome-email', {
-            body: {
-              name: formData.name,
-              email: formData.email,
-            },
-          });
-          console.log('Welcome email sent successfully');
-        } catch (emailError) {
+        // Enviar e-mail de boas-vindas em background (não bloqueia o fluxo)
+        supabase.functions.invoke('send-welcome-email', {
+          body: {
+            name: formData.name,
+            email: formData.email,
+          },
+        }).catch((emailError) => {
           console.error('Error sending welcome email:', emailError);
-        }
+        });
 
         toast.success("Cadastro realizado! Você tem 30 dias de acesso gratuito.");
         
