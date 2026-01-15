@@ -12,6 +12,7 @@ import AdminMetricsPanel from "@/components/admin/AdminMetricsPanel";
 import LeadsManagement from "@/components/admin/LeadsManagement";
 import AdminBroadcastPanel from "@/components/admin/AdminBroadcastPanel";
 import { SatisfactionSurveyPanel } from "@/components/admin/SatisfactionSurveyPanel";
+import QRCodeSection from "@/components/admin/QRCodeSection";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { toast } from "sonner";
 
@@ -711,6 +712,9 @@ const Admin = () => {
 
         {/* Financial Dashboard */}
         <FinancialDashboard />
+
+        {/* QR Code para Divulgação */}
+        <QRCodeSection />
       </main>
 
       {/* Dialog de Confirmação de Exclusão */}
