@@ -90,7 +90,10 @@ const Progresso = () => {
       missingItems.push("Valores pessoais");
     }
     
-    const areasPreenchidas = areasVida.filter((a: any) => a.notaAtual && a.notaDesejada);
+    // Handle both snake_case (from Supabase) and camelCase (from localStorage)
+    const areasPreenchidas = areasVida.filter((a: any) => 
+      (a.nota_atual || a.notaAtual) && (a.nota_desejada || a.notaDesejada)
+    );
     if (areasPreenchidas.length === 0) {
       missingItems.push("Roda da Vida (Áreas da Vida)");
     }
