@@ -4,6 +4,9 @@
 
 Este documento descreve a estrutura completa de cache para pré-computar dados na madrugada, eliminando latência no carregamento da aplicação durante o dia.
 
+**Última atualização:** 2026-01-15
+**Status:** Em implementação
+
 ---
 
 ## 1. Estrutura da Tabela de Cache
@@ -11,7 +14,7 @@ Este documento descreve a estrutura completa de cache para pré-computar dados n
 ```sql
 CREATE TABLE public.user_home_cache (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  user_id UUID UNIQUE NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  user_id UUID UNIQUE NOT NULL,
   
   -- Status do Plano de Vida
   is_plan_complete BOOLEAN DEFAULT FALSE,
@@ -193,6 +196,28 @@ CREATE TABLE public.user_home_cache (
     }
   */
   
+  -- Agenda (NOVO!)
+  agenda_data JSONB,
+  /*
+    {
+      "today_tasks_count": 5,
+      "today_completed_count": 2,
+      "overdue_tasks_count": 3,
+      "upcoming_deadlines": [
+        { "id": "uuid", "title": "Meta: Certificação", "date": "2026-01-20", "days_until": 5 }
+      ],
+      "tasks_by_source": {
+        "manual": 3,
+        "action": 5,
+        "step": 8,
+        "goal": 2,
+        "objective": 1,
+        "eisenhower": 4
+      },
+      "weekly_completion_rate": 75
+    }
+  */
+  
   -- Notificações pendentes
   pending_notifications JSONB,
   /*
@@ -258,43 +283,69 @@ CREATE POLICY "Users can view own cache"
 ON public.user_home_cache FOR SELECT
 USING (auth.uid() = user_id);
 
--- Apenas o sistema (service_role) pode inserir/atualizar
-CREATE POLICY "System can manage cache"
-ON public.user_home_cache FOR ALL
-USING (auth.jwt() ->> 'role' = 'service_role');
+-- O sistema atualiza via service_role key
 ```
 
 ---
 
 ## 2. Edge Function: Processar Cache Noturno
 
-```typescript
-// supabase/functions/process-home-cache/index.ts
+### Localização: `supabase/functions/process-home-cache/index.ts`
 
-// Função que será chamada pelo cron na madrugada
-// Processa todos os usuários ativos e atualiza o cache
+A função processa todos os usuários ativos e atualiza o cache com:
 
-// Lógica:
-// 1. Busca todos os usuários ativos (logaram nos últimos 30 dias)
-// 2. Para cada usuário, calcula todos os dados
-// 3. Upsert na tabela user_home_cache
-// 4. Log de execução para monitoramento
-```
+1. **Dados do Plano de Vida**
+   - Status de conclusão das 3 etapas
+   - Roda da Vida, Valores, VVD
+
+2. **Hierarquia de Objetivos**
+   - Objetivos → Metas → Ações → Passos
+   - Status e datas-alvo
+
+3. **Estatísticas de Progresso**
+   - Contagens e percentuais de conclusão
+
+4. **Gamificação**
+   - Nível, pontos, streak, conquistas
+
+5. **Diário**
+   - Última entrada, frequência, tendência de humor
+
+6. **Agenda (NOVO!)**
+   - Tarefas do dia (total e concluídas)
+   - Tarefas atrasadas
+   - Próximos prazos
+   - Taxa de conclusão semanal
+   - Distribuição por origem
+
+7. **Reflexão Estoica**
+   - Reflexão do dia com áudio
+
+8. **Citação do Dia**
+   - Baseada no day_of_year
+
+9. **Status de Ferramentas**
+   - Quais ferramentas foram completadas
+
+10. **Notificações**
+    - Prazos próximos, dias sem diário
 
 ---
 
-## 3. Configuração do Cron (pg_cron)
+## 3. Cron Job
+
+O processamento ocorre às 3h da manhã (horário de Brasília):
 
 ```sql
 -- Executar às 3h da manhã (horário de Brasília = 6h UTC)
 SELECT cron.schedule(
   'process-home-cache-daily',
-  '0 6 * * *',  -- 6:00 UTC = 3:00 BRT
+  '0 6 * * *',
   $$
   SELECT net.http_post(
     url := 'https://zlclwweeyrvrgxuukdhl.supabase.co/functions/v1/process-home-cache',
-    headers := '{"Content-Type": "application/json", "Authorization": "Bearer ANON_KEY"}'::jsonb,
-    body := '{"trigger": "cron", "timestamp": "' || now() || '"}'::jsonb
+    headers := '{"Content-Type": "application/json", "Authorization": "Bearer SERVICE_ROLE_KEY"}'::jsonb,
+    body := '{"trigger": "cron"}'::jsonb
   );
   $$
 );
@@ -304,116 +355,291 @@ SELECT cron.schedule(
 
 ## 4. Atualização em Tempo Real (Triggers)
 
-Para não esperar a madrugada quando o usuário fizer ações importantes:
+Para ações críticas que não podem esperar a madrugada:
 
 ```sql
--- Trigger para atualizar cache quando:
--- 1. Usuário completa o plano de vida
--- 2. Usuário conclui objetivo/meta/ação
--- 3. Mudança no status da assinatura
-
-CREATE OR REPLACE FUNCTION update_home_cache_on_change()
+-- Trigger genérico para marcar cache como dirty
+CREATE OR REPLACE FUNCTION mark_cache_dirty()
 RETURNS TRIGGER AS $$
 BEGIN
-  -- Marca o cache como "dirty" para atualização prioritária
-  -- Ou atualiza campos específicos imediatamente
   UPDATE public.user_home_cache
   SET 
     last_updated_at = NOW(),
     update_triggered_by = 'user_action'
-  WHERE user_id = NEW.user_id;
+  WHERE user_id = COALESCE(NEW.user_id, OLD.user_id);
   
-  RETURN NEW;
+  RETURN COALESCE(NEW, OLD);
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- Aplicar em tabelas críticas
+CREATE TRIGGER cache_dirty_on_objective_change
+AFTER INSERT OR UPDATE OR DELETE ON public.user_objectives
+FOR EACH ROW EXECUTE FUNCTION mark_cache_dirty();
+
+CREATE TRIGGER cache_dirty_on_goal_change
+AFTER INSERT OR UPDATE OR DELETE ON public.user_goals
+FOR EACH ROW EXECUTE FUNCTION mark_cache_dirty();
+
+CREATE TRIGGER cache_dirty_on_action_change
+AFTER INSERT OR UPDATE OR DELETE ON public.user_actions
+FOR EACH ROW EXECUTE FUNCTION mark_cache_dirty();
+
+CREATE TRIGGER cache_dirty_on_agenda_change
+AFTER INSERT OR UPDATE OR DELETE ON public.agenda_events
+FOR EACH ROW EXECUTE FUNCTION mark_cache_dirty();
 ```
 
 ---
 
-## 5. Uso no Frontend
+## 5. Hook useHomeCache
 
 ```typescript
 // hooks/useHomeCache.ts
 
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+
+export interface HomeCache {
+  // Plan status
+  isPlanComplete: boolean;
+  planCompletionDetails: {
+    quem_sou: boolean;
+    para_onde: boolean;
+    como_chegar: boolean;
+    has_objective: boolean;
+    has_goal: boolean;
+    has_action: boolean;
+    has_step: boolean;
+  };
+  
+  // Subscription
+  subscriptionStatus: 'trial' | 'active' | 'expired' | 'company_exempt';
+  subscriptionPlan: string;
+  subscriptionDaysRemaining: number;
+  isCompanyEmployee: boolean;
+  isCompanyManager: boolean;
+  
+  // Objectives hierarchy
+  objectives: ObjectiveWithHierarchy[];
+  
+  // Progress
+  progress: {
+    totalObjectives: number;
+    completedObjectives: number;
+    totalGoals: number;
+    completedGoals: number;
+    totalActions: number;
+    completedActions: number;
+    totalSteps: number;
+    completedSteps: number;
+    overallPercentage: number;
+  };
+  
+  // Gamification
+  gamification: {
+    level: number;
+    levelName: string;
+    totalPoints: number;
+    currentStreak: number;
+    longestStreak: number;
+  };
+  
+  // Diary
+  diary: {
+    lastEntryDate: string | null;
+    hasEntryToday: boolean;
+    entriesThisWeek: number;
+    moodTrend: string[];
+  };
+  
+  // Agenda (NEW!)
+  agenda: {
+    todayTasksCount: number;
+    todayCompletedCount: number;
+    overdueTasksCount: number;
+    upcomingDeadlines: Array<{
+      id: string;
+      title: string;
+      date: string;
+      daysUntil: number;
+    }>;
+    weeklyCompletionRate: number;
+  };
+  
+  // Insight
+  insight: {
+    hasInsight: boolean;
+    insightText: string | null;
+    hasAudio: boolean;
+    audioUrl: string | null;
+  };
+  
+  // Stoic reflection
+  stoicReflection: {
+    date: string;
+    title: string;
+    content: string;
+    author: string;
+    hasAudio: boolean;
+    audioUrl: string | null;
+  };
+  
+  // Daily quote
+  dailyQuote: string;
+  
+  // Tools status
+  toolsStatus: Record<string, { completed: boolean; count?: number }>;
+  
+  // Metadata
+  lastUpdatedAt: string;
+}
+
 export const useHomeCache = () => {
-  const { data, isLoading } = useQuery({
+  return useQuery({
     queryKey: ['home-cache'],
     queryFn: async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error('Not authenticated');
+
       const { data, error } = await supabase
         .from('user_home_cache')
         .select('*')
+        .eq('user_id', user.id)
         .single();
       
-      if (error) throw error;
-      return data;
+      if (error) {
+        // Cache doesn't exist yet, return defaults
+        if (error.code === 'PGRST116') {
+          return null;
+        }
+        throw error;
+      }
+      
+      return transformCacheData(data);
     },
-    staleTime: 5 * 60 * 1000, // 5 minutos
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    gcTime: 30 * 60 * 1000, // 30 minutes
+    retry: 1,
   });
+};
 
+function transformCacheData(raw: any): HomeCache {
   return {
-    cache: data,
-    isLoading,
-    isPlanComplete: data?.is_plan_complete ?? false,
-    subscriptionStatus: data?.subscription_status,
-    objectives: data?.objectives_data ?? [],
-    progress: data?.progress_stats,
-    gamification: data?.gamification_data,
-    // ... demais campos
+    isPlanComplete: raw.is_plan_complete ?? false,
+    planCompletionDetails: raw.plan_completion_details ?? {},
+    subscriptionStatus: raw.subscription_status ?? 'trial',
+    subscriptionPlan: raw.subscription_plan ?? 'gratuito',
+    subscriptionDaysRemaining: raw.subscription_days_remaining ?? 0,
+    isCompanyEmployee: raw.is_company_employee ?? false,
+    isCompanyManager: raw.is_company_manager ?? false,
+    objectives: raw.objectives_data ?? [],
+    progress: raw.progress_stats ?? {
+      totalObjectives: 0,
+      completedObjectives: 0,
+      totalGoals: 0,
+      completedGoals: 0,
+      totalActions: 0,
+      completedActions: 0,
+      totalSteps: 0,
+      completedSteps: 0,
+      overallPercentage: 0,
+    },
+    gamification: raw.gamification_data ?? {
+      level: 1,
+      levelName: 'Iniciante',
+      totalPoints: 0,
+      currentStreak: 0,
+      longestStreak: 0,
+    },
+    diary: raw.diary_data ?? {
+      lastEntryDate: null,
+      hasEntryToday: false,
+      entriesThisWeek: 0,
+      moodTrend: [],
+    },
+    agenda: raw.agenda_data ?? {
+      todayTasksCount: 0,
+      todayCompletedCount: 0,
+      overdueTasksCount: 0,
+      upcomingDeadlines: [],
+      weeklyCompletionRate: 0,
+    },
+    insight: raw.insight_data ?? {
+      hasInsight: false,
+      insightText: null,
+      hasAudio: false,
+      audioUrl: null,
+    },
+    stoicReflection: raw.stoic_reflection ?? {},
+    dailyQuote: raw.daily_quote?.quote ?? '',
+    toolsStatus: raw.tools_status ?? {},
+    lastUpdatedAt: raw.last_updated_at,
   };
-};
+}
 ```
 
 ---
 
-## 6. Lógica de Roteamento da Home
+## 6. Fluxo de Dados
 
-```typescript
-// No App.tsx ou componente de rota
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                        MADRUGADA (3h)                           │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                 │
+│  ┌─────────────┐    ┌──────────────────┐    ┌───────────────┐  │
+│  │  pg_cron    │───►│ process-home-    │───►│ user_home_    │  │
+│  │  trigger    │    │ cache function   │    │ cache table   │  │
+│  └─────────────┘    └──────────────────┘    └───────────────┘  │
+│                              │                                  │
+│                              ▼                                  │
+│                    ┌──────────────────┐                        │
+│                    │ Processa todos   │                        │
+│                    │ usuários ativos  │                        │
+│                    │ (último login    │                        │
+│                    │  < 30 dias)      │                        │
+│                    └──────────────────┘                        │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
 
-const HomeRouter = () => {
-  const { isPlanComplete, isLoading } = useHomeCache();
-
-  if (isLoading) return <LoadingScreen />;
-
-  // Redireciona baseado no cache pré-computado
-  return isPlanComplete ? <HomeComplete /> : <Home />;
-};
+┌─────────────────────────────────────────────────────────────────┐
+│                      DURANTE O DIA                              │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                 │
+│  ┌─────────────┐    ┌──────────────────┐    ┌───────────────┐  │
+│  │  Usuário    │───►│   useHomeCache   │───►│ user_home_    │  │
+│  │  acessa     │    │   hook           │    │ cache table   │  │
+│  │  Home       │    │   (1 query!)     │    │ (pré-comp.)   │  │
+│  └─────────────┘    └──────────────────┘    └───────────────┘  │
+│                                                                 │
+│  ┌─────────────┐    ┌──────────────────┐    ┌───────────────┐  │
+│  │  Usuário    │───►│   Triggers       │───►│ Marca cache   │  │
+│  │  faz ação   │    │   (INSERT/UPDATE)│    │ como "dirty"  │  │
+│  │  crítica    │    │                  │    │               │  │
+│  └─────────────┘    └──────────────────┘    └───────────────┘  │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
 ```
 
 ---
 
-## 7. Campos a Definir para Nova Home
-
-> **PENDENTE**: Definir quais dados do cache serão exibidos na nova Home (HomeComplete)
-
-### Sugestões de seções para a nova Home:
-- [ ] Resumo do progresso geral
-- [ ] Objetivo principal em destaque
-- [ ] Próximas ações/passos pendentes
-- [ ] Streak e gamificação
-- [ ] Reflexão estoica do dia
-- [ ] Citação do dia
-- [ ] Acesso rápido às ferramentas
-- [ ] Notificações pendentes
-- [ ] Mini calendário com metas
-
----
-
-## 8. Benefícios da Arquitetura
+## 7. Benefícios da Arquitetura
 
 | Aspecto | Antes (atual) | Depois (com cache) |
 |---------|---------------|-------------------|
-| Queries no login | 8-12 queries | 1 query |
-| Tempo de carregamento | 2-4 segundos | < 500ms |
+| Queries no login | 15-20 queries | 1 query |
+| Tempo de carregamento | 2-5 segundos | < 300ms |
 | Carga no banco (pico) | Alta | Mínima |
 | Processamento | Cliente | Servidor (madrugada) |
 | Consistência | Tempo real | Near-realtime* |
+| Dados da Agenda | 8+ queries | Incluído no cache |
 
 *Com triggers para ações críticas
 
 ---
 
-## 9. Monitoramento
+## 8. Monitoramento
 
 ```sql
 -- Tabela de logs do processamento
@@ -431,15 +657,23 @@ CREATE TABLE public.cache_processing_logs (
 
 ---
 
-## 10. Próximos Passos
+## 9. Checklist de Implementação
 
-1. [ ] Definir layout/componentes da nova Home (HomeComplete)
-2. [ ] Definir quais campos do cache são prioritários
-3. [ ] Implementar tabela `user_home_cache`
-4. [ ] Implementar Edge Function `process-home-cache`
-5. [ ] Configurar pg_cron
-6. [ ] Implementar triggers para atualização em tempo real
-7. [ ] Criar hook `useHomeCache`
-8. [ ] Implementar `HomeComplete.tsx`
-9. [ ] Atualizar roteamento
-10. [ ] Testes e monitoramento
+- [x] Documento de arquitetura atualizado
+- [ ] Tabela `user_home_cache` criada
+- [ ] Edge Function `process-home-cache` implementada
+- [ ] Hook `useHomeCache` implementado
+- [ ] Triggers de atualização configurados
+- [ ] Componentes da Home atualizados
+- [ ] pg_cron configurado
+- [ ] Monitoramento implementado
+- [ ] Testes realizados
+
+---
+
+## 10. Considerações de Segurança
+
+1. **RLS**: Usuários só podem ler seu próprio cache
+2. **Service Role**: Apenas o sistema pode escrever no cache
+3. **Dados Sensíveis**: Nenhum dado sensível é armazenado no cache
+4. **Validação**: Edge function valida todos os dados antes de inserir
