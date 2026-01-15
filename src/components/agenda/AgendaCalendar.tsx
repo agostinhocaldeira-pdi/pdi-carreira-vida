@@ -94,23 +94,29 @@ export const AgendaCalendar = ({ selectedDate, onDateSelect, taskDates = [] }: A
   }, [selectedDate, weekStart]);
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-2 sm:space-y-3">
       {/* Date header */}
       <div className="flex items-center justify-between">
         <div>
-          <p className="text-sm text-muted-foreground uppercase tracking-wide">
+          <p className={cn(
+            "uppercase tracking-wide text-muted-foreground",
+            isMobile ? "text-[10px]" : "text-sm"
+          )}>
             {format(displayedMonth, "MMMM yyyy", { locale: ptBR })}
           </p>
-          <p className="text-lg font-semibold text-primary">
+          <p className={cn(
+            "font-semibold text-primary",
+            isMobile ? "text-sm" : "text-lg"
+          )}>
             {isToday(selectedDate) ? "HOJE" : format(selectedDate, "EEEE", { locale: ptBR }).toUpperCase()}
           </p>
         </div>
-        <div className="flex items-center gap-1">
-          <Button variant="ghost" size="icon" onClick={goToPreviousWeek} className="h-8 w-8">
-            <ChevronLeft className="h-4 w-4" />
+        <div className="flex items-center gap-0.5 sm:gap-1">
+          <Button variant="ghost" size="icon" onClick={goToPreviousWeek} className="h-7 w-7 sm:h-8 sm:w-8">
+            <ChevronLeft className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
           </Button>
-          <Button variant="ghost" size="icon" onClick={goToNextWeek} className="h-8 w-8">
-            <ChevronRight className="h-4 w-4" />
+          <Button variant="ghost" size="icon" onClick={goToNextWeek} className="h-7 w-7 sm:h-8 sm:w-8">
+            <ChevronRight className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
           </Button>
         </div>
       </div>
@@ -118,7 +124,7 @@ export const AgendaCalendar = ({ selectedDate, onDateSelect, taskDates = [] }: A
       {/* Week days scroll */}
       <div 
         ref={scrollRef}
-        className="flex gap-2 overflow-x-auto scrollbar-hide pb-2 -mx-2 px-2 scroll-smooth"
+        className="flex gap-1.5 sm:gap-2 overflow-x-auto scrollbar-hide pb-2 -mx-2 px-2 scroll-smooth"
         style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
       >
         {days.map((day) => {
@@ -131,8 +137,9 @@ export const AgendaCalendar = ({ selectedDate, onDateSelect, taskDates = [] }: A
               key={day.toISOString()}
               onClick={() => onDateSelect(day)}
               className={cn(
-                "flex flex-col items-center justify-center min-w-[52px] h-[70px] rounded-xl transition-all",
+                "flex flex-col items-center justify-center rounded-xl transition-all",
                 "focus:outline-none focus:ring-2 focus:ring-primary/50",
+                isMobile ? "min-w-[42px] h-[56px]" : "min-w-[52px] h-[70px]",
                 isSelected
                   ? "bg-primary text-primary-foreground shadow-lg scale-105"
                   : isTodayDate
@@ -141,13 +148,15 @@ export const AgendaCalendar = ({ selectedDate, onDateSelect, taskDates = [] }: A
               )}
             >
               <span className={cn(
-                "text-xs uppercase font-medium",
+                "uppercase font-medium",
+                isMobile ? "text-[9px]" : "text-xs",
                 isSelected ? "text-primary-foreground/80" : "text-muted-foreground"
               )}>
                 {format(day, "EEE", { locale: ptBR })}
               </span>
               <span className={cn(
-                "text-xl font-bold",
+                "font-bold",
+                isMobile ? "text-base" : "text-xl",
                 isSelected ? "text-primary-foreground" : ""
               )}>
                 {format(day, "d")}
@@ -158,7 +167,8 @@ export const AgendaCalendar = ({ selectedDate, onDateSelect, taskDates = [] }: A
                   isSelected ? "opacity-80" : ""
                 )}>
                   <div className={cn(
-                    "w-1.5 h-1.5 rounded-full",
+                    "rounded-full",
+                    isMobile ? "w-1 h-1" : "w-1.5 h-1.5",
                     isSelected ? "bg-primary-foreground" : "bg-primary"
                   )} />
                 </div>
