@@ -97,6 +97,13 @@ export const useAgenda = () => {
         .select('*')
         .eq('user_id', user.id);
 
+      // Fetch pending tasks that are "fazendo" (in progress)
+      const { data: pendingTasks } = await supabase
+        .from('user_pending_tasks')
+        .select('*')
+        .eq('user_id', user.id)
+        .eq('status', 'fazendo');
+
       // Check existing synced events
       const { data: existingEvents } = await supabase
         .from('agenda_events')
@@ -247,6 +254,26 @@ export const useAgenda = () => {
             label_color: colorMap[task.quadrant] || 'orange',
             is_recurring: true,
             recurrence_type: task.quadrant === 'urgent-important' ? 'daily' : undefined,
+          });
+        }
+      });
+
+      // Sync pending tasks with status "fazendo"
+      pendingTasks?.forEach(task => {
+        const key = `pending-${task.id}`;
+        if (!existingSourceIds.has(key)) {
+          eventsToCreate.push({
+            user_id: user.id,
+            title: task.title,
+            description: task.description || undefined,
+            scheduled_date: today,
+            scheduled_time: '06:30:00',
+            source_type: 'pending',
+            source_id: task.id,
+            label: 'Pendência',
+            label_color: 'purple',
+            is_recurring: true,
+            recurrence_type: 'daily',
           });
         }
       });
@@ -424,8 +451,40 @@ export const useAgenda = () => {
 
   // Toggle task completion
   const toggleComplete = useCallback(async (taskId: string, completed: boolean) => {
+    // Find the event to check if it's a pending task
+    const event = events.find(e => e.id === taskId);
+    
+    // If it's a pending task being marked as completed, also update the pending task
+    if (event?.source_type === 'pending' && event.source_id && completed) {
+      try {
+        await supabase
+          .from('user_pending_tasks')
+          .update({ 
+            status: 'feito',
+            completed_at: new Date().toISOString()
+          })
+          .eq('id', event.source_id);
+        
+        // Also delete the agenda event since it's no longer in "fazendo"
+        await supabase
+          .from('agenda_events')
+          .delete()
+          .eq('id', taskId);
+        
+        toast({
+          title: "Pendência concluída! 🎉",
+          description: "A tarefa foi movida para 'Feito' na Lista de Pendências.",
+        });
+        
+        await fetchEvents();
+        return;
+      } catch (error) {
+        console.error('Error completing pending task:', error);
+      }
+    }
+    
     await updateEvent(taskId, { is_completed: completed });
-  }, [updateEvent]);
+  }, [events, updateEvent, fetchEvents, toast]);
 
   // Initial fetch
   useEffect(() => {

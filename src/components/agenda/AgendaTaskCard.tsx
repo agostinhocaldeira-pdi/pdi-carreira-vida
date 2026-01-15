@@ -1,4 +1,4 @@
-import { Check, Zap, Footprints, Target, ClipboardList, Calendar, Sparkles } from "lucide-react";
+import { Check, Zap, Footprints, Target, ClipboardList, Calendar, Sparkles, ListTodo } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export interface AgendaTask {
@@ -6,10 +6,10 @@ export interface AgendaTask {
   title: string;
   description?: string;
   scheduled_time: string;
-  source_type: 'manual' | 'action' | 'step' | 'eisenhower' | 'goal' | 'objective';
+  source_type: 'manual' | 'action' | 'step' | 'eisenhower' | 'goal' | 'objective' | 'pending';
   source_quadrant?: 'do' | 'schedule' | 'delegate' | 'eliminate';
   label?: string;
-  label_color?: 'green' | 'yellow' | 'orange' | 'red' | 'blue' | 'purple' | 'gray' | 'cyan';
+  label_color?: 'green' | 'yellow' | 'orange' | 'red' | 'blue' | 'purple' | 'gray' | 'cyan' | 'violet';
   is_completed: boolean;
   is_recurring?: boolean;
   recurrence_type?: 'daily' | 'weekly';
@@ -28,6 +28,7 @@ const sourceConfig = {
   eisenhower: { icon: Target, defaultLabel: 'Prioridade', defaultColor: 'orange' as const },
   goal: { icon: ClipboardList, defaultLabel: 'Meta', defaultColor: 'blue' as const },
   objective: { icon: Calendar, defaultLabel: 'Objetivo', defaultColor: 'purple' as const },
+  pending: { icon: ListTodo, defaultLabel: 'Pendência', defaultColor: 'violet' as const },
 };
 
 const quadrantLabels = {
@@ -46,6 +47,7 @@ const colorClasses = {
   purple: 'bg-purple-100 border-l-purple-500 dark:bg-purple-900/30',
   gray: 'bg-gray-100 border-l-gray-500 dark:bg-gray-900/30',
   cyan: 'bg-cyan-100 border-l-cyan-500 dark:bg-cyan-900/30',
+  violet: 'bg-violet-100 border-l-violet-500 dark:bg-violet-900/30',
 };
 
 const dotColorClasses = {
@@ -57,6 +59,7 @@ const dotColorClasses = {
   purple: 'bg-purple-500',
   gray: 'bg-gray-500',
   cyan: 'bg-cyan-500',
+  violet: 'bg-violet-500',
 };
 
 export const AgendaTaskCard = ({ task, onToggleComplete, onClick }: AgendaTaskCardProps) => {
