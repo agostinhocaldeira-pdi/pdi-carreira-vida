@@ -156,9 +156,6 @@ const LeadP = () => {
                 Já tentou mudar, já tentou se organizar, já consumiu conteúdos…<br />
                 Mas tudo parece desconectado, confuso e difícil de manter no longo prazo.
               </p>
-              <p className="text-xl sm:text-2xl font-bold text-primary mt-6">
-                Falta um sistema.
-              </p>
             </div>
             
             <div className="pt-6 space-y-4">
