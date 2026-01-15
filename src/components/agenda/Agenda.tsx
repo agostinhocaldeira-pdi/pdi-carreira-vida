@@ -104,14 +104,59 @@ export const Agenda = () => {
           ) : (
             <ScrollArea className="h-[280px] sm:h-[320px] -mx-4 px-4">
               <div className="space-y-2 pb-16">
-                {tasks.map((task) => (
-                  <AgendaTaskCard
-                    key={task.id}
-                    task={task}
-                    onToggleComplete={toggleComplete}
-                    onClick={handleTaskClick}
-                  />
-                ))}
+                {/* Desktop: agrupa tarefas com mesmo horário na mesma linha */}
+                {!isMobile ? (
+                  (() => {
+                    // Agrupa tarefas por horário
+                    const tasksByTime = tasks.reduce((acc, task) => {
+                      const time = task.scheduled_time;
+                      if (!acc[time]) acc[time] = [];
+                      acc[time].push(task);
+                      return acc;
+                    }, {} as Record<string, typeof tasks>);
+
+                    // Ordena os horários
+                    const sortedTimes = Object.keys(tasksByTime).sort();
+
+                    return sortedTimes.map((time) => {
+                      const timeTasks = tasksByTime[time];
+                      if (timeTasks.length === 1) {
+                        // Apenas uma tarefa nesse horário - renderiza normalmente
+                        return (
+                          <AgendaTaskCard
+                            key={timeTasks[0].id}
+                            task={timeTasks[0]}
+                            onToggleComplete={toggleComplete}
+                            onClick={handleTaskClick}
+                          />
+                        );
+                      }
+                      // Múltiplas tarefas no mesmo horário - renderiza em grid
+                      return (
+                        <div key={time} className="grid grid-cols-2 gap-2">
+                          {timeTasks.map((task) => (
+                            <AgendaTaskCard
+                              key={task.id}
+                              task={task}
+                              onToggleComplete={toggleComplete}
+                              onClick={handleTaskClick}
+                            />
+                          ))}
+                        </div>
+                      );
+                    });
+                  })()
+                ) : (
+                  // Mobile: renderiza tarefas individualmente
+                  tasks.map((task) => (
+                    <AgendaTaskCard
+                      key={task.id}
+                      task={task}
+                      onToggleComplete={toggleComplete}
+                      onClick={handleTaskClick}
+                    />
+                  ))
+                )}
 
                 {completedCount === tasks.length && tasks.length > 0 && (
                   <div className="text-center py-4">
