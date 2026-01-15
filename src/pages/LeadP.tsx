@@ -148,7 +148,7 @@ const LeadP = () => {
             
             <div className="bg-card border border-border/50 rounded-xl p-6 sm:p-8 shadow-sm">
               <p className="text-lg sm:text-xl font-semibold text-foreground leading-relaxed mb-4">
-                Mas aí, entra o problema:
+                Mas não consegue avançar
               </p>
               <p className="text-base sm:text-lg text-foreground leading-relaxed mb-4">
                 Mesmo sendo capaz, dedicado e inteligente, você se sente travado.
