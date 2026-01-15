@@ -145,12 +145,6 @@ const LeadP = () => {
               </li>
             </ul>
             
-            <div className="py-4">
-              <p className="text-lg sm:text-xl md:text-2xl font-semibold text-primary">
-                Significa que você tem o desejo legítimo de viver uma vida com propósito, segurança e liberdade.
-              </p>
-            </div>
-            
             <div className="bg-card border border-border/50 rounded-xl p-6 sm:p-8 shadow-sm">
               <p className="text-lg sm:text-xl font-semibold text-foreground leading-relaxed mb-4">
                 Mas aí, entra o problema:
