@@ -784,79 +784,205 @@ const MaoNaMassa = ({ embedded = false }: MaoNaMassaProps) => {
               </div>
 
               {acoes.length > 0 && (
-                <div className="rounded-lg border overflow-x-auto">
-                  <Table className="w-full table-fixed min-w-0 sm:min-w-[600px]">
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead className="text-xs sm:text-sm">Ação</TableHead>
-                        <TableHead className="text-xs sm:text-sm">Periodicidade</TableHead>
-                        <TableHead className="text-xs sm:text-sm">Status</TableHead>
-                        <TableHead className="w-[80px] sm:w-[100px] text-xs sm:text-sm">Ações</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {acoes.map((acao) => {
-                        const isEditing = editandoId === acao.id;
-                        
-                        return (
-                          <TableRow key={acao.id}>
-                            <TableCell>
-                              {isEditing ? (
-                                <Input
-                                  value={acaoEditada?.acao || ""}
-                                  onChange={(e) => setAcaoEditada({ ...acaoEditada!, acao: e.target.value })}
-                                />
-                              ) : (
-                                 <span className="block max-w-full break-words whitespace-normal [overflow-wrap:anywhere]">{acao.acao}</span>
-                              )}
-                            </TableCell>
-                            <TableCell>
-                              {isEditing ? (
-                                <div className="space-y-2">
+                <>
+                  {/* Versão Desktop - Tabela */}
+                  <div className="hidden sm:block rounded-lg border overflow-x-auto">
+                    <Table className="w-full">
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead className="text-sm">Ação</TableHead>
+                          <TableHead className="text-sm w-[130px]">Periodicidade</TableHead>
+                          <TableHead className="text-sm w-[120px]">Status</TableHead>
+                          <TableHead className="w-[100px] text-sm">Ações</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {acoes.map((acao) => {
+                          const isEditing = editandoId === acao.id;
+                          
+                          return (
+                            <TableRow key={acao.id}>
+                              <TableCell>
+                                {isEditing ? (
+                                  <Input
+                                    value={acaoEditada?.acao || ""}
+                                    onChange={(e) => setAcaoEditada({ ...acaoEditada!, acao: e.target.value })}
+                                  />
+                                ) : (
+                                   <span className="block max-w-full break-words whitespace-normal [overflow-wrap:anywhere]">{acao.acao}</span>
+                                )}
+                              </TableCell>
+                              <TableCell>
+                                {isEditing ? (
+                                  <div className="space-y-2">
+                                    <Select
+                                      value={acaoEditada?.periodicidade || ""}
+                                      onValueChange={(value) => setAcaoEditada({ ...acaoEditada!, periodicidade: value, dataPontual: value !== "pontual" ? "" : acaoEditada?.dataPontual })}
+                                    >
+                                      <SelectTrigger>
+                                        <SelectValue />
+                                      </SelectTrigger>
+                                      <SelectContent>
+                                        <SelectItem value="pontual">Pontual (única vez)</SelectItem>
+                                        <SelectItem value="diariamente">Diariamente</SelectItem>
+                                        <SelectItem value="semanalmente">Semanalmente</SelectItem>
+                                        <SelectItem value="mensalmente">Mensalmente</SelectItem>
+                                        <SelectItem value="trimestral">Trimestral</SelectItem>
+                                        <SelectItem value="semestral">Semestral</SelectItem>
+                                        <SelectItem value="anual">Anual</SelectItem>
+                                      </SelectContent>
+                                    </Select>
+                                    {acaoEditada?.periodicidade === "pontual" && (
+                                      <Input
+                                        type="date"
+                                        value={acaoEditada?.dataPontual || ""}
+                                        onChange={(e) => setAcaoEditada({ ...acaoEditada!, dataPontual: e.target.value })}
+                                        className="text-sm"
+                                      />
+                                    )}
+                                  </div>
+                                ) : (
+                                  <div className="space-y-1">
+                                    <span className="capitalize">{acao.periodicidade === "pontual" ? "Pontual" : acao.periodicidade}</span>
+                                    {acao.periodicidade === "pontual" && acao.dataPontual && (
+                                      <div className="text-xs text-muted-foreground">
+                                        {new Date(acao.dataPontual + 'T00:00:00').toLocaleDateString('pt-BR')}
+                                      </div>
+                                    )}
+                                  </div>
+                                )}
+                              </TableCell>
+                              <TableCell>
+                                {isEditing ? (
                                   <Select
-                                    value={acaoEditada?.periodicidade || ""}
-                                    onValueChange={(value) => setAcaoEditada({ ...acaoEditada!, periodicidade: value, dataPontual: value !== "pontual" ? "" : acaoEditada?.dataPontual })}
+                                    value={acaoEditada?.status || ""}
+                                    onValueChange={(value) => setAcaoEditada({ ...acaoEditada!, status: value })}
                                   >
                                     <SelectTrigger>
                                       <SelectValue />
                                     </SelectTrigger>
                                     <SelectContent>
-                                      <SelectItem value="pontual">Pontual (única vez)</SelectItem>
-                                      <SelectItem value="diariamente">Diariamente</SelectItem>
-                                      <SelectItem value="semanalmente">Semanalmente</SelectItem>
-                                      <SelectItem value="mensalmente">Mensalmente</SelectItem>
-                                      <SelectItem value="trimestral">Trimestral</SelectItem>
-                                      <SelectItem value="semestral">Semestral</SelectItem>
-                                      <SelectItem value="anual">Anual</SelectItem>
+                                      <SelectItem value="a-fazer">A fazer</SelectItem>
+                                      <SelectItem value="pendente">Pendente</SelectItem>
+                                      <SelectItem value="em-andamento">Em andamento</SelectItem>
+                                      <SelectItem value="concluido">Concluído</SelectItem>
                                     </SelectContent>
                                   </Select>
-                                  {acaoEditada?.periodicidade === "pontual" && (
-                                    <Input
-                                      type="date"
-                                      value={acaoEditada?.dataPontual || ""}
-                                      onChange={(e) => setAcaoEditada({ ...acaoEditada!, dataPontual: e.target.value })}
-                                      className="text-sm"
-                                    />
+                                ) : (
+                                  <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                                    acao.status === "concluido" 
+                                      ? "bg-success/15 text-success" 
+                                      : acao.status === "pendente"
+                                      ? "bg-warning/15 text-warning"
+                                      : acao.status === "em-andamento"
+                                      ? "bg-secondary/20 text-secondary"
+                                      : "bg-muted text-muted-foreground"
+                                  }`}>
+                                    {acao.status === "concluido" ? "Concluído" 
+                                      : acao.status === "pendente" ? "Pendente" 
+                                      : acao.status === "em-andamento" ? "Em andamento"
+                                      : "A fazer"}
+                                  </span>
+                                )}
+                              </TableCell>
+                              <TableCell>
+                                <div className="flex gap-1">
+                                  {isEditing ? (
+                                    <>
+                                      <Button
+                                        variant="ghost"
+                                        size="sm"
+                                        onClick={() => handleSaveEdit(acao.id)}
+                                      >
+                                        <Check className="w-4 h-4 text-green-600" />
+                                      </Button>
+                                      <Button
+                                        variant="ghost"
+                                        size="sm"
+                                        onClick={handleCancelEdit}
+                                      >
+                                        <X className="w-4 h-4 text-destructive" />
+                                      </Button>
+                                    </>
+                                  ) : (
+                                    <>
+                                      <Button
+                                        variant="ghost"
+                                        size="sm"
+                                        onClick={() => handleStartEdit(acao)}
+                                      >
+                                        <Pencil className="w-4 h-4" />
+                                      </Button>
+                                      <Button
+                                        variant="ghost"
+                                        size="sm"
+                                        onClick={() => handleRemoveAcao(acao.id)}
+                                      >
+                                        <Trash2 className="w-4 h-4 text-destructive" />
+                                      </Button>
+                                    </>
                                   )}
                                 </div>
-                              ) : (
-                                <div className="space-y-1">
-                                  <span className="capitalize">{acao.periodicidade === "pontual" ? "Pontual" : acao.periodicidade}</span>
-                                  {acao.periodicidade === "pontual" && acao.dataPontual && (
-                                    <div className="text-xs text-muted-foreground">
-                                      {new Date(acao.dataPontual + 'T00:00:00').toLocaleDateString('pt-BR')}
-                                    </div>
-                                  )}
-                                </div>
-                              )}
-                            </TableCell>
-                            <TableCell>
-                              {isEditing ? (
+                              </TableCell>
+                            </TableRow>
+                          );
+                        })}
+                      </TableBody>
+                    </Table>
+                  </div>
+
+                  {/* Versão Mobile - Cards */}
+                  <div className="sm:hidden space-y-3">
+                    {acoes.map((acao) => {
+                      const isEditing = editandoId === acao.id;
+                      
+                      return (
+                        <div key={acao.id} className="rounded-lg border bg-card p-4 space-y-3">
+                          {isEditing ? (
+                            <div className="space-y-3">
+                              <div>
+                                <Label className="text-xs text-muted-foreground">Ação</Label>
+                                <Input
+                                  value={acaoEditada?.acao || ""}
+                                  onChange={(e) => setAcaoEditada({ ...acaoEditada!, acao: e.target.value })}
+                                  className="mt-1"
+                                />
+                              </div>
+                              <div>
+                                <Label className="text-xs text-muted-foreground">Periodicidade</Label>
+                                <Select
+                                  value={acaoEditada?.periodicidade || ""}
+                                  onValueChange={(value) => setAcaoEditada({ ...acaoEditada!, periodicidade: value, dataPontual: value !== "pontual" ? "" : acaoEditada?.dataPontual })}
+                                >
+                                  <SelectTrigger className="mt-1">
+                                    <SelectValue />
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    <SelectItem value="pontual">Pontual (única vez)</SelectItem>
+                                    <SelectItem value="diariamente">Diariamente</SelectItem>
+                                    <SelectItem value="semanalmente">Semanalmente</SelectItem>
+                                    <SelectItem value="mensalmente">Mensalmente</SelectItem>
+                                    <SelectItem value="trimestral">Trimestral</SelectItem>
+                                    <SelectItem value="semestral">Semestral</SelectItem>
+                                    <SelectItem value="anual">Anual</SelectItem>
+                                  </SelectContent>
+                                </Select>
+                                {acaoEditada?.periodicidade === "pontual" && (
+                                  <Input
+                                    type="date"
+                                    value={acaoEditada?.dataPontual || ""}
+                                    onChange={(e) => setAcaoEditada({ ...acaoEditada!, dataPontual: e.target.value })}
+                                    className="mt-2 text-sm"
+                                  />
+                                )}
+                              </div>
+                              <div>
+                                <Label className="text-xs text-muted-foreground">Status</Label>
                                 <Select
                                   value={acaoEditada?.status || ""}
                                   onValueChange={(value) => setAcaoEditada({ ...acaoEditada!, status: value })}
                                 >
-                                  <SelectTrigger>
+                                  <SelectTrigger className="mt-1">
                                     <SelectValue />
                                   </SelectTrigger>
                                   <SelectContent>
@@ -866,8 +992,61 @@ const MaoNaMassa = ({ embedded = false }: MaoNaMassaProps) => {
                                     <SelectItem value="concluido">Concluído</SelectItem>
                                   </SelectContent>
                                 </Select>
-                              ) : (
-                                <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                              </div>
+                              <div className="flex gap-2 pt-2">
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  onClick={() => handleSaveEdit(acao.id)}
+                                  className="flex-1"
+                                >
+                                  <Check className="w-4 h-4 mr-1 text-green-600" />
+                                  Salvar
+                                </Button>
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  onClick={handleCancelEdit}
+                                  className="flex-1"
+                                >
+                                  <X className="w-4 h-4 mr-1 text-destructive" />
+                                  Cancelar
+                                </Button>
+                              </div>
+                            </div>
+                          ) : (
+                            <>
+                              <div className="flex items-start justify-between gap-2">
+                                <p className="font-medium text-sm break-words [overflow-wrap:anywhere] flex-1">{acao.acao}</p>
+                                <div className="flex gap-1 flex-shrink-0">
+                                  <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    onClick={() => handleStartEdit(acao)}
+                                    className="h-8 w-8 p-0"
+                                  >
+                                    <Pencil className="w-4 h-4" />
+                                  </Button>
+                                  <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    onClick={() => handleRemoveAcao(acao.id)}
+                                    className="h-8 w-8 p-0"
+                                  >
+                                    <Trash2 className="w-4 h-4 text-destructive" />
+                                  </Button>
+                                </div>
+                              </div>
+                              <div className="flex flex-wrap items-center gap-2">
+                                <span className="text-xs text-muted-foreground capitalize">
+                                  📅 {acao.periodicidade === "pontual" ? "Pontual" : acao.periodicidade}
+                                  {acao.periodicidade === "pontual" && acao.dataPontual && (
+                                    <span className="ml-1">
+                                      ({new Date(acao.dataPontual + 'T00:00:00').toLocaleDateString('pt-BR')})
+                                    </span>
+                                  )}
+                                </span>
+                                <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${
                                   acao.status === "concluido" 
                                     ? "bg-success/15 text-success" 
                                     : acao.status === "pendente"
@@ -881,53 +1060,14 @@ const MaoNaMassa = ({ embedded = false }: MaoNaMassaProps) => {
                                     : acao.status === "em-andamento" ? "Em andamento"
                                     : "A fazer"}
                                 </span>
-                              )}
-                            </TableCell>
-                            <TableCell>
-                              <div className="flex gap-1">
-                                {isEditing ? (
-                                  <>
-                                    <Button
-                                      variant="ghost"
-                                      size="sm"
-                                      onClick={() => handleSaveEdit(acao.id)}
-                                    >
-                                      <Check className="w-4 h-4 text-green-600" />
-                                    </Button>
-                                    <Button
-                                      variant="ghost"
-                                      size="sm"
-                                      onClick={handleCancelEdit}
-                                    >
-                                      <X className="w-4 h-4 text-destructive" />
-                                    </Button>
-                                  </>
-                                ) : (
-                                  <>
-                                    <Button
-                                      variant="ghost"
-                                      size="sm"
-                                      onClick={() => handleStartEdit(acao)}
-                                    >
-                                      <Pencil className="w-4 h-4" />
-                                    </Button>
-                                    <Button
-                                      variant="ghost"
-                                      size="sm"
-                                      onClick={() => handleRemoveAcao(acao.id)}
-                                    >
-                                      <Trash2 className="w-4 h-4 text-destructive" />
-                                    </Button>
-                                  </>
-                                )}
                               </div>
-                            </TableCell>
-                          </TableRow>
-                        );
-                      })}
-                    </TableBody>
-                  </Table>
-                </div>
+                            </>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </>
               )}
 
               <Button 
