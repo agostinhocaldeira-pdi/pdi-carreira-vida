@@ -152,6 +152,39 @@ export type Database = {
         }
         Relationships: []
       }
+      cache_processing_logs: {
+        Row: {
+          completed_at: string | null
+          created_at: string | null
+          duration_seconds: number | null
+          error_details: Json | null
+          id: string
+          started_at: string | null
+          users_failed: number | null
+          users_processed: number | null
+        }
+        Insert: {
+          completed_at?: string | null
+          created_at?: string | null
+          duration_seconds?: number | null
+          error_details?: Json | null
+          id?: string
+          started_at?: string | null
+          users_failed?: number | null
+          users_processed?: number | null
+        }
+        Update: {
+          completed_at?: string | null
+          created_at?: string | null
+          duration_seconds?: number | null
+          error_details?: Json | null
+          id?: string
+          started_at?: string | null
+          users_failed?: number | null
+          users_processed?: number | null
+        }
+        Relationships: []
+      }
       companies: {
         Row: {
           cnpj: string
@@ -1036,6 +1069,105 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      user_home_cache: {
+        Row: {
+          agenda_data: Json | null
+          cache_version: number | null
+          company_id: string | null
+          created_at: string | null
+          daily_quote: Json | null
+          diary_data: Json | null
+          gamification_data: Json | null
+          id: string
+          insight_data: Json | null
+          integrations_status: Json | null
+          is_company_employee: boolean | null
+          is_company_manager: boolean | null
+          is_plan_complete: boolean | null
+          last_updated_at: string | null
+          next_update_at: string | null
+          objectives_data: Json | null
+          okr_links: Json | null
+          pending_notifications: Json | null
+          plan_completion_details: Json | null
+          plano_vida_summary: Json | null
+          progress_stats: Json | null
+          stoic_reflection: Json | null
+          subscription_days_remaining: number | null
+          subscription_end_date: string | null
+          subscription_plan: string | null
+          subscription_status: string | null
+          tools_status: Json | null
+          update_triggered_by: string | null
+          user_id: string
+          user_roles: Json | null
+        }
+        Insert: {
+          agenda_data?: Json | null
+          cache_version?: number | null
+          company_id?: string | null
+          created_at?: string | null
+          daily_quote?: Json | null
+          diary_data?: Json | null
+          gamification_data?: Json | null
+          id?: string
+          insight_data?: Json | null
+          integrations_status?: Json | null
+          is_company_employee?: boolean | null
+          is_company_manager?: boolean | null
+          is_plan_complete?: boolean | null
+          last_updated_at?: string | null
+          next_update_at?: string | null
+          objectives_data?: Json | null
+          okr_links?: Json | null
+          pending_notifications?: Json | null
+          plan_completion_details?: Json | null
+          plano_vida_summary?: Json | null
+          progress_stats?: Json | null
+          stoic_reflection?: Json | null
+          subscription_days_remaining?: number | null
+          subscription_end_date?: string | null
+          subscription_plan?: string | null
+          subscription_status?: string | null
+          tools_status?: Json | null
+          update_triggered_by?: string | null
+          user_id: string
+          user_roles?: Json | null
+        }
+        Update: {
+          agenda_data?: Json | null
+          cache_version?: number | null
+          company_id?: string | null
+          created_at?: string | null
+          daily_quote?: Json | null
+          diary_data?: Json | null
+          gamification_data?: Json | null
+          id?: string
+          insight_data?: Json | null
+          integrations_status?: Json | null
+          is_company_employee?: boolean | null
+          is_company_manager?: boolean | null
+          is_plan_complete?: boolean | null
+          last_updated_at?: string | null
+          next_update_at?: string | null
+          objectives_data?: Json | null
+          okr_links?: Json | null
+          pending_notifications?: Json | null
+          plan_completion_details?: Json | null
+          plano_vida_summary?: Json | null
+          progress_stats?: Json | null
+          stoic_reflection?: Json | null
+          subscription_days_remaining?: number | null
+          subscription_end_date?: string | null
+          subscription_plan?: string | null
+          subscription_status?: string | null
+          tools_status?: Json | null
+          update_triggered_by?: string | null
+          user_id?: string
+          user_roles?: Json | null
+        }
+        Relationships: []
       }
       user_insight_audio: {
         Row: {
