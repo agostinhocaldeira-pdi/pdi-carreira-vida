@@ -112,8 +112,9 @@ const LeadP = () => {
             
             <div className="mt-6 p-6 rounded-xl border border-border/50 bg-muted/20 max-w-lg mx-auto">
               <div className="space-y-2 text-sm sm:text-base text-muted-foreground">
-                <p className="flex items-center justify-center gap-2">
-                  <strong>Teste o sistema por 30 dias, e avalie se faz sentido para você</strong>
+              <p className="flex flex-col items-center justify-center gap-1">
+                  <strong>Avalie por 30 dias, grátis.</strong>
+                  <span className="text-xs">(Não precisa cadastrar cartão)</span>
                 </p>
               </div>
             </div>
