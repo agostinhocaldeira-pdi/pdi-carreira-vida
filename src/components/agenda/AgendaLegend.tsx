@@ -1,8 +1,9 @@
 import { useState } from "react";
-import { HelpCircle, X, Zap, Footprints, Target, ClipboardList, Calendar, Sparkles } from "lucide-react";
+import { HelpCircle, X, Zap, Footprints, Target, ClipboardList, Calendar, Sparkles, ListTodo } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
+import { PendingTasksModal } from "./PendingTasksModal";
 
 // Cores das categorias (tarefas manuais)
 const categoryColors = [
@@ -22,6 +23,7 @@ const sourceTypes = [
   { icon: Target, label: 'Eisenhower', color: 'bg-orange-500', description: 'Matriz de Eisenhower' },
   { icon: ClipboardList, label: 'Meta', color: 'bg-blue-500', description: 'Meta do plano' },
   { icon: Calendar, label: 'Objetivo', color: 'bg-purple-500', description: 'Objetivo principal' },
+  { icon: ListTodo, label: 'Pendência', color: 'bg-violet-500', description: 'Lista de Pendências' },
 ];
 
 // Quadrantes Eisenhower (apenas os que aparecem na agenda)
@@ -36,6 +38,7 @@ interface AgendaLegendProps {
 
 export const AgendaLegend = ({ variant = 'compact' }: AgendaLegendProps) => {
   const [modalOpen, setModalOpen] = useState(false);
+  const [pendingTasksModalOpen, setPendingTasksModalOpen] = useState(false);
 
   // Versão inline (desktop) - mostra legenda resumida
   if (variant === 'inline') {
@@ -54,26 +57,47 @@ export const AgendaLegend = ({ variant = 'compact' }: AgendaLegendProps) => {
         >
           Ver todas
         </button>
+        <span className="text-muted-foreground/50">|</span>
+        <button
+          onClick={() => setPendingTasksModalOpen(true)}
+          className="text-primary hover:underline flex items-center gap-1"
+        >
+          <ListTodo className="w-3 h-3" />
+          Pendências
+        </button>
         
         <LegendModal open={modalOpen} onOpenChange={setModalOpen} />
+        <PendingTasksModal open={pendingTasksModalOpen} onOpenChange={setPendingTasksModalOpen} />
       </div>
     );
   }
 
-  // Versão compacta (mobile) - apenas botão que abre modal
+  // Versão compacta (mobile) - apenas botões que abrem modais
   return (
     <>
-      <Button
-        variant="ghost"
-        size="sm"
-        onClick={() => setModalOpen(true)}
-        className="text-xs text-muted-foreground hover:text-primary gap-1.5 h-8 px-2"
-      >
-        <HelpCircle className="w-3.5 h-3.5" />
-        <span>Legenda das cores</span>
-      </Button>
+      <div className="flex items-center gap-2">
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => setModalOpen(true)}
+          className="text-xs text-muted-foreground hover:text-primary gap-1.5 h-8 px-2"
+        >
+          <HelpCircle className="w-3.5 h-3.5" />
+          <span>Legenda</span>
+        </Button>
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => setPendingTasksModalOpen(true)}
+          className="text-xs text-muted-foreground hover:text-primary gap-1.5 h-8 px-2"
+        >
+          <ListTodo className="w-3.5 h-3.5" />
+          <span>Pendências</span>
+        </Button>
+      </div>
       
       <LegendModal open={modalOpen} onOpenChange={setModalOpen} />
+      <PendingTasksModal open={pendingTasksModalOpen} onOpenChange={setPendingTasksModalOpen} />
     </>
   );
 };

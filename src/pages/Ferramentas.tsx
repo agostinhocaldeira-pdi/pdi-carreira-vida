@@ -12,7 +12,8 @@ import {
   Sparkles, 
   LayoutGrid, 
   Brain,
-  Wrench
+  Wrench,
+  ListTodo
 } from "lucide-react";
 import LogoutButton from "@/components/LogoutButton";
 import { useRoleProtection } from "@/hooks/useRoleProtection";
@@ -75,6 +76,13 @@ const Ferramentas = () => {
       icon: Brain,
       link: "/ferramentas/crencas",
       color: "text-primary"
+    },
+    {
+      nome: "Lista de Pendências",
+      descricao: "Tire da mente as atividades pendentes do dia a dia",
+      icon: ListTodo,
+      link: "/ferramentas/lista-pendencias",
+      color: "text-accent"
     }
   ];
 

@@ -54,6 +54,7 @@ import PlanoVidaParaOnde from "./pages/PlanoVidaParaOnde";
 import PlanoVidaComoChegar from "./pages/PlanoVidaComoChegar";
 import Reflexao from "./pages/Reflexao";
 import Progresso from "./pages/Progresso";
+import ListaPendencias from "./pages/ListaPendencias";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -102,6 +103,7 @@ const App = () => (
                 <Route path="/ferramentas/smart" element={<MetodoSmart />} />
                 <Route path="/ferramentas/metodo-vvd" element={<MetodoVvd />} />
                 <Route path="/ferramentas/autoavaliacao-360" element={<Autoavaliacao360 />} />
+                <Route path="/ferramentas/lista-pendencias" element={<ListaPendencias />} />
                 <Route path="/integracoes" element={<Integracoes />} />
                 <Route path="/cadastrar-empresa" element={<CadastrarEmpresa />} />
                 <Route path="/dashboard-empresa" element={<DashboardEmpresa />} />
