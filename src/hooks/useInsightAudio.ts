@@ -93,8 +93,8 @@ export function useInsightAudio(insight: string | null) {
       );
 
       if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.error || 'Erro ao gerar áudio');
+        console.warn('[InsightAudio] ElevenLabs unavailable - credits may be exhausted');
+        return; // Silently fail - audio is optional
       }
 
       const audioBlob = await response.blob();
@@ -133,11 +133,10 @@ export function useInsightAudio(insight: string | null) {
       }
 
       setAudioUrl(signedData.signedUrl);
-      toast.success('Áudio gerado com sucesso!');
 
     } catch (error) {
-      console.error('Error generating audio:', error);
-      toast.error(error instanceof Error ? error.message : 'Erro ao gerar áudio');
+      console.warn('[InsightAudio] Error generating audio:', error);
+      // Silently fail - audio is optional feature
     } finally {
       setIsGenerating(false);
     }
@@ -177,8 +176,9 @@ export function useInsightAudio(insight: string | null) {
         );
 
         if (!response.ok) {
-          const errorData = await response.json().catch(() => ({}));
-          throw new Error(errorData.error || 'Erro ao gerar áudio');
+          console.warn('[InsightAudio] ElevenLabs unavailable - credits may be exhausted');
+          setIsGenerating(false);
+          return; // Silently fail
         }
 
         const audioBlob = await response.blob();
@@ -220,11 +220,10 @@ export function useInsightAudio(insight: string | null) {
 
           await audio.play();
           setIsPlaying(true);
-          toast.success('Áudio gerado com sucesso!');
         }
       } catch (error) {
-        console.error('Error generating audio:', error);
-        toast.error(error instanceof Error ? error.message : 'Erro ao gerar áudio');
+        console.warn('[InsightAudio] Error generating audio:', error);
+        // Silently fail - audio is optional
       } finally {
         setIsGenerating(false);
       }
