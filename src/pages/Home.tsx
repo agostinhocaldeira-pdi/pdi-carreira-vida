@@ -454,8 +454,8 @@ const Home = () => {
         {/* Trial Status Banner */}
         <TrialStatusBanner />
 
-        {/* Seu Objetivo Principal - Exibição no topo (oculto se não houver objetivos) */}
-        {objetivos.length > 0 && objetivos.some((obj: any) => obj.is_principal || obj.isPrincipal) && (
+        {/* Seu Objetivo Principal - Só exibe se houver objetivo principal */}
+        {objetivos.some((obj: any) => obj.is_principal || obj.isPrincipal) && (
           <section className="animate-slide-up">
             <div className="rounded-xl border-2 border-accent/30 bg-gradient-to-r from-accent/10 via-accent/5 to-transparent p-4 sm:p-5 lg:p-6">
               {objetivos
