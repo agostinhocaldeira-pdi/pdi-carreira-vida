@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Dialog,
   DialogContent,
@@ -8,54 +9,18 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { 
-  Target, 
-  Compass, 
-  CheckSquare, 
-  BookOpen, 
-  ArrowRight,
-  Sparkles
+  Sparkles,
+  Clock,
+  Calendar
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
 const FIRST_STEPS_KEY = "pdi_first_steps_shown";
 
-interface Step {
-  number: number;
-  title: string;
-  description: string;
-  icon: React.ReactNode;
-}
-
-const steps: Step[] = [
-  {
-    number: 1,
-    title: "Plano de Vida",
-    description: "Defina sua Visão de Vida Desejada (VVD), valores e áreas da vida",
-    icon: <Compass className="w-5 h-5" />,
-  },
-  {
-    number: 2,
-    title: "Meus Objetivos",
-    description: "Crie até 3 objetivos alinhados com sua VVD",
-    icon: <Target className="w-5 h-5" />,
-  },
-  {
-    number: 3,
-    title: "Mão na Massa",
-    description: "Defina metas e ações para alcançar seus objetivos",
-    icon: <CheckSquare className="w-5 h-5" />,
-  },
-  {
-    number: 4,
-    title: "Diário",
-    description: "Registre reflexões, conquistas e gratidão diariamente",
-    icon: <BookOpen className="w-5 h-5" />,
-  },
-];
-
 export const FirstStepsModal = () => {
   const [open, setOpen] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const checkFirstAccess = async () => {
@@ -120,6 +85,15 @@ export const FirstStepsModal = () => {
     setOpen(false);
   };
 
+  const handleStartNow = async () => {
+    await handleClose();
+    navigate('/plano-vida/quem-sou');
+  };
+
+  const handleSchedule = async () => {
+    await handleClose();
+  };
+
   return (
     <Dialog open={open} onOpenChange={(isOpen) => {
       if (!isOpen) handleClose();
@@ -130,42 +104,50 @@ export const FirstStepsModal = () => {
             <div className="w-10 h-10 sm:w-12 sm:h-12 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0">
               <Sparkles className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
             </div>
-            <DialogTitle className="text-lg sm:text-xl">Bem-vindo ao PDI! 🎯</DialogTitle>
+            <DialogTitle className="text-lg sm:text-xl">Parabéns pela sua decisão! 🎉</DialogTitle>
           </div>
           <DialogDescription className="text-sm sm:text-base">
-            Siga esta ordem para construir seu PDI de forma eficaz:
+            Parabéns pela sua decisão de construir seu futuro com o PDI.
           </DialogDescription>
         </DialogHeader>
 
-        <div className="space-y-2 sm:space-y-3 py-2 sm:py-4">
-          {steps.map((step, index) => (
-            <div 
-              key={step.number}
-              className="flex items-start gap-3 sm:gap-4 p-2 sm:p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors"
-            >
-              <div className="flex-shrink-0 w-7 h-7 sm:w-8 sm:h-8 bg-primary rounded-full flex items-center justify-center text-primary-foreground font-bold text-xs sm:text-sm">
-                {step.number}
-              </div>
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2">
-                  <span className="text-primary">{step.icon}</span>
-                  <h4 className="font-semibold text-foreground text-sm sm:text-base">{step.title}</h4>
-                </div>
-                <p className="text-xs sm:text-sm text-muted-foreground mt-0.5 sm:mt-1">
-                  {step.description}
-                </p>
-              </div>
-              {index < steps.length - 1 && (
-                <ArrowRight className="w-4 h-4 text-muted-foreground/50 flex-shrink-0 mt-1.5 sm:mt-2 hidden sm:block" />
-              )}
+        <div className="space-y-4 py-4">
+          <div className="p-4 rounded-lg bg-primary/5 border border-primary/20">
+            <h4 className="font-semibold text-foreground text-base mb-2">
+              Comece pelo Plano de Vida:
+            </h4>
+            <p className="text-sm text-foreground font-medium mb-2">
+              Faça o passo 1 "Quem sou eu"
+            </p>
+            <p className="text-sm text-muted-foreground mb-3">
+              Nesta atividade, você vai realizar exercícios de autoconhecimento. 
+              Com esse exercício você terá uma clareza maior sobre o que você realmente deseja para sua vida.
+            </p>
+            <div className="flex items-center gap-2 text-sm text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/30 p-2 rounded-md">
+              <Clock className="w-4 h-4 flex-shrink-0" />
+              <span>Essa etapa é muito importante. Faça com calma. Duração aproximada: 30 minutos.</span>
             </div>
-          ))}
+          </div>
+
+          <p className="text-sm text-muted-foreground text-center">
+            Você pode fazer agora ou cadastrar uma tarefa na sua agenda, para realizar no dia e hora que ficar melhor para você.
+          </p>
         </div>
 
-        <div className="flex justify-end pt-2 sticky bottom-0 bg-background pb-1">
-          <Button onClick={handleClose} className="gap-2 text-sm sm:text-base">
-            Começar minha jornada
-            <ArrowRight className="w-4 h-4" />
+        <div className="flex flex-col sm:flex-row gap-3 pt-2 sticky bottom-0 bg-background pb-1">
+          <Button 
+            variant="outline" 
+            onClick={handleSchedule} 
+            className="gap-2 text-sm sm:text-base flex-1"
+          >
+            <Calendar className="w-4 h-4" />
+            Vou agendar
+          </Button>
+          <Button 
+            onClick={handleStartNow} 
+            className="gap-2 text-sm sm:text-base flex-1"
+          >
+            Fazer agora
           </Button>
         </div>
       </DialogContent>
