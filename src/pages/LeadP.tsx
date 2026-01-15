@@ -161,11 +161,10 @@ const LeadP = () => {
             
             <div className="pt-6 space-y-4">
               <p className="text-lg sm:text-xl font-semibold text-foreground">
-                E é exatamente isso que o PDI – Carreira e Vida se tornou.
+                É para isso que o PDI Carreira e Vida foi desenvolvido.
               </p>
               <p className="text-base sm:text-lg text-muted-foreground leading-relaxed max-w-2xl mx-auto">
-                O PDI não é mais apenas um plano.<br />
-                Ele evoluiu para um <strong className="text-foreground">sistema completo</strong>, que integra vida pessoal, carreira, decisões financeiras e execução prática — tudo no mesmo lugar, de forma simples e aplicável.
+                Um sistema com método exclusivo.
               </p>
             </div>
             
