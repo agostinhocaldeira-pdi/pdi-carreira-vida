@@ -35,6 +35,7 @@ import { getTodayReflection } from "@/data/stoicReflections";
 import { useStoicAudioPreload } from "@/hooks/useStoicAudioPreload";
 import { useDailyQuote } from "@/hooks/useDailyQuote";
 import { QuickAccessNav } from "@/components/home/QuickAccessNav";
+import { ProductivityTipsSection } from "@/components/home/ProductivityTipsSection";
 
 
 const Home = () => {
@@ -585,7 +586,7 @@ const Home = () => {
         </section>
 
 
-        {/* Plano de Vida Section */}
+        {/* Plano de Vida Section OR Productivity Tips */}
         <section className="animate-slide-up overflow-hidden max-w-full" style={{ animationDelay: "0.2s" }} data-section="plano-de-vida">
           {(() => {
             const isValoresComplete = valores.some((v: string) => String(v).trim() !== "");
@@ -612,10 +613,17 @@ const Home = () => {
             const step2Done = objetivos.length > 0;
             const step3Done = habilidadesCount > 0;
 
+            const allStepsComplete = step1Done && step2Done && step3Done;
+
+            // If all steps are complete, show productivity tips instead
+            if (allStepsComplete) {
+              return <ProductivityTipsSection />;
+            }
+
             const step2Locked = !step1Done;
             const step3Locked = !step1Done || !step2Done;
 
-            // Mensagem dinâmica do passo atual (sempre visível para evitar “piscar” no mobile)
+            // Mensagem dinâmica do passo atual (sempre visível para evitar "piscar" no mobile)
             let stepNumber = 1;
             let stepTitle = "O primeiro passo da sua transformação";
             let stepDescription = "Antes de mudar sua vida, você precisa se enxergar com clareza. Nesta etapa, você vai construir seu VVD, definir seus Valores e avaliar sua Roda da Vida.";
@@ -628,10 +636,6 @@ const Home = () => {
               stepNumber = 3;
               stepTitle = "O terceiro passo da sua transformação";
               stepDescription = "Você sabe quem é e para onde vai. Falta criar o plano de ação com metas claras para conquistar seus objetivos.";
-            } else if (step1Done && step2Done && step3Done) {
-              stepNumber = 3;
-              stepTitle = "Parabéns — seu Plano de Vida está completo";
-              stepDescription = "Agora é manter o ritmo: revise seus objetivos, ajuste suas metas e acompanhe seu progresso para continuar evoluindo.";
             }
 
             return (
