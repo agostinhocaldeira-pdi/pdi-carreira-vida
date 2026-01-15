@@ -1,9 +1,10 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { format, addDays, startOfWeek, isSameDay, isToday } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface AgendaCalendarProps {
   selectedDate: Date;
@@ -13,22 +14,71 @@ interface AgendaCalendarProps {
 
 export const AgendaCalendar = ({ selectedDate, onDateSelect, taskDates = [] }: AgendaCalendarProps) => {
   const scrollRef = useRef<HTMLDivElement>(null);
+  const isMobile = useIsMobile();
   const [weekStart, setWeekStart] = useState(() => startOfWeek(new Date(), { weekStartsOn: 1 }));
+  const [displayedMonth, setDisplayedMonth] = useState<Date>(selectedDate);
 
-  // Generate 7 days starting from weekStart
-  const days = Array.from({ length: 7 }, (_, i) => addDays(weekStart, i));
+  // Show 7 days on mobile, 14 on desktop
+  const daysToShow = isMobile ? 7 : 14;
+  const daysToNavigate = isMobile ? 7 : 14;
+
+  // Generate days starting from weekStart
+  const days = Array.from({ length: daysToShow }, (_, i) => addDays(weekStart, i));
 
   const goToPreviousWeek = () => {
-    setWeekStart(prev => addDays(prev, -7));
+    setWeekStart(prev => addDays(prev, -daysToNavigate));
   };
 
   const goToNextWeek = () => {
-    setWeekStart(prev => addDays(prev, 7));
+    setWeekStart(prev => addDays(prev, daysToNavigate));
   };
 
   const hasTasksOnDay = (date: Date) => {
     return taskDates.some(taskDate => isSameDay(taskDate, date));
   };
+
+  // Update displayed month based on scroll position
+  const updateDisplayedMonth = useCallback(() => {
+    if (!scrollRef.current) return;
+
+    const container = scrollRef.current;
+    const scrollLeft = container.scrollLeft;
+    const dayWidth = 56; // approximate width of each day button + gap
+    
+    // Calculate which day index is at the center of the visible area
+    const containerWidth = container.offsetWidth;
+    const centerScroll = scrollLeft + containerWidth / 2;
+    const centerIndex = Math.floor(centerScroll / dayWidth);
+    
+    // Get the day at the center (clamped to valid range)
+    const clampedIndex = Math.max(0, Math.min(centerIndex, days.length - 1));
+    const visibleCenterDay = days[clampedIndex];
+    
+    if (visibleCenterDay) {
+      setDisplayedMonth(visibleCenterDay);
+    }
+  }, [days]);
+
+  // Handle scroll events
+  useEffect(() => {
+    const container = scrollRef.current;
+    if (!container) return;
+
+    const handleScroll = () => {
+      updateDisplayedMonth();
+    };
+
+    container.addEventListener('scroll', handleScroll, { passive: true });
+    return () => container.removeEventListener('scroll', handleScroll);
+  }, [updateDisplayedMonth]);
+
+  // Update displayed month when weekStart changes
+  useEffect(() => {
+    // Use the first day of the visible range as default
+    if (days.length > 0) {
+      setDisplayedMonth(days[0]);
+    }
+  }, [weekStart]);
 
   // Scroll to center selected day on mount
   useEffect(() => {
@@ -49,7 +99,7 @@ export const AgendaCalendar = ({ selectedDate, onDateSelect, taskDates = [] }: A
       <div className="flex items-center justify-between">
         <div>
           <p className="text-sm text-muted-foreground uppercase tracking-wide">
-            {format(selectedDate, "MMMM yyyy", { locale: ptBR })}
+            {format(displayedMonth, "MMMM yyyy", { locale: ptBR })}
           </p>
           <p className="text-lg font-semibold text-primary">
             {isToday(selectedDate) ? "HOJE" : format(selectedDate, "EEEE", { locale: ptBR }).toUpperCase()}
