@@ -173,7 +173,7 @@ export const AgendaTaskModal = ({
 
             <div className="space-y-2">
               <Label className="text-xs uppercase text-muted-foreground">Hora</Label>
-              <Select value={time} onValueChange={setTime} disabled={isReadOnly}>
+              <Select value={time} onValueChange={setTime}>
                 <SelectTrigger className="border-0 border-b rounded-none px-0">
                   <div className="flex items-center">
                     <Clock className="mr-2 h-4 w-4" />
@@ -262,7 +262,7 @@ export const AgendaTaskModal = ({
           {/* Read-only info for non-manual tasks */}
           {isReadOnly && (
             <div className="bg-muted/50 rounded-lg p-3 text-sm text-muted-foreground">
-              <p>Esta tarefa foi criada automaticamente e não pode ser editada aqui.</p>
+              <p>Esta tarefa foi criada automaticamente. Apenas o horário pode ser alterado.</p>
               <p className="mt-1">
                 Origem: {
                   task.source_type === 'action' ? 'Ação (Mão na Massa)' :
@@ -290,22 +290,29 @@ export const AgendaTaskModal = ({
               Excluir
             </Button>
           )}
-          {!isReadOnly && (
+          {isReadOnly ? (
+            <>
+              <Button
+                variant="outline"
+                onClick={() => onOpenChange(false)}
+                className="flex-1"
+              >
+                Cancelar
+              </Button>
+              <Button
+                onClick={handleSave}
+                className="flex-1 bg-primary hover:bg-primary/90"
+              >
+                Salvar Horário
+              </Button>
+            </>
+          ) : (
             <Button
               onClick={handleSave}
               disabled={!title.trim()}
               className="flex-1 bg-primary hover:bg-primary/90"
             >
               {isEditMode ? 'Salvar' : 'Criar Tarefa'}
-            </Button>
-          )}
-          {isReadOnly && (
-            <Button
-              variant="outline"
-              onClick={() => onOpenChange(false)}
-              className="flex-1"
-            >
-              Fechar
             </Button>
           )}
         </div>
