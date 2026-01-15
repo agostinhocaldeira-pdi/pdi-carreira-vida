@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useCallback, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useCallback, ReactNode, useEffect } from 'react';
 
 export type ActionType = 
   | 'diary' 
@@ -38,12 +38,41 @@ const progressMirrorMessages = [
   "Você escolheu agir quando poderia ter adiado. Isso diz muito sobre quem você está se tornando."
 ];
 
+// Helper function to add action points to gamification
+const addGamificationPoint = () => {
+  const storedStreak = localStorage.getItem('user_streak');
+  const streakData = storedStreak ? JSON.parse(storedStreak) : {
+    current_streak: 0,
+    longest_streak: 0,
+    last_activity_date: null,
+    total_points: 0,
+    level: 1,
+  };
+  
+  const newPoints = streakData.total_points + 1;
+  // Calculate new level: 0-50 = 1, 51-100 = 2, 100+ = 3
+  let newLevel = 1;
+  if (newPoints > 100) newLevel = 3;
+  else if (newPoints > 50) newLevel = 2;
+  
+  const updatedStreak = {
+    ...streakData,
+    total_points: newPoints,
+    level: newLevel,
+  };
+  
+  localStorage.setItem('user_streak', JSON.stringify(updatedStreak));
+  
+  return { previousLevel: streakData.level, newLevel };
+};
+
 export function ActionCelebrationProvider({ children }: { children: ReactNode }) {
   const [sessionActionCount, setSessionActionCount] = useState(0);
   const [showProgressMirror, setShowProgressMirror] = useState(false);
   const [showCongratulation, setShowCongratulation] = useState(false);
   const [lastCelebration, setLastCelebration] = useState<{ type: ActionType; name?: string } | null>(null);
   const [progressMirrorMessage, setProgressMirrorMessage] = useState('');
+  const [levelUpReward, setLevelUpReward] = useState<string | null>(null);
   
   // Track how many actions of each type have been created in this session
   const [actionTypeCounts, setActionTypeCounts] = useState<Record<ActionType, number>>({
@@ -76,6 +105,18 @@ export function ActionCelebrationProvider({ children }: { children: ReactNode })
     const newCount = sessionActionCount + 1;
     setSessionActionCount(newCount);
     setLastCelebration({ type: actionType, name: actionName });
+    
+    // Add 1 point for each action in the gamification system
+    const { previousLevel, newLevel } = addGamificationPoint();
+    
+    // Check for level up rewards (insights)
+    if (newLevel > previousLevel) {
+      if (newLevel === 2) {
+        setLevelUpReward('Intermediário');
+      } else if (newLevel === 3) {
+        setLevelUpReward('Experiente');
+      }
+    }
     
     // Only show congratulation toast for the FIRST action of each type
     if (currentTypeCount === 0) {
@@ -125,6 +166,12 @@ export function ActionCelebrationProvider({ children }: { children: ReactNode })
           actionType={lastCelebration.type}
           actionName={lastCelebration.name}
           onClose={dismissCongratulation} 
+        />
+      )}
+      {levelUpReward && (
+        <LevelUpModal 
+          levelName={levelUpReward} 
+          onClose={() => setLevelUpReward(null)} 
         />
       )}
     </ActionCelebrationContext.Provider>
@@ -228,6 +275,51 @@ function ProgressMirrorModal({
               className="w-full bg-primary text-primary-foreground py-3 px-6 rounded-lg font-medium hover:bg-primary/90 transition-colors"
             >
               Continue firme! 💪
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// Level Up Modal Component - shows when user reaches Intermediário or Experiente
+function LevelUpModal({ 
+  levelName, 
+  onClose 
+}: { 
+  levelName: string; 
+  onClose: () => void;
+}) {
+  const isExpert = levelName === 'Experiente';
+  
+  return (
+    <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/60 animate-in fade-in duration-300">
+      <div className="bg-card border-2 border-primary/30 rounded-2xl shadow-2xl max-w-md w-full p-8 animate-in zoom-in-95 duration-300">
+        <div className="text-center space-y-5">
+          <div className="w-20 h-20 mx-auto bg-gradient-to-br from-primary/30 to-primary/10 rounded-full flex items-center justify-center">
+            <span className="text-4xl">{isExpert ? '⭐' : '🚀'}</span>
+          </div>
+          
+          <h2 className="text-2xl font-bold text-foreground">
+            Parabéns! 🎉
+          </h2>
+          
+          <div className="space-y-2">
+            <p className="text-lg font-semibold text-primary">
+              Você alcançou o nível {levelName}!
+            </p>
+            <p className="text-muted-foreground">
+              Como recompensa, você ganhou <span className="font-bold text-primary">1 Insight personalizado</span> para usar quando quiser.
+            </p>
+          </div>
+          
+          <div className="pt-3">
+            <button
+              onClick={onClose}
+              className="w-full bg-primary text-primary-foreground py-3 px-6 rounded-lg font-medium hover:bg-primary/90 transition-colors"
+            >
+              Incrível! 🎯
             </button>
           </div>
         </div>

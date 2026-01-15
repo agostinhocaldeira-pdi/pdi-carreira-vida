@@ -129,47 +129,31 @@ export const faqItems = [
     ]
   },
   {
-    category: "Gamificação e Badges",
+    category: "Gamificação e Sua Jornada",
     questions: [
       {
-        question: "O que são os badges e como funcionam?",
-        answer: "Badges são conquistas que você desbloqueia ao cumprir determinados critérios no PDI. Eles representam seu progresso e dedicação, além de conceder pontos que aumentam seu nível. Os badges são exibidos na seção 'Seu Progresso' do Dashboard."
+        question: "Como funciona o sistema de pontos?",
+        answer: "O sistema é simples: cada dia que você acessa e usa o PDI, ganha 1 ponto. Além disso, cada ação dentro do sistema (cadastrar algo, marcar como feito, concluir uma tarefa) também gera 1 ponto. Os pontos acumulam e determinam seu nível."
       },
       {
-        question: "Quais são os badges disponíveis?",
-        answer: "Existem 17 badges divididos em categorias: Diário (Primeiro Passo, Semana Consistente, Mês de Reflexão), Objetivos (Visionário, Foco Total), Metas (Planejador, Estrategista), Ações (Executor, Máquina de Ação), Plano de Vida (Visão Clara, Valores Definidos), Ferramentas (Autoconhecimento, Analista, Metas SMART) e Nível (Aprendiz, Praticante, Mestre)."
+        question: "Quais são os níveis e suas recompensas?",
+        answer: "🌱 Iniciante (0-50 pontos): Você está começando sua jornada de desenvolvimento. 🚀 Intermediário (51-100 pontos): Ao atingir este nível, você ganha 1 Insight personalizado como recompensa! ⭐ Experiente (acima de 100 pontos): Ao atingir este nível, você ganha mais 1 Insight personalizado!"
       },
       {
-        question: "Como desbloquear os badges de Diário?",
-        answer: "📝 Primeiro Passo (10 pts): Registre seu primeiro dia no diário. 🔥 Semana Consistente (50 pts): Registre 7 dias consecutivos no diário. 🏆 Mês de Reflexão (200 pts): Registre 30 dias consecutivos no diário."
+        question: "O que são os Insights que ganho ao subir de nível?",
+        answer: "Insights são análises personalizadas geradas por IA com base nos seus dados do PDI. Ao atingir o nível Intermediário (51 pontos) e o nível Experiente (101 pontos), você recebe 1 Insight de presente em cada conquista."
       },
       {
-        question: "Como desbloquear os badges de Objetivos e Metas?",
-        answer: "🎯 Visionário (10 pts): Crie seu primeiro objetivo. 🎯 Foco Total (30 pts): Tenha 3 objetivos ativos. 📊 Planejador (10 pts): Crie sua primeira meta. 📊 Estrategista (100 pts): Crie 10 metas no total."
-      },
-      {
-        question: "Como desbloquear os badges de Ações?",
-        answer: "⚡ Executor (10 pts): Complete sua primeira ação marcando-a como 'concluído'. ⚡ Máquina de Ação (200 pts): Complete 50 ações no total."
-      },
-      {
-        question: "Como desbloquear os badges de Plano de Vida?",
-        answer: "🌟 Visão Clara (50 pts): Defina e salve sua Visão de Vida Desejada (VVD). 💎 Valores Definidos (50 pts): Complete o exercício de Valores com pelo menos 6 valores selecionados."
-      },
-      {
-        question: "Como desbloquear os badges de Ferramentas?",
-        answer: "🎡 Autoconhecimento (30 pts): Complete a Roda da Vida com todas as 10 áreas preenchidas. 📋 Analista (30 pts): Complete a Análise SWOT com pelo menos um item. 🧠 Metas SMART (40 pts): Crie uma meta usando o método SMART na página de Ferramentas."
-      },
-      {
-        question: "Como desbloquear os badges de Nível?",
-        answer: "⭐ Aprendiz (100 pts): Alcance o nível 5. ⭐ Praticante (200 pts): Alcance o nível 10. 👑 Mestre (500 pts): Alcance o nível 25. Você ganha níveis acumulando pontos ao desbloquear outros badges."
-      },
-      {
-        question: "Como funciona o sistema de níveis?",
-        answer: "Cada badge desbloqueado concede pontos. Esses pontos acumulam e determinam seu nível atual. Os primeiros níveis exigem menos pontos, mas a quantidade necessária aumenta progressivamente. Por exemplo: Nível 2 = 50 pts, Nível 5 = 500 pts, Nível 10 = 2.250 pts, Nível 25 = 10.500 pts."
+        question: "Como ganho pontos rapidamente?",
+        answer: "Acesse o sistema todos os dias (1 ponto por dia) e realize ações como: cadastrar objetivos, metas e ações, completar tarefas, preencher o diário, usar as ferramentas de autoconhecimento. Cada ação conta 1 ponto!"
       },
       {
         question: "O que é o streak e como funciona?",
-        answer: "O streak (sequência) conta quantos dias consecutivos você registrou atividades no diário. Se você pular um dia, o streak volta para 1. Seu maior streak (recorde) fica registrado. Manter streaks altos desbloqueia badges como 'Semana Consistente' e 'Mês de Reflexão'."
+        answer: "O streak (sequência) conta quantos dias consecutivos você acessou o sistema. Se você pular um dia, o streak volta para 1. Seu maior streak (recorde) fica registrado. Manter um streak alto ajuda a acumular pontos mais rapidamente."
+      },
+      {
+        question: "Onde vejo meu progresso na jornada?",
+        answer: "Na seção 'Sua Jornada' do Dashboard você encontra seu nível atual, pontos acumulados, streak de dias consecutivos e a barra de progresso para o próximo nível."
       }
     ]
   },
