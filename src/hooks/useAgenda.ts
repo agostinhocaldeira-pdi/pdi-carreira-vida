@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import { format, isSameDay, parseISO, startOfDay } from "date-fns";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { useHomeCache } from "@/hooks/useHomeCache";
 import { AgendaTask } from "@/components/agenda/AgendaTaskCard";
 
 interface AgendaEvent {
