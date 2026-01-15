@@ -786,6 +786,26 @@ const MetodoVvd = () => {
                       spellCheck
                     />
                   </div>
+
+                  {/* Botão Salvar Informações Complementares */}
+                  <div className="pt-4 border-t border-muted">
+                    <Button
+                      onClick={async () => {
+                        await saveSurveyData();
+                        toast.success("Informações complementares salvas!", {
+                          description: "Esses dados serão utilizados para gerar insights mais profundos."
+                        });
+                      }}
+                      disabled={!surveyData.currentPhase && !surveyData.expectations && !surveyData.biggestChallenge && !surveyData.motivationSource}
+                      className="w-full bg-gradient-to-r from-accent to-primary hover:opacity-90"
+                    >
+                      <Check className="h-4 w-4 mr-2" />
+                      Salvar Informações Complementares
+                    </Button>
+                    <p className="text-xs text-muted-foreground text-center mt-2">
+                      💡 Essas informações serão utilizadas para gerar insights personalizados mais profundos
+                    </p>
+                  </div>
                 </CardContent>
               </Card>
             )}
