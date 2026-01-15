@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { format, isToday } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import { Plus, CalendarDays, Sparkles } from "lucide-react";
+import { Plus, CalendarDays } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -9,10 +9,13 @@ import { PDILoader } from "@/components/ui/pdi-loader";
 import { AgendaCalendar } from "./AgendaCalendar";
 import { AgendaTaskCard, AgendaTask } from "./AgendaTaskCard";
 import { AgendaTaskModal } from "./AgendaTaskModal";
+import { AgendaLegend } from "./AgendaLegend";
 import { useAgenda } from "@/hooks/useAgenda";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
 
 export const Agenda = () => {
+  const isMobile = useIsMobile();
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedTask, setSelectedTask] = useState<AgendaTask | null>(null);
@@ -120,6 +123,11 @@ export const Agenda = () => {
               </div>
             </ScrollArea>
           )}
+
+          {/* Legend */}
+          <div className="pt-2 border-t border-border/50">
+            <AgendaLegend variant={isMobile ? 'compact' : 'inline'} />
+          </div>
         </CardContent>
 
         {/* Floating Add Button */}
