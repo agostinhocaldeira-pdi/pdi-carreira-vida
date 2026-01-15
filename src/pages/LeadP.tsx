@@ -37,6 +37,7 @@ import lucasSa from "@/assets/testimonials/lucas-sa.jpg";
 const LeadP = () => {
   const navigate = useNavigate();
   const [videoModalUrl, setVideoModalUrl] = useState<string | null>(null);
+  const [videoStarted, setVideoStarted] = useState(false);
 
   const faqItems = [
     {
@@ -85,13 +86,34 @@ const LeadP = () => {
           {/* Video de Apresentação */}
           <div className="w-full max-w-3xl mx-auto mb-8">
             <div className="relative aspect-video rounded-xl overflow-hidden shadow-2xl border border-border/30">
-              <iframe
-                src="https://www.youtube.com/embed/k5xnoCgCuCw"
-                title="Apresentação do PDI"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                allowFullScreen
-                className="absolute inset-0 w-full h-full"
-              />
+              {!videoStarted ? (
+                // Capa do vídeo
+                <div 
+                  className="absolute inset-0 bg-gradient-to-br from-primary/90 via-primary to-primary/80 flex flex-col items-center justify-center cursor-pointer group"
+                  onClick={() => setVideoStarted(true)}
+                >
+                  <div className="absolute inset-0 bg-[url('https://img.youtube.com/vi/k5xnoCgCuCw/maxresdefault.jpg')] bg-cover bg-center opacity-20" />
+                  <div className="relative z-10 text-center px-4">
+                    <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center mx-auto mb-4 group-hover:scale-110 group-hover:bg-white/30 transition-all duration-300 shadow-2xl">
+                      <Play className="w-8 h-8 sm:w-10 sm:h-10 text-white fill-white ml-1" />
+                    </div>
+                    <p className="text-white text-lg sm:text-xl md:text-2xl font-semibold drop-shadow-lg">
+                      Clique aqui para conhecer o PDI
+                    </p>
+                    <p className="text-white/80 text-sm sm:text-base mt-2">
+                      2 minutos que podem mudar sua vida
+                    </p>
+                  </div>
+                </div>
+              ) : (
+                <iframe
+                  src="https://www.youtube.com/embed/k5xnoCgCuCw?autoplay=1"
+                  title="Apresentação do PDI"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  allowFullScreen
+                  className="absolute inset-0 w-full h-full"
+                />
+              )}
             </div>
           </div>
 
