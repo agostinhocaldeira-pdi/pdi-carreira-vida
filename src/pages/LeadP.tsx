@@ -79,9 +79,12 @@ const LeadP = () => {
           <Badge variant="secondary" className="mb-4 text-xs sm:text-sm">
             O PDI
           </Badge>
-          <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold mb-6 text-foreground leading-tight">
-            Pare de desistir no meio do caminho e conquiste seus maiores sonhos.
+          <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold mb-3 text-foreground leading-tight">
+            Sua evolução está esperando por você.
           </h1>
+          <p className="text-base sm:text-lg md:text-xl text-muted-foreground mb-6 max-w-2xl mx-auto">
+            Cada dia é uma nova oportunidade de transformar seus sonhos em conquistas reais.
+          </p>
 
           {/* Video de Apresentação */}
           <div className="w-full max-w-3xl mx-auto mb-8">
