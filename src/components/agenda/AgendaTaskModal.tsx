@@ -191,14 +191,13 @@ export const AgendaTaskModal = ({
             </div>
           </div>
 
-          {/* Description */}
+          {/* Description - always editable */}
           <div className="space-y-2">
             <Label className="text-xs uppercase text-muted-foreground">Notas</Label>
             <Textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               placeholder="Adicionar notas..."
-              disabled={isReadOnly}
               className="border-0 border-b rounded-none focus-visible:ring-0 px-0 min-h-[60px] resize-none"
             />
           </div>
@@ -262,7 +261,7 @@ export const AgendaTaskModal = ({
           {/* Read-only info for non-manual tasks */}
           {isReadOnly && (
             <div className="bg-muted/50 rounded-lg p-3 text-sm text-muted-foreground">
-              <p>Esta tarefa foi criada automaticamente. Apenas o horário pode ser alterado.</p>
+              <p>Esta tarefa foi criada automaticamente. Apenas o horário e as notas podem ser alterados.</p>
               <p className="mt-1">
                 Origem: {
                   task.source_type === 'action' ? 'Ação (Mão na Massa)' :
@@ -303,7 +302,7 @@ export const AgendaTaskModal = ({
                 onClick={handleSave}
                 className="flex-1 bg-primary hover:bg-primary/90"
               >
-                Salvar Horário
+                Salvar
               </Button>
             </>
           ) : (
