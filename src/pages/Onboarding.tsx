@@ -36,6 +36,13 @@ const Onboarding = () => {
     estado: "",
   });
 
+  // MUDANÇA TEMPORÁRIA: Pular onboarding e ir direto para home
+  // Para reativar as páginas de bem-vindo e endereço, remova este useEffect
+  useEffect(() => {
+    localStorage.setItem("onboardingComplete", "true");
+    navigate("/home", { replace: true });
+  }, [navigate]);
+
   // Obter usuário autenticado do Supabase
   useEffect(() => {
     const getUser = async () => {
