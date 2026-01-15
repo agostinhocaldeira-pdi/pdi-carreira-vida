@@ -419,7 +419,7 @@ const PlanoVidaQuemSou = () => {
                       className="gap-2 text-xs sm:text-sm"
                     >
                       <Target className="w-4 h-4" />
-                      Meu VVD
+                      Criar meu VVD
                     </Button>
                     <div className="flex gap-2 w-full sm:w-auto justify-end">
                       {!isEditingVvd && (
