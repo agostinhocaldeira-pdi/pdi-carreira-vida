@@ -57,10 +57,12 @@ export function useStoicAudioPreload() {
           const result = await response.json();
           console.log("[StoicAudioPreload] Audio ready:", result.audioUrl);
         } else {
-          console.warn("[StoicAudioPreload] Failed to generate audio");
+          // Silently fail - ElevenLabs credits may be exhausted
+          console.log("[StoicAudioPreload] Audio generation skipped - service unavailable");
         }
       } catch (error) {
-        console.warn("[StoicAudioPreload] Error:", error);
+        // Silently fail - audio is optional
+        console.log("[StoicAudioPreload] Audio preload skipped:", error);
       }
     };
 
