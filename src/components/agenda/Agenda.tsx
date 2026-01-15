@@ -131,16 +131,17 @@ export const Agenda = () => {
                           />
                         );
                       }
-                      // Múltiplas tarefas no mesmo horário - renderiza em grid
+                      // Múltiplas tarefas no mesmo horário - renderiza em flex row
                       return (
-                        <div key={time} className="grid grid-cols-2 gap-2">
+                        <div key={time} className="flex gap-2">
                           {timeTasks.map((task) => (
-                            <AgendaTaskCard
-                              key={task.id}
-                              task={task}
-                              onToggleComplete={toggleComplete}
-                              onClick={handleTaskClick}
-                            />
+                            <div key={task.id} className="flex-1 min-w-0">
+                              <AgendaTaskCard
+                                task={task}
+                                onToggleComplete={toggleComplete}
+                                onClick={handleTaskClick}
+                              />
+                            </div>
                           ))}
                         </div>
                       );
