@@ -79,8 +79,7 @@ const LeadP = () => {
             O PDI
           </Badge>
           <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold mb-6 text-foreground leading-tight">
-            O PDI é mais do que um sistema para planejar a vida.<br />
-            É um sistema para viver a vida com direção e conquistas.
+            Pare de desistir no meio do caminho e conquiste seus maiores sonhos.
           </h1>
 
           {/* Video de Apresentação */}
