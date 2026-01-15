@@ -62,8 +62,15 @@ serve(async (req) => {
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error('ElevenLabs API error:', errorText);
-      throw new Error(`ElevenLabs API error: ${response.status}`);
+      console.log('ElevenLabs API unavailable (possibly no credits):', response.status);
+      // Return empty response with unavailable flag instead of error
+      return new Response(
+        JSON.stringify({ unavailable: true, message: 'Audio service temporarily unavailable' }),
+        {
+          status: 200,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        }
+      );
     }
 
     const audioBuffer = await response.arrayBuffer();
