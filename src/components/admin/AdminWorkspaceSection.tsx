@@ -3,7 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { PendingTasksKanban } from "@/components/pending-tasks/PendingTasksKanban";
+import { AdminPendingTasksKanban } from "@/components/admin/AdminPendingTasksKanban";
 import { ClipboardList, StickyNote, ChevronDown, ChevronUp, Save } from "lucide-react";
 import { toast } from "sonner";
 
@@ -61,7 +61,7 @@ const AdminWorkspaceSection = () => {
                 Lista de Pendências
               </h3>
               <div className="border rounded-lg p-3 bg-muted/30">
-                <PendingTasksKanban compact showLink />
+                <AdminPendingTasksKanban />
               </div>
             </div>
 
