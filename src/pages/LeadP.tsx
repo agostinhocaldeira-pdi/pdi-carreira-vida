@@ -115,11 +115,6 @@ const LeadP = () => {
                 <p className="flex items-center justify-center gap-2">
                   <strong>Teste o sistema por 30 dias, e avalie se faz sentido para você</strong>
                 </p>
-                <p className="flex items-start justify-center gap-2 text-left">
-                  <CheckCircle2 className="h-4 w-4 text-primary mt-1 flex-shrink-0" />
-                  <span>Depois de 30 dias, se você quiser continuar, é só efetivar sua assinatura.<br />
-                  Por apenas R$ 67,00, você garante o acesso ao sistema por um ano, e ainda ganha + 30 dias para pagar.</span>
-                </p>
               </div>
             </div>
           </div>
