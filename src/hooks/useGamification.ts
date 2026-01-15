@@ -23,7 +23,9 @@ export interface UserStreak {
   level: number;
 }
 
-const LEVEL_THRESHOLDS = [0, 50, 150, 300, 500, 750, 1050, 1400, 1800, 2250, 2750, 3300, 3900, 4550, 5250, 6000, 6800, 7650, 8550, 9500, 10500];
+// Simplified level system: Iniciante (0-50), Intermediário (51-100), Experiente (100+)
+const LEVEL_NAMES = ['Iniciante', 'Intermediário', 'Experiente'] as const;
+type LevelName = typeof LEVEL_NAMES[number];
 
 export function useGamification() {
   const [achievements, setAchievements] = useState<Achievement[]>([]);
@@ -37,6 +39,7 @@ export function useGamification() {
   });
   const [isLoading, setIsLoading] = useState(true);
   const [newAchievement, setNewAchievement] = useState<Achievement | null>(null);
+  const [levelUpReward, setLevelUpReward] = useState<LevelName | null>(null);
 
   // Load achievements from localStorage (mock) or Supabase
   useEffect(() => {
@@ -96,29 +99,78 @@ export function useGamification() {
     }
   };
 
+  // Simplified level calculation:
+  // 0-50 points = Iniciante (level 1)
+  // 51-100 points = Intermediário (level 2)
+  // 100+ points = Experiente (level 3)
   const calculateLevel = (points: number): number => {
-    let level = 1;
-    for (let i = 0; i < LEVEL_THRESHOLDS.length; i++) {
-      if (points >= LEVEL_THRESHOLDS[i]) {
-        level = i + 1;
-      } else {
-        break;
-      }
-    }
-    return level;
+    if (points > 100) return 3; // Experiente
+    if (points > 50) return 2; // Intermediário
+    return 1; // Iniciante
   };
 
-  const getProgressToNextLevel = (): { current: number; next: number; percentage: number } => {
-    const currentThreshold = LEVEL_THRESHOLDS[streak.level - 1] || 0;
-    const nextThreshold = LEVEL_THRESHOLDS[streak.level] || currentThreshold + 1000;
-    const progress = streak.total_points - currentThreshold;
-    const needed = nextThreshold - currentThreshold;
-    return {
-      current: progress,
-      next: needed,
-      percentage: Math.min((progress / needed) * 100, 100),
-    };
+  const getLevelName = (level: number): LevelName => {
+    return LEVEL_NAMES[Math.min(level - 1, 2)];
   };
+
+  const getProgressToNextLevel = (): { current: number; next: number; percentage: number; levelName: LevelName } => {
+    const levelName = getLevelName(streak.level);
+    
+    if (streak.level === 1) {
+      // Iniciante: progressing to 51 points
+      return {
+        current: streak.total_points,
+        next: 51,
+        percentage: Math.min((streak.total_points / 51) * 100, 100),
+        levelName,
+      };
+    } else if (streak.level === 2) {
+      // Intermediário: progressing to 101 points
+      return {
+        current: streak.total_points - 51,
+        next: 50, // 51 to 101
+        percentage: Math.min(((streak.total_points - 51) / 50) * 100, 100),
+        levelName,
+      };
+    } else {
+      // Experiente: max level
+      return {
+        current: streak.total_points,
+        next: streak.total_points,
+        percentage: 100,
+        levelName,
+      };
+    }
+  };
+
+  // Add points for any action in the system
+  const addActionPoint = useCallback(() => {
+    const previousLevel = streak.level;
+    const newPoints = streak.total_points + 1;
+    const newLevel = calculateLevel(newPoints);
+    
+    const updatedStreak = {
+      ...streak,
+      total_points: newPoints,
+      level: newLevel,
+    };
+    
+    setStreak(updatedStreak);
+    localStorage.setItem('user_streak', JSON.stringify(updatedStreak));
+    
+    // Check for level up rewards (insights)
+    if (newLevel > previousLevel) {
+      if (newLevel === 2) {
+        setLevelUpReward('Intermediário');
+      } else if (newLevel === 3) {
+        setLevelUpReward('Experiente');
+      }
+    }
+  }, [streak]);
+
+  const dismissLevelUpReward = useCallback(() => {
+    setLevelUpReward(null);
+  }, []);
 
   const unlockAchievement = useCallback((code: string) => {
     if (userAchievements.includes(code)) return;
@@ -147,10 +199,12 @@ export function useGamification() {
     setTimeout(() => setNewAchievement(null), 5000);
   }, [achievements, userAchievements, streak]);
 
+  // Update streak AND add 1 point for daily access
   const updateStreak = useCallback((activityDate: string = new Date().toISOString().split('T')[0]) => {
     const lastDate = streak.last_activity_date;
     let newCurrentStreak = streak.current_streak;
     let newLongestStreak = streak.longest_streak;
+    let addDailyPoint = false;
 
     if (lastDate) {
       const last = new Date(lastDate);
@@ -158,28 +212,49 @@ export function useGamification() {
       const diffDays = Math.floor((current.getTime() - last.getTime()) / (1000 * 60 * 60 * 24));
 
       if (diffDays === 1) {
+        // Consecutive day - add streak point
         newCurrentStreak++;
+        addDailyPoint = true;
       } else if (diffDays > 1) {
+        // Streak broken
         newCurrentStreak = 1;
+        addDailyPoint = true;
       }
-      // If same day, don't change streak
+      // If same day (diffDays === 0), don't add daily point
     } else {
+      // First access ever
       newCurrentStreak = 1;
+      addDailyPoint = true;
     }
 
     if (newCurrentStreak > newLongestStreak) {
       newLongestStreak = newCurrentStreak;
     }
 
+    const previousLevel = streak.level;
+    const newPoints = addDailyPoint ? streak.total_points + 1 : streak.total_points;
+    const newLevel = calculateLevel(newPoints);
+
     const updatedStreak = {
       ...streak,
       current_streak: newCurrentStreak,
       longest_streak: newLongestStreak,
       last_activity_date: activityDate,
+      total_points: newPoints,
+      level: newLevel,
     };
 
     setStreak(updatedStreak);
     localStorage.setItem('user_streak', JSON.stringify(updatedStreak));
+
+    // Check for level up rewards (insights)
+    if (newLevel > previousLevel) {
+      if (newLevel === 2) {
+        setLevelUpReward('Intermediário');
+      } else if (newLevel === 3) {
+        setLevelUpReward('Experiente');
+      }
+    }
 
     // Check streak achievements
     if (newCurrentStreak >= 7) unlockAchievement('diary_week');
@@ -251,12 +326,16 @@ export function useGamification() {
     streak,
     isLoading,
     newAchievement,
+    levelUpReward,
     unlockAchievement,
     updateStreak,
+    addActionPoint,
     checkAndUnlockAchievements,
     dismissNewAchievement,
+    dismissLevelUpReward,
     getUnlockedAchievements,
     getLockedAchievements,
     getProgressToNextLevel,
+    getLevelName,
   };
 }
