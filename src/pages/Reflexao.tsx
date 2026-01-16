@@ -1,14 +1,10 @@
-import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, MousePointerClick } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import StoicReflectionCard from "@/components/home/StoicReflectionCard";
 import StoicReflectionSection from "@/components/home/StoicReflectionSection";
-import DiaryScientificModal from "@/components/DiaryScientificModal";
 
 const Reflexao = () => {
-  const [isScientificModalOpen, setIsScientificModalOpen] = useState(false);
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-primary/5">
       {/* Header */}
@@ -26,13 +22,6 @@ const Reflexao = () => {
             <p className="text-xs sm:text-sm text-muted-foreground">
               Cultive sua mente e registre sua jornada
             </p>
-            <button
-              onClick={() => setIsScientificModalOpen(true)}
-              className="inline-flex items-center gap-2 text-wine hover:text-wine/80 font-medium text-xs sm:text-sm transition-colors underline underline-offset-4 mt-1"
-            >
-              <MousePointerClick className="h-5 w-5 sm:h-4 sm:w-4 flex-shrink-0" />
-              Clique aqui: Entenda o que diz a ciência sobre ter um diário
-            </button>
           </div>
         </div>
       </header>
@@ -49,11 +38,6 @@ const Reflexao = () => {
           <StoicReflectionSection />
         </section>
       </main>
-
-      <DiaryScientificModal 
-        open={isScientificModalOpen} 
-        onOpenChange={setIsScientificModalOpen} 
-      />
     </div>
   );
 };

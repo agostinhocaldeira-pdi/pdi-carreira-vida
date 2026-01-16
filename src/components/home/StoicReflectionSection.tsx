@@ -8,7 +8,8 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Calendar } from "@/components/ui/calendar";
-import { Calendar as CalendarIcon, Save, Check, PenLine, History, Loader2, Smile, Frown, Meh } from "lucide-react";
+import { Calendar as CalendarIcon, Save, Check, PenLine, History, Loader2, Smile, Frown, Meh, MousePointerClick } from "lucide-react";
+import DiaryScientificModal from "@/components/DiaryScientificModal";
 import { supabase } from "@/integrations/supabase/client";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
@@ -22,6 +23,7 @@ type DiaryViewMode = "registro" | "historico";
 
 const StoicReflectionSection = () => {
   const { celebrateAction } = useActionCelebration();
+  const [isScientificModalOpen, setIsScientificModalOpen] = useState(false);
   
   const today = new Date();
   const formattedDate = format(today, "EEEE, d 'de' MMMM", { locale: ptBR });
@@ -347,13 +349,21 @@ const StoicReflectionSection = () => {
   const capitalizedShortDate = shortDate.charAt(0).toUpperCase() + shortDate.slice(1);
 
   return (
-    <Card className="shadow-medium border-primary/20 bg-gradient-to-br from-card to-primary/5">
+    <>
+      <Card className="shadow-medium border-primary/20 bg-gradient-to-br from-card to-primary/5">
       <CardHeader className="pb-3">
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col gap-2">
           <h3 className="text-lg font-semibold flex items-center gap-2">
             <PenLine className="w-5 h-5 text-primary" />
             Diário & Reflexão
           </h3>
+          <button
+            onClick={() => setIsScientificModalOpen(true)}
+            className="inline-flex items-center gap-2 text-wine hover:text-wine/80 font-medium text-xs sm:text-sm transition-colors underline underline-offset-4"
+          >
+            <MousePointerClick className="h-5 w-5 sm:h-4 sm:w-4 flex-shrink-0" />
+            Clique aqui: Entenda o que diz a ciência sobre ter um diário
+          </button>
         </div>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -688,6 +698,12 @@ const StoicReflectionSection = () => {
             )}
           </CardContent>
       </Card>
+
+      <DiaryScientificModal 
+        open={isScientificModalOpen} 
+        onOpenChange={setIsScientificModalOpen} 
+      />
+    </>
   );
 };
 
