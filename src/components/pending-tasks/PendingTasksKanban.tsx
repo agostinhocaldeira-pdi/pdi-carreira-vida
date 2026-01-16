@@ -15,7 +15,7 @@ import {
   Circle,
   Clock,
   GripVertical,
-  ExternalLink
+  MousePointerClick
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -200,7 +200,7 @@ export const PendingTasksKanban = ({ compact = false, showLink = false }: Pendin
             to="/ferramentas/lista-pendencias"
             className="flex items-center justify-center gap-2 text-sm text-primary hover:underline py-2"
           >
-            <ExternalLink className="w-4 h-4" />
+            <MousePointerClick className="w-4 h-4" />
             Abrir ferramenta completa
           </Link>
         </div>

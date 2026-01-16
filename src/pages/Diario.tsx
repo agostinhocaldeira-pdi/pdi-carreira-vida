@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Book, Smile, Frown, Meh, Loader2, ArrowRight } from "lucide-react";
+import { Book, Smile, Frown, Meh, Loader2, MousePointerClick, ArrowRight } from "lucide-react";
 import { toast } from "sonner";
 import LogoutButton from "@/components/LogoutButton";
 import { useRoleProtection } from "@/hooks/useRoleProtection";
@@ -133,7 +133,7 @@ const Diario = () => {
                 className="inline-flex items-center gap-1 text-primary hover:text-primary/80 font-medium text-sm transition-colors underline underline-offset-4"
               >
                 Conheça o embasamento científico do Diário
-                <ArrowRight className="h-3.5 w-3.5" />
+                <MousePointerClick className="h-3.5 w-3.5" />
               </button>
             </CardDescription>
           </CardHeader>
