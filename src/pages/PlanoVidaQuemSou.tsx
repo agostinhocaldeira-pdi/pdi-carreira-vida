@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Heart, ArrowRight, Edit, ArrowLeft, Home, Sparkles, Lightbulb, Compass, Target, ChevronDown } from "lucide-react";
+import { Heart, ArrowRight, Edit, ArrowLeft, Home, Sparkles, Lightbulb, Compass, Target, ChevronDown, Info } from "lucide-react";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { PDILoader } from "@/components/ui/pdi-loader";
@@ -18,6 +18,9 @@ import LogoutButton from "@/components/LogoutButton";
 import { useAIUsage } from "@/hooks/useAIUsage";
 import { AIUsageLimitModal } from "@/components/AIUsageLimitModal";
 import { useUserRole } from "@/hooks/useUserRole";
+import VvdScientificModal from "@/components/VvdScientificModal";
+import ValuesScientificModal from "@/components/ValuesScientificModal";
+import { LifeWheelScientificModal } from "@/components/LifeWheelScientificModal";
 
 const PlanoVidaQuemSou = () => {
   const { isLoading: roleLoading, userRole } = useRoleProtection({ allowedRoles: ["user", "gestor"] });
@@ -43,6 +46,11 @@ const PlanoVidaQuemSou = () => {
   const [hasGeneratedInsight, setHasGeneratedInsight] = useState(false);
   const [isGeneratingInsight, setIsGeneratingInsight] = useState(false);
   const [showAILimitModal, setShowAILimitModal] = useState(false);
+  
+  // Scientific modal states
+  const [showVvdModal, setShowVvdModal] = useState(false);
+  const [showValoresModal, setShowValoresModal] = useState(false);
+  const [showRodaVidaModal, setShowRodaVidaModal] = useState(false);
   
   // AI Usage hook
   const aiUsage = useAIUsage('insight');
@@ -442,6 +450,15 @@ const PlanoVidaQuemSou = () => {
                       >
                         Salvar
                       </Button>
+                      <Button 
+                        onClick={() => setShowVvdModal(true)} 
+                        size="sm" 
+                        variant="ghost"
+                        className="text-xs sm:text-sm px-2 sm:px-3 gap-1"
+                      >
+                        <Info className="w-3 h-3 sm:w-4 sm:h-4" />
+                        <span className="hidden sm:inline">Conhecer melhor</span>
+                      </Button>
                     </div>
                   </div>
                 </div>
@@ -488,6 +505,15 @@ const PlanoVidaQuemSou = () => {
                         className="text-xs sm:text-sm px-2 sm:px-3"
                       >
                         Salvar
+                      </Button>
+                      <Button 
+                        onClick={() => setShowValoresModal(true)} 
+                        size="sm" 
+                        variant="ghost"
+                        className="text-xs sm:text-sm px-2 sm:px-3 gap-1"
+                      >
+                        <Info className="w-3 h-3 sm:w-4 sm:h-4" />
+                        <span className="hidden sm:inline">Conhecer melhor</span>
                       </Button>
                     </div>
                   </div>
@@ -541,7 +567,7 @@ const PlanoVidaQuemSou = () => {
                     </div>
                   )}
 
-                  <div className="flex items-center justify-start">
+                  <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                     <Button 
                       variant="outline" 
                       size="sm" 
@@ -551,6 +577,17 @@ const PlanoVidaQuemSou = () => {
                       <Sparkles className="w-4 h-4" />
                       Roda da Vida
                     </Button>
+                    <div className="flex gap-2 w-full sm:w-auto justify-end">
+                      <Button 
+                        onClick={() => setShowRodaVidaModal(true)} 
+                        size="sm" 
+                        variant="ghost"
+                        className="text-xs sm:text-sm px-2 sm:px-3 gap-1"
+                      >
+                        <Info className="w-3 h-3 sm:w-4 sm:h-4" />
+                        <span className="hidden sm:inline">Conhecer melhor</span>
+                      </Button>
+                    </div>
                   </div>
                 </div>
               </>
@@ -676,6 +713,20 @@ const PlanoVidaQuemSou = () => {
         isLoading={aiUsage.isLoading}
         featureType="insight"
         featureName="Insight Inicial"
+      />
+
+      {/* Scientific Modals */}
+      <VvdScientificModal 
+        open={showVvdModal} 
+        onOpenChange={setShowVvdModal} 
+      />
+      <ValuesScientificModal 
+        open={showValoresModal} 
+        onOpenChange={setShowValoresModal} 
+      />
+      <LifeWheelScientificModal 
+        open={showRodaVidaModal} 
+        onOpenChange={setShowRodaVidaModal} 
       />
     </div>
   );
