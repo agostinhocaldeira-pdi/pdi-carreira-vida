@@ -11,6 +11,8 @@ import { useRoleProtection } from "@/hooks/useRoleProtection";
 import { usePDIStorage } from "@/hooks/usePDIStorage";
 import { LifeWheelScientificModal } from "@/components/LifeWheelScientificModal";
 import { useActionCelebration } from "@/contexts/ActionCelebrationContext";
+import { Slider } from "@/components/ui/slider";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import type { AreaVida } from "@/types/pdi";
 
 interface LifeArea {
@@ -43,6 +45,7 @@ export default function RodaDaVida() {
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [isLifeWheelModalOpen, setIsLifeWheelModalOpen] = useState(false);
+  const [hoveredSlider, setHoveredSlider] = useState<{ index: number; type: 'atual' | 'desejada' } | null>(null);
 
   // Carregar áreas do Supabase
   useEffect(() => {
@@ -65,10 +68,15 @@ export default function RodaDaVida() {
     loadAreas();
   }, [getAreasVida]);
 
-  const saveAreas = useCallback(async (newAreas: LifeArea[]) => {
+  const updateAreaScore = useCallback((index: number, type: 'atual' | 'desejada', value: number) => {
+    const newAreas = [...areas];
+    if (type === 'atual') {
+      newAreas[index].notaAtual = value;
+    } else {
+      newAreas[index].notaDesejada = value;
+    }
     setAreas(newAreas);
-    // Não salva automaticamente - usuário precisa clicar em "Salvar no Plano de Vida"
-  }, []);
+  }, [areas]);
 
   const handleSaveToPlanoDeVida = async () => {
     setIsSaving(true);
@@ -90,16 +98,16 @@ export default function RodaDaVida() {
     }
   };
 
-  const handleEdit = (index: number) => {
+  const handleEditAreaName = (index: number) => {
     setEditingIndex(index);
     setTempArea({ ...areas[index] });
   };
 
-  const handleSave = () => {
+  const handleSaveAreaName = () => {
     if (editingIndex !== null && tempArea) {
       const newAreas = [...areas];
-      newAreas[editingIndex] = tempArea;
-      saveAreas(newAreas);
+      newAreas[editingIndex] = { ...newAreas[editingIndex], area: tempArea.area };
+      setAreas(newAreas);
       setEditingIndex(null);
       setTempArea(null);
     }
@@ -207,114 +215,136 @@ export default function RodaDaVida() {
             <CardHeader>
               <CardTitle>Áreas da Vida</CardTitle>
               <CardDescription>
-                Clique no ícone de edição para personalizar as áreas e suas notas
+                Arraste as barras para definir suas notas de 0 a 10
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="space-y-4 max-h-[400px] overflow-y-auto">
-                {areas.map((area, index) => (
-                  <div
-                    key={index}
-                    className="flex flex-col sm:flex-row gap-2 items-start sm:items-center p-3 rounded-lg border border-border bg-card"
-                  >
-                    {editingIndex === index ? (
-                      <>
-                        <Input
-                          value={tempArea?.area || ""}
-                          onChange={(e) =>
-                            setTempArea(
-                              tempArea ? { ...tempArea, area: e.target.value } : null
-                            )
-                          }
-                          className="flex-1"
-                          placeholder="Nome da área"
-                        />
-                        <div className="flex gap-2 w-full sm:w-auto">
-                          <Input
-                            type="number"
-                            min="0"
-                            max="10"
-                            value={tempArea?.notaAtual || 0}
-                            onChange={(e) =>
-                              setTempArea(
-                                tempArea
-                                  ? {
-                                      ...tempArea,
-                                      notaAtual: Math.min(
-                                        10,
-                                        Math.max(0, Number(e.target.value))
-                                      ),
-                                    }
-                                  : null
-                              )
-                            }
-                            className="w-20"
-                            placeholder="Atual"
-                          />
-                          <Input
-                            type="number"
-                            min="0"
-                            max="10"
-                            value={tempArea?.notaDesejada || 0}
-                            onChange={(e) =>
-                              setTempArea(
-                                tempArea
-                                  ? {
-                                      ...tempArea,
-                                      notaDesejada: Math.min(
-                                        10,
-                                        Math.max(0, Number(e.target.value))
-                                      ),
-                                    }
-                                  : null
-                              )
-                            }
-                            className="w-20"
-                            placeholder="Desejada"
-                          />
-                        </div>
-                        <div className="flex gap-2">
-                          <Button
-                            size="icon"
-                            variant="default"
-                            onClick={handleSave}
-                          >
-                            <Save className="h-4 w-4" />
-                          </Button>
-                          <Button
-                            size="icon"
-                            variant="ghost"
-                            onClick={handleCancel}
-                          >
-                            <X className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      </>
-                    ) : (
-                      <>
-                        <div className="flex-1">
-                          <p className="font-medium text-foreground">{area.area}</p>
-                        </div>
-                        <div className="flex gap-4 items-center text-sm">
-                          <span className="text-muted-foreground">
-                            Atual: <span className="font-semibold text-foreground">{area.notaAtual}</span>
-                          </span>
-                          <span className="text-muted-foreground">
-                            Desejada: <span className="font-semibold text-foreground">{area.notaDesejada}</span>
+              <TooltipProvider>
+                <div className="space-y-6 max-h-[500px] overflow-y-auto pr-2">
+                  {areas.map((area, index) => (
+                    <div
+                      key={index}
+                      className="p-4 rounded-lg border border-border bg-card space-y-4"
+                    >
+                      {/* Nome da área */}
+                      <div className="flex items-center justify-between gap-2">
+                        {editingIndex === index ? (
+                          <div className="flex items-center gap-2 flex-1">
+                            <Input
+                              value={tempArea?.area || ""}
+                              onChange={(e) =>
+                                setTempArea(
+                                  tempArea ? { ...tempArea, area: e.target.value } : null
+                                )
+                              }
+                              className="flex-1"
+                              placeholder="Nome da área"
+                            />
+                            <Button
+                              size="icon"
+                              variant="default"
+                              onClick={handleSaveAreaName}
+                            >
+                              <Save className="h-4 w-4" />
+                            </Button>
+                            <Button
+                              size="icon"
+                              variant="ghost"
+                              onClick={handleCancel}
+                            >
+                              <X className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        ) : (
+                          <>
+                            <p className="font-medium text-foreground">{area.area}</p>
+                            <Button
+                              size="icon"
+                              variant="ghost"
+                              onClick={() => handleEditAreaName(index)}
+                              className="h-8 w-8"
+                            >
+                              <Edit2 className="h-4 w-4" />
+                            </Button>
+                          </>
+                        )}
+                      </div>
+
+                      {/* Linha 1: Nota Atual */}
+                      <div className="space-y-2">
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm text-muted-foreground">Atual</span>
+                          <span className="text-sm font-semibold text-primary min-w-[2rem] text-right">
+                            {area.notaAtual}
                           </span>
                         </div>
-                        <Button
-                          size="icon"
-                          variant="ghost"
-                          onClick={() => handleEdit(index)}
-                        >
-                          <Edit2 className="h-4 w-4" />
-                        </Button>
-                      </>
-                    )}
-                  </div>
-                ))}
-              </div>
+                        <Tooltip open={hoveredSlider?.index === index && hoveredSlider?.type === 'atual'}>
+                          <TooltipTrigger asChild>
+                            <div
+                              onMouseEnter={() => setHoveredSlider({ index, type: 'atual' })}
+                              onMouseLeave={() => setHoveredSlider(null)}
+                              onTouchStart={() => setHoveredSlider({ index, type: 'atual' })}
+                              onTouchEnd={() => setHoveredSlider(null)}
+                            >
+                              <Slider
+                                value={[area.notaAtual]}
+                                onValueChange={(value) => updateAreaScore(index, 'atual', value[0])}
+                                min={0}
+                                max={10}
+                                step={1}
+                                className="cursor-pointer"
+                              />
+                            </div>
+                          </TooltipTrigger>
+                          <TooltipContent side="top" className="bg-primary text-primary-foreground font-bold">
+                            {area.notaAtual}
+                          </TooltipContent>
+                        </Tooltip>
+                        <div className="flex justify-between text-xs text-muted-foreground">
+                          <span>0</span>
+                          <span>10</span>
+                        </div>
+                      </div>
+
+                      {/* Linha 2: Nota Desejada */}
+                      <div className="space-y-2">
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm text-muted-foreground">Desejada</span>
+                          <span className="text-sm font-semibold text-accent min-w-[2rem] text-right">
+                            {area.notaDesejada}
+                          </span>
+                        </div>
+                        <Tooltip open={hoveredSlider?.index === index && hoveredSlider?.type === 'desejada'}>
+                          <TooltipTrigger asChild>
+                            <div
+                              onMouseEnter={() => setHoveredSlider({ index, type: 'desejada' })}
+                              onMouseLeave={() => setHoveredSlider(null)}
+                              onTouchStart={() => setHoveredSlider({ index, type: 'desejada' })}
+                              onTouchEnd={() => setHoveredSlider(null)}
+                            >
+                              <Slider
+                                value={[area.notaDesejada]}
+                                onValueChange={(value) => updateAreaScore(index, 'desejada', value[0])}
+                                min={0}
+                                max={10}
+                                step={1}
+                                className="cursor-pointer [&_[data-orientation=horizontal]]:bg-accent/20 [&_[role=slider]]:border-accent [&_[role=slider]]:bg-accent [&_.bg-primary]:bg-accent"
+                              />
+                            </div>
+                          </TooltipTrigger>
+                          <TooltipContent side="top" className="bg-accent text-accent-foreground font-bold">
+                            {area.notaDesejada}
+                          </TooltipContent>
+                        </Tooltip>
+                        <div className="flex justify-between text-xs text-muted-foreground">
+                          <span>0</span>
+                          <span>10</span>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </TooltipProvider>
             </CardContent>
           </Card>
         </div>
