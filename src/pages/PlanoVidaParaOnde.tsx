@@ -11,7 +11,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Target, ArrowRight, ArrowLeft, Home, Plus, Trash2, Pencil, Check, X, ChevronDown, Lightbulb, Star } from "lucide-react";
+import { Target, ArrowRight, ArrowLeft, Home, Plus, Trash2, Pencil, Check, X, ChevronDown, Lightbulb, Star, HelpCircle } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { PDILoader } from "@/components/ui/pdi-loader";
 import { toast } from "sonner";
@@ -73,6 +73,9 @@ const PlanoVidaParaOnde = () => {
 
   // Estado para insight inicial
   const [insightInicial, setInsightInicial] = useState("");
+
+  // Estado para modal explicativo de objetivos
+  const [showObjetivoExplicativoModal, setShowObjetivoExplicativoModal] = useState(false);
 
   // Carregar dados salvos
   useEffect(() => {
@@ -701,6 +704,15 @@ const PlanoVidaParaOnde = () => {
                         <ChevronDown className="w-4 h-4 transition-transform duration-200 data-[state=open]:rotate-180" />
                       </Button>
                     </CollapsibleTrigger>
+                    
+                    {/* Link explicativo sobre objetivos */}
+                    <button
+                      onClick={() => setShowObjetivoExplicativoModal(true)}
+                      className="flex items-center gap-1.5 mt-2 text-xs sm:text-sm text-primary hover:text-primary/80 hover:underline transition-colors group"
+                    >
+                      <HelpCircle className="w-3.5 h-3.5 sm:w-4 sm:h-4 group-hover:scale-110 transition-transform" />
+                      <span>Entenda como definir seu objetivo</span>
+                    </button>
                     <CollapsibleContent className="mt-4">
                       <div className="space-y-4 p-4 border rounded-lg bg-muted/30">
                         <h4 className="font-medium text-sm">"Quem muito quer, pouco consegue"</h4>
@@ -862,6 +874,34 @@ const PlanoVidaParaOnde = () => {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* Modal explicativo sobre como definir objetivos */}
+      <Dialog open={showObjetivoExplicativoModal} onOpenChange={setShowObjetivoExplicativoModal}>
+        <DialogContent className="max-w-md sm:max-w-lg">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-lg sm:text-xl">
+              <Target className="w-5 h-5 text-primary" />
+              Como definir seu objetivo
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 py-2">
+            <p className="text-sm sm:text-base text-foreground/90 leading-relaxed">
+              Um <strong>Objetivo</strong> é simplesmente aquilo que você deseja alcançar ou conquistar de forma ampla, como "aprender uma nova língua" ou "ser mais saudável", mas ele não deve ser escolhido ao acaso.
+            </p>
+            <p className="text-sm sm:text-base text-foreground/90 leading-relaxed">
+              Ele precisa funcionar como um <strong>degrau</strong> que te leva para a sua <strong>Visão de Vida Desejada (VVD)</strong> — aquele roteiro onde você descreveu o estilo de vida dos seus sonhos.
+            </p>
+            <p className="text-sm sm:text-base text-foreground/90 leading-relaxed">
+              Portanto, definir um objetivo é escolher uma conquista que sirva de <strong>ponte direta</strong> para a realidade do seu VVD, garantindo que você gaste sua energia construindo exatamente a vida que desenhou, e não caminhando para o lado oposto.
+            </p>
+          </div>
+          <DialogFooter>
+            <Button onClick={() => setShowObjetivoExplicativoModal(false)}>
+              Entendi
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
