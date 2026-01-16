@@ -1635,7 +1635,7 @@ const PlanoDeVida = ({ onTabChange, onOpenChange, forcedTab, forcedOpen }: Plano
 
                         <Link 
                           to="/ferramentas" 
-                          className="flex items-center gap-2 text-xs sm:text-sm text-primary hover:underline mt-2"
+                          className="flex items-center gap-2 text-xs sm:text-sm text-wine hover:text-wine/80 hover:underline mt-2"
                         >
                           <MousePointerClick className="w-5 h-5 sm:w-4 sm:h-4 flex-shrink-0" />
                           <span className="truncate">Clique aqui: Ferramentas (FF)</span>
