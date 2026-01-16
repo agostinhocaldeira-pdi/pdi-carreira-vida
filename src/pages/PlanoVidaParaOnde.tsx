@@ -708,7 +708,7 @@ const PlanoVidaParaOnde = () => {
                     {/* Link explicativo sobre objetivos */}
                     <button
                       onClick={() => setShowObjetivoExplicativoModal(true)}
-                      className="flex items-center gap-2 mt-2 text-xs sm:text-sm text-primary hover:text-primary/80 hover:underline transition-colors group"
+                      className="flex items-center gap-2 mt-2 text-xs sm:text-sm text-wine hover:text-wine/80 hover:underline transition-colors group"
                     >
                       <MousePointerClick className="w-5 h-5 sm:w-4 sm:h-4 flex-shrink-0 group-hover:scale-110 transition-transform" />
                       <span>Clique aqui: Entenda como definir seu objetivo</span>

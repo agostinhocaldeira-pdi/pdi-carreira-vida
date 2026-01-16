@@ -56,6 +56,10 @@ export default {
           DEFAULT: "hsl(var(--warning))",
           foreground: "hsl(var(--warning-foreground))",
         },
+        wine: {
+          DEFAULT: "hsl(var(--wine))",
+          foreground: "hsl(var(--wine-foreground))",
+        },
       },
       backgroundImage: {
         'gradient-primary': 'var(--gradient-primary)',

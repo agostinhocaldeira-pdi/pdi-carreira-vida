@@ -53,6 +53,10 @@ All colors MUST be HSL.
     --warning: 46 72% 63%;
     --warning-foreground: 0 0% 18%;
 
+    /* Vinho/Burgundy #722F37 - links e CTAs de destaque */
+    --wine: 355 43% 32%;
+    --wine-foreground: 0 0% 100%;
+
     /* Sidebar - usando cores estruturais */
     --sidebar-background: 204 61% 15%;
     --sidebar-foreground: 0 0% 100%;

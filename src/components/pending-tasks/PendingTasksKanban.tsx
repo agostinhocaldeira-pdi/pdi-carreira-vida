@@ -198,7 +198,7 @@ export const PendingTasksKanban = ({ compact = false, showLink = false }: Pendin
         <div className="pt-2 border-t">
           <Link 
             to="/ferramentas/lista-pendencias"
-            className="flex items-center justify-center gap-2 text-sm text-primary hover:underline py-2"
+            className="flex items-center justify-center gap-2 text-sm text-wine hover:text-wine/80 hover:underline py-2"
           >
             <MousePointerClick className="w-5 h-5 sm:w-4 sm:h-4 flex-shrink-0" />
             Clique aqui: Abrir ferramenta completa
