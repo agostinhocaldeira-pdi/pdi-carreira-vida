@@ -6,8 +6,8 @@ import { Badge } from "@/components/ui/badge";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { Link, useNavigate } from "react-router-dom";
-import { Target, TrendingUp, BookOpen, MessagesSquare, Book, Sparkles, User, Zap, Star, Shield, Lock, ChevronDown, AlertCircle, Link2, Users, Bell, HelpCircle, FileText, ClipboardCheck, Focus, Loader2, Crosshair, Play, Footprints } from "lucide-react";
+import { Link, useNavigate, useLocation } from "react-router-dom";
+import { Target, TrendingUp, BookOpen, MessagesSquare, Book, Sparkles, User, Zap, Star, Shield, Lock, ChevronDown, AlertCircle, Link2, Users, Bell, HelpCircle, FileText, ClipboardCheck, Focus, Loader2, Crosshair, Play, Footprints, PartyPopper } from "lucide-react";
 import { Agenda } from "@/components/agenda";
 
 
@@ -40,6 +40,7 @@ import { ProductivityTipsSection } from "@/components/home/ProductivityTipsSecti
 
 const Home = () => {
   const navigate = useNavigate();
+  const location = useLocation();
 
   // DEBUG: helps confirm which build is running on device/browser
   useEffect(() => {
@@ -58,6 +59,7 @@ const Home = () => {
   const { quote: dailyQuote, isLoading: isDailyQuoteLoading } = useDailyQuote();
   
   const [showDiaryWarningModal, setShowDiaryWarningModal] = useState(false);
+  const [showPlanoVidaCompleteModal, setShowPlanoVidaCompleteModal] = useState(false);
   const [agendaOpen, setAgendaOpen] = useState(true);
   
   
@@ -173,6 +175,15 @@ const Home = () => {
   useEffect(() => {
     checkAndUnlockAchievements();
   }, []);
+
+  // Check if coming from Plano de Vida completion
+  useEffect(() => {
+    if (location.state?.showPlanoVidaCompleteModal) {
+      setShowPlanoVidaCompleteModal(true);
+      // Clear the state to prevent modal from showing again on refresh
+      window.history.replaceState({}, document.title);
+    }
+  }, [location.state]);
 
   // Expor função globalmente para ser chamada pelas seções
   useEffect(() => {
@@ -366,6 +377,39 @@ const Home = () => {
             </Button>
             <Button onClick={() => setShowDiaryWarningModal(false)}>
               Vou registrar agora
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Modal de Plano de Vida Concluído */}
+      <Dialog open={showPlanoVidaCompleteModal} onOpenChange={setShowPlanoVidaCompleteModal}>
+        <DialogContent className="sm:max-w-[500px]">
+          <DialogHeader>
+            <div className="flex items-center gap-3 mb-2">
+              <div className="w-12 h-12 bg-success/20 rounded-full flex items-center justify-center">
+                <PartyPopper className="w-6 h-6 text-success" />
+              </div>
+              <DialogTitle className="text-xl">Excelente, você concluiu seu plano de vida! 🎉</DialogTitle>
+            </div>
+            <DialogDescription className="text-base leading-relaxed pt-4 space-y-4">
+              <p>
+                Essa foi a etapa mais "teórica" do sistema.
+              </p>
+              <p>
+                <strong>Agora vem a parte prática. Agir.</strong>
+              </p>
+              <p>
+                A seguir, veja as "Dicas de Eficiência, Produtividade e Clareza" para tirar o melhor proveito desta jornada.
+              </p>
+              <p className="text-primary font-medium">
+                Estou muito feliz por você! 😊
+              </p>
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex justify-end mt-4">
+            <Button onClick={() => setShowPlanoVidaCompleteModal(false)}>
+              Entendi
             </Button>
           </div>
         </DialogContent>
