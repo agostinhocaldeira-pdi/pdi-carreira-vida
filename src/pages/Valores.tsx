@@ -50,7 +50,7 @@ const VALORES_LISTA = [
 
 const Valores = () => {
   const navigate = useNavigate();
-  const { getValores, saveValores } = usePDIStorage();
+  const { getValores, saveValores, getAreasVida } = usePDIStorage();
   const [etapa, setEtapa] = useState(1);
   const [valoresSelecionados20, setValoresSelecionados20] = useState<string[]>([]);
   const [valoresSelecionados10, setValoresSelecionados10] = useState<string[]>([]);
@@ -132,6 +132,24 @@ const Valores = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
+  const checkNextTool = async (): Promise<string | null> => {
+    try {
+      // Check Roda da Vida
+      const areas = await getAreasVida();
+      const hasRodaVida = areas && areas.some(a => a.nota_atual > 0 || a.nota_desejada > 0);
+      
+      if (!hasRodaVida) {
+        return "/roda-da-vida";
+      }
+
+      // All tools completed
+      return null;
+    } catch (error) {
+      console.error("Erro ao verificar próxima ferramenta:", error);
+      return null;
+    }
+  };
+
   const handleSalvar = () => {
     if (valoresSelecionados6.length === 6) {
       setIsSaving(true);
@@ -145,6 +163,16 @@ const Valores = () => {
       saveValores(valoresSelecionados6).catch(error => {
         console.error('Background valores sync error:', error);
       });
+    }
+  };
+
+  const handleContinuar = async () => {
+    setShowSuccessDialog(false);
+    const nextTool = await checkNextTool();
+    if (nextTool) {
+      navigate(nextTool);
+    } else {
+      navigate("/home");
     }
   };
 
@@ -453,15 +481,11 @@ const Valores = () => {
               </div>
             </AlertDialogDescription>
           </AlertDialogHeader>
-          <AlertDialogFooter className="flex-col sm:flex-row gap-2">
+          <AlertDialogFooter className="justify-center">
             <AlertDialogAction asChild>
-              <Button variant="outline" onClick={() => navigate("/ferramentas")} className="w-full sm:w-auto">
-                Voltar às Ferramentas
-              </Button>
-            </AlertDialogAction>
-            <AlertDialogAction asChild>
-              <Button onClick={() => navigate("/home")} className="w-full sm:w-auto">
-                Ir para o Plano de Vida
+              <Button onClick={handleContinuar} className="w-full sm:w-auto gap-2">
+                <ArrowRight className="w-4 h-4" />
+                Continuar
               </Button>
             </AlertDialogAction>
           </AlertDialogFooter>
