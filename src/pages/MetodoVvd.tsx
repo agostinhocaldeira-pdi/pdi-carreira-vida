@@ -558,25 +558,8 @@ const MetodoVvd = () => {
                       />
                     </div>
 
-                    {hasUsedAI && (
-                      <div className="bg-accent/10 border border-accent/20 rounded-lg p-4">
-                        <p className="text-sm text-muted-foreground text-center">
-                          ℹ️ Você já utilizou a IA. Para continuar, edite manualmente o texto acima ou prossiga para a próxima etapa.
-                        </p>
-                      </div>
-                    )}
-
                     <div className="flex flex-col sm:flex-row justify-between gap-3 sm:gap-4">
-                      <Button
-                        variant="outline"
-                        onClick={() => setStep(1)}
-                        disabled={isProcessing}
-                        className="w-full sm:w-auto"
-                      >
-                        <ArrowLeft className="h-4 w-4 mr-2" />
-                        Voltar
-                      </Button>
-                      <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+                      <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto order-1 sm:order-1">
                         <Button
                           onClick={handleStep2ManualSave}
                           disabled={!paragraphText.trim()}
@@ -586,40 +569,35 @@ const MetodoVvd = () => {
                         >
                           Salvar
                         </Button>
-                        <Button
-                          onClick={() => handleStep2Save()}
-                          disabled={!paragraphText.trim() || isProcessing}
-                          size="lg"
-                          className="w-full sm:w-auto bg-gradient-to-r from-primary to-accent hover:opacity-90 transition-opacity"
-                        >
-                          {isProcessing ? (
-                            <>
-                              <Loader2 className="h-5 w-5 animate-spin mr-2" />
-                              Processando...
-                            </>
-                          ) : hasUsedAI ? (
-                            <>
-                              <Sparkles className="h-5 w-5 mr-2" />
-                              IA já utilizada
-                            </>
-                          ) : (
-                            <>
-                              <Sparkles className="h-5 w-5 mr-2" />
-                              Resumir para uma Frase
-                            </>
-                          )}
-                        </Button>
+                        {!hasUsedAI && (
+                          <Button
+                            onClick={() => handleStep2Save()}
+                            disabled={!paragraphText.trim() || isProcessing}
+                            size="lg"
+                            className="w-full sm:w-auto bg-gradient-to-r from-primary to-accent hover:opacity-90 transition-opacity"
+                          >
+                            {isProcessing ? (
+                              <>
+                                <Loader2 className="h-5 w-5 animate-spin mr-2" />
+                                Processando...
+                              </>
+                            ) : (
+                              <>
+                                <Sparkles className="h-5 w-5 mr-2" />
+                                Resumir para uma Frase
+                              </>
+                            )}
+                          </Button>
+                        )}
                       </div>
-                    </div>
-
-                    <div className="pt-4 border-t border-muted">
                       <Button
-                        variant="ghost"
-                        className="w-full justify-center gap-2 text-muted-foreground hover:text-primary"
-                        onClick={() => navigate("/home")}
+                        variant="outline"
+                        onClick={() => setStep(1)}
+                        disabled={isProcessing}
+                        className="w-full sm:w-auto order-2 sm:order-none"
                       >
-                        <ExternalLink className="h-4 w-4" />
-                        Voltar Dashboard
+                        <ArrowLeft className="h-4 w-4 mr-2" />
+                        Voltar
                       </Button>
                     </div>
                   </>
