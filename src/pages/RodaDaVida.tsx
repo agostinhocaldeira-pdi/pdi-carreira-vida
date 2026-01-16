@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowLeft, Edit2, Save, X, Check, Loader2, HelpCircle, Sparkles, Home, CircleDot } from "lucide-react";
+import { ArrowLeft, ArrowRight, Edit2, Save, X, Check, Loader2, HelpCircle, Sparkles, Home, CircleDot, CheckCircle2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer, Legend } from "recharts";
 import { toast } from "sonner";
@@ -21,6 +21,15 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import type { AreaVida } from "@/types/pdi";
 
 interface LifeArea {
@@ -55,6 +64,7 @@ export default function RodaDaVida() {
   const [isLifeWheelModalOpen, setIsLifeWheelModalOpen] = useState(false);
   const [hoveredSlider, setHoveredSlider] = useState<{ index: number; type: 'atual' | 'desejada' } | null>(null);
   const [showWelcomeModal, setShowWelcomeModal] = useState(false);
+  const [showSuccessDialog, setShowSuccessDialog] = useState(false);
 
   // Carregar áreas do Supabase
   useEffect(() => {
@@ -109,13 +119,18 @@ export default function RodaDaVida() {
       }));
       await saveAreasVida(areasVida);
       celebrateAction('tool_roda', 'Roda da Vida');
-      toast.success("Áreas da Vida atualizadas no Plano de Vida com sucesso!");
+      setShowSuccessDialog(true);
     } catch (error) {
       console.error('Erro ao salvar:', error);
       toast.error("Erro ao salvar áreas da vida");
     } finally {
       setIsSaving(false);
     }
+  };
+
+  const handleContinuar = () => {
+    setShowSuccessDialog(false);
+    navigate("/plano-vida/para-onde");
   };
 
   const handleEditAreaName = (index: number) => {
@@ -393,6 +408,38 @@ export default function RodaDaVida() {
             </div>
           </CardContent>
         </Card>
+
+        {/* Success Dialog */}
+        <AlertDialog open={showSuccessDialog} onOpenChange={setShowSuccessDialog}>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <div className="flex items-center justify-center mb-4">
+                <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center">
+                  <CheckCircle2 className="w-10 h-10 text-primary" />
+                </div>
+              </div>
+              <AlertDialogTitle className="text-center text-2xl">
+                Roda da Vida Salva! 🎉
+              </AlertDialogTitle>
+              <AlertDialogDescription className="text-center space-y-4">
+                <p>
+                  Suas áreas da vida foram salvas com sucesso no <strong>Plano de Vida</strong>.
+                </p>
+                <p className="text-sm">
+                  Você concluiu o <strong>Passo 1: Quem sou eu</strong>! Agora vamos para o próximo passo.
+                </p>
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter className="justify-center">
+              <AlertDialogAction asChild>
+                <Button onClick={handleContinuar} className="w-full sm:w-auto gap-2">
+                  <ArrowRight className="w-4 h-4" />
+                  Continuar
+                </Button>
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
 
         {/* Modal de boas-vindas para usuários que não preencheram */}
         <Dialog open={showWelcomeModal} onOpenChange={setShowWelcomeModal}>
