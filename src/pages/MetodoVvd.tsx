@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { ArrowLeft, Sparkles, Heart, Star, Loader2, Edit, Check, ExternalLink, HelpCircle, ClipboardList, Lightbulb } from "lucide-react";
+import { ArrowLeft, Sparkles, Heart, Star, Loader2, Edit, Check, ExternalLink, HelpCircle, ClipboardList, Lightbulb, Home, ArrowRight } from "lucide-react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -14,6 +14,13 @@ import { usePDIStorage } from "@/hooks/usePDIStorage";
 import VvdScientificModal from "@/components/VvdScientificModal";
 import { useAIUsage } from "@/hooks/useAIUsage";
 import { AIUsageLimitModal } from "@/components/AIUsageLimitModal";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 interface SurveyData {
   currentPhase: string;
@@ -28,7 +35,7 @@ interface SurveyData {
 
 const MetodoVvd = () => {
   const navigate = useNavigate();
-  const { saveVvd } = usePDIStorage();
+  const { saveVvd, getValores, getAreasVida } = usePDIStorage();
   const [step, setStep] = useState(1);
   const [freeText, setFreeText] = useState("");
   const [paragraphText, setParagraphText] = useState("");
@@ -38,10 +45,11 @@ const MetodoVvd = () => {
   const [isEditingSentence, setIsEditingSentence] = useState(false);
   const [hasUsedAI, setHasUsedAI] = useState(false);
   const [isVvdModalOpen, setIsVvdModalOpen] = useState(false);
-  const [showSurveySection, setShowSurveySection] = useState(false);
+  const [showSurveySection, setShowSurveySection] = useState(true); // Always show survey
   const [userId, setUserId] = useState<string | null>(null);
   const [showAILimitModal, setShowAILimitModal] = useState(false);
   const [pendingAIStep, setPendingAIStep] = useState<"step1" | "step2" | null>(null);
+  const [showCompletionModal, setShowCompletionModal] = useState(false);
   
   // AI Usage hook for purchasing additional usage
   const aiUsage = useAIUsage('vvd');
@@ -259,6 +267,32 @@ const MetodoVvd = () => {
     }
   };
 
+  const checkNextTool = async (): Promise<string | null> => {
+    try {
+      // Check Valores
+      const valores = await getValores();
+      const hasValores = valores && valores.length >= 6;
+      
+      if (!hasValores) {
+        return "/ferramentas/valores";
+      }
+
+      // Check Roda da Vida
+      const areas = await getAreasVida();
+      const hasRodaVida = areas && areas.some(a => a.nota_atual > 0 || a.nota_desejada > 0);
+      
+      if (!hasRodaVida) {
+        return "/roda-da-vida";
+      }
+
+      // All tools completed
+      return null;
+    } catch (error) {
+      console.error("Erro ao verificar próxima ferramenta:", error);
+      return null;
+    }
+  };
+
   const handleFinalSave = async () => {
     if (!sentenceText.trim()) {
       toast.error("A frase não pode estar vazia.");
@@ -279,8 +313,16 @@ const MetodoVvd = () => {
         description: "Sua VVD foi automaticamente adicionada ao seu Plano de Vida."
       });
 
-      // Redirecionar para home
-      setTimeout(() => navigate("/home"), 1500);
+      // Check next tool to navigate
+      const nextTool = await checkNextTool();
+      
+      if (nextTool) {
+        // Navigate to next unfilled tool
+        setTimeout(() => navigate(nextTool), 1500);
+      } else {
+        // All tools completed - show modal
+        setTimeout(() => setShowCompletionModal(true), 1500);
+      }
     } catch (error) {
       console.error("Erro ao salvar VVD:", error);
       toast.error("Erro ao salvar VVD. Tente novamente.");
@@ -915,6 +957,45 @@ const MetodoVvd = () => {
         open={isVvdModalOpen} 
         onOpenChange={setIsVvdModalOpen} 
       />
+
+      {/* Completion Modal - All Step 1 tools completed */}
+      <Dialog open={showCompletionModal} onOpenChange={setShowCompletionModal}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-center text-2xl">
+              🎉 Parabéns!
+            </DialogTitle>
+            <DialogDescription className="text-center text-base pt-2">
+              Você concluiu todas as atividades do <strong>Passo 1: Quem Sou Eu</strong>!
+              <br /><br />
+              O que deseja fazer agora?
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex flex-col gap-3 pt-4">
+            <Button
+              onClick={() => {
+                setShowCompletionModal(false);
+                navigate("/plano-vida/para-onde");
+              }}
+              className="w-full bg-gradient-to-r from-primary to-accent hover:opacity-90"
+            >
+              <ArrowRight className="h-4 w-4 mr-2" />
+              Iniciar Passo 2: Para Onde Vou
+            </Button>
+            <Button
+              variant="outline"
+              onClick={() => {
+                setShowCompletionModal(false);
+                navigate("/home");
+              }}
+              className="w-full"
+            >
+              <Home className="h-4 w-4 mr-2" />
+              Voltar para Home
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
     </>
   );
