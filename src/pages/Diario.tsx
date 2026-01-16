@@ -130,10 +130,10 @@ const Diario = () => {
               </span>
               <button
                 onClick={() => setIsScientificModalOpen(true)}
-                className="inline-flex items-center gap-1 text-primary hover:text-primary/80 font-medium text-sm transition-colors underline underline-offset-4"
+                className="inline-flex items-center gap-2 text-primary hover:text-primary/80 font-medium text-sm transition-colors underline underline-offset-4"
               >
-                Conheça o embasamento científico do Diário
-                <MousePointerClick className="h-3.5 w-3.5" />
+                <MousePointerClick className="h-5 w-5 sm:h-4 sm:w-4 flex-shrink-0" />
+                Clique aqui: Conheça o embasamento científico do Diário
               </button>
             </CardDescription>
           </CardHeader>

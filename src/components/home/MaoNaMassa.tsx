@@ -666,10 +666,10 @@ const MaoNaMassa = ({ embedded = false }: MaoNaMassaProps) => {
               />
               <Link 
                 to="/ferramentas/smart" 
-                className="text-xs text-primary hover:underline mt-1 inline-flex items-center gap-1"
+                className="text-xs text-primary hover:underline mt-1 inline-flex items-center gap-2"
               >
-                <MousePointerClick className="h-3 w-3" />
-                Criar utilizando a ferramenta SMART
+                <MousePointerClick className="h-5 w-5 sm:h-4 sm:w-4 flex-shrink-0" />
+                Clique aqui: Criar utilizando a ferramenta SMART
               </Link>
             </div>
 

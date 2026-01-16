@@ -457,10 +457,10 @@ const PlanoVidaQuemSou = () => {
                         onClick={() => setShowVvdModal(true)} 
                         size="sm" 
                         variant="ghost"
-                        className="text-xs sm:text-sm px-2 sm:px-3 gap-1"
+                        className="text-xs sm:text-sm px-2 sm:px-3 gap-1.5"
                       >
-                        <MousePointerClick className="w-3 h-3 sm:w-4 sm:h-4" />
-                        <span className="hidden sm:inline">Conhecer melhor</span>
+                        <MousePointerClick className="w-5 h-5 sm:w-4 sm:h-4 flex-shrink-0" />
+                        <span>Clique aqui</span>
                       </Button>
                     </div>
                   </div>
@@ -513,10 +513,10 @@ const PlanoVidaQuemSou = () => {
                         onClick={() => setShowValoresModal(true)} 
                         size="sm" 
                         variant="ghost"
-                        className="text-xs sm:text-sm px-2 sm:px-3 gap-1"
+                        className="text-xs sm:text-sm px-2 sm:px-3 gap-1.5"
                       >
-                        <MousePointerClick className="w-3 h-3 sm:w-4 sm:h-4" />
-                        <span className="hidden sm:inline">Conhecer melhor</span>
+                        <MousePointerClick className="w-5 h-5 sm:w-4 sm:h-4 flex-shrink-0" />
+                        <span>Clique aqui</span>
                       </Button>
                     </div>
                   </div>
@@ -585,10 +585,10 @@ const PlanoVidaQuemSou = () => {
                         onClick={() => setShowRodaVidaModal(true)} 
                         size="sm" 
                         variant="ghost"
-                        className="text-xs sm:text-sm px-2 sm:px-3 gap-1"
+                        className="text-xs sm:text-sm px-2 sm:px-3 gap-1.5"
                       >
-                        <MousePointerClick className="w-3 h-3 sm:w-4 sm:h-4" />
-                        <span className="hidden sm:inline">Conhecer melhor</span>
+                        <MousePointerClick className="w-5 h-5 sm:w-4 sm:h-4 flex-shrink-0" />
+                        <span>Clique aqui</span>
                       </Button>
                     </div>
                   </div>
