@@ -141,7 +141,7 @@ const Signup = () => {
               30 dias grátis
             </p>
             <p className="text-sm text-muted-foreground">
-              R$ 67,00/ano • Acesso completo por 12 meses
+              Utilize 100% dos recursos, ferramentas e Inteligência Artificial.
             </p>
           </div>
         </CardHeader>
