@@ -57,7 +57,7 @@ const SubscriberLanding = () => {
             <p className="text-muted-foreground mb-2">Ainda não é assinante?</p>
             <Button 
               variant="outline"
-              onClick={() => navigate("/leadp")}
+              onClick={() => navigate("/")}
               className="border-primary/30 text-primary hover:bg-primary/10"
             >
               Conheça o PDI
