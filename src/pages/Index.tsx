@@ -811,8 +811,8 @@ const Index = () => {
               onClick={() => setIsDiaryModalOpen(true)}
               className="inline-flex items-center gap-2 text-primary hover:text-primary/80 font-medium text-sm sm:text-base transition-colors underline underline-offset-4"
             >
-              Conheça o embasamento científico validado por trás desta ferramenta
-              <MousePointerClick className="h-4 w-4" />
+              <MousePointerClick className="h-5 w-5 sm:h-4 sm:w-4 flex-shrink-0" />
+              Clique aqui: Conheça o embasamento científico validado por trás desta ferramenta
             </button>
             
             <div className="flex flex-col items-center gap-3">

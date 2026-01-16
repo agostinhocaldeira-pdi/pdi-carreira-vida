@@ -156,10 +156,10 @@ export const StoicReflectionLanding = () => {
 
               <button
                 onClick={() => setShowPhilosophyModal(true)}
-                className="inline-flex items-center gap-1.5 text-primary hover:text-primary/80 underline underline-offset-4 text-sm font-medium transition-colors text-left group"
+                className="inline-flex items-center gap-2 text-primary hover:text-primary/80 underline underline-offset-4 text-sm font-medium transition-colors text-left group"
               >
-                <MousePointerClick className="w-3.5 h-3.5 sm:w-4 sm:h-4 group-hover:scale-110 transition-transform" />
-                Entenda mais sobre a Filosofia Estóica aqui
+                <MousePointerClick className="w-5 h-5 sm:w-4 sm:h-4 flex-shrink-0 group-hover:scale-110 transition-transform" />
+                Clique aqui: Entenda mais sobre a Filosofia Estóica
               </button>
             </div>
           </div>
