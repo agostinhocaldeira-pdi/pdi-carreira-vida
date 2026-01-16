@@ -126,25 +126,25 @@ export const Agenda = () => {
                           <AgendaTaskCard
                             key={timeTasks[0].id}
                             task={timeTasks[0]}
-                            onToggleComplete={toggleComplete}
+                            onToggleComplete={(id, completed) => toggleComplete(id, completed, selectedDate)}
                             onClick={handleTaskClick}
                           />
                         );
                       }
                       // Múltiplas tarefas no mesmo horário - renderiza em flex row
-                      return (
-                        <div key={time} className="flex gap-2">
-                          {timeTasks.map((task) => (
-                            <div key={task.id} className="flex-1 min-w-0">
-                              <AgendaTaskCard
-                                task={task}
-                                onToggleComplete={toggleComplete}
-                                onClick={handleTaskClick}
-                              />
-                            </div>
-                          ))}
-                        </div>
-                      );
+                        return (
+                          <div key={time} className="flex gap-2">
+                            {timeTasks.map((task) => (
+                              <div key={task.id} className="flex-1 min-w-0">
+                                <AgendaTaskCard
+                                  task={task}
+                                  onToggleComplete={(id, completed) => toggleComplete(id, completed, selectedDate)}
+                                  onClick={handleTaskClick}
+                                />
+                              </div>
+                            ))}
+                          </div>
+                        );
                     });
                   })()
                 ) : (
@@ -153,7 +153,7 @@ export const Agenda = () => {
                     <AgendaTaskCard
                       key={task.id}
                       task={task}
-                      onToggleComplete={toggleComplete}
+                      onToggleComplete={(id, completed) => toggleComplete(id, completed, selectedDate)}
                       onClick={handleTaskClick}
                     />
                   ))
