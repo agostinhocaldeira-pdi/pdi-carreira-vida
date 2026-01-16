@@ -638,8 +638,8 @@ const MetodoVvd = () => {
               </CardContent>
             </Card>
 
-            {/* Survey Questions Section - appears after paragraph generation */}
-            {showSurveySection && step === 2 && (
+            {/* Survey Questions Section - appears in all VVD steps */}
+            {showSurveySection && step >= 1 && (
               <Card className="border-2 border-accent/30 shadow-xl animate-fade-in mb-6">
                 <CardHeader className="space-y-4">
                   <div className="flex items-center gap-3">
