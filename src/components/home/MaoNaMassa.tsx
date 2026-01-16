@@ -1224,8 +1224,10 @@ const MaoNaMassa = ({ embedded = false }: MaoNaMassaProps) => {
                     Organize suas tarefas na Matriz de Eisenhower
                   </p>
                   <p className="text-sm text-muted-foreground">
-                    Cadastre os passos e ações da sua meta na <strong>Matriz de Eisenhower</strong> para 
-                    visualizar diariamente o que realmente precisa executar e priorizar suas atividades.
+                    Esta ferramenta te ajuda a separar o que é urgente, importante e dizer NÃO para o restante.
+                  </p>
+                  <p className="text-sm text-muted-foreground">
+                    É um exercício muito importante para saber eliminar o que não contribui para alcançar sua meta.
                   </p>
                 </div>
               </div>
