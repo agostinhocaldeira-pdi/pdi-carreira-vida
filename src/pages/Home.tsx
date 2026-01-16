@@ -400,7 +400,7 @@ const Home = () => {
                 <strong>Agora vem a parte prática. Agir.</strong>
               </p>
               <p>
-                A seguir, veja as "Dicas de Eficiência, Produtividade e Clareza" para tirar o melhor proveito desta jornada.
+                A seguir, veja as <strong>"Dicas de Eficiência, Produtividade e Clareza"</strong> para tirar o melhor proveito desta jornada.
               </p>
               <p className="text-primary font-medium">
                 Estou muito feliz por você! 😊
