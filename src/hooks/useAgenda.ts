@@ -25,26 +25,40 @@ interface AgendaEvent {
   updated_at: string;
 }
 
+interface DailyCompletion {
+  event_id: string;
+  completed_date: string;
+}
+
 export const useAgenda = () => {
   const { toast } = useToast();
   const [loading, setLoading] = useState(true);
   const [events, setEvents] = useState<AgendaEvent[]>([]);
+  const [dailyCompletions, setDailyCompletions] = useState<DailyCompletion[]>([]);
   const [syncing, setSyncing] = useState(false);
 
-  // Fetch all events for the user
+  // Fetch all events and daily completions for the user
   const fetchEvents = useCallback(async () => {
     try {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
 
-      const { data, error } = await supabase
-        .from('agenda_events')
-        .select('*')
-        .eq('user_id', user.id)
-        .order('scheduled_time', { ascending: true });
+      // Fetch events and daily completions in parallel
+      const [eventsResult, completionsResult] = await Promise.all([
+        supabase
+          .from('agenda_events')
+          .select('*')
+          .eq('user_id', user.id)
+          .order('scheduled_time', { ascending: true }),
+        supabase
+          .from('agenda_daily_completions')
+          .select('event_id, completed_date')
+          .eq('user_id', user.id)
+      ]);
 
-      if (error) throw error;
-      setEvents(data || []);
+      if (eventsResult.error) throw eventsResult.error;
+      setEvents(eventsResult.data || []);
+      setDailyCompletions(completionsResult.data || []);
     } catch (error) {
       console.error('Error fetching agenda events:', error);
     } finally {
@@ -296,6 +310,12 @@ export const useAgenda = () => {
     }
   }, [fetchEvents]);
 
+  // Check if a recurring task is completed for a specific date
+  const isCompletedForDate = useCallback((eventId: string, date: Date): boolean => {
+    const dateStr = format(date, 'yyyy-MM-dd');
+    return dailyCompletions.some(c => c.event_id === eventId && c.completed_date === dateStr);
+  }, [dailyCompletions]);
+
   // Get tasks for a specific date
   const getTasksForDate = useCallback((date: Date): AgendaTask[] => {
     const dateStr = format(date, 'yyyy-MM-dd');
@@ -320,21 +340,29 @@ export const useAgenda = () => {
         
         return false;
       })
-      .map(event => ({
-        id: event.id,
-        title: event.title,
-        description: event.description || undefined,
-        scheduled_time: event.scheduled_time,
-        source_type: event.source_type as AgendaTask['source_type'],
-        source_quadrant: event.source_quadrant as AgendaTask['source_quadrant'],
-        label: event.label || undefined,
-        label_color: event.label_color as AgendaTask['label_color'],
-        is_completed: event.is_completed,
-        is_recurring: event.is_recurring,
-        recurrence_type: event.recurrence_type as AgendaTask['recurrence_type'],
-      }))
+      .map(event => {
+        // For recurring tasks, check daily completion instead of global is_completed
+        const isRecurringTask = event.is_recurring && (event.recurrence_type === 'daily' || event.recurrence_type === 'weekly');
+        const completed = isRecurringTask 
+          ? isCompletedForDate(event.id, date)
+          : event.is_completed;
+        
+        return {
+          id: event.id,
+          title: event.title,
+          description: event.description || undefined,
+          scheduled_time: event.scheduled_time,
+          source_type: event.source_type as AgendaTask['source_type'],
+          source_quadrant: event.source_quadrant as AgendaTask['source_quadrant'],
+          label: event.label || undefined,
+          label_color: event.label_color as AgendaTask['label_color'],
+          is_completed: completed,
+          is_recurring: event.is_recurring,
+          recurrence_type: event.recurrence_type as AgendaTask['recurrence_type'],
+        };
+      })
       .sort((a, b) => a.scheduled_time.localeCompare(b.scheduled_time));
-  }, [events]);
+  }, [events, isCompletedForDate]);
 
   // Get dates that have tasks
   const getTaskDates = useCallback((): Date[] => {
@@ -449,13 +477,17 @@ export const useAgenda = () => {
     }
   }, [fetchEvents, toast]);
 
-  // Toggle task completion
-  const toggleComplete = useCallback(async (taskId: string, completed: boolean) => {
-    // Find the event to check if it's a pending task
+  // Toggle task completion - for recurring tasks, uses daily completions
+  const toggleComplete = useCallback(async (taskId: string, completed: boolean, forDate?: Date) => {
+    // Find the event to check its type
     const event = events.find(e => e.id === taskId);
+    if (!event) return;
+
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
     
     // If it's a pending task being marked as completed, also update the pending task
-    if (event?.source_type === 'pending' && event.source_id && completed) {
+    if (event.source_type === 'pending' && event.source_id && completed) {
       try {
         await supabase
           .from('user_pending_tasks')
@@ -482,8 +514,49 @@ export const useAgenda = () => {
         console.error('Error completing pending task:', error);
       }
     }
+
+    // For recurring tasks, use daily completions instead of global is_completed
+    const isRecurringTask = event.is_recurring && (event.recurrence_type === 'daily' || event.recurrence_type === 'weekly');
     
-    await updateEvent(taskId, { is_completed: completed });
+    if (isRecurringTask) {
+      const dateStr = format(forDate || new Date(), 'yyyy-MM-dd');
+      
+      try {
+        if (completed) {
+          // Add daily completion record
+          const { error } = await supabase
+            .from('agenda_daily_completions')
+            .insert({
+              user_id: user.id,
+              event_id: taskId,
+              completed_date: dateStr
+            });
+          
+          if (error && error.code !== '23505') { // Ignore unique constraint violation
+            throw error;
+          }
+        } else {
+          // Remove daily completion record
+          await supabase
+            .from('agenda_daily_completions')
+            .delete()
+            .eq('event_id', taskId)
+            .eq('completed_date', dateStr);
+        }
+        
+        await fetchEvents();
+      } catch (error) {
+        console.error('Error toggling daily completion:', error);
+        toast({
+          title: "Erro ao atualizar tarefa",
+          description: "Não foi possível atualizar a tarefa. Tente novamente.",
+          variant: "destructive",
+        });
+      }
+    } else {
+      // For non-recurring tasks, use global is_completed
+      await updateEvent(taskId, { is_completed: completed });
+    }
   }, [events, updateEvent, fetchEvents, toast]);
 
   // Initial fetch
