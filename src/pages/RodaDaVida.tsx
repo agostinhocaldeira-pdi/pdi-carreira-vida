@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowLeft, Edit2, Save, X, Check, Loader2, HelpCircle, Sparkles } from "lucide-react";
+import { ArrowLeft, Edit2, Save, X, Check, Loader2, HelpCircle, Sparkles, Home, CircleDot } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, ResponsiveContainer, Legend } from "recharts";
 import { toast } from "sonner";
@@ -13,6 +13,14 @@ import { LifeWheelScientificModal } from "@/components/LifeWheelScientificModal"
 import { useActionCelebration } from "@/contexts/ActionCelebrationContext";
 import { Slider } from "@/components/ui/slider";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import type { AreaVida } from "@/types/pdi";
 
 interface LifeArea {
@@ -46,6 +54,7 @@ export default function RodaDaVida() {
   const [isSaving, setIsSaving] = useState(false);
   const [isLifeWheelModalOpen, setIsLifeWheelModalOpen] = useState(false);
   const [hoveredSlider, setHoveredSlider] = useState<{ index: number; type: 'atual' | 'desejada' } | null>(null);
+  const [showWelcomeModal, setShowWelcomeModal] = useState(false);
 
   // Carregar áreas do Supabase
   useEffect(() => {
@@ -53,11 +62,22 @@ export default function RodaDaVida() {
       try {
         const savedAreas = await getAreasVida();
         if (savedAreas && savedAreas.length > 0) {
+          // Verificar se tem notas preenchidas (não só zeros)
+          const hasFilledAreas = savedAreas.some(a => a.nota_atual > 0 || a.nota_desejada > 0);
+          
           setAreas(savedAreas.map(a => ({
             area: a.area,
             notaAtual: a.nota_atual,
             notaDesejada: a.nota_desejada
           })));
+          
+          // Se não tem notas preenchidas, mostrar modal de boas-vindas
+          if (!hasFilledAreas) {
+            setShowWelcomeModal(true);
+          }
+        } else {
+          // Nenhuma área salva, mostrar modal de boas-vindas
+          setShowWelcomeModal(true);
         }
       } catch (error) {
         console.error('Erro ao carregar áreas:', error);
@@ -373,6 +393,43 @@ export default function RodaDaVida() {
             </div>
           </CardContent>
         </Card>
+
+        {/* Modal de boas-vindas para usuários que não preencheram */}
+        <Dialog open={showWelcomeModal} onOpenChange={setShowWelcomeModal}>
+          <DialogContent className="sm:max-w-md">
+            <DialogHeader>
+              <DialogTitle className="text-xl text-center">
+                <CircleDot className="w-8 h-8 text-primary mx-auto mb-2" />
+                Roda da Vida
+              </DialogTitle>
+              <DialogDescription className="text-center text-base pt-2">
+                A <strong>3ª atividade</strong> do Passo 1 "Quem sou eu" é o exercício sobre <strong>Áreas da Vida</strong>.
+                <br /><br />
+                Você quer continuar e fazer agora, ou voltar para o Dashboard?
+              </DialogDescription>
+            </DialogHeader>
+            <DialogFooter className="flex-col sm:flex-row gap-2 pt-4">
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setShowWelcomeModal(false);
+                  navigate("/home");
+                }}
+                className="w-full sm:w-auto gap-2"
+              >
+                <Home className="w-4 h-4" />
+                Voltar ao Dashboard
+              </Button>
+              <Button
+                onClick={() => setShowWelcomeModal(false)}
+                className="w-full sm:w-auto gap-2"
+              >
+                <CircleDot className="w-4 h-4" />
+                Fazer agora
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </div>
     </div>
   );

@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Link, useNavigate } from "react-router-dom";
-import { ArrowLeft, ArrowRight, Heart, CheckCircle2, Sparkles, Loader2, HelpCircle } from "lucide-react";
+import { ArrowLeft, ArrowRight, Heart, CheckCircle2, Sparkles, Loader2, HelpCircle, Home } from "lucide-react";
 import ValuesScientificModal from "@/components/ValuesScientificModal";
 import { toast } from "sonner";
 import {
@@ -16,6 +16,14 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import LogoutButton from "@/components/LogoutButton";
 import { usePDIStorage } from "@/hooks/usePDIStorage";
 
@@ -52,6 +60,7 @@ const Valores = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [isValuesModalOpen, setIsValuesModalOpen] = useState(false);
+  const [showWelcomeModal, setShowWelcomeModal] = useState(false);
 
   useEffect(() => {
     // Verificar se o exercício já foi concluído (do Supabase)
@@ -61,6 +70,9 @@ const Valores = () => {
         if (savedValores && savedValores.length >= 6) {
           setExercicioConcluido(true);
           setValoresSelecionados6(savedValores.slice(0, 6));
+        } else {
+          // Se não preencheu, mostrar modal de boas-vindas
+          setShowWelcomeModal(true);
         }
       } catch (error) {
         console.error('Erro ao carregar valores:', error);
@@ -455,6 +467,43 @@ const Valores = () => {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* Modal de boas-vindas para usuários que não preencheram */}
+      <Dialog open={showWelcomeModal} onOpenChange={setShowWelcomeModal}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-xl text-center">
+              <Heart className="w-8 h-8 text-primary mx-auto mb-2" />
+              Exercício de Valores
+            </DialogTitle>
+            <DialogDescription className="text-center text-base pt-2">
+              A <strong>2ª atividade</strong> do Passo 1 "Quem sou eu" é o exercício sobre <strong>Valores</strong>.
+              <br /><br />
+              Você quer continuar e fazer agora, ou voltar para o Dashboard?
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="flex-col sm:flex-row gap-2 pt-4">
+            <Button
+              variant="outline"
+              onClick={() => {
+                setShowWelcomeModal(false);
+                navigate("/home");
+              }}
+              className="w-full sm:w-auto gap-2"
+            >
+              <Home className="w-4 h-4" />
+              Voltar ao Dashboard
+            </Button>
+            <Button
+              onClick={() => setShowWelcomeModal(false)}
+              className="w-full sm:w-auto gap-2"
+            >
+              <Heart className="w-4 h-4" />
+              Fazer agora
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
