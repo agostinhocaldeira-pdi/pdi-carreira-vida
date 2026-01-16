@@ -352,13 +352,18 @@ const PlanoVidaQuemSou = () => {
                 </h2>
                 <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">
                   Antes de traçar seu caminho, é preciso <strong className="text-foreground">saber quem você é</strong>. 
-                  O autoconhecimento é a fundação que sustenta seus sonhos. Quando você entende seus valores, 
-                  sua essência e o que realmente importa, tudo fica mais claro: seus <strong className="text-foreground">objetivos</strong> ganham 
-                  propósito, suas <strong className="text-foreground">metas</strong> ganham direção, suas <strong className="text-foreground">ações</strong> ganham 
-                  força, e cada <strong className="text-foreground">passo</strong> se torna uma conquista rumo à vida que você deseja.
+                  O autoconhecimento é a fundação que sustenta seus sonhos.
                 </p>
-                <p className="text-sm text-primary font-medium italic">
-                  "Conhece-te a ti mesmo e conhecerás o universo." — Oráculo de Delfos
+                <p className="text-sm sm:text-base text-muted-foreground leading-relaxed mt-2">
+                  Nesta primeira etapa, conclua as 3 atividades:
+                </p>
+                <ol className="text-sm sm:text-base text-muted-foreground leading-relaxed list-decimal list-inside space-y-1 mt-2">
+                  <li>Criação do seu <strong className="text-foreground">VVD</strong> (Visão de Vida Desejada)</li>
+                  <li>Seus <strong className="text-foreground">Valores</strong></li>
+                  <li><strong className="text-foreground">Roda da Vida</strong></li>
+                </ol>
+                <p className="text-sm sm:text-base text-primary font-semibold mt-3">
+                  Mãos à obra!
                 </p>
               </div>
             </div>
