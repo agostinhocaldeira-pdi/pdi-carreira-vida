@@ -1236,7 +1236,10 @@ const MaoNaMassa = ({ embedded = false }: MaoNaMassaProps) => {
           <DialogFooter className="flex-col sm:flex-row gap-2">
             <Button 
               variant="outline"
-              onClick={() => setShowSuggestionModal(false)}
+              onClick={() => {
+                setShowSuggestionModal(false);
+                navigate('/home', { state: { showPlanoVidaCompleteModal: true } });
+              }}
               className="w-full sm:w-auto"
             >
               Fazer depois
