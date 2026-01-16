@@ -97,13 +97,13 @@ const LeadP = () => {
                 >
                   <div className="absolute inset-0 bg-[url('https://img.youtube.com/vi/k5xnoCgCuCw/maxresdefault.jpg')] bg-cover bg-center opacity-20" />
                   <div className="relative z-10 text-center px-4">
-                    <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center mx-auto mb-4 group-hover:scale-110 group-hover:bg-white/30 transition-all duration-300 shadow-2xl">
-                      <Play className="w-8 h-8 sm:w-10 sm:h-10 text-white fill-white ml-1" />
+                    <div className="w-14 h-14 sm:w-24 sm:h-24 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center mx-auto mb-4 group-hover:scale-110 group-hover:bg-white/30 transition-all duration-300 shadow-2xl">
+                      <Play className="w-6 h-6 sm:w-10 sm:h-10 text-white fill-white ml-1" />
                     </div>
-                    <p className="text-white text-lg sm:text-xl md:text-2xl font-semibold drop-shadow-lg">
+                    <p className="text-white text-sm sm:text-xl md:text-2xl font-semibold drop-shadow-lg">
                       Clique aqui para conhecer o PDI
                     </p>
-                    <p className="text-white/80 text-sm sm:text-base mt-2">
+                    <p className="text-white/80 text-xs sm:text-base mt-2">
                       2 minutos que podem mudar sua vida
                     </p>
                   </div>
