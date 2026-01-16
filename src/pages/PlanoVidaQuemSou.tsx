@@ -425,17 +425,20 @@ const PlanoVidaQuemSou = () => {
                     className="text-sm"
                   />
                   <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                    <Button 
-                      variant="outline" 
-                      size="sm" 
-                      onClick={() => navigate("/ferramentas/metodo-vvd")}
-                      className="gap-2 text-xs sm:text-sm"
-                    >
-                      <Target className="w-4 h-4" />
-                      Criar meu VVD
-                    </Button>
-                    <div className="flex gap-2 w-full sm:w-auto justify-end">
-                      {!isEditingVvd && (
+                    {/* Show "Criar meu VVD" only when VVD is empty */}
+                    {!vvd.trim() && (
+                      <Button 
+                        variant="outline" 
+                        size="sm" 
+                        onClick={() => navigate("/ferramentas/metodo-vvd")}
+                        className="gap-2 text-xs sm:text-sm"
+                      >
+                        <Target className="w-4 h-4" />
+                        Criar meu VVD
+                      </Button>
+                    )}
+                    <div className={`flex gap-2 w-full sm:w-auto ${vvd.trim() ? 'justify-between sm:justify-end' : 'justify-end'}`}>
+                      {!isEditingVvd && vvd.trim() && (
                         <Button onClick={handleEditVvd} size="sm" variant="outline" className="text-xs sm:text-sm px-2 sm:px-3">
                           <Edit className="w-3 h-3 sm:w-4 sm:h-4 sm:mr-2" />
                           <span className="hidden sm:inline">Editar</span>
