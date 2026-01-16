@@ -869,12 +869,6 @@ const MetodoVvd = () => {
                 </div>
               </div>
 
-              <div className="bg-accent/10 border border-accent/20 rounded-lg p-4">
-                <p className="text-sm text-center text-muted-foreground">
-                  ✨ Esta frase será automaticamente adicionada à seção "Minha Visão de Vida Desejada" no seu Plano de Vida
-                </p>
-              </div>
-
               <div className="flex flex-col sm:flex-row justify-between gap-3 sm:gap-4">
                 <Button
                   variant="outline"
@@ -882,7 +876,7 @@ const MetodoVvd = () => {
                   className="w-full sm:w-auto"
                 >
                   <ArrowLeft className="h-4 w-4 mr-2" />
-                  Voltar
+                  Voltar página
                 </Button>
                 <Button
                   onClick={handleFinalSave}
@@ -893,6 +887,12 @@ const MetodoVvd = () => {
                   <Check className="h-5 w-5 mr-2" />
                   Salvar no Plano de Vida
                 </Button>
+              </div>
+
+              <div className="bg-accent/10 border border-accent/20 rounded-lg p-4">
+                <p className="text-sm text-center text-muted-foreground">
+                  ✨ Esta frase será automaticamente adicionada à seção "Minha Visão de Vida Desejada" no seu Plano de Vida
+                </p>
               </div>
 
               <div className="pt-4 border-t border-muted">
