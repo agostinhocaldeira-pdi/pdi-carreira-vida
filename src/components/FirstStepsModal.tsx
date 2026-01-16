@@ -30,20 +30,36 @@ export const FirstStepsModal = () => {
       if (user) {
         setUserId(user.id);
         
-        // Verificar no Supabase se o usuário já viu o modal (usando user_onboarding)
-        const { data: onboarding } = await supabase
-          .from('user_onboarding')
-          .select('current_phase')
-          .eq('user_id', user.id)
-          .maybeSingle();
+        // Verificar se o usuário já tem algum uso real do sistema
+        // Checamos: objetivos, metas, valores, áreas de vida ou VVD preenchido
+        const [
+          { data: objetivos },
+          { data: metas },
+          { data: valores },
+          { data: areasVida },
+          { data: vvd }
+        ] = await Promise.all([
+          supabase.from('user_objectives').select('id').eq('user_id', user.id).limit(1),
+          supabase.from('user_goals').select('id').eq('user_id', user.id).limit(1),
+          supabase.from('user_valores').select('id').eq('user_id', user.id).limit(1),
+          supabase.from('user_life_areas').select('id').eq('user_id', user.id).limit(1),
+          supabase.from('user_vvd').select('id').eq('user_id', user.id).limit(1)
+        ]);
         
-        // Se o usuário tem registro de onboarding, já viu o modal
-        if (onboarding) {
+        const hasUsedSystem = 
+          (objetivos && objetivos.length > 0) ||
+          (metas && metas.length > 0) ||
+          (valores && valores.length > 0) ||
+          (areasVida && areasVida.length > 0) ||
+          (vvd && vvd.length > 0);
+        
+        // Se o usuário já usou o sistema, não mostrar o modal
+        if (hasUsedSystem) {
           localStorage.setItem(FIRST_STEPS_KEY, "true");
           return;
         }
         
-        // Se não tem registro, mostrar o modal
+        // Se não tem uso real, mostrar o modal
         const timer = setTimeout(() => {
           setOpen(true);
         }, 500);
