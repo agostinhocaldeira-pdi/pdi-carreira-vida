@@ -416,9 +416,9 @@ const MetodoVvd = () => {
           </div>
         </div>
 
-        {/* Step 1: Free Text */}
-        {step >= 1 && (
-          <Card className={`border-2 shadow-xl animate-fade-in mb-6 ${step === 1 ? 'border-primary/20' : 'border-muted/20'}`}>
+        {/* Step 1: Free Text - Only show when on step 1 */}
+        {step === 1 && (
+          <Card className="border-2 shadow-xl animate-fade-in mb-6 border-primary/20">
             <CardHeader className="space-y-4">
               <div className="flex items-center gap-3">
                 <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center">
@@ -510,19 +510,14 @@ const MetodoVvd = () => {
                 </>
               )}
               
-              {step > 1 && (
-                <div className="bg-muted/30 rounded-lg p-4 border border-muted">
-                  <p className="text-sm text-muted-foreground whitespace-pre-wrap">{freeText}</p>
-                </div>
-              )}
             </CardContent>
           </Card>
         )}
 
-        {/* Step 2: Paragraph + Survey Questions */}
-        {step >= 2 && (
+        {/* Step 2: Paragraph + Survey Questions - Only show when on step 2 */}
+        {step === 2 && (
           <>
-            <Card className={`border-2 shadow-xl animate-fade-in mb-6 ${step === 2 ? 'border-primary/20' : 'border-muted/20'}`}>
+            <Card className="border-2 shadow-xl animate-fade-in mb-6 border-primary/20">
               <CardHeader className="space-y-4">
                 <div className="flex items-center gap-3">
                   <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center">
@@ -630,11 +625,6 @@ const MetodoVvd = () => {
                   </>
                 )}
 
-                {step > 2 && (
-                  <div className="bg-muted/30 rounded-lg p-4 border border-muted">
-                    <p className="text-base font-medium text-muted-foreground whitespace-pre-wrap">{paragraphText}</p>
-                  </div>
-                )}
               </CardContent>
             </Card>
 
@@ -679,7 +669,7 @@ const MetodoVvd = () => {
                     <Label htmlFor="expectations" className="font-semibold">O que você espera alcançar com o PDI?</Label>
                     <Textarea
                       id="expectations"
-                      placeholder="Compartilhe suas expectativas, sonhos e o que deseja conquistar..."
+                      placeholder="Compartilhe seus sentimentos, sonhos e o que deseja conquistar..."
                       value={surveyData.expectations}
                       onChange={(e) => setSurveyData(prev => ({ ...prev, expectations: e.target.value }))}
                       rows={3}
@@ -723,8 +713,8 @@ const MetodoVvd = () => {
                       className="grid grid-cols-2 gap-2"
                     >
                       <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="nunca" id="vvd-nunca" />
-                        <Label htmlFor="vvd-nunca" className="font-normal cursor-pointer">Raramente/Nunca</Label>
+                        <RadioGroupItem value="raramente" id="vvd-raramente" />
+                        <Label htmlFor="vvd-raramente" className="font-normal cursor-pointer">Raramente</Label>
                       </div>
                       <div className="flex items-center space-x-2">
                         <RadioGroupItem value="1-2x" id="vvd-1-2x" />
