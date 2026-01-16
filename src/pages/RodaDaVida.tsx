@@ -184,11 +184,10 @@ export default function RodaDaVida() {
         <Card>
           <CardHeader>
             <CardTitle className="text-3xl font-bold">Roda da Vida</CardTitle>
-            <CardDescription className="text-base mt-2">
-              A Roda da Vida é uma ferramenta poderosa de autoconhecimento que permite visualizar o equilíbrio
-              entre diferentes áreas da sua vida. Avalie cada área com uma nota de 0 a 10, onde 0 representa
-              total insatisfação e 10 representa plena realização. Compare seu estado atual com onde você
-              deseja chegar e identifique as áreas que precisam de mais atenção no seu desenvolvimento pessoal.
+            <CardDescription className="text-base mt-2 space-y-1">
+              <p className="font-semibold">Como fazer o exercício</p>
+              <p>Avalie cada área com uma nota de 0 a 10</p>
+              <p className="text-muted-foreground">Zero representa total insatisfação e 10 representa plena realização.</p>
             </CardDescription>
             <button
               onClick={() => setIsLifeWheelModalOpen(true)}
