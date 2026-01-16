@@ -5,8 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Lightbulb, ArrowLeft, Home, Plus, Trash2, Pencil, Check, X, ExternalLink, ChevronDown } from "lucide-react";
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { Lightbulb, ArrowLeft, Home, Plus, Trash2, Pencil, Check, X, ExternalLink, HelpCircle } from "lucide-react";
 import { PDILoader } from "@/components/ui/pdi-loader";
 import { toast } from "sonner";
 
@@ -30,7 +30,7 @@ const PlanoVidaComoChegar = () => {
   const [editandoHabilidadeId, setEditandoHabilidadeId] = useState<number | null>(null);
   const [habilidadeEditada, setHabilidadeEditada] = useState("");
   const [deleteHabilidadeId, setDeleteHabilidadeId] = useState<number | null>(null);
-  const [habilidadesExpanded, setHabilidadesExpanded] = useState(false);
+  const [showHabilidadesModal, setShowHabilidadesModal] = useState(false);
 
   // Trigger open meta form if coming from para-onde page
   useEffect(() => {
@@ -212,64 +212,15 @@ const PlanoVidaComoChegar = () => {
             ) : (
               <>
                 {/* Seção: Habilidades a Desenvolver */}
-                <Collapsible 
-                  open={habilidadesExpanded} 
-                  onOpenChange={setHabilidadesExpanded}
-                  className="p-4 sm:p-6 rounded-xl border-2 border-primary/20 bg-gradient-to-br from-primary/5 to-transparent space-y-4 w-full overflow-hidden"
-                >
-                  <CollapsibleTrigger asChild>
-                    <button className="flex items-center justify-between w-full group">
-                      <div className="flex items-center gap-2">
-                        <Lightbulb className="w-5 h-5 text-primary" />
-                        <h3 className="text-lg font-semibold">Habilidades a Desenvolver</h3>
-                        {habilidades.length > 0 && (
-                          <span className="text-xs bg-primary/20 text-primary px-2 py-0.5 rounded-full">
-                            {habilidades.length}
-                          </span>
-                        )}
-                      </div>
-                      <ChevronDown className={`w-5 h-5 text-muted-foreground transition-transform duration-200 ${habilidadesExpanded ? 'rotate-180' : ''}`} />
-                    </button>
-                  </CollapsibleTrigger>
-
-                  <CollapsibleContent className="space-y-4">
-                    {/* Explicação sobre habilidades */}
-                    <div className="p-4 bg-muted/40 rounded-lg border border-border/50 space-y-4 mt-4">
-                    <p className="text-sm text-muted-foreground leading-relaxed">
-                      Um objetivo normalmente dependerá de <strong>novas habilidades</strong>. Para identificar quais são as habilidades necessárias para alcançar seus objetivos, sugerimos utilizar:
-                    </p>
-                    
-                    <div className="space-y-3 ml-2">
-                      <div className="space-y-2">
-                        <p className="text-sm text-muted-foreground">
-                          • <strong>Autoavaliação + 360º</strong> — receba feedbacks estruturados sobre suas competências
-                        </p>
-                        <Button 
-                          variant="outline" 
-                          size="sm"
-                          onClick={() => navigate("/ferramentas/autoavaliacao-360")}
-                          className="text-xs sm:text-sm ml-3"
-                        >
-                          <ExternalLink className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
-                          Autoavaliação + 360º
-                        </Button>
-                      </div>
-                      
-                      <div className="space-y-2">
-                        <p className="text-sm text-muted-foreground">
-                          • <strong>Ferramentas (FF)</strong> — explore outras ferramentas de desenvolvimento pessoal
-                        </p>
-                        <Button 
-                          variant="outline" 
-                          size="sm"
-                          onClick={() => navigate("/ferramentas")}
-                          className="text-xs sm:text-sm ml-3"
-                        >
-                          <ExternalLink className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
-                          Ferramentas (FF)
-                        </Button>
-                      </div>
-                    </div>
+                <div className="p-4 sm:p-6 rounded-xl border-2 border-primary/20 bg-gradient-to-br from-primary/5 to-transparent space-y-4 w-full overflow-hidden">
+                  <div className="flex items-center gap-2">
+                    <Lightbulb className="w-5 h-5 text-primary" />
+                    <h3 className="text-lg font-semibold">Habilidades a Desenvolver</h3>
+                    {habilidades.length > 0 && (
+                      <span className="text-xs bg-primary/20 text-primary px-2 py-0.5 rounded-full">
+                        {habilidades.length}
+                      </span>
+                    )}
                   </div>
 
                   <div className="space-y-3">
@@ -295,15 +246,24 @@ const PlanoVidaComoChegar = () => {
                       variant="outline" 
                       size="sm"
                       onClick={handleAddHabilidade}
-                      className="mt-2 text-xs sm:text-sm"
+                      className="text-xs sm:text-sm"
                     >
                       <Plus className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
                       <span className="sm:hidden">Adicionar</span>
                       <span className="hidden sm:inline">Adicionar Habilidade</span>
                     </Button>
 
+                    {/* Link explicativo sobre habilidades */}
+                    <button
+                      onClick={() => setShowHabilidadesModal(true)}
+                      className="flex items-center gap-1.5 text-xs sm:text-sm text-primary hover:text-primary/80 hover:underline transition-colors group"
+                    >
+                      <HelpCircle className="w-3.5 h-3.5 sm:w-4 sm:h-4 group-hover:scale-110 transition-transform" />
+                      <span>Entenda como descobrir habilidades que precisam ser desenvolvidas</span>
+                    </button>
+
                     {habilidades.length > 0 && (
-                      <div className="rounded-lg border overflow-x-auto max-w-full">
+                      <div className="rounded-lg border overflow-x-auto max-w-full mt-4">
                         <Table className="w-full table-fixed">
                           <TableHeader>
                             <TableRow>
@@ -375,8 +335,7 @@ const PlanoVidaComoChegar = () => {
                       </div>
                     )}
                   </div>
-                  </CollapsibleContent>
-                </Collapsible>
+                </div>
 
                 {/* Seção: Mão na Massa */}
                 <div className="p-4 sm:p-6 rounded-xl border-2 border-accent/30 bg-gradient-to-br from-accent/5 to-transparent max-w-full overflow-hidden w-full box-border">
@@ -415,6 +374,66 @@ const PlanoVidaComoChegar = () => {
         title="Excluir Habilidade"
         description="Tem certeza que deseja excluir esta habilidade?"
       />
+
+      {/* Modal explicativo sobre como descobrir habilidades */}
+      <Dialog open={showHabilidadesModal} onOpenChange={setShowHabilidadesModal}>
+        <DialogContent className="max-w-md sm:max-w-lg">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-lg sm:text-xl">
+              <Lightbulb className="w-5 h-5 text-primary" />
+              Como descobrir habilidades a desenvolver
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 py-2">
+            <p className="text-sm sm:text-base text-foreground/90 leading-relaxed">
+              Um objetivo normalmente dependerá de <strong>novas habilidades</strong>. Para identificar quais são as habilidades necessárias para alcançar seus objetivos, sugerimos utilizar:
+            </p>
+            
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <p className="text-sm sm:text-base text-foreground/90">
+                  • <strong>Autoavaliação + 360º</strong> — receba feedbacks estruturados sobre suas competências
+                </p>
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={() => {
+                    setShowHabilidadesModal(false);
+                    navigate("/ferramentas/autoavaliacao-360");
+                  }}
+                  className="text-xs sm:text-sm ml-4"
+                >
+                  <ExternalLink className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
+                  Autoavaliação + 360º
+                </Button>
+              </div>
+              
+              <div className="space-y-2">
+                <p className="text-sm sm:text-base text-foreground/90">
+                  • <strong>Ferramentas (FF)</strong> — explore outras ferramentas de desenvolvimento pessoal
+                </p>
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={() => {
+                    setShowHabilidadesModal(false);
+                    navigate("/ferramentas");
+                  }}
+                  className="text-xs sm:text-sm ml-4"
+                >
+                  <ExternalLink className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
+                  Ferramentas (FF)
+                </Button>
+              </div>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button onClick={() => setShowHabilidadesModal(false)}>
+              Entendi
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
