@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Heart, ArrowRight, Edit, ArrowLeft, Home, Sparkles, Lightbulb, Compass, Target, ChevronDown, Info } from "lucide-react";
+import { Heart, ArrowRight, Edit, ArrowLeft, Home, Sparkles, Lightbulb, Compass, Target, ChevronDown, MousePointerClick } from "lucide-react";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { PDILoader } from "@/components/ui/pdi-loader";
@@ -459,7 +459,7 @@ const PlanoVidaQuemSou = () => {
                         variant="ghost"
                         className="text-xs sm:text-sm px-2 sm:px-3 gap-1"
                       >
-                        <Info className="w-3 h-3 sm:w-4 sm:h-4" />
+                        <MousePointerClick className="w-3 h-3 sm:w-4 sm:h-4" />
                         <span className="hidden sm:inline">Conhecer melhor</span>
                       </Button>
                     </div>
@@ -515,7 +515,7 @@ const PlanoVidaQuemSou = () => {
                         variant="ghost"
                         className="text-xs sm:text-sm px-2 sm:px-3 gap-1"
                       >
-                        <Info className="w-3 h-3 sm:w-4 sm:h-4" />
+                        <MousePointerClick className="w-3 h-3 sm:w-4 sm:h-4" />
                         <span className="hidden sm:inline">Conhecer melhor</span>
                       </Button>
                     </div>
@@ -587,7 +587,7 @@ const PlanoVidaQuemSou = () => {
                         variant="ghost"
                         className="text-xs sm:text-sm px-2 sm:px-3 gap-1"
                       >
-                        <Info className="w-3 h-3 sm:w-4 sm:h-4" />
+                        <MousePointerClick className="w-3 h-3 sm:w-4 sm:h-4" />
                         <span className="hidden sm:inline">Conhecer melhor</span>
                       </Button>
                     </div>

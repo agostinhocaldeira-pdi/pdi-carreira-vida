@@ -8,7 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Rocket, Plus, Trash2, Pencil, Check, X, ChevronDown, Lightbulb, Loader2, Target, LayoutGrid, ArrowRight } from "lucide-react";
+import { Rocket, Plus, Trash2, Pencil, Check, X, ChevronDown, Lightbulb, Loader2, Target, LayoutGrid, ArrowRight, MousePointerClick } from "lucide-react";
 import { PDILoader } from "@/components/ui/pdi-loader";
 import { toast } from "sonner";
 import { useNavigate, Link } from "react-router-dom";
@@ -668,7 +668,7 @@ const MaoNaMassa = ({ embedded = false }: MaoNaMassaProps) => {
                 to="/ferramentas/smart" 
                 className="text-xs text-primary hover:underline mt-1 inline-flex items-center gap-1"
               >
-                <Target className="h-3 w-3" />
+                <MousePointerClick className="h-3 w-3" />
                 Criar utilizando a ferramenta SMART
               </Link>
             </div>

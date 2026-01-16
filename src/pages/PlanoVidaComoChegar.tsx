@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
-import { Lightbulb, ArrowLeft, Home, Plus, Trash2, Pencil, Check, X, ExternalLink, HelpCircle } from "lucide-react";
+import { Lightbulb, ArrowLeft, Home, Plus, Trash2, Pencil, Check, X, ExternalLink, MousePointerClick } from "lucide-react";
 import { PDILoader } from "@/components/ui/pdi-loader";
 import { toast } from "sonner";
 
@@ -258,7 +258,7 @@ const PlanoVidaComoChegar = () => {
                       onClick={() => setShowHabilidadesModal(true)}
                       className="flex items-center gap-1.5 text-xs sm:text-sm text-primary hover:text-primary/80 hover:underline transition-colors group"
                     >
-                      <HelpCircle className="w-3.5 h-3.5 sm:w-4 sm:h-4 group-hover:scale-110 transition-transform" />
+                      <MousePointerClick className="w-3.5 h-3.5 sm:w-4 sm:h-4 group-hover:scale-110 transition-transform" />
                       <span>Entenda como descobrir habilidades que precisam ser desenvolvidas</span>
                     </button>
 

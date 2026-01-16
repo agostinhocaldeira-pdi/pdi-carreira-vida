@@ -1,7 +1,7 @@
 import { useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Play, Pause, Volume2, BookOpen, Sparkles } from "lucide-react";
+import { Play, Pause, Volume2, BookOpen, Sparkles, MousePointerClick } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
 // Reflexão fixa para a landing page
@@ -156,8 +156,9 @@ export const StoicReflectionLanding = () => {
 
               <button
                 onClick={() => setShowPhilosophyModal(true)}
-                className="text-primary hover:text-primary/80 underline underline-offset-4 text-sm font-medium transition-colors text-left"
+                className="inline-flex items-center gap-1.5 text-primary hover:text-primary/80 underline underline-offset-4 text-sm font-medium transition-colors text-left group"
               >
+                <MousePointerClick className="w-3.5 h-3.5 sm:w-4 sm:h-4 group-hover:scale-110 transition-transform" />
                 Entenda mais sobre a Filosofia Estóica aqui
               </button>
             </div>

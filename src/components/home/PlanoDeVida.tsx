@@ -9,7 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
-import { Compass, Heart, Target, Lightbulb, ChevronDown, ArrowRight, Edit, Sparkles, Loader2, ExternalLink, Plus, Trash2, Pencil, Check, X, Building2, Monitor, Smartphone, Lock } from "lucide-react";
+import { Compass, Heart, Target, Lightbulb, ChevronDown, ArrowRight, Edit, Sparkles, Loader2, MousePointerClick, Plus, Trash2, Pencil, Check, X, Building2, Monitor, Smartphone, Lock } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { PDILoader } from "@/components/ui/pdi-loader";
 import { toast } from "sonner";
@@ -1638,7 +1638,7 @@ const PlanoDeVida = ({ onTabChange, onOpenChange, forcedTab, forcedOpen }: Plano
                           className="flex items-center gap-2 text-xs sm:text-sm text-primary hover:underline mt-2"
                         >
                           <span className="truncate">Ferramentas (FF)</span>
-                          <ExternalLink className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0" />
+                          <MousePointerClick className="w-3 h-3 sm:w-4 sm:h-4 flex-shrink-0" />
                         </Link>
                       </div>
                     </div>
