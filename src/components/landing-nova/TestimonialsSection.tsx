@@ -10,35 +10,35 @@ import lucasImg from "@/assets/testimonials/lucas-sa.jpg";
 const testimonials = [
   {
     name: "Eric Pereira",
-    role: "Gerente Comercial",
     image: ericImg,
     quote: "O PDI me ajudou a organizar minha rotina de forma que eu nunca tinha conseguido antes. Hoje tenho clareza do que preciso fazer cada semana.",
-    videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ",
-    linkedinUrl: "https://linkedin.com"
+    videoUrl: "https://www.youtube.com/embed/i1VgEBOW4PI",
+    linkedinUrl: "https://linkedin.com",
+    note: null
   },
   {
     name: "Gabriele Campos",
-    role: "Analista de RH",
     image: gabrieleImg,
     quote: "Finalmente consegui sair do ciclo de procrastinação. O sistema guiado faz toda a diferença.",
-    videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ",
-    linkedinUrl: "https://linkedin.com"
+    videoUrl: "https://www.youtube.com/embed/NjEA4WBiUvA",
+    linkedinUrl: "https://linkedin.com",
+    note: "(após PDI, ela conseguiu ser promovida em 3 meses)"
   },
   {
     name: "Larissa Schuartz",
-    role: "Empreendedora",
     image: larissaImg,
     quote: "A inteligência artificial do PDI me dá insights que eu não teria sozinha. É como ter um coach disponível 24h.",
-    videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ",
-    linkedinUrl: "https://linkedin.com"
+    videoUrl: "https://www.youtube.com/embed/Tpz2mmxUYHc",
+    linkedinUrl: "https://linkedin.com",
+    note: null
   },
   {
     name: "Lucas Sá",
-    role: "Desenvolvedor",
     image: lucasImg,
     quote: "Em 3 meses usando o PDI, consegui uma promoção que vinha buscando há 2 anos. O método funciona.",
-    videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ",
-    linkedinUrl: "https://linkedin.com"
+    videoUrl: null,
+    linkedinUrl: "https://linkedin.com",
+    note: null
   }
 ];
 
@@ -71,14 +71,16 @@ const TestimonialsSection = ({ onOpenVideo }: TestimonialsSectionProps) => {
                     alt={testimonial.name}
                     className="w-full aspect-square object-cover"
                   />
-                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                    <button
-                      onClick={() => onOpenVideo(testimonial.videoUrl)}
-                      className="w-14 h-14 rounded-full bg-primary flex items-center justify-center hover:scale-110 transition-transform"
-                    >
-                      <Play className="w-6 h-6 text-primary-foreground ml-1" />
-                    </button>
-                  </div>
+                  {testimonial.videoUrl && (
+                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                      <button
+                        onClick={() => onOpenVideo(testimonial.videoUrl!)}
+                        className="w-14 h-14 rounded-full bg-primary flex items-center justify-center hover:scale-110 transition-transform"
+                      >
+                        <Play className="w-6 h-6 text-primary-foreground ml-1" />
+                      </button>
+                    </div>
+                  )}
                 </div>
 
                 {/* Content */}
@@ -86,7 +88,6 @@ const TestimonialsSection = ({ onOpenVideo }: TestimonialsSectionProps) => {
                   <div className="flex items-center justify-between mb-3">
                     <div>
                       <h3 className="font-bold text-foreground">{testimonial.name}</h3>
-                      <p className="text-sm text-muted-foreground">{testimonial.role}</p>
                     </div>
                     <a 
                       href={testimonial.linkedinUrl}
@@ -100,6 +101,11 @@ const TestimonialsSection = ({ onOpenVideo }: TestimonialsSectionProps) => {
                   <p className="text-sm text-muted-foreground italic leading-relaxed">
                     "{testimonial.quote}"
                   </p>
+                  {testimonial.note && (
+                    <p className="text-xs text-primary mt-2 font-medium">
+                      {testimonial.note}
+                    </p>
+                  )}
                 </div>
               </CardContent>
             </Card>
