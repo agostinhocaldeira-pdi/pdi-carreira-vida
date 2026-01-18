@@ -60,10 +60,10 @@ const HeroSection = ({ onCTA }: HeroSectionProps) => {
           <Button 
             size="lg" 
             onClick={onCTA}
-            className="text-base sm:text-lg px-8 py-6 bg-primary hover:bg-primary/90 shadow-xl hover:shadow-2xl transition-all duration-300"
+            className="text-base sm:text-lg px-6 sm:px-8 py-6 bg-primary hover:bg-primary/90 shadow-xl hover:shadow-2xl transition-all duration-300 whitespace-normal h-auto"
           >
-            Começar meu Teste Grátis na Plataforma
-            <ArrowRight className="ml-2 h-5 w-5" />
+            <span className="text-center">Começar meu Teste Grátis na Plataforma</span>
+            <ArrowRight className="ml-2 h-5 w-5 flex-shrink-0" />
           </Button>
           
           <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-6 mt-6 text-sm text-muted-foreground">
