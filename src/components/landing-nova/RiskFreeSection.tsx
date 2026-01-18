@@ -48,11 +48,11 @@ const RiskFreeSection = ({ onCTA }: RiskFreeSectionProps) => {
         <Button 
           size="lg" 
           onClick={onCTA}
-          className="text-lg px-10 py-7 bg-primary hover:bg-primary/90 shadow-xl hover:shadow-2xl transition-all duration-300"
+          className="text-base sm:text-lg px-6 sm:px-10 py-6 sm:py-7 bg-primary hover:bg-primary/90 shadow-xl hover:shadow-2xl transition-all duration-300 whitespace-normal h-auto"
         >
           <span className="mr-2">👉</span>
-          Criar minha conta gratuita
-          <Sparkles className="ml-3 w-5 h-5" />
+          <span className="text-center">Criar minha conta gratuita</span>
+          <Sparkles className="ml-2 sm:ml-3 w-5 h-5 flex-shrink-0" />
         </Button>
       </div>
     </section>
