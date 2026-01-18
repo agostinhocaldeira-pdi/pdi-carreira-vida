@@ -1,8 +1,8 @@
 import { Button } from "@/components/ui/button";
 import { ArrowRight, CheckCircle2 } from "lucide-react";
 
-// Import dashboard images
-import dashboardOverview from "@/assets/tutorial/dashboard-overview.jpg";
+// Import video
+import journalVideo from "@/assets/journal-video.mp4";
 
 interface HeroSectionProps {
   onCTA: () => void;
@@ -30,28 +30,18 @@ const HeroSection = ({ onCTA }: HeroSectionProps) => {
           </p>
         </div>
 
-        {/* Dashboard Preview */}
+        {/* Video Preview */}
         <div className="relative mx-auto max-w-5xl mb-12">
           <div className="relative rounded-2xl overflow-hidden shadow-2xl border border-border/50">
-            <img 
-              src={dashboardOverview} 
-              alt="Dashboard PDI - Visão geral"
+            <video 
+              src={journalVideo} 
+              autoPlay
+              loop
+              muted
+              playsInline
               className="w-full h-auto"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-background/20 to-transparent pointer-events-none" />
-          </div>
-          
-          {/* Mobile mockup overlay */}
-          <div className="absolute -right-4 sm:right-8 bottom-0 w-24 sm:w-32 md:w-40 transform translate-y-1/4 hidden sm:block">
-            <div className="bg-card rounded-3xl p-1 shadow-2xl border border-border">
-              <div className="bg-muted rounded-2xl overflow-hidden aspect-[9/19]">
-                <img 
-                  src={dashboardOverview} 
-                  alt="Dashboard PDI - Mobile"
-                  className="w-full h-full object-cover object-left-top"
-                />
-              </div>
-            </div>
           </div>
         </div>
 
