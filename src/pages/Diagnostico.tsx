@@ -5,6 +5,7 @@ import { Progress } from "@/components/ui/progress";
 import { motion, AnimatePresence } from "framer-motion";
 import { Brain, Target, Calendar, Flame, Heart, ArrowRight, Sparkles, Clock, Gift } from "lucide-react";
 import logoPdi from "@/assets/logo_pdi.png";
+import diagnosticoHero from "@/assets/diagnostico-hero.jpg";
 
 type Trava = "CLAREZA" | "DISPERSAO" | "ROTINA" | "CONSTANCIA" | "INTEGRACAO";
 
@@ -204,50 +205,61 @@ const Diagnostico = () => {
               transition={{ duration: 0.4 }}
               className="w-full max-w-lg text-center"
             >
-              <div className="bg-white rounded-2xl shadow-xl p-8 md:p-10">
-                {/* Title */}
-                <h1 className="text-2xl md:text-3xl font-bold text-foreground mb-4 leading-tight">
-                  Descubra a <span className="text-primary">'Trava Invisível'</span> que impede sua evolução.
-                </h1>
-
-                {/* Subtitle */}
-                <p className="text-muted-foreground text-base md:text-lg mb-8 leading-relaxed">
-                  Em 2 minutos, identifique o padrão comportamental exato que está bloqueando seus resultados e receba a ferramenta para corrigir.
-                </p>
-
-                {/* Benefits */}
-                <div className="space-y-4 mb-8">
-                  <div className="flex items-center gap-3 text-left p-3 bg-muted/30 rounded-xl">
-                    <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
-                      <Clock className="w-5 h-5 text-primary" />
-                    </div>
-                    <span className="text-foreground/80">Leva menos de <strong>2 minutos</strong></span>
-                  </div>
-
-                  <div className="flex items-center gap-3 text-left p-3 bg-muted/30 rounded-xl">
-                    <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
-                      <Brain className="w-5 h-5 text-primary" />
-                    </div>
-                    <span className="text-foreground/80">Análise de <strong>perfil comportamental</strong></span>
-                  </div>
-
-                  <div className="flex items-center gap-3 text-left p-3 bg-muted/30 rounded-xl">
-                    <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
-                      <Gift className="w-5 h-5 text-primary" />
-                    </div>
-                    <span className="text-foreground/80">Acesso a <strong>ferramenta de correção gratuita</strong> no final</span>
-                  </div>
+              <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
+                {/* Hero Image */}
+                <div className="w-full">
+                  <img 
+                    src={diagnosticoHero} 
+                    alt="Homem interagindo com interface digital" 
+                    className="w-full h-48 md:h-64 object-cover object-center"
+                  />
                 </div>
 
-                {/* CTA Button */}
-                <Button
-                  onClick={startQuiz}
-                  size="lg"
-                  className="w-full bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 text-primary-foreground font-semibold text-lg py-6 rounded-xl shadow-lg"
-                >
-                  Começar Diagnóstico
-                  <ArrowRight className="ml-2 w-5 h-5" />
-                </Button>
+                <div className="p-8 md:p-10">
+                  {/* Title */}
+                  <h1 className="text-2xl md:text-3xl font-bold text-foreground mb-4 leading-tight">
+                    Descubra a <span className="text-primary">'Trava Invisível'</span> que impede sua evolução.
+                  </h1>
+
+                  {/* Subtitle */}
+                  <p className="text-muted-foreground text-base md:text-lg mb-8 leading-relaxed">
+                    Em 2 minutos, identifique o padrão comportamental exato que está bloqueando seus resultados e receba a ferramenta para corrigir.
+                  </p>
+
+                  {/* Benefits */}
+                  <div className="space-y-4 mb-8">
+                    <div className="flex items-center gap-3 text-left p-3 bg-muted/30 rounded-xl">
+                      <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                        <Clock className="w-5 h-5 text-primary" />
+                      </div>
+                      <span className="text-foreground/80">Leva menos de <strong>2 minutos</strong></span>
+                    </div>
+
+                    <div className="flex items-center gap-3 text-left p-3 bg-muted/30 rounded-xl">
+                      <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                        <Brain className="w-5 h-5 text-primary" />
+                      </div>
+                      <span className="text-foreground/80">Análise de <strong>perfil comportamental</strong></span>
+                    </div>
+
+                    <div className="flex items-center gap-3 text-left p-3 bg-muted/30 rounded-xl">
+                      <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                        <Gift className="w-5 h-5 text-primary" />
+                      </div>
+                      <span className="text-foreground/80">Acesso a <strong>ferramenta de correção gratuita</strong> no final</span>
+                    </div>
+                  </div>
+
+                  {/* CTA Button */}
+                  <Button
+                    onClick={startQuiz}
+                    size="lg"
+                    className="w-full bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 text-primary-foreground font-semibold text-lg py-6 rounded-xl shadow-lg"
+                  >
+                    Começar Diagnóstico
+                    <ArrowRight className="ml-2 w-5 h-5" />
+                  </Button>
+                </div>
               </div>
             </motion.div>
           )}
