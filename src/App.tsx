@@ -55,6 +55,7 @@ import PlanoVidaComoChegar from "./pages/PlanoVidaComoChegar";
 import Reflexao from "./pages/Reflexao";
 import Progresso from "./pages/Progresso";
 import ListaPendencias from "./pages/ListaPendencias";
+import LandingNova from "./pages/LandingNova";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -79,11 +80,12 @@ const App = () => (
               <BrowserRouter>
               <ScrollToTop />
               <Routes>
-                <Route path="/" element={<LeadP />} />
+                <Route path="/" element={<LandingNova />} />
                 <Route path="/news" element={<SubscriberLanding />} />
                 <Route path="/leadp" element={<Landing />} />
                 <Route path="/leadp2" element={<Index />} />
                 <Route path="/leadp3" element={<LeadP3 />} />
+                <Route path="/landing-antiga" element={<LeadP />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/signup" element={<Signup />} />
                 <Route path="/onboarding" element={<Onboarding />} />
