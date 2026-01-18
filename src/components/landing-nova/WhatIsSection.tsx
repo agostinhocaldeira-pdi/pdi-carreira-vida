@@ -25,12 +25,11 @@ const WhatIsSection = () => {
             </div>
           </div>
 
-          {/* O que É */}
           <div className="flex items-center">
-            <div className="p-6 rounded-2xl bg-primary/10 border border-primary/20">
+            <div className="p-4 sm:p-6 rounded-2xl bg-primary/10 border border-primary/20">
               <div className="flex items-start gap-3">
-                <CheckCircle2 className="w-8 h-8 text-primary flex-shrink-0 mt-1" />
-                <p className="text-foreground text-lg leading-relaxed">
+                <CheckCircle2 className="w-6 sm:w-8 h-6 sm:h-8 text-primary flex-shrink-0 mt-1" />
+                <p className="text-foreground text-sm sm:text-lg leading-relaxed">
                   É uma <span className="font-bold text-primary">plataforma digital interativa</span>, 
                   com um sistema guiado baseado em Método e ferramentas validadas, para transformar 
                   objetivos pessoais e profissionais em <span className="font-bold">planos práticos</span>, 
