@@ -4,7 +4,7 @@ import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Lightbulb, Rocket, TrendingUp, ChevronLeft, ChevronRight } from "lucide-react";
 
 // Import step images
-import maoNaMassaVideo from "@/assets/mao-na-massa-video.mp4";
+import agirSectionVideo from "@/assets/agir-section-video.mp4";
 
 // Import gallery images for Planejar
 import objetivosImg from "@/assets/landing/objetivos.png";
@@ -53,7 +53,7 @@ const steps = [
     subtitle: "Módulo de Rotina",
     description: "O sistema transforma \"sonhos grandes\" em tarefas semanais. Você acorda na segunda-feira sabendo exatamente o que priorizar.",
     icon: Rocket,
-    video: maoNaMassaVideo,
+    video: agirSectionVideo,
     color: "accent",
     hasGallery: false,
     hasVideo: true,
