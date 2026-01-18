@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { CheckCircle2, Smartphone, Target, Calendar, Brain, Headphones, ArrowRight } from "lucide-react";
+import { Smartphone, Target, Calendar, Brain, Headphones, BookOpen, ArrowRight } from "lucide-react";
 
 const accessItems = [
   {
@@ -17,6 +17,10 @@ const accessItems = [
   {
     icon: Brain,
     text: "Análise de Perfil com IA"
+  },
+  {
+    icon: BookOpen,
+    text: "Diário Inteligente para reflexão"
   },
   {
     icon: Headphones,
