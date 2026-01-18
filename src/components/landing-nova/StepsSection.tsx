@@ -4,7 +4,7 @@ import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Lightbulb, Rocket, TrendingUp, ChevronLeft, ChevronRight } from "lucide-react";
 
 // Import step images
-import maoNaMassaImg from "@/assets/tutorial/mao-na-massa.jpg";
+import maoNaMassaVideo from "@/assets/mao-na-massa-video.mp4";
 import progressoImg from "@/assets/tutorial/progresso.jpg";
 
 // Import gallery images for Planejar
@@ -37,9 +37,10 @@ const steps = [
     subtitle: "Módulo de Rotina",
     description: "O sistema transforma \"sonhos grandes\" em tarefas semanais. Você acorda na segunda-feira sabendo exatamente o que priorizar.",
     icon: Rocket,
-    image: maoNaMassaImg,
+    video: maoNaMassaVideo,
     color: "accent",
-    hasGallery: false
+    hasGallery: false,
+    hasVideo: true
   },
   {
     number: "3",
@@ -196,6 +197,24 @@ const StepsSection = () => {
                 {/* Image or Gallery */}
                 {step.hasGallery ? (
                   <ImageGallery />
+                ) : step.hasVideo ? (
+                  <div className="relative aspect-video overflow-hidden">
+                    <video 
+                      src={step.video}
+                      autoPlay
+                      loop
+                      muted
+                      playsInline
+                      className="w-full h-full object-cover"
+                    />
+                    {/* Step number badge */}
+                    <div 
+                      className="absolute top-4 left-4 w-10 h-10 rounded-full flex items-center justify-center text-white font-bold text-lg z-10"
+                      style={{ backgroundColor: `hsl(var(--${step.color}))` }}
+                    >
+                      {step.number}
+                    </div>
+                  </div>
                 ) : (
                   <div className="relative h-48 overflow-hidden">
                     <img 
