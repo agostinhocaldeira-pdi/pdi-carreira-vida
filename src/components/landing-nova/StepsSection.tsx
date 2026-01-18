@@ -5,7 +5,6 @@ import { Lightbulb, Rocket, TrendingUp, ChevronLeft, ChevronRight } from "lucide
 
 // Import step images
 import maoNaMassaVideo from "@/assets/mao-na-massa-video.mp4";
-import progressoImg from "@/assets/tutorial/progresso.jpg";
 
 // Import gallery images for Planejar
 import objetivosImg from "@/assets/landing/objetivos.png";
@@ -13,11 +12,26 @@ import vvdImg from "@/assets/landing/vvd.png";
 import rodaDaVidaImg from "@/assets/landing/roda-da-vida.png";
 import valoresImg from "@/assets/landing/valores.png";
 
+// Import gallery images for Evoluir
+import evoluirInsightImg from "@/assets/landing/evoluir-insight.png";
+import evoluirJornadaImg from "@/assets/landing/evoluir-jornada.png";
+import evoluirRelatorioImg from "@/assets/landing/evoluir-relatorio.png";
+import evoluirPdiImg from "@/assets/landing/evoluir-pdi.png";
+import evoluirStatusImg from "@/assets/landing/evoluir-status.png";
+
 const planejarGallery = [
   { src: rodaDaVidaImg, alt: "Roda da Vida" },
   { src: valoresImg, alt: "Descobrindo Seus Valores" },
   { src: vvdImg, alt: "Visão de Vida Desejada" },
   { src: objetivosImg, alt: "Definindo Objetivos" },
+];
+
+const evoluirGallery = [
+  { src: evoluirInsightImg, alt: "Seu Insight Inicial" },
+  { src: evoluirJornadaImg, alt: "Sua Jornada" },
+  { src: evoluirRelatorioImg, alt: "Relatório de Progresso" },
+  { src: evoluirPdiImg, alt: "PDI Completo" },
+  { src: evoluirStatusImg, alt: "Status do seu PDI" },
 ];
 
 const steps = [
@@ -27,9 +41,11 @@ const steps = [
     subtitle: "Módulo de Clareza",
     description: "Entenda seu momento atual, prioridades e o que realmente importa agora, para definir objetivos e transformá-los em ações compatíveis com sua rotina real.",
     icon: Lightbulb,
-    image: null, // Will use gallery instead
+    image: null,
     color: "primary",
-    hasGallery: true
+    hasGallery: true,
+    gallery: planejarGallery,
+    hasVideo: false
   },
   {
     number: "2",
@@ -40,7 +56,8 @@ const steps = [
     video: maoNaMassaVideo,
     color: "accent",
     hasGallery: false,
-    hasVideo: true
+    hasVideo: true,
+    gallery: null
   },
   {
     number: "3",
@@ -48,25 +65,33 @@ const steps = [
     subtitle: "Módulo de IA",
     description: "Acompanhe seu progresso com gráficos e relatórios, e receba feedbacks da nossa Inteligência Artificial para corrigir a rota.",
     icon: TrendingUp,
-    image: progressoImg,
+    image: null,
     color: "success",
-    hasGallery: false
+    hasGallery: true,
+    gallery: evoluirGallery,
+    hasVideo: false
   }
 ];
 
-const ImageGallery = () => {
+interface GalleryProps {
+  images: { src: string; alt: string }[];
+  stepNumber: string;
+  color: string;
+}
+
+const ImageGallery = ({ images, stepNumber, color }: GalleryProps) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedImage, setSelectedImage] = useState<{ src: string; alt: string } | null>(null);
   const [isPaused, setIsPaused] = useState(false);
 
   const nextSlide = useCallback(() => {
-    setCurrentIndex((prev) => (prev + 1) % planejarGallery.length);
-  }, []);
+    setCurrentIndex((prev) => (prev + 1) % images.length);
+  }, [images.length]);
 
   const prevSlide = useCallback(() => {
-    setCurrentIndex((prev) => (prev - 1 + planejarGallery.length) % planejarGallery.length);
-  }, []);
+    setCurrentIndex((prev) => (prev - 1 + images.length) % images.length);
+  }, [images.length]);
 
   // Auto-scroll every 3 seconds
   useEffect(() => {
@@ -91,7 +116,7 @@ const ImageGallery = () => {
   return (
     <>
       <div 
-        className="relative h-64 overflow-hidden group"
+        className="relative h-72 overflow-hidden group"
         onMouseEnter={() => setIsPaused(true)}
         onMouseLeave={() => setIsPaused(false)}
       >
@@ -100,21 +125,20 @@ const ImageGallery = () => {
           className="flex transition-transform duration-500 ease-in-out h-full"
           style={{ transform: `translateX(-${currentIndex * 100}%)` }}
         >
-          {planejarGallery.map((image, idx) => (
+          {images.map((image, idx) => (
             <div 
               key={idx} 
-              className="min-w-full h-full cursor-pointer"
+              className="min-w-full h-full cursor-pointer flex items-center justify-center bg-muted/20"
               onClick={() => openModal(image)}
             >
               <img 
                 src={image.src} 
                 alt={image.alt}
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                className="max-w-full max-h-full object-contain group-hover:scale-105 transition-transform duration-500"
               />
             </div>
           ))}
         </div>
-
 
         {/* Navigation arrows */}
         <button
@@ -132,7 +156,7 @@ const ImageGallery = () => {
 
         {/* Dots indicator */}
         <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1.5">
-          {planejarGallery.map((_, idx) => (
+          {images.map((_, idx) => (
             <button
               key={idx}
               onClick={(e) => { e.stopPropagation(); setCurrentIndex(idx); }}
@@ -148,9 +172,9 @@ const ImageGallery = () => {
         {/* Step number badge */}
         <div 
           className="absolute top-4 left-4 w-10 h-10 rounded-full flex items-center justify-center text-white font-bold text-lg z-10"
-          style={{ backgroundColor: `hsl(var(--primary))` }}
+          style={{ backgroundColor: `hsl(var(--${color}))` }}
         >
-          1
+          {stepNumber}
         </div>
       </div>
 
@@ -195,8 +219,12 @@ const StepsSection = () => {
             >
               <CardContent className="p-0">
                 {/* Image or Gallery */}
-                {step.hasGallery ? (
-                  <ImageGallery />
+                {step.hasGallery && step.gallery ? (
+                  <ImageGallery 
+                    images={step.gallery} 
+                    stepNumber={step.number} 
+                    color={step.color}
+                  />
                 ) : step.hasVideo ? (
                   <div className="relative aspect-video overflow-hidden">
                     <video 
