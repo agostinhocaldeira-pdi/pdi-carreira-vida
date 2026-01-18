@@ -1,4 +1,4 @@
-import { AlertTriangle, ArrowRight, Brain, RefreshCw, XCircle, Lightbulb } from "lucide-react";
+import { AlertTriangle, ArrowRight, ArrowDown, Brain, RefreshCw, XCircle, Lightbulb } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 
 const ProblemSection = () => {
@@ -71,7 +71,7 @@ const ProblemSection = () => {
               O ciclo da escassez
             </h3>
             
-            <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3 text-sm sm:text-base">
+            <div className="flex flex-col sm:flex-row sm:flex-wrap items-center justify-center gap-2 sm:gap-3 text-sm sm:text-base">
               {[
                 "Tenta",
                 "Falha ou abandona",
@@ -81,12 +81,15 @@ const ProblemSection = () => {
                 "Perde oportunidades",
                 "Confirma a crença de incapacidade"
               ].map((step, index, arr) => (
-                <span key={index} className="flex items-center gap-2">
-                  <span className="px-3 py-2 rounded-lg bg-destructive/10 text-foreground font-medium">
+                <span key={index} className="flex flex-col sm:flex-row items-center gap-2">
+                  <span className="px-3 py-2 rounded-lg bg-destructive/10 text-foreground font-medium text-center">
                     {step}
                   </span>
                   {index < arr.length - 1 && (
-                    <ArrowRight className="w-4 h-4 text-muted-foreground" />
+                    <>
+                      <ArrowDown className="w-4 h-4 text-muted-foreground sm:hidden" />
+                      <ArrowRight className="w-4 h-4 text-muted-foreground hidden sm:block" />
+                    </>
                   )}
                 </span>
               ))}
