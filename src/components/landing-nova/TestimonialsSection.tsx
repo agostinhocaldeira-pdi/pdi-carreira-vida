@@ -12,7 +12,7 @@ const testimonials = [
     name: "Eric Pereira",
     image: ericImg,
     quote: "O PDI me ajudou a organizar minha rotina de forma que eu nunca tinha conseguido antes. Hoje tenho clareza do que preciso fazer cada semana.",
-    videoUrl: "https://www.youtube.com/embed/i1VgEBOW4PI",
+    videoUrl: "https://www.youtube.com/embed/i1VgEBOW4PI?autoplay=1",
     linkedinUrl: "https://linkedin.com",
     note: null
   },
@@ -20,7 +20,7 @@ const testimonials = [
     name: "Gabriele Campos",
     image: gabrieleImg,
     quote: "Finalmente consegui sair do ciclo de procrastinação. O sistema guiado faz toda a diferença.",
-    videoUrl: "https://www.youtube.com/embed/gpVTmaktFO8",
+    videoUrl: "https://www.youtube.com/embed/gpVTmaktFO8?autoplay=1",
     linkedinUrl: "https://linkedin.com",
     note: "(após PDI, ela conseguiu ser promovida em 3 meses)"
   },
@@ -28,7 +28,7 @@ const testimonials = [
     name: "Larissa Schuartz",
     image: larissaImg,
     quote: "A inteligência artificial do PDI me dá insights que eu não teria sozinha. É como ter um coach disponível 24h.",
-    videoUrl: "https://www.youtube.com/embed/Tpz2mmxUYHc",
+    videoUrl: "https://www.youtube.com/embed/1FYfKkhVtU4?autoplay=1",
     linkedinUrl: "https://linkedin.com",
     note: null
   },
