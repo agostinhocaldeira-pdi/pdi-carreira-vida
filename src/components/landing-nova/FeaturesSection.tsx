@@ -1,4 +1,4 @@
-import { CheckCircle2, Target, Calendar, TrendingUp, Brain, ListChecks } from "lucide-react";
+import { Target, Calendar, TrendingUp, Brain, ListChecks, BookOpen } from "lucide-react";
 
 const features = [
   {
@@ -20,6 +20,10 @@ const features = [
   {
     icon: Brain,
     text: "Apoio de Inteligência Artificial para clareza e organização"
+  },
+  {
+    icon: BookOpen,
+    text: "Página de Reflexão e diário, para registrar sua jornada"
   }
 ];
 
