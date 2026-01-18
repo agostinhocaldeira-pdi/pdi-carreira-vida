@@ -20,7 +20,7 @@ const testimonials = [
     name: "Gabriele Campos",
     image: gabrieleImg,
     quote: "Finalmente consegui sair do ciclo de procrastinação. O sistema guiado faz toda a diferença.",
-    videoUrl: "https://www.youtube.com/embed/NjEA4WBiUvA",
+    videoUrl: "https://www.youtube.com/embed/gpVTmaktFO8",
     linkedinUrl: "https://linkedin.com",
     note: "(após PDI, ela conseguiu ser promovida em 3 meses)"
   },
