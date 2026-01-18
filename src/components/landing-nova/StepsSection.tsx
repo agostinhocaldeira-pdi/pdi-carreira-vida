@@ -91,7 +91,7 @@ const ImageGallery = () => {
   return (
     <>
       <div 
-        className="relative h-48 overflow-hidden group"
+        className="relative h-64 overflow-hidden group"
         onMouseEnter={() => setIsPaused(true)}
         onMouseLeave={() => setIsPaused(false)}
       >
