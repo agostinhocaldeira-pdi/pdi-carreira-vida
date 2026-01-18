@@ -226,7 +226,7 @@ const StepsSection = () => {
                     color={step.color}
                   />
                 ) : step.hasVideo ? (
-                  <div className="relative aspect-video overflow-hidden">
+                  <div className="relative h-72 overflow-hidden">
                     <video 
                       src={step.video}
                       autoPlay
