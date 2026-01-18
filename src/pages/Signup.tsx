@@ -141,7 +141,7 @@ const Signup = () => {
               30 dias grátis
             </p>
             <p className="text-sm text-muted-foreground">
-              Utilize 100% dos recursos, ferramentas e Inteligência Artificial.
+              Fique tranquilo: você não está assumindo nenhum compromisso de assinar após os 30 dias. A escolha é 100% sua.
             </p>
           </div>
         </CardHeader>
