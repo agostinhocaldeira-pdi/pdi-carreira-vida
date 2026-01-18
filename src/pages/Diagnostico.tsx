@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { motion, AnimatePresence } from "framer-motion";
-import { Brain, Target, Calendar, Flame, Heart, ArrowRight, Sparkles } from "lucide-react";
+import { Brain, Target, Calendar, Flame, Heart, ArrowRight, Sparkles, Clock, Gift } from "lucide-react";
 import logoPdi from "@/assets/logo_pdi.png";
 
 type Trava = "CLAREZA" | "DISPERSAO" | "ROTINA" | "CONSTANCIA" | "INTEGRACAO";
@@ -124,6 +124,7 @@ const ordemDesempate: Trava[] = ["ROTINA", "CONSTANCIA", "CLAREZA", "DISPERSAO",
 
 const Diagnostico = () => {
   const navigate = useNavigate();
+  const [showCover, setShowCover] = useState(true);
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [scores, setScores] = useState<Record<Trava, number>>({
     CLAREZA: 0,
@@ -135,6 +136,10 @@ const Diagnostico = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [showResult, setShowResult] = useState(false);
   const [resultTrava, setResultTrava] = useState<Trava | null>(null);
+
+  const startQuiz = () => {
+    setShowCover(false);
+  };
 
   const handleAnswer = (trava: Trava) => {
     const newScores = { ...scores, [trava]: scores[trava] + 1 };
@@ -189,7 +194,66 @@ const Diagnostico = () => {
 
       <main className="flex-1 flex items-center justify-center px-4 py-8">
         <AnimatePresence mode="wait">
-          {!showResult && !isLoading && (
+          {/* Cover Screen */}
+          {showCover && (
+            <motion.div
+              key="cover"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              transition={{ duration: 0.4 }}
+              className="w-full max-w-lg text-center"
+            >
+              <div className="bg-white rounded-2xl shadow-xl p-8 md:p-10">
+                {/* Title */}
+                <h1 className="text-2xl md:text-3xl font-bold text-foreground mb-4 leading-tight">
+                  Descubra a <span className="text-primary">'Trava Invisível'</span> que impede sua evolução.
+                </h1>
+
+                {/* Subtitle */}
+                <p className="text-muted-foreground text-base md:text-lg mb-8 leading-relaxed">
+                  Em 2 minutos, identifique o padrão comportamental exato que está bloqueando seus resultados e receba a ferramenta para corrigir.
+                </p>
+
+                {/* Benefits */}
+                <div className="space-y-4 mb-8">
+                  <div className="flex items-center gap-3 text-left p-3 bg-muted/30 rounded-xl">
+                    <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                      <Clock className="w-5 h-5 text-primary" />
+                    </div>
+                    <span className="text-foreground/80">Leva menos de <strong>2 minutos</strong></span>
+                  </div>
+
+                  <div className="flex items-center gap-3 text-left p-3 bg-muted/30 rounded-xl">
+                    <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                      <Brain className="w-5 h-5 text-primary" />
+                    </div>
+                    <span className="text-foreground/80">Análise de <strong>perfil comportamental</strong></span>
+                  </div>
+
+                  <div className="flex items-center gap-3 text-left p-3 bg-muted/30 rounded-xl">
+                    <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                      <Gift className="w-5 h-5 text-primary" />
+                    </div>
+                    <span className="text-foreground/80">Acesso a <strong>ferramenta de correção gratuita</strong> no final</span>
+                  </div>
+                </div>
+
+                {/* CTA Button */}
+                <Button
+                  onClick={startQuiz}
+                  size="lg"
+                  className="w-full bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 text-primary-foreground font-semibold text-lg py-6 rounded-xl shadow-lg"
+                >
+                  Começar Diagnóstico
+                  <ArrowRight className="ml-2 w-5 h-5" />
+                </Button>
+              </div>
+            </motion.div>
+          )}
+
+          {/* Quiz Questions */}
+          {!showCover && !showResult && !isLoading && (
             <motion.div
               key={`question-${currentQuestion}`}
               initial={{ opacity: 0, x: 50 }}
