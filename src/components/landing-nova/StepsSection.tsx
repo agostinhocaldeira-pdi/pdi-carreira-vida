@@ -226,14 +226,14 @@ const StepsSection = () => {
                     color={step.color}
                   />
                 ) : step.hasVideo ? (
-                  <div className="relative h-72 overflow-hidden">
+                  <div className="relative h-48 sm:h-72 overflow-hidden">
                     <video 
                       src={step.video}
                       autoPlay
                       loop
                       muted
                       playsInline
-                      className="w-full h-full object-cover"
+                      className="w-full h-full object-contain sm:object-cover bg-muted/20"
                     />
                     {/* Step number badge */}
                     <div 
