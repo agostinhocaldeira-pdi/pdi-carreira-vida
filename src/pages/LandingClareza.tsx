@@ -1,21 +1,20 @@
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
-import { ArrowRight, CheckCircle2, XCircle, Play } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import Logo from "@/components/Logo";
 import { useState } from "react";
 
 // Import section components
-import LandingHeroSection from "@/components/landing-nova/HeroSection";
+import HeroSectionPersonalized from "@/components/landing-nova/HeroSectionPersonalized";
 import LandingWhatIsSection from "@/components/landing-nova/WhatIsSection";
 import LandingFeaturesSection from "@/components/landing-nova/FeaturesSection";
 import LandingStepsSection from "@/components/landing-nova/StepsSection";
 import LandingTestimonialsSection from "@/components/landing-nova/TestimonialsSection";
-import LandingProblemSection from "@/components/landing-nova/ProblemSection";
 import LandingAccessSection from "@/components/landing-nova/AccessSection";
 import LandingRiskFreeSection from "@/components/landing-nova/RiskFreeSection";
 import WhatsAppButton from "@/components/WhatsAppButton";
 
-const LandingNova = () => {
+const LandingClareza = () => {
   const navigate = useNavigate();
   const [videoModalOpen, setVideoModalOpen] = useState(false);
   const [videoUrl, setVideoUrl] = useState("");
@@ -56,12 +55,17 @@ const LandingNova = () => {
 
       {/* Main Content */}
       <main>
-        <LandingHeroSection onCTA={handleCTA} />
+        <HeroSectionPersonalized 
+          onCTA={handleCTA}
+          headline='Transforme sua "Nuvem de Ideias" em um Mapa Prático em 10 minutos.'
+          subheadline="Pare de sofrer com a Fadiga de Decisão. Nossa IA organiza seus pensamentos e cria o plano passo a passo para você apenas executar."
+          ctaText="👉 Criar meu Plano de Ação Grátis"
+        />
         <LandingWhatIsSection />
         <LandingFeaturesSection />
         <LandingStepsSection />
         <LandingTestimonialsSection onOpenVideo={openVideoModal} />
-        <LandingProblemSection />
+        {/* Seção "Por que é tão difícil mudar sozinho?" removida conforme solicitado */}
         <LandingAccessSection onCTA={handleCTA} />
         <LandingRiskFreeSection onCTA={handleCTA} />
       </main>
@@ -107,4 +111,4 @@ const LandingNova = () => {
   );
 };
 
-export default LandingNova;
+export default LandingClareza;

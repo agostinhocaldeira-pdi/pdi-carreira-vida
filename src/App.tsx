@@ -56,6 +56,11 @@ import Reflexao from "./pages/Reflexao";
 import Progresso from "./pages/Progresso";
 import ListaPendencias from "./pages/ListaPendencias";
 import LandingNova from "./pages/LandingNova";
+import LandingClareza from "./pages/LandingClareza";
+import LandingDispersao from "./pages/LandingDispersao";
+import LandingRotina from "./pages/LandingRotina";
+import LandingConstancia from "./pages/LandingConstancia";
+import LandingIntegracao from "./pages/LandingIntegracao";
 import Quiz from "./pages/Quiz";
 
 const queryClient = new QueryClient({
@@ -129,6 +134,11 @@ const App = () => (
                 <Route path="/reflexao" element={<Reflexao />} />
                 <Route path="/progresso" element={<Progresso />} />
                 <Route path="/quiz" element={<Quiz />} />
+                <Route path="/lp-clareza" element={<LandingClareza />} />
+                <Route path="/lp-dispersao" element={<LandingDispersao />} />
+                <Route path="/lp-rotina" element={<LandingRotina />} />
+                <Route path="/lp-constancia" element={<LandingConstancia />} />
+                <Route path="/lp-integracao" element={<LandingIntegracao />} />
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                 <Route path="*" element={<NotFound />} />
                 <Route path="*" element={<NotFound />} />
