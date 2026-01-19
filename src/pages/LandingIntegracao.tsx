@@ -1,21 +1,20 @@
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
-import { ArrowRight, CheckCircle2, XCircle, Play } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import Logo from "@/components/Logo";
 import { useState } from "react";
 
 // Import section components
-import LandingHeroSection from "@/components/landing-nova/HeroSection";
+import HeroSectionPersonalized from "@/components/landing-nova/HeroSectionPersonalized";
 import LandingWhatIsSection from "@/components/landing-nova/WhatIsSection";
 import LandingFeaturesSection from "@/components/landing-nova/FeaturesSection";
 import LandingStepsSection from "@/components/landing-nova/StepsSection";
 import LandingTestimonialsSection from "@/components/landing-nova/TestimonialsSection";
-import LandingProblemSection from "@/components/landing-nova/ProblemSection";
 import LandingAccessSection from "@/components/landing-nova/AccessSection";
 import LandingRiskFreeSection from "@/components/landing-nova/RiskFreeSection";
 import WhatsAppButton from "@/components/WhatsAppButton";
 
-const LandingNova = () => {
+const LandingIntegracao = () => {
   const navigate = useNavigate();
   const [videoModalOpen, setVideoModalOpen] = useState(false);
   const [videoUrl, setVideoUrl] = useState("");
@@ -56,12 +55,16 @@ const LandingNova = () => {
 
       {/* Main Content */}
       <main>
-        <LandingHeroSection onCTA={handleCTA} />
+        <HeroSectionPersonalized 
+          onCTA={handleCTA}
+          headline="Pare de tentar ser duas pessoas diferentes."
+          subheadline="Gerenciar carreira num app e vida pessoal em outro drena sua energia mental. Unifique sua visão e cresça sem sacrificar sua paz."
+          ctaText="👉 Unificar minha Vida e Carreira"
+        />
         <LandingWhatIsSection />
         <LandingFeaturesSection />
         <LandingStepsSection />
         <LandingTestimonialsSection onOpenVideo={openVideoModal} />
-        <LandingProblemSection />
         <LandingAccessSection onCTA={handleCTA} />
         <LandingRiskFreeSection onCTA={handleCTA} />
       </main>
@@ -107,4 +110,4 @@ const LandingNova = () => {
   );
 };
 
-export default LandingNova;
+export default LandingIntegracao;

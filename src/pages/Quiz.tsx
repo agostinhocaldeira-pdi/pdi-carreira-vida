@@ -74,49 +74,67 @@ const resultados: Record<Trava, {
   titulo: string;
   diagnostico: string;
   ciencia: string;
-  solucao: string;
+  primeiroPasso: string;
+  ferramenta: string;
   botaoTexto: string;
+  microcopy: string;
   icon: React.ElementType;
+  landingRoute: string;
 }> = {
   CLAREZA: {
     titulo: "Falta de Clareza Estratégica",
-    diagnostico: "Você não está estagnado por falta de capacidade, mas por excesso de ruído mental. Seu cérebro gasta toda a energia tentando decidir \"qual o melhor caminho\" e não sobra energia para caminhar.",
-    ciencia: "A neurociência chama isso de Fadiga de Decisão. Quando há opções demais sem critério, o córtex pré-frontal \"desliga\" para economizar energia biológica.",
-    solucao: "Você precisa do Módulo de Metas com IA. Nossa Inteligência Artificial vai entrevistar você e transformar essa nuvem de ideias em um plano claro e executável.",
-    botaoTexto: "Organizar minha clareza agora",
+    diagnostico: "Você não está estagnado por falta de ideias, mas por excesso delas. Seu cérebro gasta energia tentando decidir 'qual o melhor caminho' e trava.",
+    ciencia: "A neurociência chama isso de Fadiga de Decisão. Quando há opções demais sem critério, o córtex pré-frontal 'desliga' para economizar energia.",
+    primeiroPasso: "Para destravar, adote o 'Menos é Mais'. Clareza exige eliminação. Comece dizendo 'NÃO' para tudo que não leva ao seu objetivo. Em seguida, use a metodologia SMART para garantir que sua meta seja realizável e caiba na sua rotina real.",
+    ferramenta: "Disponibilizamos gratuitamente a Ferramenta de Metas SMART Guiada dentro da plataforma para te ajudar a filtrar o essencial agora.",
+    botaoTexto: "Criar minha Meta SMART",
+    microcopy: "Acesso imediato • Sem cartão de crédito",
     icon: Brain,
+    landingRoute: "/lp-clareza",
   },
   DISPERSAO: {
     titulo: "Dispersão de Energia",
-    diagnostico: "Você entra em ciclos de iniciar com empolgação, mas perder foco antes de concluir. Você tenta abraçar o mundo, a atenção se dilui e nada é finalizado de verdade.",
-    ciencia: "Isso é uma reação química. Seu cérebro viciou em buscar a dopamina da \"novidade\" em vez da satisfação lenta do \"concluído\".",
-    solucao: "Você precisa da Agenda Inteligente de Priorização. O sistema vai esconder o ruído e te mostrar apenas a ÚNICA coisa que você precisa fazer hoje para avançar.",
-    botaoTexto: "Definir o que realmente importa hoje",
+    diagnostico: "Você entra em ciclos de iniciar com empolgação, mas perder foco antes de concluir. A atenção se dilui e nada é finalizado de verdade.",
+    ciencia: "Isso é uma reação química. Seu cérebro viciou em buscar a dopamina da 'novidade' em vez da satisfação lenta do 'concluído'.",
+    primeiroPasso: "Para ter foco, você não precisa de mais tempo, precisa de mais 'NÃOs'. Aplique a Regra da Única Coisa: Pergunte-se 'Qual é a única coisa que, se feita hoje, me aproxima do meu objetivo e torna o resto mais fácil ou desnecessário?'. Ignore o resto até terminar essa tarefa.",
+    ferramenta: "A nossa Agenda Inteligente já vem configurada para destacar sua Prioridade #1 e esconder as distrações visuais.",
+    botaoTexto: "Definir minha Prioridade Única",
+    microcopy: "Acesso imediato • Sem cartão de crédito",
     icon: Target,
+    landingRoute: "/lp-dispersao",
   },
   ROTINA: {
     titulo: "Planejamento vs. Realidade",
-    diagnostico: "Existe um abismo entre o que você planeja e o que cabe no seu dia. Você cria listas para uma \"versão ideal\" de si mesmo, não para sua vida real.",
+    diagnostico: "Existe um abismo entre o que você planeja e o que cabe no seu dia. Você cria listas para uma 'versão ideal' de si mesmo, e não para a real.",
     ciencia: "Isso é conhecido como a Falácia do Planejamento. O cérebro humano é biologicamente programado para ser otimista demais com o tempo futuro.",
-    solucao: "Você precisa do Planejador Semanal Realista. O PDI pega seus sonhos grandes e os quebra em tarefas curtas que encaixam nos intervalos do seu dia real.",
-    botaoTexto: "Criar um plano que caiba na minha rotina",
+    primeiroPasso: "Pare de agendar 100% do seu tempo. Imprevistos são a única certeza. A técnica de ouro é deixar 20% do dia livre como 'Margem de Segurança'. Um planejamento rígido quebra; um flexível funciona.",
+    ferramenta: "O Planejador Realista do PDI ajuda você a distribuir tarefas em blocos de tempo que consideram seus imprevistos reais.",
+    botaoTexto: "Criar Rotina com Margem de Segurança",
+    microcopy: "Acesso imediato • Sem cartão de crédito",
     icon: Calendar,
+    landingRoute: "/lp-rotina",
   },
   CONSTANCIA: {
     titulo: "Oscilação de Constância",
     diagnostico: "Você vive ciclos de motivação seguidos de abandono. Você depende da emoção para agir, e quando ela esfria, você para.",
-    ciencia: "O termo técnico é Fricção Límbica. O erro é tentar usar motivação (emoção passageira) para sustentar um hábito (que exige estrutura racional).",
-    solucao: "Você precisa do Painel de Evolução Visual. O ser humano precisa ver progresso: os gráficos do PDI geram a dopamina necessária para você não desistir.",
-    botaoTexto: "Começar a avançar sem depender de motivação",
+    ciencia: "O erro é tentar usar motivação (emoção passageira) para sustentar um hábito. O cérebro precisa de Recompensa Visual para manter o comportamento.",
+    primeiroPasso: "Troque intensidade por frequência. É melhor fazer 15 minutos todos os dias (e marcar um 'OK' no calendário) do que tentar 5 horas uma vez por semana e falhar. Não quebre a corrente. O progresso visual gera a dopamina que falta.",
+    ferramenta: "O Painel de Evolução automatiza esse rastreamento, gerando gráficos de progresso que te mantêm no jogo visualmente.",
+    botaoTexto: "Ativar meu Rastreamento de Hábito",
+    microcopy: "Acesso imediato • Sem cartão de crédito",
     icon: Flame,
+    landingRoute: "/lp-constancia",
   },
   INTEGRACAO: {
     titulo: "Desalinhamento de Áreas",
-    diagnostico: "Você sente que o sucesso profissional custa a paz pessoal. Esse conflito gera uma autossabotagem inconsciente para \"proteger\" a área negligenciada.",
-    ciencia: "Isso se chama Custo de Troca de Contexto. A tentativa de ser duas pessoas diferentes consome sua reserva cognitiva, drenando sua energia mental.",
-    solucao: "Você precisa do Sistema Integrado PDI. Pare de usar um app para trabalho e outro para a vida. Centralize tudo num lugar só e cresça sem sacrificar quem você ama.",
-    botaoTexto: "Integrar vida e carreira com clareza",
+    diagnostico: "Você sente que o sucesso profissional custa a paz pessoal. Esse conflito gera autossabotagem para 'proteger' a área negligenciada.",
+    ciencia: "Isso se chama Custo de Troca de Contexto. A tentativa de ser duas pessoas diferentes (o 'profissional' e o 'pessoal') drena sua reserva cognitiva.",
+    primeiroPasso: "Pare de tentar 'equilibrar' pratos. O segredo é a Integração. Gerencie sua Energia, não apenas seu tempo. Entenda que o descanso em casa é o combustível para a performance no trabalho. Uma agenda única para uma vida única.",
+    ferramenta: "O Sistema Integrado PDI une suas metas de vida e carreira num único painel, para você crescer sem negligenciar quem ama.",
+    botaoTexto: "Unificar minha Vida e Carreira",
+    microcopy: "Acesso imediato • Sem cartão de crédito",
     icon: Heart,
+    landingRoute: "/lp-integracao",
   },
 };
 
@@ -181,7 +199,11 @@ const Diagnostico = () => {
   };
 
   const handleCTA = () => {
-    navigate("/");
+    if (resultTrava) {
+      navigate(resultados[resultTrava].landingRoute);
+    } else {
+      navigate("/");
+    }
   };
 
   const progress = ((currentQuestion + 1) / questions.length) * 100;
@@ -384,14 +406,25 @@ const Diagnostico = () => {
                     </p>
                   </div>
 
-                  {/* A Solução */}
+                  {/* Primeiro Passo */}
                   <div>
                     <h3 className="font-semibold text-foreground mb-2 flex items-center gap-2">
                       <span className="w-1.5 h-1.5 rounded-full bg-success"></span>
-                      A Solução PDI
+                      O Primeiro Passo (Valor)
                     </h3>
                     <p className="text-muted-foreground text-sm leading-relaxed">
-                      {resultados[resultTrava].solucao}
+                      {resultados[resultTrava].primeiroPasso}
+                    </p>
+                  </div>
+
+                  {/* A Ferramenta PDI */}
+                  <div className="bg-primary/5 rounded-xl p-4 border border-primary/10">
+                    <h3 className="font-semibold text-foreground mb-2 flex items-center gap-2">
+                      <span className="w-1.5 h-1.5 rounded-full bg-primary"></span>
+                      A Ferramenta PDI
+                    </h3>
+                    <p className="text-muted-foreground text-sm leading-relaxed">
+                      {resultados[resultTrava].ferramenta}
                     </p>
                   </div>
 
@@ -408,7 +441,7 @@ const Diagnostico = () => {
                       </span>
                     </Button>
                     <p className="text-center text-xs text-muted-foreground mt-3">
-                      Acesso imediato • Sem cartão de crédito • Cancele quando quiser
+                      {resultados[resultTrava].microcopy}
                     </p>
                   </div>
                 </div>
