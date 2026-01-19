@@ -400,11 +400,11 @@ const Diagnostico = () => {
                     <Button
                       onClick={handleCTA}
                       size="lg"
-                      className="w-full bg-gradient-to-r from-accent to-accent/90 hover:from-accent/90 hover:to-accent text-accent-foreground font-semibold text-sm sm:text-base py-6 rounded-xl shadow-lg whitespace-normal leading-tight"
+                      className="w-full bg-gradient-to-r from-accent to-accent/90 hover:from-accent/90 hover:to-accent text-accent-foreground font-semibold text-sm sm:text-base py-4 sm:py-6 min-h-[72px] sm:min-h-[56px] rounded-xl shadow-lg whitespace-normal leading-snug"
                     >
-                      <span className="flex flex-col sm:flex-row items-center gap-1 sm:gap-2">
+                      <span className="flex flex-col sm:flex-row items-center justify-center gap-0.5 sm:gap-2 text-center">
                         <span>👉 {resultados[resultTrava].botaoTexto}</span>
-                        <span className="flex items-center gap-1">(Grátis) <ArrowRight className="w-5 h-5" /></span>
+                        <span className="flex items-center gap-1">(Grátis) <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" /></span>
                       </span>
                     </Button>
                     <p className="text-center text-xs text-muted-foreground mt-3">
