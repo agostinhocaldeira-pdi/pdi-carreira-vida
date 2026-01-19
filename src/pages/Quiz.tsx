@@ -410,7 +410,7 @@ const Diagnostico = () => {
                   <div>
                     <h3 className="font-semibold text-foreground mb-2 flex items-center gap-2">
                       <span className="w-1.5 h-1.5 rounded-full bg-success"></span>
-                      O Primeiro Passo (Valor)
+                      O Primeiro Passo
                     </h3>
                     <p className="text-muted-foreground text-sm leading-relaxed">
                       {resultados[resultTrava].primeiroPasso}
