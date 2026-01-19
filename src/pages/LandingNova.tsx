@@ -11,6 +11,7 @@ import LandingFeaturesSection from "@/components/landing-nova/FeaturesSection";
 import LandingStepsSection from "@/components/landing-nova/StepsSection";
 import LandingTestimonialsSection from "@/components/landing-nova/TestimonialsSection";
 import LandingProblemSection from "@/components/landing-nova/ProblemSection";
+import QuizCTASection from "@/components/landing-nova/QuizCTASection";
 import LandingAccessSection from "@/components/landing-nova/AccessSection";
 import LandingRiskFreeSection from "@/components/landing-nova/RiskFreeSection";
 import WhatsAppButton from "@/components/WhatsAppButton";
@@ -62,6 +63,7 @@ const LandingNova = () => {
         <LandingStepsSection />
         <LandingTestimonialsSection onOpenVideo={openVideoModal} />
         <LandingProblemSection />
+        <QuizCTASection />
         <LandingAccessSection onCTA={handleCTA} />
         <LandingRiskFreeSection onCTA={handleCTA} />
       </main>
