@@ -223,30 +223,30 @@ const Diagnostico = () => {
 
                   {/* Subtitle */}
                   <p className="text-muted-foreground text-base md:text-lg mb-8 leading-relaxed">
-                    Em 2 minutos, identifique o padrão comportamental exato que está bloqueando seus resultados e receba a ferramenta para corrigir.
+                    Você tem planos, mas a execução trava. Entenda o porquê agora e receba a solução exata para o seu caso.
                   </p>
 
-                  {/* Benefits */}
+                  {/* Benefits - Passo a Passo */}
                   <div className="space-y-4 mb-8">
                     <div className="flex items-center gap-3 text-left p-3 bg-muted/30 rounded-xl">
                       <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
                         <Clock className="w-5 h-5 text-primary" />
                       </div>
-                      <span className="text-foreground/80">Leva menos de <strong>2 minutos</strong></span>
+                      <span className="text-foreground/80">Responda <strong>5 perguntas rápidas</strong></span>
                     </div>
 
                     <div className="flex items-center gap-3 text-left p-3 bg-muted/30 rounded-xl">
                       <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
-                        <Brain className="w-5 h-5 text-primary" />
+                        <Target className="w-5 h-5 text-primary" />
                       </div>
-                      <span className="text-foreground/80">Análise de <strong>perfil comportamental</strong></span>
+                      <span className="text-foreground/80">Identifique sua <strong>trava oculta</strong></span>
                     </div>
 
                     <div className="flex items-center gap-3 text-left p-3 bg-muted/30 rounded-xl">
                       <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
                         <Gift className="w-5 h-5 text-primary" />
                       </div>
-                      <span className="text-foreground/80">Acesso a <strong>ferramenta de correção gratuita</strong> no final</span>
+                      <span className="text-foreground/80">Receba a <strong>ferramenta para corrigir</strong></span>
                     </div>
                   </div>
 
