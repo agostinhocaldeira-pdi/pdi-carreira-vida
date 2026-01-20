@@ -194,10 +194,17 @@ const Diagnostico = () => {
   };
 
   const handleCTA = () => {
+    // Teste A/B: 50% vai para landing page do tema, 50% vai para signup
+    const isVariantB = Math.random() < 0.5;
+    
     if (resultTrava) {
-      navigate(resultados[resultTrava].landingRoute);
+      if (isVariantB) {
+        navigate("/signup");
+      } else {
+        navigate(resultados[resultTrava].landingRoute);
+      }
     } else {
-      navigate("/");
+      navigate("/signup");
     }
   };
 
