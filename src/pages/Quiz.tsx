@@ -358,13 +358,10 @@ const Diagnostico = () => {
 
                   {/* Conheça o PDI */}
                   <div className="bg-primary/5 rounded-xl p-4 border border-primary/10">
-                    <h3 className="font-semibold text-foreground mb-2 flex items-center gap-2">
+                    <h3 className="font-semibold text-foreground flex items-center gap-2">
                       <span className="w-1.5 h-1.5 rounded-full bg-primary"></span>
                       Conheça o Sistema de Organização, Gestão e Planejamento de Vida - PDI.
                     </h3>
-                    <p className="text-muted-foreground text-sm leading-relaxed">
-                      {resultados[resultTrava].ferramenta}
-                    </p>
                   </div>
 
                   {/* CTA */}
