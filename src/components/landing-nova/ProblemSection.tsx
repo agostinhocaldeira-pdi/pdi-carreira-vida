@@ -73,7 +73,7 @@ const ProblemSection = () => {
             
             <div className="flex flex-col sm:flex-row sm:flex-wrap items-center justify-center gap-2 sm:gap-3 text-sm sm:text-base">
               {[
-                "Tenta",
+                "Começa",
                 "Falha ou abandona",
                 "Sente frustração e culpa",
                 "Passa a duvidar de si",
