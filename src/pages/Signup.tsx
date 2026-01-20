@@ -138,7 +138,7 @@ const Signup = () => {
               30 dias grátis
             </p>
             <p className="text-sm text-muted-foreground">
-              Fique tranquilo: você não está assumindo nenhum compromisso de assinar após os 30 dias. A escolha é 100% sua.
+              Use a plataforma por 30 dias gratuitamente, e veja na prática como ela pode te ajudar a transformar sua vida. Se gostar, continua. Se não: cancele com um clique.
             </p>
           </div>
         </CardHeader>
