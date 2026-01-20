@@ -27,11 +27,11 @@ const QuizCTASection = () => {
                 onClick={() => navigate("/quiz")}
                 className="bg-accent hover:bg-accent/90 text-accent-foreground text-lg px-8 py-6 h-auto shadow-lg hover:shadow-xl transition-all"
               >
-                👉 Descobrir minha Trava Invisível (Grátis)
+                👉 Quero entender meu padrão
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
               <p className="text-sm text-primary-foreground/70">
-                Análise personalizada + Ferramenta de correção inclusa.
+                Responda 5 perguntas rápidas para entender qual padrão de comportamento pode estar drenando sua energia hoje.
               </p>
             </div>
           </div>
