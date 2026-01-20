@@ -133,9 +133,6 @@ const Signup = () => {
             <Logo size="lg" showText={false} />
           </div>
           <CardTitle className="text-2xl sm:text-3xl font-bold">PDI - Carreira & Vida</CardTitle>
-          <CardDescription className="text-sm sm:text-base">
-            Crie seu perfil e comece sua jornada de desenvolvimento
-          </CardDescription>
           <div className="bg-primary/10 border border-primary/20 rounded-lg px-3 py-3 mt-2 text-center">
             <p className="text-base font-bold text-primary mb-1">
               30 dias grátis
