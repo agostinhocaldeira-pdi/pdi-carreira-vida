@@ -143,7 +143,6 @@ const ordemDesempate: Trava[] = ["ROTINA", "CONSTANCIA", "CLAREZA", "DISPERSAO",
 
 const Diagnostico = () => {
   const navigate = useNavigate();
-  const [showCover, setShowCover] = useState(true);
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [scores, setScores] = useState<Record<Trava, number>>({
     CLAREZA: 0,
@@ -155,10 +154,6 @@ const Diagnostico = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [showResult, setShowResult] = useState(false);
   const [resultTrava, setResultTrava] = useState<Trava | null>(null);
-
-  const startQuiz = () => {
-    setShowCover(false);
-  };
 
   const handleAnswer = (trava: Trava) => {
     const newScores = { ...scores, [trava]: scores[trava] + 1 };
@@ -211,120 +206,64 @@ const Diagnostico = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-primary/5 flex flex-col">
       {/* Header */}
-      <header className="py-4 px-6 flex justify-center">
-        <img src={logoPdi} alt="PDI" className="h-10" />
+      <header className="py-3 sm:py-4 px-4 sm:px-6 flex justify-center">
+        <img src={logoPdi} alt="PDI" className="h-8 sm:h-10" />
       </header>
 
-      <main className="flex-1 flex items-center justify-center px-4 py-8">
+      <main className="flex-1 flex items-start sm:items-center justify-center px-4 py-4 sm:py-8">
         <AnimatePresence mode="wait">
-          {/* Cover Screen */}
-          {showCover && (
-            <motion.div
-              key="cover"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.4 }}
-              className="w-full max-w-lg text-center"
-            >
-              <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
-                {/* Hero Image */}
-                <div className="w-full">
-                  <img 
-                    src={diagnosticoHero} 
-                    alt="Homem interagindo com interface digital" 
-                    className="w-full h-48 md:h-64 object-cover object-center"
-                  />
-                </div>
 
-                <div className="p-8 md:p-10">
-                  {/* Title */}
-                  <h1 className="text-2xl md:text-3xl font-bold text-foreground mb-4 leading-tight">
-                    Descubra a <span className="text-primary">'Trava Invisível'</span> que impede sua evolução.
-                  </h1>
-
-                  {/* Subtitle */}
-                  <p className="text-muted-foreground text-base md:text-lg mb-8 leading-relaxed">
-                    Você tem planos, mas a execução trava. Entenda o porquê agora e receba a solução exata para o seu caso.
-                  </p>
-
-                  {/* Benefits - Passo a Passo */}
-                  <div className="space-y-4 mb-8">
-                    <div className="flex items-center gap-3 text-left p-3 bg-muted/30 rounded-xl">
-                      <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
-                        <Clock className="w-5 h-5 text-primary" />
-                      </div>
-                      <span className="text-foreground/80">Responda <strong>5 perguntas rápidas</strong></span>
-                    </div>
-
-                    <div className="flex items-center gap-3 text-left p-3 bg-muted/30 rounded-xl">
-                      <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
-                        <Target className="w-5 h-5 text-primary" />
-                      </div>
-                      <span className="text-foreground/80">Identifique sua <strong>trava oculta</strong></span>
-                    </div>
-
-                    <div className="flex items-center gap-3 text-left p-3 bg-muted/30 rounded-xl">
-                      <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
-                        <Gift className="w-5 h-5 text-primary" />
-                      </div>
-                      <span className="text-foreground/80">Receba a <strong>ferramenta para corrigir</strong></span>
-                    </div>
-                  </div>
-
-                  {/* CTA Button */}
-                  <Button
-                    onClick={startQuiz}
-                    size="lg"
-                    className="w-full bg-gradient-to-r from-primary to-primary/80 hover:from-primary/90 hover:to-primary/70 text-primary-foreground font-semibold text-lg py-6 rounded-xl shadow-lg"
-                  >
-                    Começar Diagnóstico
-                    <ArrowRight className="ml-2 w-5 h-5" />
-                  </Button>
-                </div>
-              </div>
-            </motion.div>
-          )}
-
-          {/* Quiz Questions */}
-          {!showCover && !showResult && !isLoading && (
+          {/* Quiz Questions - Start directly with Question 1 */}
+          {!showResult && !isLoading && (
             <motion.div
               key={`question-${currentQuestion}`}
-              initial={{ opacity: 0, x: 50 }}
+              initial={{ opacity: 0, x: currentQuestion === 0 ? 0 : 50 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: -50 }}
               transition={{ duration: 0.3 }}
               className="w-full max-w-lg"
             >
-              {/* Progress */}
-              <div className="mb-8">
-                <div className="flex justify-between text-sm text-muted-foreground mb-2">
+              {/* Special header for Question 1 */}
+              {currentQuestion === 0 && (
+                <div className="text-center mb-4 sm:mb-6">
+                  <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-foreground mb-2 sm:mb-3 leading-tight">
+                    O que parece estar travando sua evolução neste momento?
+                  </h1>
+                  <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">
+                    Responda 5 perguntas rápidas para entender qual padrão de comportamento pode estar drenando sua energia hoje.
+                  </p>
+                </div>
+              )}
+
+              {/* Progress - smaller on mobile for first question */}
+              <div className={`${currentQuestion === 0 ? 'mb-3 sm:mb-6' : 'mb-6 sm:mb-8'}`}>
+                <div className="flex justify-between text-xs sm:text-sm text-muted-foreground mb-2">
                   <span>Pergunta {currentQuestion + 1} de {questions.length}</span>
                   <span>{Math.round(progress)}%</span>
                 </div>
-                <Progress value={progress} className="h-2" />
+                <Progress value={progress} className="h-1.5 sm:h-2" />
               </div>
 
-              {/* Question Card */}
-              <div className="bg-white rounded-2xl shadow-lg p-6 md:p-8">
-                <h2 className="text-xl md:text-2xl font-bold text-foreground mb-6 leading-tight">
+              {/* Question Card - more compact on mobile */}
+              <div className="bg-white rounded-xl sm:rounded-2xl shadow-lg p-4 sm:p-6 md:p-8">
+                <h2 className="text-base sm:text-xl md:text-2xl font-bold text-foreground mb-4 sm:mb-6 leading-tight">
                   {questions[currentQuestion].headline}
                 </h2>
 
-                <div className="space-y-3">
+                <div className="space-y-2 sm:space-y-3">
                   {questions[currentQuestion].options.map((option, index) => (
                     <motion.button
                       key={index}
-                      whileHover={{ scale: 1.02 }}
+                      whileHover={{ scale: 1.01 }}
                       whileTap={{ scale: 0.98 }}
                       onClick={() => handleAnswer(option.trava)}
-                      className="w-full text-left p-4 rounded-xl border-2 border-muted hover:border-primary hover:bg-primary/5 transition-all duration-200 group"
+                      className="w-full text-left p-3 sm:p-4 rounded-lg sm:rounded-xl border-2 border-muted hover:border-primary hover:bg-primary/5 transition-all duration-200 group"
                     >
-                      <div className="flex items-start gap-3">
-                        <span className="flex-shrink-0 w-8 h-8 rounded-full bg-muted group-hover:bg-primary group-hover:text-white flex items-center justify-center font-semibold text-sm transition-colors">
+                      <div className="flex items-start gap-2 sm:gap-3">
+                        <span className="flex-shrink-0 w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-muted group-hover:bg-primary group-hover:text-white flex items-center justify-center font-semibold text-xs sm:text-sm transition-colors">
                           {String.fromCharCode(65 + index)}
                         </span>
-                        <span className="text-sm md:text-base text-foreground/80 group-hover:text-foreground">
+                        <span className="text-xs sm:text-sm md:text-base text-foreground/80 group-hover:text-foreground leading-snug">
                           {option.text}
                         </span>
                       </div>
