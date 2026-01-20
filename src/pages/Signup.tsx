@@ -25,7 +25,7 @@ const Signup = () => {
   const [lgpdAccepted, setLgpdAccepted] = useState(false);
 
   const validateForm = () => {
-    if (!formData.name || !formData.email || !formData.phone || !formData.password) {
+    if (!formData.name || !formData.email || !formData.password) {
       toast.error("Por favor, preencha todos os campos");
       return false;
     }
@@ -170,6 +170,7 @@ const Signup = () => {
               />
             </div>
 
+            {/* Campo de telefone oculto temporariamente - será reativado no futuro
             <div className="space-y-2">
               <Label htmlFor="phone">Telefone</Label>
               <Input
@@ -182,6 +183,7 @@ const Signup = () => {
                 disabled={isLoading}
               />
             </div>
+            */}
 
             <div className="space-y-2">
               <Label htmlFor="password">Senha</Label>
