@@ -314,7 +314,7 @@ const Diagnostico = () => {
                     })()}
                   </div>
                   <p className="text-primary-foreground/80 text-sm mb-1">
-                    Sua Trava Principal é:
+                    O que pode estar drenando sua energia:
                   </p>
                   <h2 className="text-2xl md:text-3xl font-bold text-white">
                     {resultados[resultTrava].titulo}
