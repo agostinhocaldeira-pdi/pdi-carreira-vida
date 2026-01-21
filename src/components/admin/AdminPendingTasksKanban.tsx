@@ -81,7 +81,7 @@ export const AdminPendingTasksKanban = () => {
 
   return (
     <div className="space-y-4">
-      <div className={cn("grid gap-4 grid-cols-3")}>
+      <div className={cn("grid gap-4", isMobile ? "grid-cols-1" : "grid-cols-3")}>
         {columns.map((status) => {
           const config = statusConfig[status];
           const columnTasks = getTasksByStatus(status);
