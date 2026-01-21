@@ -36,8 +36,12 @@ export const useAdminPendingTasks = () => {
   }, []);
 
   const saveTasks = (newTasks: AdminPendingTask[]) => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(newTasks));
-    setTasks(newTasks);
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(newTasks));
+      setTasks([...newTasks]); // Force state update with new array reference
+    } catch (error) {
+      console.error('Error saving admin pending tasks:', error);
+    }
   };
 
   const createTask = async (title: string, description?: string) => {
