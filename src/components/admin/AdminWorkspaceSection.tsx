@@ -4,28 +4,63 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { AdminPendingTasksKanban } from "@/components/admin/AdminPendingTasksKanban";
-import { ClipboardList, StickyNote, ChevronDown, ChevronUp, Save } from "lucide-react";
+import { ClipboardList, StickyNote, ChevronDown, ChevronUp, Save, Loader2 } from "lucide-react";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
 
 const AdminWorkspaceSection = () => {
   const [isOpen, setIsOpen] = useState(true);
   const [projectNotes, setProjectNotes] = useState("");
   const [isSaving, setIsSaving] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
-  // Load project notes from localStorage
+  // Load project notes from Supabase
   useEffect(() => {
-    const savedNotes = localStorage.getItem("admin_project_notes");
-    if (savedNotes) {
-      setProjectNotes(savedNotes);
-    }
+    const loadNotes = async () => {
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) return;
+
+        const { data, error } = await supabase
+          .from('admin_project_notes')
+          .select('notes')
+          .eq('user_id', user.id)
+          .maybeSingle();
+
+        if (error) throw error;
+        if (data?.notes) {
+          setProjectNotes(data.notes);
+        }
+      } catch (error) {
+        console.error('Error loading project notes:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadNotes();
   }, []);
 
-  const handleSaveNotes = () => {
+  const handleSaveNotes = async () => {
     setIsSaving(true);
     try {
-      localStorage.setItem("admin_project_notes", projectNotes);
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error('Usuário não autenticado');
+
+      const { error } = await supabase
+        .from('admin_project_notes')
+        .upsert({
+          user_id: user.id,
+          notes: projectNotes,
+          updated_at: new Date().toISOString()
+        }, {
+          onConflict: 'user_id'
+        });
+
+      if (error) throw error;
       toast.success("Anotações salvas!");
     } catch (error) {
+      console.error('Error saving notes:', error);
       toast.error("Erro ao salvar anotações");
     } finally {
       setIsSaving(false);
