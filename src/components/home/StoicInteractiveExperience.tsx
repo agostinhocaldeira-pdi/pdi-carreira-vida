@@ -397,11 +397,34 @@ const StoicInteractiveExperience = ({
                     placeholder="Escreva sua reflexão sobre a pergunta acima..."
                     className="min-h-[100px] resize-none bg-background/50 border-primary/20 focus:border-primary/40"
                   />
-                  <div className="flex justify-end">
+                  <div className="flex flex-col sm:flex-row sm:justify-between items-center gap-3">
+                    {/* Mobile controls - show inline with save button */}
+                    <div className="flex gap-2 sm:hidden">
+                      <Button
+                        variant="outline"
+                        size="icon"
+                        onClick={handleReset}
+                        className="rounded-full shadow-sm"
+                      >
+                        <RotateCcw className="w-4 h-4" />
+                      </Button>
+                      <Button
+                        onClick={handleStart}
+                        disabled={isLoading}
+                        size="icon"
+                        className="rounded-full shadow-md"
+                      >
+                        {isLoading ? (
+                          <Loader2 className="w-5 h-5 animate-spin" />
+                        ) : (
+                          <Pause className="w-5 h-5" />
+                        )}
+                      </Button>
+                    </div>
                     <Button
                       onClick={onSave}
                       disabled={!canSave || isSaving}
-                      className="gap-2"
+                      className="gap-2 w-full sm:w-auto sm:ml-auto"
                     >
                       {isSaving ? (
                         <Loader2 className="w-4 h-4 animate-spin" />
@@ -417,11 +440,14 @@ const StoicInteractiveExperience = ({
           </div>
         )}
 
-        {/* Play/Pause Button - Desktop only when not active, always visible when active */}
+        {/* Play/Pause Button - Desktop only when not active, hidden on mobile when completed (controls are inline) */}
         <div className={cn(
           "transition-all duration-300",
           isActive 
-            ? "absolute bottom-4 right-4" 
+            ? cn(
+                "absolute bottom-4 right-4",
+                phase === "completed" ? "hidden sm:flex" : "flex"
+              )
             : "hidden sm:block sm:absolute sm:top-1/2 sm:right-6 sm:-translate-y-1/2"
         )}>
           <div className="flex gap-2">
