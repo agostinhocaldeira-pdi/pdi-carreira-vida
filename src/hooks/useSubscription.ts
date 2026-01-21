@@ -11,7 +11,10 @@ interface SubscriptionState {
   subscriptionEnd: string | null;
 }
 
-const TRIAL_DAYS = 30;
+// Trial period configuration
+const TRIAL_DAYS_NEW_USERS = 30;
+const TRIAL_DAYS_LEGACY_USERS = 365; // 1 year for users before cutoff
+const LEGACY_CUTOFF_DATE = new Date('2026-01-20T00:00:00Z');
 
 // Stripe product ID for Plano Básico
 const PLANO_BASICO_PRODUCT_ID = "prod_TXWvEwloGWytPs";
@@ -20,9 +23,15 @@ const PLANO_BASICO_PRODUCT_ID = "prod_TXWvEwloGWytPs";
 const calculateTrialDaysRemaining = (createdAt: string): number => {
   const created = new Date(createdAt);
   const now = new Date();
+  
+  // Determine trial period based on signup date
+  const trialDays = created < LEGACY_CUTOFF_DATE 
+    ? TRIAL_DAYS_LEGACY_USERS 
+    : TRIAL_DAYS_NEW_USERS;
+  
   const diffTime = now.getTime() - created.getTime();
   const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-  return Math.max(0, TRIAL_DAYS - diffDays);
+  return Math.max(0, trialDays - diffDays);
 };
 
 export const useSubscription = () => {
