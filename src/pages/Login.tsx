@@ -291,10 +291,7 @@ const Login = () => {
       return;
     }
 
-    // 6. Usuário comum: não forçar checkout no login.
-    // O status (trial/expirado/ativo) é gerenciado globalmente pelo SubscriptionProvider,
-    // que só bloqueia o acesso quando o período de teste realmente expira.
-
+    // 6. Usuário comum
     localStorage.setItem("user", JSON.stringify({
       id: userId,
       name: userName,
@@ -302,6 +299,26 @@ const Login = () => {
       phone: userPhone,
       role: userRole,
     }));
+
+    // Check for redirect parameter (e.g., redirect=checkout from 7-day email)
+    const searchParams = new URLSearchParams(location.search);
+    const redirectTo = searchParams.get('redirect');
+    
+    if (redirectTo === 'checkout') {
+      // Redirect to checkout flow
+      try {
+        const { data, error } = await supabase.functions.invoke('create-checkout');
+        if (data?.url) {
+          window.location.href = data.url;
+          return;
+        }
+        if (error) {
+          console.error('Checkout error:', error);
+        }
+      } catch (err) {
+        console.error('Error creating checkout:', err);
+      }
+    }
 
     navigate("/home");
   };
