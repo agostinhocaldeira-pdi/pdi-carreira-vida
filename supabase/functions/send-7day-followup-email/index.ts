@@ -136,6 +136,35 @@ const handler = async (req: Request): Promise<Response> => {
     const supabase = createClient(supabaseUrl, supabaseKey);
     const resend = new Resend(resendApiKey);
 
+    // Check for test email mode
+    let testEmail: string | null = null;
+    try {
+      const body = await req.json();
+      testEmail = body?.test_email || null;
+    } catch {
+      // No body or invalid JSON - normal mode
+    }
+
+    if (testEmail) {
+      logStep("TEST MODE: Sending test email", { to: testEmail });
+      
+      const checkoutUrl = `https://pdicarreiraevida.lovable.app/login?redirect=checkout`;
+      
+      const emailResponse = await resend.emails.send({
+        from: "PDI - Carreira & Vida <notificacoes@pdicarreiraevida.com.br>",
+        to: [testEmail],
+        subject: "Um convite para o futuro PDI Black (R$ 297 por R$ 0) ♠️",
+        html: generateFollowupEmailHtml("Usuário Teste", checkoutUrl),
+      });
+
+      logStep("Test email sent", { response: JSON.stringify(emailResponse) });
+
+      return new Response(
+        JSON.stringify({ success: true, testMode: true, emailsSent: 1 }),
+        { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
     logStep("Starting 7-day followup email check");
 
     // Calculate the date 7 days ago
