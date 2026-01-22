@@ -63,6 +63,7 @@ import LandingConstancia from "./pages/LandingConstancia";
 import LandingIntegracao from "./pages/LandingIntegracao";
 import Quiz from "./pages/Quiz";
 import DesafioCodigo from "./pages/DesafioCodigo";
+import CheckoutDireto from "./pages/CheckoutDireto";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -141,6 +142,7 @@ const App = () => (
                 <Route path="/lp-constancia" element={<LandingConstancia />} />
                 <Route path="/lp-integracao" element={<LandingIntegracao />} />
                 <Route path="/desafio-30-dias" element={<DesafioCodigo />} />
+                <Route path="/checkout-direto" element={<CheckoutDireto />} />
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                 <Route path="*" element={<NotFound />} />
                 <Route path="*" element={<NotFound />} />

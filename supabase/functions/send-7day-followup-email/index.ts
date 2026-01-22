@@ -1,6 +1,7 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.39.3";
 import { Resend } from "https://esm.sh/resend@2.0.0";
+import { encode as base64Encode } from "https://deno.land/std@0.190.0/encoding/base64.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -11,6 +12,34 @@ const logStep = (step: string, details?: any) => {
   const detailsStr = details ? ` - ${JSON.stringify(details)}` : '';
   console.log(`[7DAY-FOLLOWUP] ${step}${detailsStr}`);
 };
+
+// HMAC-SHA256 using Web Crypto API
+async function hmacSha256(secret: string, message: string): Promise<string> {
+  const encoder = new TextEncoder();
+  const keyData = encoder.encode(secret);
+  const messageData = encoder.encode(message);
+  
+  const cryptoKey = await crypto.subtle.importKey(
+    "raw",
+    keyData,
+    { name: "HMAC", hash: "SHA-256" },
+    false,
+    ["sign"]
+  );
+  
+  const signature = await crypto.subtle.sign("HMAC", cryptoKey, messageData);
+  const hashArray = Array.from(new Uint8Array(signature));
+  return hashArray.map(b => b.toString(16).padStart(2, "0")).join("");
+}
+
+// Generate a signed checkout link that expires in 7 days
+async function generateSignedCheckoutUrl(email: string, secret: string): Promise<string> {
+  const expiresAt = Date.now() + 7 * 24 * 60 * 60 * 1000; // 7 days
+  const payload = `${email}|${expiresAt}`;
+  const signature = await hmacSha256(secret, payload);
+  const token = base64Encode(`${payload}|${signature}`);
+  return `https://pdicarreiraevida.lovable.app/checkout-direto?token=${encodeURIComponent(token)}`;
+}
 
 const generateFollowupEmailHtml = (name: string, checkoutUrl: string): string => `
 <!DOCTYPE html>
@@ -52,7 +81,7 @@ const generateFollowupEmailHtml = (name: string, checkoutUrl: string): string =>
     </div>
     
     <div class="book-image">
-      <img src="https://zlclwweeyrvrgxuukdhl.supabase.co/storage/v1/object/public/email-assets/codigo-essencial-email.png" alt="O Código do Essencial - 30 Dias" style="max-width: 400px; width: 100%;" />
+      <img src="cid:header-image" alt="O Código do Essencial - 30 Dias" style="max-width: 400px; width: 100%;" />
     </div>
     
     <div class="content">
@@ -136,6 +165,26 @@ const handler = async (req: Request): Promise<Response> => {
     const supabase = createClient(supabaseUrl, supabaseKey);
     const resend = new Resend(resendApiKey);
 
+    // We use Stripe secret key as the signing secret for checkout URLs
+    const signingSecret = stripeKey;
+
+    // Fetch the image from Supabase Storage
+    const imageUrl = "https://zlclwweeyrvrgxuukdhl.supabase.co/storage/v1/object/public/email-assets/codigo-essencial-email.png";
+    let imageBase64: string | null = null;
+    
+    try {
+      const imageResponse = await fetch(imageUrl);
+      if (imageResponse.ok) {
+        const imageBuffer = await imageResponse.arrayBuffer();
+        imageBase64 = base64Encode(imageBuffer);
+        logStep("Image fetched and encoded", { size: imageBuffer.byteLength });
+      } else {
+        logStep("Failed to fetch image", { status: imageResponse.status });
+      }
+    } catch (imgError) {
+      logStep("Error fetching image", { error: String(imgError) });
+    }
+
     // Check for test email mode
     let testEmail: string | null = null;
     try {
@@ -148,19 +197,33 @@ const handler = async (req: Request): Promise<Response> => {
     if (testEmail) {
       logStep("TEST MODE: Sending test email", { to: testEmail });
       
-      const checkoutUrl = `https://pdicarreiraevida.lovable.app/login?redirect=checkout`;
+      const checkoutUrl = await generateSignedCheckoutUrl(testEmail, signingSecret);
+      logStep("Generated signed checkout URL", { url: checkoutUrl });
       
-      const emailResponse = await resend.emails.send({
+      const emailPayload: any = {
         from: "PDI - Carreira & Vida <notificacoes@pdicarreiraevida.com.br>",
         to: [testEmail],
         subject: "Um convite para o futuro PDI Black (R$ 297 por R$ 0) ♠️",
         html: generateFollowupEmailHtml("Usuário Teste", checkoutUrl),
-      });
+      };
+
+      // Add inline image if available
+      if (imageBase64) {
+        emailPayload.attachments = [
+          {
+            content: imageBase64,
+            filename: "codigo-essencial-email.png",
+            contentId: "header-image",
+          },
+        ];
+      }
+
+      const emailResponse = await resend.emails.send(emailPayload);
 
       logStep("Test email sent", { response: JSON.stringify(emailResponse) });
 
       return new Response(
-        JSON.stringify({ success: true, testMode: true, emailsSent: 1 }),
+        JSON.stringify({ success: true, testMode: true, emailsSent: 1, checkoutUrl }),
         { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
@@ -230,16 +293,29 @@ const handler = async (req: Request): Promise<Response> => {
 
         const userName = profile?.full_name || user.email?.split('@')[0] || 'Usuário';
 
-        // Generate checkout URL - user will be redirected to checkout after login
-        const checkoutUrl = `https://pdicarreiraevida.lovable.app/login?redirect=checkout`;
+        // Generate signed checkout URL
+        const checkoutUrl = await generateSignedCheckoutUrl(user.email!, signingSecret);
 
-        // Send email
-        const emailResponse = await resend.emails.send({
+        // Build email payload
+        const emailPayload: any = {
           from: "PDI - Carreira & Vida <notificacoes@pdicarreiraevida.com.br>",
           to: [user.email!],
           subject: "Um convite para o futuro PDI Black (R$ 297 por R$ 0) ♠️",
           html: generateFollowupEmailHtml(userName, checkoutUrl),
-        });
+        };
+
+        if (imageBase64) {
+          emailPayload.attachments = [
+            {
+              content: imageBase64,
+              filename: "codigo-essencial-email.png",
+              contentId: "header-image",
+            },
+          ];
+        }
+
+        // Send email
+        const emailResponse = await resend.emails.send(emailPayload);
 
         logStep(`Email sent to ${user.email}`, { response: JSON.stringify(emailResponse) });
 
