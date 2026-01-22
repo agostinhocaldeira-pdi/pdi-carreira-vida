@@ -16,7 +16,7 @@ serve(async (req) => {
     const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const supabase = createClient(supabaseUrl, supabaseKey);
 
-    console.log("Checking for users who need diary reminders (2-4 days inactive only)...");
+    console.log("Checking for users who need diary reminders (15 days inactive)...");
 
     // Get ALL users from auth.users
     const { data: authData, error: authError } = await supabase.auth.admin.listUsers();
@@ -44,8 +44,8 @@ serve(async (req) => {
 
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-    const twoDaysAgo = new Date(today);
-    twoDaysAgo.setDate(twoDaysAgo.getDate() - 2);
+    const fifteenDaysAgo = new Date(today);
+    fifteenDaysAgo.setDate(fifteenDaysAgo.getDate() - 15);
 
     const remindersToSend: { userId: string; email: string; daysInactive: number }[] = [];
 
@@ -78,8 +78,8 @@ serve(async (req) => {
         createdAt.setHours(0, 0, 0, 0);
         daysInactive = Math.floor((today.getTime() - createdAt.getTime()) / (1000 * 60 * 60 * 24));
         
-        // Only remind if account is at least 2 days old
-        if (daysInactive < 2) {
+        // Only remind if account is at least 15 days old
+        if (daysInactive < 15) {
           console.log(`User ${user.email} is new (${daysInactive} days), skipping`);
           continue;
         }
@@ -89,18 +89,17 @@ serve(async (req) => {
         daysInactive = Math.floor((today.getTime() - lastEntryDate.getTime()) / (1000 * 60 * 60 * 24));
       }
 
-      // Send reminder only if inactive for 2-4 days (first 3 days of inactivity)
-      // Day 2 = first reminder, Day 3 = second reminder, Day 4 = third/last reminder
-      // After 4 days, stop sending reminders
-      if (daysInactive >= 2 && daysInactive <= 4) {
+      // Send reminder only if inactive for exactly 15 days (or multiples of 15)
+      // This ensures the email is sent once every 15 days of inactivity
+      if (daysInactive >= 15 && daysInactive % 15 === 0) {
         remindersToSend.push({ 
           userId: user.id, 
           email: user.email || '',
           daysInactive 
         });
-        console.log(`User ${user.email} inactive for ${daysInactive} days (within 3-day window), will send reminder`);
-      } else if (daysInactive > 4) {
-        console.log(`User ${user.email} inactive for ${daysInactive} days (exceeded 3-day window), skipping`);
+        console.log(`User ${user.email} inactive for ${daysInactive} days, will send reminder`);
+      } else if (daysInactive < 15) {
+        console.log(`User ${user.email} inactive for only ${daysInactive} days, skipping (need 15)`);
       }
     }
 
