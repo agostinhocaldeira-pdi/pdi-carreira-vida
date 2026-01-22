@@ -52,7 +52,7 @@ const generateFollowupEmailHtml = (name: string, checkoutUrl: string): string =>
     </div>
     
     <div class="book-image">
-      <img src="https://pdicarreiraevida.lovable.app/images/codigo-essencial-email.png" alt="O Código do Essencial - 30 Dias" />
+      <img src="https://zlclwweeyrvrgxuukdhl.supabase.co/storage/v1/object/public/email-assets/codigo-essencial-email.png" alt="O Código do Essencial - 30 Dias" />
     </div>
     
     <div class="content">
@@ -86,7 +86,7 @@ const generateFollowupEmailHtml = (name: string, checkoutUrl: string): string =>
       
       <p>Não é um "livrinho de dicas". Não é "mais conteúdo" para você ler e esquecer.</p>
       
-      <p>É um <strong class="gold-text">Protocolo de Reinicialização Mental de 30 Dias</strong>. Condensamos a sabedoria de Hábitos Atômicos, Essencialismo e Deep Work em 30 pílulas de pura execução.</p>
+      <p>É um <strong class="gold-text">Protocolo de Reinicialização Mental de 30 Dias</strong>. Condensamos a sabedoria de dezenas de livros, como Hábitos Atômicos, Essencialismo e Deep Work, em 30 pílulas de pura execução. Todas utilizam fundamentos sólidos da ciência, da filosofia e da psicologia.</p>
       
       <p><strong>Nos próximos 30 dias, dentro da plataforma, você vai:</strong></p>
       
