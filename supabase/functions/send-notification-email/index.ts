@@ -24,25 +24,31 @@ const generateDiaryReminderHtml = (name: string, daysInactive: number): string =
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #1a1a1a; margin: 0; padding: 20px; color: #e5e5e5; }
-    .container { max-width: 600px; margin: 0 auto; background: #0a0a0a; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.5); border: 1px solid #333; }
+    .container { max-width: 650px; margin: 0 auto; background: #0a0a0a; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.5); border: 1px solid #333; }
     .header { background: linear-gradient(135deg, #000000 0%, #1a1a1a 100%); padding: 30px; text-align: center; border-bottom: 2px solid #d4a853; }
     .header h1 { margin: 0; font-size: 24px; color: #d4a853; }
     .header p { margin: 10px 0 0 0; color: #888; font-size: 14px; }
     .content { padding: 30px; }
-    .content p { color: #e5e5e5; line-height: 1.8; margin-bottom: 18px; font-size: 15px; }
+    .content p { color: #e5e5e5; line-height: 1.8; margin-bottom: 16px; font-size: 15px; }
     .content strong { color: #ffffff; }
     .highlight { background: #1a1a1a; border-left: 4px solid #d4a853; padding: 18px; margin: 25px 0; border-radius: 0 8px 8px 0; }
     .highlight p { margin: 0; color: #d4a853; }
-    .section-title { font-size: 18px; font-weight: bold; color: #d4a853; margin: 25px 0 15px 0; border-bottom: 1px solid #333; padding-bottom: 8px; }
+    .section-title { font-size: 18px; font-weight: bold; color: #d4a853; margin: 30px 0 15px 0; border-bottom: 1px solid #333; padding-bottom: 8px; }
+    .sub-section { font-size: 16px; font-weight: bold; color: #d4a853; margin: 25px 0 12px 0; }
     .benefit-item { background: #111; border-radius: 8px; padding: 15px 20px; margin: 12px 0; border-left: 3px solid #d4a853; }
     .benefit-item strong { color: #d4a853; display: block; margin-bottom: 8px; }
     .benefit-item p { margin: 0; font-size: 14px; color: #ccc; }
-    .graph-section { background: #111; border-radius: 8px; padding: 20px; margin: 25px 0; text-align: center; }
-    .graph-section img { max-width: 100%; border-radius: 8px; }
+    .bullet-list { margin: 12px 0 12px 20px; padding: 0; }
+    .bullet-list li { color: #ccc; margin-bottom: 8px; line-height: 1.6; }
+    .integration-box { background: #111; border-radius: 8px; padding: 20px; margin: 20px 0; }
+    .integration-item { display: flex; align-items: center; margin: 10px 0; }
+    .integration-arrow { color: #d4a853; margin: 0 10px; font-weight: bold; }
+    .conclusion-box { background: linear-gradient(135deg, #1a1a1a 0%, #111 100%); border: 1px solid #d4a853; border-radius: 8px; padding: 25px; margin: 25px 0; text-align: center; }
+    .conclusion-box p { color: #e5e5e5; margin: 10px 0; }
+    .conclusion-box .emphasis { color: #d4a853; font-style: italic; font-size: 16px; }
     .cta-section { text-align: center; padding: 30px 20px; background: linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%); }
     .cta-button { display: inline-block; background: linear-gradient(135deg, #d4a853 0%, #b8943f 100%); color: #000 !important; padding: 18px 40px; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 16px; text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 4px 15px rgba(212, 168, 83, 0.3); }
     .cta-note { color: #888; font-size: 13px; margin-top: 15px; }
-    .link-text { color: #d4a853; text-decoration: underline; }
     .footer { background: #0a0a0a; padding: 25px; text-align: center; color: #666; font-size: 12px; border-top: 1px solid #333; }
     .footer a { color: #d4a853; text-decoration: none; }
     .gold-text { color: #d4a853; }
@@ -62,49 +68,117 @@ const generateDiaryReminderHtml = (name: string, daysInactive: number): string =
       
       <p>Sabemos que a rotina é corrida, mas queremos te lembrar o <strong>porquê</strong> vale a pena dedicar 5 minutos ao seu diário:</p>
       
-      <div class="highlight">
-        <p>Em meio à rotina acelerada, excesso de informações e múltiplas responsabilidades, muitas pessoas sentem dificuldade em organizar pensamentos, compreender emoções e perceber avanços reais na própria vida e carreira.</p>
+      <div class="section-title">📝 O que é um Diário Digital Inteligente no PDI</div>
+      
+      <p>No PDI, o Diário não é apenas um espaço livre de anotações. Ele convida o usuário a registrar, de forma simples e objetiva:</p>
+      
+      <ul class="bullet-list">
+        <li>seu <strong>humor</strong> no dia;</li>
+        <li><strong>pensamentos</strong> relevantes;</li>
+        <li><strong>conquistas</strong> ou avanços, mesmo que pequenos;</li>
+        <li>uma <strong>gratidão</strong> diária.</li>
+      </ul>
+      
+      <p>Essa estrutura orientada transforma o ato de escrever em um processo consciente de organização interna.</p>
+      
+      <div class="sub-section">1. Registrar o humor aumenta a consciência emocional</div>
+      
+      <p>A prática de identificar e registrar o humor diário é amplamente utilizada em abordagens terapêuticas baseadas em evidências.</p>
+      
+      <p>Ao nomear emoções, a pessoa:</p>
+      <ul class="bullet-list">
+        <li>desenvolve maior consciência sobre seus estados internos;</li>
+        <li>identifica padrões emocionais ao longo do tempo;</li>
+        <li>reduz a sensação de confusão ou sobrecarga difusa.</li>
+      </ul>
+      
+      <p>Esse processo favorece a <strong>autorregulação emocional</strong>, permitindo decisões mais alinhadas com objetivos pessoais e profissionais.</p>
+      
+      <div class="sub-section">2. Escrever pensamentos organiza a mente e reduz carga emocional</div>
+      
+      <p>A escrita reflexiva, também conhecida como <em>expressive writing</em>, é um recurso estudado há décadas.</p>
+      
+      <p>Registrar pensamentos:</p>
+      <ul class="bullet-list">
+        <li>ajuda a externalizar preocupações;</li>
+        <li>organiza experiências internas;</li>
+        <li>reduz ruminação mental.</li>
+      </ul>
+      
+      <p>Ao colocar ideias no papel (ou na tela), o cérebro deixa de gastar energia apenas "segurando" informações e passa a processá-las de forma mais clara e estruturada.</p>
+      
+      <div class="sub-section">3. Registrar conquistas fortalece a autoconfiança e a motivação</div>
+      
+      <p>Um dos maiores bloqueios no desenvolvimento de carreira e vida é a sensação de estagnação — muitas vezes causada por não perceber o próprio progresso.</p>
+      
+      <p>Ao registrar conquistas diárias, mesmo pequenas:</p>
+      <ul class="bullet-list">
+        <li>a percepção de avanço se torna mais concreta;</li>
+        <li>a autoconfiança é reforçada;</li>
+        <li>a motivação tende a se sustentar no longo prazo.</li>
+      </ul>
+      
+      <p>Esse princípio está diretamente relacionado ao conceito de <strong>autoeficácia</strong>, que descreve a crença na própria capacidade de agir e evoluir.</p>
+      
+      <div class="sub-section">4. Praticar gratidão melhora bem-estar e perspectiva</div>
+      
+      <p>A gratidão não elimina desafios, mas altera a forma como eles são percebidos.</p>
+      
+      <p>Estudos mostram que o registro regular de gratidão está associado a:</p>
+      <ul class="bullet-list">
+        <li>maior bem-estar subjetivo;</li>
+        <li>mais emoções positivas no cotidiano;</li>
+        <li>melhor equilíbrio emocional diante de dificuldades.</li>
+      </ul>
+      
+      <p>No contexto do PDI, a gratidão ajuda o usuário a manter uma visão mais ampla da própria trajetória, sem negar problemas, mas sem ser dominado por eles.</p>
+      
+      <div class="section-title">🔗 O diferencial está na combinação estruturada</div>
+      
+      <p>O verdadeiro valor do Diário Digital Inteligente não está em um único elemento isolado, mas na <strong>integração consciente</strong> de todos eles:</p>
+      
+      <div class="integration-box">
+        <div class="integration-item">
+          <span class="gold-text">😊 Humor</span>
+          <span class="integration-arrow">→</span>
+          <span>consciência emocional</span>
+        </div>
+        <div class="integration-item">
+          <span class="gold-text">💭 Pensamentos</span>
+          <span class="integration-arrow">→</span>
+          <span>clareza cognitiva</span>
+        </div>
+        <div class="integration-item">
+          <span class="gold-text">🏆 Conquistas</span>
+          <span class="integration-arrow">→</span>
+          <span>reforço de progresso</span>
+        </div>
+        <div class="integration-item">
+          <span class="gold-text">🙏 Gratidão</span>
+          <span class="integration-arrow">→</span>
+          <span>equilíbrio emocional</span>
+        </div>
       </div>
       
-      <p>O Diário Digital Inteligente do PDI foi concebido exatamente para responder a esse desafio: oferecer um <strong>espaço estruturado de reflexão diária</strong> que favorece clareza mental, autorregulação emocional e consciência de progresso.</p>
+      <p>Essa combinação cria um <strong>ciclo diário de organização interna</strong>, alinhado ao propósito maior do PDI: ajudar a pessoa a sair do modo reativo e assumir uma postura mais estratégica sobre a própria vida e carreira.</p>
       
-      <p>Essa funcionalidade não é intuitiva ou casual. Ela se apoia em fundamentos amplamente estudados pela Psicologia, especialmente pela <strong>Psicologia Cognitivo-Comportamental</strong> e pela <strong>Psicologia Positiva</strong>.</p>
+      <div class="section-title">⏳ Um recurso simples, com impacto consistente ao longo do tempo</div>
       
-      <div class="section-title">🧠 Por que funciona</div>
+      <p>O Diário do PDI não promete soluções instantâneas nem resultados mágicos. Seu valor está na <strong>prática contínua</strong>.</p>
       
-      <div class="benefit-item">
-        <strong>📊 Registro de Humor</strong>
-        <p>Aumenta a consciência emocional, pilar da Terapia Cognitivo-Comportamental (TCC).</p>
+      <p>Com o uso regular, o usuário tende a desenvolver:</p>
+      <ul class="bullet-list">
+        <li>mais clareza sobre si mesmo;</li>
+        <li>maior senso de direção;</li>
+        <li>melhor relação com suas metas e decisões;</li>
+        <li>mais consciência do próprio processo de evolução.</li>
+      </ul>
+      
+      <div class="conclusion-box">
+        <p><strong class="gold-text">Conclusão</strong></p>
+        <p>O Diário Digital Inteligente do PDI – Carreira e Vida é uma ferramenta prática, fundamentada e acessível, criada para apoiar quem deseja mais organização interna, foco e consciência no dia a dia.</p>
+        <p class="emphasis">Registrar o dia não é apenas escrever sobre o que aconteceu.<br>É construir, aos poucos, uma visão mais clara de quem você é, onde está e para onde quer ir.</p>
       </div>
-      
-      <div class="benefit-item">
-        <strong>✍️ Reflexão Escrita</strong>
-        <p>Organiza a mente e reduz a ruminação, conforme estudos de escrita expressiva.</p>
-      </div>
-      
-      <div class="benefit-item">
-        <strong>🏆 Registro de Conquistas</strong>
-        <p>Reforça a autoeficácia, conceito fundamental de Albert Bandura.</p>
-      </div>
-      
-      <div class="benefit-item">
-        <strong>🙏 Prática de Gratidão</strong>
-        <p>Melhora o bem-estar geral, comprovado pela Psicologia Positiva.</p>
-      </div>
-      
-      <div class="section-title">📈 Visualize sua evolução</div>
-      
-      <p>Além de registrar seu dia, o Diário permite que você consulte todo o seu <strong>histórico por período de até um ano</strong>, revisitando anotações, conquistas e reflexões passadas.</p>
-      
-      <p>E para tornar sua jornada ainda mais clara, você tem acesso a um <strong>gráfico interativo</strong> que mostra o comparativo do seu humor dia a dia, permitindo identificar padrões emocionais, momentos de maior bem-estar e períodos que merecem atenção.</p>
-      
-      <div class="highlight">
-        <p><strong>Essa visão ampliada transforma dados em autoconhecimento — e autoconhecimento em poder de decisão.</strong></p>
-      </div>
-      
-      <p style="text-align: center; margin-top: 25px;">
-        <a href="https://www.pdicarreiraevida.com.br/leadp2" class="link-text">🔬 Clique aqui: Conheça o embasamento científico validado por trás desta ferramenta</a>
-      </p>
     </div>
     
     <div class="cta-section">
