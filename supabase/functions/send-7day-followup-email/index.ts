@@ -38,7 +38,10 @@ async function generateSignedCheckoutUrl(email: string, secret: string): Promise
   const payload = `${email}|${expiresAt}`;
   const signature = await hmacSha256(secret, payload);
   const token = base64Encode(`${payload}|${signature}`);
-  return `https://pdicarreiraevida.lovable.app/checkout-direto?token=${encodeURIComponent(token)}`;
+  // Go straight to the backend function, which validates the token and redirects to Stripe.
+  // This avoids any dependency on frontend routes (prevents 404 on stale published builds).
+  const backendUrl = Deno.env.get("SUPABASE_URL") || "https://pdicarreiraevida.lovable.app";
+  return `${backendUrl}/functions/v1/checkout-direto?token=${encodeURIComponent(token)}`;
 }
 
 const generateFollowupEmailHtml = (name: string, checkoutUrl: string): string => `
@@ -53,8 +56,6 @@ const generateFollowupEmailHtml = (name: string, checkoutUrl: string): string =>
     .header { background: linear-gradient(135deg, #000000 0%, #1a1a1a 100%); padding: 30px; text-align: center; border-bottom: 2px solid #d4a853; }
     .header h1 { margin: 0; font-size: 24px; color: #d4a853; }
     .header p { margin: 10px 0 0 0; color: #888; font-size: 12px; }
-    .book-image { text-align: center; padding: 30px 20px; background: linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%); }
-    .book-image img { max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0 8px 30px rgba(212, 168, 83, 0.2); }
     .content { padding: 30px; }
     .content p { color: #e5e5e5; line-height: 1.8; margin-bottom: 18px; font-size: 15px; }
     .content strong { color: #ffffff; }
@@ -78,10 +79,6 @@ const generateFollowupEmailHtml = (name: string, checkoutUrl: string): string =>
     <div class="header">
       <h1>♠️ PDI - Carreira & Vida</h1>
       <p>Um convite exclusivo para você</p>
-    </div>
-    
-    <div class="book-image">
-      <img src="cid:header-image" alt="O Código do Essencial - 30 Dias" style="max-width: 400px; width: 100%;" />
     </div>
     
     <div class="content">
@@ -168,23 +165,6 @@ const handler = async (req: Request): Promise<Response> => {
     // We use Stripe secret key as the signing secret for checkout URLs
     const signingSecret = stripeKey;
 
-    // Fetch the image from Supabase Storage
-    const imageUrl = "https://zlclwweeyrvrgxuukdhl.supabase.co/storage/v1/object/public/email-assets/codigo-essencial-email.png";
-    let imageBase64: string | null = null;
-    
-    try {
-      const imageResponse = await fetch(imageUrl);
-      if (imageResponse.ok) {
-        const imageBuffer = await imageResponse.arrayBuffer();
-        imageBase64 = base64Encode(imageBuffer);
-        logStep("Image fetched and encoded", { size: imageBuffer.byteLength });
-      } else {
-        logStep("Failed to fetch image", { status: imageResponse.status });
-      }
-    } catch (imgError) {
-      logStep("Error fetching image", { error: String(imgError) });
-    }
-
     // Check for test email mode
     let testEmail: string | null = null;
     try {
@@ -206,17 +186,6 @@ const handler = async (req: Request): Promise<Response> => {
         subject: "Um convite para o futuro PDI Black (R$ 297 por R$ 0) ♠️",
         html: generateFollowupEmailHtml("Usuário Teste", checkoutUrl),
       };
-
-      // Add inline image if available
-      if (imageBase64) {
-        emailPayload.attachments = [
-          {
-            content: imageBase64,
-            filename: "codigo-essencial-email.png",
-            contentId: "header-image",
-          },
-        ];
-      }
 
       const emailResponse = await resend.emails.send(emailPayload);
 
@@ -303,16 +272,6 @@ const handler = async (req: Request): Promise<Response> => {
           subject: "Um convite para o futuro PDI Black (R$ 297 por R$ 0) ♠️",
           html: generateFollowupEmailHtml(userName, checkoutUrl),
         };
-
-        if (imageBase64) {
-          emailPayload.attachments = [
-            {
-              content: imageBase64,
-              filename: "codigo-essencial-email.png",
-              contentId: "header-image",
-            },
-          ];
-        }
 
         // Send email
         const emailResponse = await resend.emails.send(emailPayload);
