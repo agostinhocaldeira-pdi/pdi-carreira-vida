@@ -21,37 +21,103 @@ const generateDiaryReminderHtml = (name: string, daysInactive: number): string =
 <html>
 <head>
   <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
-    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f4f4; margin: 0; padding: 20px; }
-    .container { max-width: 600px; margin: 0 auto; background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-    .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 30px; text-align: center; }
-    .header h1 { margin: 0; font-size: 24px; }
+    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #1a1a1a; margin: 0; padding: 20px; color: #e5e5e5; }
+    .container { max-width: 600px; margin: 0 auto; background: #0a0a0a; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,0.5); border: 1px solid #333; }
+    .header { background: linear-gradient(135deg, #000000 0%, #1a1a1a 100%); padding: 30px; text-align: center; border-bottom: 2px solid #d4a853; }
+    .header h1 { margin: 0; font-size: 24px; color: #d4a853; }
+    .header p { margin: 10px 0 0 0; color: #888; font-size: 14px; }
     .content { padding: 30px; }
-    .content p { color: #333; line-height: 1.6; margin-bottom: 15px; }
-    .highlight { background: #f8f4ff; border-left: 4px solid #667eea; padding: 15px; margin: 20px 0; border-radius: 0 8px 8px 0; }
-    .cta-button { display: inline-block; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 14px 28px; text-decoration: none; border-radius: 8px; font-weight: bold; margin-top: 20px; }
-    .footer { background: #f8f8f8; padding: 20px; text-align: center; color: #888; font-size: 12px; }
+    .content p { color: #e5e5e5; line-height: 1.8; margin-bottom: 18px; font-size: 15px; }
+    .content strong { color: #ffffff; }
+    .highlight { background: #1a1a1a; border-left: 4px solid #d4a853; padding: 18px; margin: 25px 0; border-radius: 0 8px 8px 0; }
+    .highlight p { margin: 0; color: #d4a853; }
+    .section-title { font-size: 18px; font-weight: bold; color: #d4a853; margin: 25px 0 15px 0; border-bottom: 1px solid #333; padding-bottom: 8px; }
+    .benefit-item { background: #111; border-radius: 8px; padding: 15px 20px; margin: 12px 0; border-left: 3px solid #d4a853; }
+    .benefit-item strong { color: #d4a853; display: block; margin-bottom: 8px; }
+    .benefit-item p { margin: 0; font-size: 14px; color: #ccc; }
+    .graph-section { background: #111; border-radius: 8px; padding: 20px; margin: 25px 0; text-align: center; }
+    .graph-section img { max-width: 100%; border-radius: 8px; }
+    .cta-section { text-align: center; padding: 30px 20px; background: linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%); }
+    .cta-button { display: inline-block; background: linear-gradient(135deg, #d4a853 0%, #b8943f 100%); color: #000 !important; padding: 18px 40px; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 16px; text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 4px 15px rgba(212, 168, 83, 0.3); }
+    .cta-note { color: #888; font-size: 13px; margin-top: 15px; }
+    .link-text { color: #d4a853; text-decoration: underline; }
+    .footer { background: #0a0a0a; padding: 25px; text-align: center; color: #666; font-size: 12px; border-top: 1px solid #333; }
+    .footer a { color: #d4a853; text-decoration: none; }
+    .gold-text { color: #d4a853; }
   </style>
 </head>
 <body>
   <div class="container">
     <div class="header">
-      <h1>📔 PDI - Carreira & Vida</h1>
+      <h1>📔 Diário Digital Inteligente</h1>
+      <p>Por que registrar seu dia transforma sua clareza, foco e bem-estar</p>
     </div>
+    
     <div class="content">
       <p>Olá, <strong>${name}</strong>!</p>
-      <p>Percebemos que você não preenche seu diário há <strong>${daysInactive} dias</strong>.</p>
+      
+      <p>Percebemos que você não preenche seu diário há <strong class="gold-text">${daysInactive} dias</strong>.</p>
+      
+      <p>Sabemos que a rotina é corrida, mas queremos te lembrar o <strong>porquê</strong> vale a pena dedicar 5 minutos ao seu diário:</p>
+      
       <div class="highlight">
-        <p style="margin:0;"><strong>💡 Lembre-se:</strong> O registro diário é fundamental para seu autoconhecimento e acompanhamento do progresso. Mesmo nos dias mais corridos, dedicar 5 minutos para refletir faz toda a diferença!</p>
+        <p>Em meio à rotina acelerada, excesso de informações e múltiplas responsabilidades, muitas pessoas sentem dificuldade em organizar pensamentos, compreender emoções e perceber avanços reais na própria vida e carreira.</p>
       </div>
-      <p>Que tal registrar como foi seu dia hoje? Suas reflexões, conquistas e aprendizados são valiosos para sua jornada de desenvolvimento.</p>
-      <center>
-        <a href="https://www.pdicarreiraevida.com.br/home" class="cta-button">Acessar meu Diário</a>
-      </center>
+      
+      <p>O Diário Digital Inteligente do PDI foi concebido exatamente para responder a esse desafio: oferecer um <strong>espaço estruturado de reflexão diária</strong> que favorece clareza mental, autorregulação emocional e consciência de progresso.</p>
+      
+      <p>Essa funcionalidade não é intuitiva ou casual. Ela se apoia em fundamentos amplamente estudados pela Psicologia, especialmente pela <strong>Psicologia Cognitivo-Comportamental</strong> e pela <strong>Psicologia Positiva</strong>.</p>
+      
+      <div class="section-title">🧠 Por que funciona</div>
+      
+      <div class="benefit-item">
+        <strong>📊 Registro de Humor</strong>
+        <p>Aumenta a consciência emocional, pilar da Terapia Cognitivo-Comportamental (TCC).</p>
+      </div>
+      
+      <div class="benefit-item">
+        <strong>✍️ Reflexão Escrita</strong>
+        <p>Organiza a mente e reduz a ruminação, conforme estudos de escrita expressiva.</p>
+      </div>
+      
+      <div class="benefit-item">
+        <strong>🏆 Registro de Conquistas</strong>
+        <p>Reforça a autoeficácia, conceito fundamental de Albert Bandura.</p>
+      </div>
+      
+      <div class="benefit-item">
+        <strong>🙏 Prática de Gratidão</strong>
+        <p>Melhora o bem-estar geral, comprovado pela Psicologia Positiva.</p>
+      </div>
+      
+      <div class="section-title">📈 Visualize sua evolução</div>
+      
+      <p>Além de registrar seu dia, o Diário permite que você consulte todo o seu <strong>histórico por período de até um ano</strong>, revisitando anotações, conquistas e reflexões passadas.</p>
+      
+      <p>E para tornar sua jornada ainda mais clara, você tem acesso a um <strong>gráfico interativo</strong> que mostra o comparativo do seu humor dia a dia, permitindo identificar padrões emocionais, momentos de maior bem-estar e períodos que merecem atenção.</p>
+      
+      <div class="highlight">
+        <p><strong>Essa visão ampliada transforma dados em autoconhecimento — e autoconhecimento em poder de decisão.</strong></p>
+      </div>
+      
+      <p style="text-align: center; margin-top: 25px;">
+        <a href="https://www.pdicarreiraevida.com.br/leadp2" class="link-text">🔬 Clique aqui: Conheça o embasamento científico validado por trás desta ferramenta</a>
+      </p>
     </div>
+    
+    <div class="cta-section">
+      <a href="https://www.pdicarreiraevida.com.br/home" class="cta-button">ACESSAR MEU DIÁRIO AGORA</a>
+      <p class="cta-note">5 minutos hoje podem transformar sua semana toda.</p>
+    </div>
+    
     <div class="footer">
+      <p>Com carinho,</p>
+      <p><strong class="gold-text">Equipe PDI - Carreira & Vida</strong></p>
+      <br>
       <p>Este email foi enviado automaticamente pelo PDI - Carreira & Vida.</p>
-      <p>Se não deseja mais receber lembretes, acesse suas configurações de notificação no aplicativo.</p>
+      <p>Se não deseja mais receber lembretes, <a href="https://www.pdicarreiraevida.com.br/perfil">acesse suas configurações</a> de notificação.</p>
     </div>
   </div>
 </body>
