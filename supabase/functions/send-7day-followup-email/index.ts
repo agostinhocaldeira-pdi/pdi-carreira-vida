@@ -52,7 +52,7 @@ const generateFollowupEmailHtml = (name: string, checkoutUrl: string): string =>
     </div>
     
     <div class="book-image">
-      <img src="https://pdicarreiraevida.lovable.app/images/codigo-essencial-email.png" alt="O Código do Essencial - 30 Dias" style="max-width: 400px;" />
+      <img src="https://zlclwweeyrvrgxuukdhl.supabase.co/storage/v1/object/public/email-assets/codigo-essencial-email.png" alt="O Código do Essencial - 30 Dias" style="max-width: 400px; width: 100%;" />
     </div>
     
     <div class="content">
