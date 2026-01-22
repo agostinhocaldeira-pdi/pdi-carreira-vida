@@ -48,7 +48,7 @@ const DesafioCodigo = () => {
               <p>Você tem em mãos agora algo perigoso para a sua zona de conforto.</p>
               <p>Isto não é um "livrinho de dicas".</p>
               <p>Isto não é "mais conteúdo" para você ler e esquecer.</p>
-              <p className="text-white font-semibold">Este caderno é um Protocolo de Reinicialização Mental de 30 Dias.</p>
+              <p className="text-white font-semibold">Este DESAFIO é um Protocolo de Reinicialização Mental de 30 Dias.</p>
               <p>Nós condensamos a sabedoria das mentes mais brilhantes do mundo — de Hábitos Atômicos a Essencialismo, de Mindset a Deep Work — e transformamos em 30 pílulas de pura execução.</p>
               <p>Sem teoria chata. Sem enrolação.</p>
               <p className="text-[#d4a853]">É um tapa na cara da procrastinação por dia, durante um mês.</p>
