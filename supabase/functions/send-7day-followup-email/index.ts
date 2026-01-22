@@ -1,7 +1,6 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.39.3";
 import { Resend } from "https://esm.sh/resend@2.0.0";
-import { encode as base64Encode } from "https://deno.land/std@0.190.0/encoding/base64.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -13,36 +12,8 @@ const logStep = (step: string, details?: any) => {
   console.log(`[7DAY-FOLLOWUP] ${step}${detailsStr}`);
 };
 
-// HMAC-SHA256 using Web Crypto API
-async function hmacSha256(secret: string, message: string): Promise<string> {
-  const encoder = new TextEncoder();
-  const keyData = encoder.encode(secret);
-  const messageData = encoder.encode(message);
-  
-  const cryptoKey = await crypto.subtle.importKey(
-    "raw",
-    keyData,
-    { name: "HMAC", hash: "SHA-256" },
-    false,
-    ["sign"]
-  );
-  
-  const signature = await crypto.subtle.sign("HMAC", cryptoKey, messageData);
-  const hashArray = Array.from(new Uint8Array(signature));
-  return hashArray.map(b => b.toString(16).padStart(2, "0")).join("");
-}
-
-// Generate a signed checkout link that expires in 7 days
-async function generateSignedCheckoutUrl(email: string, secret: string): Promise<string> {
-  const expiresAt = Date.now() + 7 * 24 * 60 * 60 * 1000; // 7 days
-  const payload = `${email}|${expiresAt}`;
-  const signature = await hmacSha256(secret, payload);
-  const token = base64Encode(`${payload}|${signature}`);
-  // Go straight to the backend function, which validates the token and redirects to Stripe.
-  // This avoids any dependency on frontend routes (prevents 404 on stale published builds).
-  const backendUrl = Deno.env.get("SUPABASE_URL") || "https://pdicarreiraevida.lovable.app";
-  return `${backendUrl}/functions/v1/checkout-direto?token=${encodeURIComponent(token)}`;
-}
+// Direct Stripe Payment Link for PDI Black offer
+const STRIPE_PAYMENT_LINK = "https://buy.stripe.com/28E3co7Iyddjdnwbxt1VK00";
 
 const generateFollowupEmailHtml = (name: string, checkoutUrl: string): string => `
 <!DOCTYPE html>
@@ -162,9 +133,6 @@ const handler = async (req: Request): Promise<Response> => {
     const supabase = createClient(supabaseUrl, supabaseKey);
     const resend = new Resend(resendApiKey);
 
-    // We use Stripe secret key as the signing secret for checkout URLs
-    const signingSecret = stripeKey;
-
     // Check for test email mode
     let testEmail: string | null = null;
     try {
@@ -177,8 +145,8 @@ const handler = async (req: Request): Promise<Response> => {
     if (testEmail) {
       logStep("TEST MODE: Sending test email", { to: testEmail });
       
-      const checkoutUrl = await generateSignedCheckoutUrl(testEmail, signingSecret);
-      logStep("Generated signed checkout URL", { url: checkoutUrl });
+      const checkoutUrl = STRIPE_PAYMENT_LINK;
+      logStep("Using Stripe Payment Link", { url: checkoutUrl });
       
       const emailPayload: any = {
         from: "PDI - Carreira & Vida <notificacoes@pdicarreiraevida.com.br>",
@@ -262,8 +230,8 @@ const handler = async (req: Request): Promise<Response> => {
 
         const userName = profile?.full_name || user.email?.split('@')[0] || 'Usuário';
 
-        // Generate signed checkout URL
-        const checkoutUrl = await generateSignedCheckoutUrl(user.email!, signingSecret);
+        // Use direct Stripe Payment Link
+        const checkoutUrl = STRIPE_PAYMENT_LINK;
 
         // Build email payload
         const emailPayload: any = {
