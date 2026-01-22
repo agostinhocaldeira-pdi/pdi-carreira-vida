@@ -1,12 +1,21 @@
 import { Link } from "react-router-dom";
-import { BookOpen, Target, MessagesSquare, Link2, HelpCircle, FileText, Users, ChevronRight, Sparkles, TrendingUp, User, Footprints } from "lucide-react";
+import { BookOpen, Target, MessagesSquare, Link2, HelpCircle, FileText, Users, ChevronRight, Sparkles, TrendingUp, User, Footprints, Trophy } from "lucide-react";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { useSubscriptionContext } from "@/contexts/SubscriptionContext";
 
 interface QuickAccessNavProps {
   isGestor?: boolean;
 }
 
 const navItems = [
+  { 
+    label: "Desafio", 
+    icon: Trophy, 
+    path: "/desafio-30-dias",
+    showAlways: true,
+    requiresSubscription: true
+  },
   { 
     label: "Reflexão", 
     icon: Sparkles, 
