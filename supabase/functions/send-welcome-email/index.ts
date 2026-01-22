@@ -14,156 +14,134 @@ interface WelcomeEmailRequest {
 }
 
 const generateWelcomeHtml = (name: string): string => {
+  const loginUrl = "https://pdicarreiraevida.lovable.app/login";
+  
   return `
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Bem-vindo ao PDI - Carreira e Vida</title>
+  <title>Seu acesso ao PDI (Login Liberado)</title>
 </head>
-<body style="margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f5f5f5;">
-  <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
+<body style="margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #1a1a1a;">
+  <div style="max-width: 600px; margin: 0 auto; background-color: #0a0a0a; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5); border: 1px solid #333;">
     
     <!-- Header -->
-    <div style="background: linear-gradient(135deg, #9b87f5 0%, #7E69AB 100%); padding: 40px 30px; text-align: center;">
-      <h1 style="color: #ffffff; margin: 0; font-size: 28px; font-weight: 700;">
-        🎯 Bem-vindo ao PDI - Carreira e Vida!
+    <div style="background: linear-gradient(135deg, #000000 0%, #1a1a1a 100%); padding: 40px 30px; text-align: center; border-bottom: 2px solid #d4a853;">
+      <h1 style="color: #d4a853; margin: 0; font-size: 24px; font-weight: 700;">
+        🔓 Seu acesso ao PDI
       </h1>
+      <p style="color: #888; margin: 10px 0 0 0; font-size: 14px;">Login Liberado</p>
     </div>
     
     <!-- Content -->
-    <div style="padding: 40px 30px;">
+    <div style="padding: 40px 30px; color: #e5e5e5;">
       
-      <p style="font-size: 18px; color: #333; margin-bottom: 20px;">
-        Olá, <strong>${name}</strong>!
+      <p style="font-size: 18px; margin-bottom: 25px;">
+        Olá, <strong style="color: #ffffff;">${name}</strong>!
       </p>
       
-      <div style="background-color: #f0f9ff; border-left: 4px solid #9b87f5; padding: 20px; margin-bottom: 30px; border-radius: 0 8px 8px 0;">
-        <p style="font-size: 16px; color: #333; margin: 0; font-weight: 600;">
-          Parabéns pela decisão de investir no seu desenvolvimento pessoal e profissional!
-        </p>
-      </div>
-      
-      <p style="font-size: 15px; color: #555; line-height: 1.7; margin-bottom: 20px;">
-        Ao escolher o PDI - Carreira e Vida, você deu um passo importante rumo a uma vida mais equilibrada, com propósito e direção clara.
+      <p style="font-size: 16px; line-height: 1.7; margin-bottom: 20px;">
+        <strong style="color: #d4a853;">Parabéns pela decisão.</strong> Você acaba de dar um passo importante para sair do caos e entrar na organização.
       </p>
       
-      <p style="font-size: 15px; color: #555; line-height: 1.7; margin-bottom: 30px;">
-        Saiba que você não está sozinho nessa jornada. <strong>Conte com todo nosso apoio e mentoria</strong> para alcançar seus objetivos. Estamos aqui para ajudá-lo em cada etapa do caminho.
+      <p style="font-size: 15px; line-height: 1.7; margin-bottom: 30px; color: #ccc;">
+        Ao escolher o PDI, você não ganhou apenas um software, <strong style="color: #ffffff;">ganhou um sistema para sua vida.</strong>
       </p>
       
       <!-- Steps Section -->
-      <div style="background-color: #fafafa; border-radius: 12px; padding: 25px; margin-bottom: 30px;">
-        <h2 style="color: #9b87f5; font-size: 18px; margin-top: 0; margin-bottom: 20px;">
-          📋 Por onde começar?
+      <div style="background-color: #111; border-radius: 12px; padding: 25px; margin-bottom: 30px; border-left: 4px solid #d4a853;">
+        <h2 style="color: #d4a853; font-size: 18px; margin-top: 0; margin-bottom: 20px;">
+          ⚡ Por onde começar? (O Caminho Rápido)
         </h2>
-        <p style="font-size: 14px; color: #666; margin-bottom: 20px;">
-          Para tirar o melhor proveito do sistema, siga esta ordem:
+        <p style="font-size: 14px; color: #aaa; margin-bottom: 25px; line-height: 1.6;">
+          Sei que a vontade é querer arrumar a vida inteira de uma vez, mas o segredo é a <strong style="color: #fff;">constância</strong>. Para ter seu primeiro resultado em 5 minutos, siga esta ordem exata:
         </p>
         
-        <div style="margin-bottom: 15px;">
+        <!-- Step 1 -->
+        <div style="margin-bottom: 25px;">
           <div style="display: flex; align-items: flex-start;">
-            <span style="background-color: #9b87f5; color: white; width: 24px; height: 24px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 12px; font-weight: bold; margin-right: 12px; flex-shrink: 0;">1</span>
+            <span style="background-color: #d4a853; color: #000; width: 28px; height: 28px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 14px; font-weight: bold; margin-right: 15px; flex-shrink: 0;">1</span>
             <div>
-              <strong style="color: #333;">Construção Guiada</strong>
-              <p style="font-size: 13px; color: #666; margin: 5px 0 0 0;">Comece pelo módulo "Quem sou eu" para descobrir seus valores, definir sua Visão de Vida Desejada (VVD) e entender sua situação atual através da Roda da Vida.</p>
+              <strong style="color: #ffffff; font-size: 15px;">Acesse a Plataforma</strong>
+              <p style="font-size: 14px; color: #aaa; margin: 8px 0 0 0; line-height: 1.5;">Clique no botão abaixo e faça seu login.</p>
             </div>
           </div>
         </div>
         
-        <div style="margin-bottom: 15px;">
+        <!-- CTA Button -->
+        <div style="text-align: center; margin: 30px 0;">
+          <a href="${loginUrl}" style="display: inline-block; background: linear-gradient(135deg, #d4a853 0%, #b8943f 100%); color: #000 !important; padding: 18px 40px; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 16px; text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 4px 15px rgba(212, 168, 83, 0.3);">
+            ACESSAR MEU PAINEL AGORA
+          </a>
+        </div>
+        
+        <!-- Step 2 -->
+        <div style="margin-bottom: 25px;">
           <div style="display: flex; align-items: flex-start;">
-            <span style="background-color: #9b87f5; color: white; width: 24px; height: 24px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 12px; font-weight: bold; margin-right: 12px; flex-shrink: 0;">2</span>
+            <span style="background-color: #d4a853; color: #000; width: 28px; height: 28px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 14px; font-weight: bold; margin-right: 15px; flex-shrink: 0;">2</span>
             <div>
-              <strong style="color: #333;">Plano de Vida</strong>
-              <p style="font-size: 13px; color: #666; margin: 5px 0 0 0;">Após se conhecer melhor, defina seus objetivos de longo prazo conectados à sua VVD.</p>
+              <strong style="color: #ffffff; font-size: 15px;">Vá direto para "Como Chegar Lá"</strong>
+              <p style="font-size: 14px; color: #aaa; margin: 8px 0 0 0; line-height: 1.5;">Primeiro, crie um <strong style="color: #fff;">Objetivo simples</strong>. Na sequência, cadastre apenas sua <strong style="color: #fff;">Meta nº 1</strong> para este mês. O sistema vai te ajudar a quebrá-la em passos.</p>
+              <p style="font-size: 13px; color: #888; margin: 12px 0 0 0; font-style: italic; background: #1a1a1a; padding: 10px 12px; border-radius: 6px;">
+                💡 <strong>Nota:</strong> Esse é apenas o pontapé inicial para você destravar. Depois que você fizer o passo de autoconhecimento, estará preparado para criar objetivos bem maiores.
+              </p>
             </div>
           </div>
         </div>
         
-        <div style="margin-bottom: 15px;">
-          <div style="display: flex; align-items: flex-start;">
-            <span style="background-color: #9b87f5; color: white; width: 24px; height: 24px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 12px; font-weight: bold; margin-right: 12px; flex-shrink: 0;">3</span>
-            <div>
-              <strong style="color: #333;">Mão na Massa</strong>
-              <p style="font-size: 13px; color: #666; margin: 5px 0 0 0;">Transforme seus objetivos em metas SMART, ações concretas e passos diários.</p>
-            </div>
-          </div>
-        </div>
-        
-        <div style="margin-bottom: 15px;">
-          <div style="display: flex; align-items: flex-start;">
-            <span style="background-color: #9b87f5; color: white; width: 24px; height: 24px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 12px; font-weight: bold; margin-right: 12px; flex-shrink: 0;">4</span>
-            <div>
-              <strong style="color: #333;">Diário</strong>
-              <p style="font-size: 13px; color: #666; margin: 5px 0 0 0;">Registre diariamente sua evolução, humor e conquistas para manter o foco e a motivação.</p>
-            </div>
-          </div>
-        </div>
-        
-        <div style="margin-bottom: 15px;">
-          <div style="display: flex; align-items: flex-start;">
-            <span style="background-color: #9b87f5; color: white; width: 24px; height: 24px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 12px; font-weight: bold; margin-right: 12px; flex-shrink: 0;">5</span>
-            <div>
-              <strong style="color: #333;">Ferramentas</strong>
-              <p style="font-size: 13px; color: #666; margin: 5px 0 0 0;">Utilize as ferramentas complementares (SWOT, Matriz de Eisenhower, Crenças) para aprofundar seu autoconhecimento.</p>
-            </div>
-          </div>
-        </div>
-        
+        <!-- Step 3 -->
         <div>
           <div style="display: flex; align-items: flex-start;">
-            <span style="background-color: #9b87f5; color: white; width: 24px; height: 24px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 12px; font-weight: bold; margin-right: 12px; flex-shrink: 0;">6</span>
+            <span style="background-color: #d4a853; color: #000; width: 28px; height: 28px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 14px; font-weight: bold; margin-right: 15px; flex-shrink: 0;">3</span>
             <div>
-              <strong style="color: #333;">Progresso</strong>
-              <p style="font-size: 13px; color: #666; margin: 5px 0 0 0;">Acompanhe sua evolução e celebre cada conquista!</p>
+              <strong style="color: #ffffff; font-size: 15px;">Use a Agenda</strong>
+              <p style="font-size: 14px; color: #aaa; margin: 8px 0 0 0; line-height: 1.5;">Arraste essa primeira ação para o dia de hoje. <strong style="color: #d4a853;">Pronto!</strong> Você já está executando.</p>
             </div>
           </div>
         </div>
       </div>
       
-      <!-- Resources Section -->
-      <div style="background-color: #fff8f0; border-radius: 12px; padding: 25px; margin-bottom: 30px;">
-        <h2 style="color: #e67e22; font-size: 18px; margin-top: 0; margin-bottom: 15px;">
-          🔧 Recursos disponíveis
+      <!-- Deep Dive Section -->
+      <div style="background-color: #111; border-radius: 12px; padding: 25px; margin-bottom: 30px;">
+        <h2 style="color: #d4a853; font-size: 18px; margin-top: 0; margin-bottom: 15px;">
+          🧭 Quer ir mais fundo?
         </h2>
-        <ul style="margin: 0; padding-left: 20px; color: #555; font-size: 14px; line-height: 2;">
-          <li><strong>Perfil</strong> - Gerencie suas informações pessoais e preferências</li>
-          <li><strong>Recursos</strong> - Acesse materiais complementares e integrações</li>
-          <li><strong>Suporte</strong> - Entre em contato conosco através do formulário de suporte sempre que precisar de ajuda</li>
-        </ul>
+        <p style="font-size: 14px; color: #ccc; line-height: 1.7; margin-bottom: 15px;">
+          Quando tiver um tempo mais tranquilo, inicie o passo <strong style="color: #ffffff;">"QUEM SOU EU"</strong>.
+        </p>
+        <div style="background: linear-gradient(135deg, #2a2000 0%, #1a1500 100%); border: 1px solid #d4a853; border-radius: 8px; padding: 15px;">
+          <p style="font-size: 14px; color: #d4a853; margin: 0; line-height: 1.6;">
+            ⚠️ <strong>Dica de Ouro:</strong> Para esta etapa, você vai precisar de uns 30 minutos de foco, em um lugar calmo e sem interrupções, ok? É ali que definimos a base do seu sucesso a longo prazo.
+          </p>
+        </div>
+        <p style="font-size: 14px; color: #aaa; margin: 20px 0 0 0; line-height: 1.6;">
+          Mas lembre-se: <strong style="color: #ffffff;">a execução vence a perfeição.</strong> Comece pela meta simples hoje.
+        </p>
       </div>
       
-      <!-- Instagram CTA -->
-      <div style="background: linear-gradient(135deg, #833AB4 0%, #E1306C 50%, #F77737 100%); border-radius: 12px; padding: 25px; text-align: center; margin-bottom: 30px;">
-        <h2 style="color: #ffffff; font-size: 18px; margin-top: 0; margin-bottom: 15px;">
-          📸 Compartilhe sua jornada!
-        </h2>
-        <p style="color: #ffffff; font-size: 14px; margin-bottom: 20px; opacity: 0.95;">
-          Que tal registrar esse momento especial? Use o PDI e compartilhe no Instagram marcando nosso perfil. Adoramos acompanhar a evolução dos nossos amigos!
-        </p>
-        <a href="https://www.instagram.com/pdi_carreiraevida" style="display: inline-block; background-color: #ffffff; color: #E1306C; padding: 12px 30px; border-radius: 25px; text-decoration: none; font-weight: 600; font-size: 14px;">
-          @pdi_carreiraevida
-        </a>
-      </div>
+      <!-- Support Note -->
+      <p style="font-size: 14px; color: #888; line-height: 1.6; margin-bottom: 30px; text-align: center;">
+        Qualquer dúvida, clique em <strong style="color: #d4a853;">Suporte</strong> no menu.
+      </p>
       
       <!-- Closing -->
-      <div style="text-align: center; padding-top: 20px; border-top: 1px solid #eee;">
-        <p style="font-size: 16px; color: #333; font-weight: 600; margin-bottom: 10px;">
-          Estamos juntos nessa jornada de transformação.
+      <div style="text-align: center; padding-top: 20px; border-top: 1px solid #333;">
+        <p style="font-size: 16px; color: #ffffff; font-weight: 600; margin-bottom: 10px;">
+          Estamos juntos nessa jornada.
         </p>
         <p style="font-size: 14px; color: #888; margin: 0;">
           Com carinho,<br>
-          <strong style="color: #9b87f5;">Equipe PDI - Carreira e Vida</strong>
+          <strong style="color: #d4a853;">Equipe PDI - Carreira e Vida</strong>
         </p>
       </div>
       
     </div>
     
     <!-- Footer -->
-    <div style="background-color: #f5f5f5; padding: 20px 30px; text-align: center;">
-      <p style="font-size: 12px; color: #999; margin: 0;">
+    <div style="background-color: #0a0a0a; padding: 20px 30px; text-align: center; border-top: 1px solid #333;">
+      <p style="font-size: 12px; color: #666; margin: 0;">
         © 2024 PDI - Carreira e Vida. Todos os direitos reservados.
       </p>
     </div>
@@ -186,9 +164,9 @@ const handler = async (req: Request): Promise<Response> => {
     console.log(`Sending welcome email to ${email} for user ${name}`);
 
     const emailResponse = await resend.emails.send({
-      from: "PDI - Carreira e Vida <contato@pdicarreiraevida.com.br>",
+      from: "PDI - Carreira e Vida <notificacoes@pdicarreiraevida.com.br>",
       to: [email],
-      subject: "🎯 Bem-vindo ao PDI - Carreira e Vida!",
+      subject: "Seu acesso ao PDI (Login Liberado) 🔓",
       html: generateWelcomeHtml(name),
     });
 
