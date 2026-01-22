@@ -1,6 +1,6 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.39.3";
-import { Resend } from "npm:resend@2.0.0";
+import { Resend } from "https://esm.sh/resend@2.0.0";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -132,6 +132,7 @@ const handler = async (req: Request): Promise<Response> => {
 
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+    const stripeKey = Deno.env.get("STRIPE_SECRET_KEY")!;
     const supabase = createClient(supabaseUrl, supabaseKey);
     const resend = new Resend(resendApiKey);
 
@@ -171,7 +172,7 @@ const handler = async (req: Request): Promise<Response> => {
     for (const user of eligibleUsers) {
       try {
         // Check if user already has an active subscription
-        const { data: hasSubscription } = await checkUserSubscription(user.email!, supabaseKey);
+        const hasSubscription = await checkUserSubscription(user.email!, stripeKey);
         
         if (hasSubscription) {
           logStep(`User ${user.email} already has active subscription, skipping`);
@@ -200,7 +201,7 @@ const handler = async (req: Request): Promise<Response> => {
 
         const userName = profile?.full_name || user.email?.split('@')[0] || 'Usuário';
 
-        // Generate checkout URL
+        // Generate checkout URL - user will be redirected to checkout after login
         const checkoutUrl = `https://pdicarreiraevida.lovable.app/login?redirect=checkout`;
 
         // Send email
@@ -211,7 +212,7 @@ const handler = async (req: Request): Promise<Response> => {
           html: generateFollowupEmailHtml(userName, checkoutUrl),
         });
 
-        logStep(`Email sent to ${user.email}`, { emailId: emailResponse.id });
+        logStep(`Email sent to ${user.email}`, { response: JSON.stringify(emailResponse) });
 
         // Log the email sent
         await supabase.from('email_logs').insert({
@@ -257,16 +258,16 @@ const handler = async (req: Request): Promise<Response> => {
 };
 
 // Helper function to check if user has active Stripe subscription
-async function checkUserSubscription(email: string, stripeKey: string): Promise<{ data: boolean }> {
+async function checkUserSubscription(email: string, stripeKey: string): Promise<boolean> {
   try {
     const Stripe = (await import("https://esm.sh/stripe@18.5.0")).default;
-    const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY") || "", { 
+    const stripe = new Stripe(stripeKey, { 
       apiVersion: "2025-08-27.basil" 
     });
     
     const customers = await stripe.customers.list({ email, limit: 1 });
     if (customers.data.length === 0) {
-      return { data: false };
+      return false;
     }
 
     const subscriptions = await stripe.subscriptions.list({
@@ -275,9 +276,9 @@ async function checkUserSubscription(email: string, stripeKey: string): Promise<
       limit: 1,
     });
 
-    return { data: subscriptions.data.length > 0 };
+    return subscriptions.data.length > 0;
   } catch {
-    return { data: false };
+    return false;
   }
 }
 

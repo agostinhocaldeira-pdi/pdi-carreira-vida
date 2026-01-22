@@ -612,6 +612,36 @@ export type Database = {
         }
         Relationships: []
       }
+      email_logs: {
+        Row: {
+          created_at: string
+          email_to: string | null
+          email_type: string
+          id: string
+          metadata: Json | null
+          sent_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          email_to?: string | null
+          email_type: string
+          id?: string
+          metadata?: Json | null
+          sent_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          email_to?: string | null
+          email_type?: string
+          id?: string
+          metadata?: Json | null
+          sent_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       leads: {
         Row: {
           confirmation_token: string | null

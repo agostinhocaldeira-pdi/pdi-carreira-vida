@@ -92,3 +92,9 @@ verify_jwt = false
 
 [functions.send-plano-vida-complete-email]
 verify_jwt = false
+
+[functions.process-home-cache]
+verify_jwt = false
+
+[functions.send-7day-followup-email]
+verify_jwt = false
