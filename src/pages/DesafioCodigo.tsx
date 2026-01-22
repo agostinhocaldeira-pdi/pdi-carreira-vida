@@ -273,14 +273,6 @@ const DesafioCodigo = () => {
         </motion.article>
       </main>
 
-      {/* Footer */}
-      <footer className="border-t border-[#333] bg-[#1a1a1a]/80 backdrop-blur-sm py-6 mt-12">
-        <div className="container mx-auto px-4 text-center">
-          <p className="text-gray-400 text-sm">
-            POR <span className="text-[#d4a853] font-medium">AGOSTINHO CALDEIRA</span> | PDI – CARREIRA & VIDA
-          </p>
-        </div>
-      </footer>
     </div>
   );
 };
