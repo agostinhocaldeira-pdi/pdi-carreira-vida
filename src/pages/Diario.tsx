@@ -20,7 +20,15 @@ const Diario = () => {
   const [isSaving, setIsSaving] = useState(false);
   const [isScientificModalOpen, setIsScientificModalOpen] = useState(false);
   
-  const today = new Date().toISOString().split("T")[0];
+  // Helper function to get local date string (YYYY-MM-DD) without timezone conversion
+  const getLocalDateString = (date: Date): string => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
+  
+  const today = getLocalDateString(new Date());
   
   const [entrada, setEntrada] = useState({
     humor: "",

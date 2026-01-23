@@ -21,6 +21,14 @@ import { cn } from "@/lib/utils";
 
 type DiaryViewMode = "registro" | "historico";
 
+// Helper function to get local date string (YYYY-MM-DD) without timezone conversion
+const getLocalDateString = (date: Date): string => {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+};
+
 const StoicReflectionSection = () => {
   const { celebrateAction } = useActionCelebration();
   const [isScientificModalOpen, setIsScientificModalOpen] = useState(false);
@@ -41,7 +49,7 @@ const StoicReflectionSection = () => {
     avancos: "",
     habitos: "",
     gratidao: "",
-    data: new Date().toISOString().split("T")[0],
+    data: getLocalDateString(new Date()),
   });
   const [selectedPeriod, setSelectedPeriod] = useState("30dias");
   const [diaryEntries, setDiaryEntries] = useState<any[]>([]);
@@ -99,7 +107,7 @@ const StoicReflectionSection = () => {
 
   // Load entry for selected date
   useEffect(() => {
-    const dateStr = selectedDate.toISOString().split("T")[0];
+    const dateStr = getLocalDateString(selectedDate);
     const existingEntry = diaryEntries.find((e) => e.data === dateStr);
     
     if (existingEntry) {
@@ -195,7 +203,7 @@ const StoicReflectionSection = () => {
       for (let i = numDays - 1; i >= 0; i--) {
         const dateItem = new Date(now);
         dateItem.setDate(dateItem.getDate() - i);
-        const dateStr = dateItem.toISOString().split("T")[0];
+        const dateStr = getLocalDateString(dateItem);
         const entry = diaryEntries.find((e) => e.data === dateStr);
         
         let humorValue = null;
@@ -226,7 +234,7 @@ const StoicReflectionSection = () => {
       for (let i = 0; i < 7; i++) {
         const dateItem = new Date(weekStart);
         dateItem.setDate(dateItem.getDate() + i);
-        const dateStr = dateItem.toISOString().split("T")[0];
+        const dateStr = getLocalDateString(dateItem);
         const entry = diaryEntries.find((e) => e.data === dateStr);
         if (entry) weekEntries.push(entry);
       }
@@ -248,7 +256,7 @@ const StoicReflectionSection = () => {
   }, [diaryEntries, selectedPeriod]);
 
   const selectedHistoryEntry = useMemo(() => {
-    const dateStr = selectedDate.toISOString().split("T")[0];
+    const dateStr = getLocalDateString(selectedDate);
     return diaryEntries.find((e) => e.data === dateStr);
   }, [selectedDate, diaryEntries]);
 
