@@ -83,20 +83,22 @@ const StoicReflectionCard = () => {
   };
 
   return (
-    <Card className="border-primary/20 bg-gradient-to-br from-background to-primary/5">
-      <CardHeader className="py-3 sm:py-4">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <BookOpen className="h-5 w-5 text-primary" />
-            <CardTitle className="text-base sm:text-lg">Reflexão Estóica do Dia</CardTitle>
+    <div className="rounded-2xl bg-[#1A1A1A] border border-[#D4AF37]/20 overflow-hidden">
+      {/* Header */}
+      <div className="px-5 py-4 border-b border-[#D4AF37]/10 flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#D4AF37]/20 to-[#D4AF37]/5 border border-[#D4AF37]/30 flex items-center justify-center">
+            <BookOpen className="w-5 h-5 text-[#D4AF37]" />
           </div>
-          <Badge variant="secondary" className="gap-1.5 hidden sm:flex">
-            <CalendarIcon className="w-3 h-3" />
-            <span className="text-xs">{capitalizedDate}</span>
-          </Badge>
+          <div>
+            <h3 className="text-lg font-bold text-white">Reflexão Estóica</h3>
+            <p className="text-xs text-gray-400">{capitalizedDate}</p>
+          </div>
         </div>
-      </CardHeader>
-      <CardContent className="pt-0">
+      </div>
+      
+      {/* Content */}
+      <div className="p-5">
         <StoicInteractiveExperience
           reflection={reflection}
           date={date}
@@ -106,8 +108,8 @@ const StoicReflectionCard = () => {
           isSaving={isSavingStoic}
           canSave={canSaveStoic}
         />
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 };
 
