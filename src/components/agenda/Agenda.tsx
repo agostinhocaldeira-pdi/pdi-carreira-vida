@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { format, isToday } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { Plus, CalendarDays } from "lucide-react";
@@ -19,6 +19,23 @@ export const Agenda = () => {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedTask, setSelectedTask] = useState<AgendaTask | null>(null);
+  const [prefilledTitle, setPrefilledTitle] = useState("");
+  const [prefilledDescription, setPrefilledDescription] = useState("");
+
+  // Listen for custom event to open modal with pre-filled data
+  useEffect(() => {
+    const handleOpenWithData = (event: CustomEvent<{ title: string; description: string }>) => {
+      setPrefilledTitle(event.detail.title);
+      setPrefilledDescription(event.detail.description);
+      setSelectedTask(null);
+      setModalOpen(true);
+    };
+
+    window.addEventListener('openTaskModalWithData', handleOpenWithData as EventListener);
+    return () => {
+      window.removeEventListener('openTaskModalWithData', handleOpenWithData as EventListener);
+    };
+  }, []);
 
   const {
     loading,
@@ -41,6 +58,8 @@ export const Agenda = () => {
   };
 
   const handleAddClick = () => {
+    setPrefilledTitle("");
+    setPrefilledDescription("");
     setSelectedTask(null);
     setModalOpen(true);
   };
@@ -193,11 +212,20 @@ export const Agenda = () => {
       {/* Task Modal */}
       <AgendaTaskModal
         open={modalOpen}
-        onOpenChange={setModalOpen}
+        onOpenChange={(open) => {
+          setModalOpen(open);
+          if (!open) {
+            // Clear prefilled values when modal closes
+            setPrefilledTitle("");
+            setPrefilledDescription("");
+          }
+        }}
         onSave={handleSaveTask}
         onDelete={handleDeleteTask}
         task={selectedTask}
         selectedDate={selectedDate}
+        initialTitle={prefilledTitle}
+        initialDescription={prefilledDescription}
       />
     </>
   );

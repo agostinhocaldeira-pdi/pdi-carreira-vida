@@ -94,6 +94,13 @@ export const FirstStepsModal = () => {
 
   const handleLater = async () => {
     await handleClose();
+    // Dispatch custom event to open task modal with pre-filled data
+    window.dispatchEvent(new CustomEvent('openTaskModalWithData', {
+      detail: {
+        title: 'Minha Base Pessoal',
+        description: '(defina data e horário para você fazer os exercícios da Base Pessoal. Esse é o passo que construirá sua jornada)'
+      }
+    }));
   };
 
   return (
@@ -111,7 +118,7 @@ export const FirstStepsModal = () => {
           </div>
           
           <h2 className="text-2xl font-bold text-white mb-2">
-            O próximo passo define todo o resto.
+            O próximo passo define toda a sua jornada.
           </h2>
           
           <p className="text-white/70 text-sm leading-relaxed">
