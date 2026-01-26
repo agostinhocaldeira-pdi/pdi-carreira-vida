@@ -193,20 +193,15 @@ export const Agenda = () => {
           <div className="pt-2 border-t border-border/50">
             <AgendaLegend variant={isMobile ? 'compact' : 'inline'} />
           </div>
-        </CardContent>
 
-        {/* Floating Add Button */}
-        <Button
-          onClick={handleAddClick}
-          size="icon"
-          className={cn(
-            "absolute bottom-4 right-4 w-12 h-12 rounded-full shadow-lg",
-            "bg-primary hover:bg-primary/90 text-primary-foreground",
-            "transition-transform hover:scale-105"
-          )}
-        >
-          <Plus className="w-6 h-6" />
-        </Button>
+          {/* Add Task Link */}
+          <button
+            onClick={handleAddClick}
+            className="w-full text-center text-sm text-primary hover:text-primary/80 transition-colors pt-2"
+          >
+            + Lista de Tarefas avulsas
+          </button>
+        </CardContent>
       </Card>
 
       {/* Task Modal */}
