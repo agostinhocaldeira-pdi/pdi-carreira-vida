@@ -33,7 +33,7 @@ import ericPereira from "@/assets/testimonials/eric-pereira.jpg";
 import gabrieleCampos from "@/assets/testimonials/gabriele-campos.jpg";
 import larissaSchuartz from "@/assets/testimonials/larissa-schuartz.jpg";
 import lucasSa from "@/assets/testimonials/lucas-sa.jpg";
-import agostinhoCaldeira from "@/assets/agostinho-caldeira-new.jpg";
+
 
 const LandingNova = () => {
   const navigate = useNavigate();
@@ -497,24 +497,6 @@ const LandingNova = () => {
       {/* Footer */}
       <footer className="py-8 sm:py-12 px-4 border-t border-gray-800 bg-[#1a1a1a]">
         <div className="container mx-auto max-w-4xl">
-          {/* Conheça o autor */}
-          <div 
-            onClick={() => navigate("/sobre")}
-            className="flex items-center justify-center gap-4 mb-6 p-4 rounded-xl bg-[#252525] border border-[#d4a853]/30 cursor-pointer hover:border-[#d4a853]/50 hover:shadow-lg transition-all group"
-          >
-            <img 
-              src={agostinhoCaldeira}
-              alt="Agostinho Caldeira - Criador do PDI"
-              className="w-14 h-14 sm:w-16 sm:h-16 rounded-full object-cover object-top border-2 border-[#d4a853]/30 group-hover:border-[#d4a853] transition-colors"
-            />
-            <div className="text-left">
-              <p className="text-xs text-gray-500">Criador do Sistema</p>
-              <p className="font-semibold text-white group-hover:text-[#d4a853] transition-colors">Conheça o autor</p>
-              <p className="text-sm text-gray-400">Agostinho Caldeira</p>
-            </div>
-            <ArrowRight className="h-5 w-5 text-[#d4a853] opacity-0 group-hover:opacity-100 transition-opacity" />
-          </div>
-          
           <div className="text-center text-xs sm:text-sm text-gray-500">
             <p>© 2024 PDI - Carreira & Vida. Todos os direitos reservados.</p>
           </div>
