@@ -54,6 +54,7 @@ const SubscriberLanding = () => {
           </p>
           
           <div className="pt-6">
+            <p className="text-white/40 text-sm mb-4">Salve essa página em seus favoritos para facilitar seu login</p>
             <p className="text-white/50 mb-2">Ainda não é assinante?</p>
             <Button 
               variant="outline"
