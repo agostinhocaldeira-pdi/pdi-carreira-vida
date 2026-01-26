@@ -37,14 +37,16 @@ export const AIMentorFAB = ({
 
   return (
     <>
-      {/* Floating Action Button */}
+      {/* Floating Action Button - Positioned above the "+" button on mobile */}
       <Button
         onClick={() => setIsOpen(true)}
         className={cn(
-          "fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full shadow-xl transition-all duration-300",
+          "fixed z-50 w-14 h-14 rounded-full shadow-xl transition-all duration-300",
           "bg-gradient-to-br from-[#D4AF37] to-[#B8860B] hover:from-[#E5C158] hover:to-[#D4AF37]",
           "text-black border-2 border-[#D4AF37]/50",
           "hover:scale-110 hover:shadow-2xl",
+          // Mobile: above the "+" button | Desktop: normal position
+          "bottom-24 right-4 sm:bottom-6 sm:right-6",
           hasInsight && "animate-pulse"
         )}
         size="icon"
@@ -54,8 +56,8 @@ export const AIMentorFAB = ({
 
       {/* Drawer/Modal */}
       <Drawer open={isOpen} onOpenChange={setIsOpen}>
-        <DrawerContent className="max-h-[85vh]">
-          <DrawerHeader className="border-b border-border pb-4">
+        <DrawerContent className="max-h-[90vh] flex flex-col">
+          <DrawerHeader className="border-b border-border pb-4 flex-shrink-0">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#D4AF37] to-[#B8860B] flex items-center justify-center">
@@ -78,7 +80,7 @@ export const AIMentorFAB = ({
             </div>
           </DrawerHeader>
 
-          <ScrollArea className="flex-1 p-4 max-h-[60vh]">
+          <div className="flex-1 overflow-y-auto p-4">
             {isGenerating ? (
               <div className="flex flex-col items-center justify-center py-12 gap-4">
                 <div className="w-16 h-16 rounded-full bg-[#D4AF37]/20 flex items-center justify-center">
@@ -147,7 +149,7 @@ export const AIMentorFAB = ({
                 </Button>
               </div>
             )}
-          </ScrollArea>
+          </div>
         </DrawerContent>
       </Drawer>
     </>
