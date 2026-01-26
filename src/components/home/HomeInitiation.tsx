@@ -166,12 +166,6 @@ export const HomeInitiation = ({ showAgenda = false }: HomeInitiationProps) => {
         </div>
       </section>
 
-      {/* Reflexão Estóica do Dia */}
-      <StoicReflectionCard />
-
-      {/* Diário */}
-      <HomeDiarySection />
-
       {/* Agenda - Condicional */}
       {shouldShowAgenda ? (
         <Agenda />
@@ -194,8 +188,13 @@ export const HomeInitiation = ({ showAgenda = false }: HomeInitiationProps) => {
           </CardContent>
         </Card>
       )}
+
+      {/* Reflexão Estóica do Dia */}
+      <StoicReflectionCard />
+
+      {/* Diário */}
+      <HomeDiarySection />
     </div>
   );
 };
 
-export default HomeInitiation;
