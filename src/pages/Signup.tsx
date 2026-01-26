@@ -126,26 +126,31 @@ const Signup = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4 py-6 sm:p-4 bg-gradient-subtle">
-      <Card className="w-full max-w-md shadow-large animate-slide-up">
+    <div className="min-h-screen flex items-center justify-center px-4 py-6 sm:p-4 bg-[#1a1a1a]">
+      <Card className="w-full max-w-md shadow-large animate-slide-up bg-[#222222] border-gray-700">
         <CardHeader className="space-y-2 text-center pb-4 sm:pb-6">
           <div className="flex justify-center mb-2">
             <Logo size="lg" showText={false} />
           </div>
-          <CardTitle className="text-2xl sm:text-3xl font-bold">PDI - Carreira & Vida</CardTitle>
-          <div className="bg-primary/10 border border-primary/20 rounded-lg px-3 py-3 mt-2 text-center">
-            <p className="text-base font-bold text-primary mb-1">
-              30 dias grátis
+          <CardTitle className="text-2xl sm:text-3xl font-bold text-white">PDI - Carreira & Vida</CardTitle>
+          <CardDescription className="text-gray-400">
+            Um sistema para organizar seus objetivos com clareza.
+          </CardDescription>
+          <div className="pt-4">
+            <p className="text-lg font-bold text-[#d4a853] mb-2">
+              Acesso completo por 30 dias
             </p>
-            <p className="text-sm text-muted-foreground">
-              Use a plataforma por 30 dias gratuitamente, e veja na prática como ela pode te ajudar a transformar sua vida. Se gostar, continua. Se não: cancele com um clique.
+            <p className="text-sm text-gray-400">
+              Use o sistema completo por 30 dias para estruturar seus objetivos, metas e próximos passos com mais clareza.
+              <br />
+              Sem compromisso. Cancele quando quiser.
             </p>
           </div>
         </CardHeader>
         <CardContent className="px-4 sm:px-6">
           <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="name">Nome Completo</Label>
+              <Label htmlFor="name" className="text-gray-300">Como podemos te chamar?</Label>
               <Input
                 id="name"
                 type="text"
@@ -154,11 +159,12 @@ const Signup = () => {
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                 required
                 disabled={isLoading}
+                className="bg-[#1a1a1a] border-gray-600 text-white placeholder:text-gray-500"
               />
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="email">E-mail</Label>
+            <div className="space-y-1">
+              <Label htmlFor="email" className="text-gray-300">E-mail</Label>
               <Input
                 id="email"
                 type="email"
@@ -167,41 +173,30 @@ const Signup = () => {
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                 required
                 disabled={isLoading}
+                className="bg-[#1a1a1a] border-gray-600 text-white placeholder:text-gray-500"
               />
+              <p className="text-xs text-gray-500">Usado para salvar seu progresso e acessar o sistema.</p>
             </div>
 
-            {/* Campo de telefone oculto temporariamente - será reativado no futuro
-            <div className="space-y-2">
-              <Label htmlFor="phone">Telefone</Label>
-              <Input
-                id="phone"
-                type="tel"
-                placeholder="(00) 00000-0000"
-                value={formData.phone}
-                onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                required
-                disabled={isLoading}
-              />
-            </div>
-            */}
+            {/* Campo de telefone oculto temporariamente - será reativado no futuro */}
 
             <div className="space-y-2">
-              <Label htmlFor="password">Senha</Label>
+              <Label htmlFor="password" className="text-gray-300">Crie uma senha para acessar sua conta</Label>
               <div className="relative">
                 <Input
                   id="password"
                   type={showPassword ? "text" : "password"}
-                  placeholder="Crie uma senha segura (mín. 6 caracteres)"
+                  placeholder="Mínimo 6 caracteres"
                   value={formData.password}
                   onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                   required
-                  className="pr-10"
+                  className="pr-10 bg-[#1a1a1a] border-gray-600 text-white placeholder:text-gray-500"
                   disabled={isLoading}
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white transition-colors"
                   disabled={isLoading}
                 >
                   {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
@@ -216,39 +211,45 @@ const Signup = () => {
                 checked={lgpdAccepted}
                 onCheckedChange={(checked) => setLgpdAccepted(checked === true)}
                 disabled={isLoading}
+                className="border-gray-600 data-[state=checked]:bg-[#d4a853] data-[state=checked]:border-[#d4a853]"
               />
-              <label htmlFor="lgpd-preview" className="text-xs text-muted-foreground cursor-pointer leading-relaxed">
-                <Shield className="w-3 h-3 inline mr-1" />
-                Li e aceito os{" "}
+              <label htmlFor="lgpd-preview" className="text-xs text-gray-400 cursor-pointer leading-relaxed">
+                Ao criar sua conta, você concorda com os{" "}
                 <button 
                   type="button" 
                   onClick={(e) => {
                     e.preventDefault();
                     setShowLGPDModal(true);
                   }}
-                  className="text-primary hover:underline"
+                  className="text-[#d4a853] hover:underline"
                 >
                   Termos de Uso e Política de Privacidade
                 </button>
-                {" "}(LGPD)
+                .
               </label>
             </div>
 
-            <Button type="submit" className="w-full mt-4 sm:mt-6" size="lg" disabled={isLoading}>
+            <Button 
+              type="submit" 
+              className="w-full mt-4 sm:mt-6 bg-[#d4a853] hover:bg-[#c49843] text-[#1a1a1a] font-semibold" 
+              size="lg" 
+              disabled={isLoading}
+            >
               {isLoading ? (
                 <Loader2 className="w-4 h-4 mr-2 animate-spin" />
               ) : (
                 <UserPlus className="w-4 h-4 mr-2" />
               )}
-              {isLoading ? "Processando..." : "Criar Perfil Grátis"}
+              {isLoading ? "Processando..." : "Acessar o sistema"}
             </Button>
+            <p className="text-center text-xs text-gray-500">Leva menos de 1 minuto</p>
           </form>
 
           <div className="mt-6 text-center">
-            <p className="text-sm text-muted-foreground">
-              Já tem uma conta?{" "}
-              <Link to="/login" className="text-primary hover:underline font-medium">
-                Faça login
+            <p className="text-sm text-gray-400">
+              Já tem conta?{" "}
+              <Link to="/login" className="text-[#d4a853] hover:underline font-medium">
+                Entrar
               </Link>
             </p>
           </div>
