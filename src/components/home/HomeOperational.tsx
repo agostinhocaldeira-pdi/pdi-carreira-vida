@@ -141,9 +141,8 @@ const HeroPrincipal = () => {
         <div className="flex flex-wrap gap-3">
           <Link to="/plano-vida/como-chegar">
             <Button 
-              variant="outline" 
               size="sm"
-              className="border-white/20 text-white/80 hover:bg-white/10 hover:text-white"
+              className="bg-[#D4AF37]/20 border border-[#D4AF37]/50 text-[#D4AF37] hover:bg-[#D4AF37]/30 hover:text-[#D4AF37]"
             >
               <Footprints className="w-4 h-4 mr-2" />
               Novo Passo
