@@ -17,10 +17,29 @@ export const FirstStepsModal = () => {
 
   useEffect(() => {
     const checkFirstAccess = async () => {
+      // Primeiro: verificar localStorage (rápido)
+      const hasSeenFirstStepsLocal = localStorage.getItem(FIRST_STEPS_KEY);
+      if (hasSeenFirstStepsLocal) {
+        return; // Já viu o modal, não mostrar novamente
+      }
+      
       const { data: { user } } = await supabase.auth.getUser();
       
       if (user) {
         setUserId(user.id);
+        
+        // Verificar no Supabase se já marcou como visto
+        const { data: onboarding } = await supabase
+          .from('user_onboarding')
+          .select('current_phase')
+          .eq('user_id', user.id)
+          .maybeSingle();
+        
+        if (onboarding?.current_phase === 'first_steps_completed') {
+          // Sincronizar com localStorage e não mostrar
+          localStorage.setItem(FIRST_STEPS_KEY, "true");
+          return;
+        }
         
         // Verificar se o usuário já tem algum uso real do sistema
         const [
@@ -49,18 +68,17 @@ export const FirstStepsModal = () => {
           return;
         }
         
+        // Nenhum critério de "já viu" atendido: mostrar modal
         const timer = setTimeout(() => {
           setOpen(true);
         }, 500);
         return () => clearTimeout(timer);
       } else {
-        const hasSeenFirstSteps = localStorage.getItem(FIRST_STEPS_KEY);
-        if (!hasSeenFirstSteps) {
-          const timer = setTimeout(() => {
-            setOpen(true);
-          }, 500);
-          return () => clearTimeout(timer);
-        }
+        // Usuário não autenticado: usar apenas localStorage (já verificado acima)
+        const timer = setTimeout(() => {
+          setOpen(true);
+        }, 500);
+        return () => clearTimeout(timer);
       }
     };
 
