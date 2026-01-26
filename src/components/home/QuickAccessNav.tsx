@@ -82,6 +82,12 @@ const maintenanceItems = [
     path: "/relatorios",
     group: 'maintenance'
   },
+  { 
+    label: "Reflexão & Diário", 
+    icon: Sparkles, 
+    path: "/reflexao",
+    group: 'maintenance'
+  },
 ];
 
 // Item exclusivo para gestores

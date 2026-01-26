@@ -420,9 +420,9 @@ const PlanoVidaQuemSou = () => {
                     value={vvd}
                     onChange={(e) => setVvd(e.target.value)}
                     disabled={!isEditingVvd}
-                    rows={4}
+                    rows={isMobile ? 8 : 4}
                     spellCheck="true"
-                    className="text-sm"
+                    className="text-sm min-h-[120px] sm:min-h-[100px]"
                   />
                   <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                     {/* Show "Criar meu VVD" only when VVD is empty */}
