@@ -307,13 +307,12 @@ const StoicInteractiveExperience = ({
   const isLoading = phase === "loading";
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       {/* Experience Container */}
       <div 
         className={cn(
           "relative rounded-xl overflow-hidden transition-all duration-500",
-          "bg-gradient-to-br from-primary/10 via-card to-primary/5",
-          "border border-primary/20",
+          "bg-[#252525]",
           isActive ? "min-h-[350px]" : "min-h-[140px] sm:min-h-[120px]"
         )}
       >
@@ -373,29 +372,29 @@ const StoicInteractiveExperience = ({
         {/* Question and Response - Inside same container */}
         {showQuestion && (
           <div className="px-6 pb-6 animate-fade-in">
-            <div className="mt-4 p-4 rounded-lg bg-primary/10 border border-primary/30 space-y-4">
+            <div className="mt-4 space-y-4">
               {/* Question */}
               <p className={cn(
-                "text-primary font-medium italic",
+                "text-[#D4AF37] font-medium italic",
                 phase === "question" && "animate-pulse"
               )}>
                 "{displayedQuestion || reflection.question}"
                 {phase === "question" && displayedQuestion !== reflection.question && (
-                  <span className="inline-block w-0.5 h-4 bg-primary ml-1 animate-pulse" />
+                  <span className="inline-block w-0.5 h-4 bg-[#D4AF37] ml-1 animate-pulse" />
                 )}
               </p>
               
-              {/* Response Field - Inside the question box */}
+              {/* Response Field */}
               {phase === "completed" && (
-                <div className="space-y-3 pt-2 border-t border-primary/20 animate-fade-in">
-                  <label className="text-sm font-medium text-muted-foreground">
-                    Sua resposta:
+                <div className="space-y-3 animate-fade-in">
+                  <label className="text-sm font-medium text-gray-400">
+                    O que posso executar hoje?
                   </label>
                   <Textarea
                     value={stoicResponse}
                     onChange={(e) => onStoicResponseChange(e.target.value)}
-                    placeholder="Escreva sua reflexão sobre a pergunta acima..."
-                    className="min-h-[100px] resize-none bg-background/50 border-primary/20 focus:border-primary/40"
+                    placeholder="Escreva sua reflexão..."
+                    className="min-h-[100px] resize-none bg-[#1A1A1A] border-[#333] text-white placeholder:text-gray-500 focus:border-[#D4AF37]"
                   />
                   <div className="flex flex-col sm:flex-row sm:justify-between items-center gap-3">
                     {/* Mobile controls - show inline with save button */}
@@ -404,7 +403,7 @@ const StoicInteractiveExperience = ({
                         variant="outline"
                         size="icon"
                         onClick={handleReset}
-                        className="rounded-full shadow-sm"
+                        className="rounded-full border-[#333] text-gray-400 hover:text-white hover:bg-[#333]"
                       >
                         <RotateCcw className="w-4 h-4" />
                       </Button>
@@ -412,7 +411,7 @@ const StoicInteractiveExperience = ({
                         onClick={handleStart}
                         disabled={isLoading}
                         size="icon"
-                        className="rounded-full shadow-md"
+                        className="rounded-full bg-[#D4AF37] text-[#1a1a1a] hover:bg-[#e5b964]"
                       >
                         {isLoading ? (
                           <Loader2 className="w-5 h-5 animate-spin" />
@@ -424,7 +423,7 @@ const StoicInteractiveExperience = ({
                     <Button
                       onClick={onSave}
                       disabled={!canSave || isSaving}
-                      className="gap-2 w-full sm:w-auto sm:ml-auto"
+                      className="gap-2 w-full sm:w-auto sm:ml-auto bg-gradient-to-r from-[#D4AF37] to-[#b8912f] hover:from-[#e5b964] hover:to-[#c9a240] text-[#1a1a1a] font-semibold"
                     >
                       {isSaving ? (
                         <Loader2 className="w-4 h-4 animate-spin" />
@@ -489,30 +488,32 @@ const StoicInteractiveExperience = ({
       {/* Static version for when ready but not yet started - shows question and existing response */}
       {(phase === "idle" || phase === "ready" || phase === "loading") && stoicResponse && (
         <div className="space-y-3 pt-2">
-          <div className="p-4 rounded-lg bg-primary/10 border border-primary/30 space-y-4">
-            <p className="text-primary font-medium italic">
+          <div className="space-y-4">
+            <p className="text-[#D4AF37] font-medium italic">
               "{reflection.question}"
             </p>
-            <div className="space-y-3 pt-2 border-t border-primary/20">
+            <div className="space-y-3">
+              <label className="text-sm font-medium text-gray-400">
+                O que posso executar hoje?
+              </label>
               <Textarea
                 value={stoicResponse}
                 onChange={(e) => onStoicResponseChange(e.target.value)}
                 placeholder="Escreva sua reflexão..."
-                className="min-h-[80px] resize-none bg-background/50"
+                className="min-h-[100px] resize-none bg-[#1A1A1A] border-[#333] text-white placeholder:text-gray-500 focus:border-[#D4AF37]"
               />
               <div className="flex justify-end">
                 <Button
                   onClick={onSave}
                   disabled={!canSave || isSaving}
-                  size="sm"
-                  className="gap-2"
+                  className="gap-2 bg-gradient-to-r from-[#D4AF37] to-[#b8912f] hover:from-[#e5b964] hover:to-[#c9a240] text-[#1a1a1a] font-semibold"
                 >
                   {isSaving ? (
                     <Loader2 className="w-4 h-4 animate-spin" />
                   ) : (
                     <Send className="w-4 h-4" />
                   )}
-                  Salvar
+                  Salvar Reflexão
                 </Button>
               </div>
             </div>

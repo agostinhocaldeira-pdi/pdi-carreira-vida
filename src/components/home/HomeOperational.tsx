@@ -35,6 +35,7 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
 import type { AgendaTask } from "@/components/agenda/AgendaTaskCard";
 import StoicReflectionCard from "./StoicReflectionCard";
+import HomeDiarySection from "./HomeDiarySection";
 
 // ============================================================
 // HERO SECTION - Objetivo Principal Premium
@@ -493,6 +494,9 @@ export const HomeOperational = () => {
       
       {/* Reflexão Estóica do Dia - Premium Black Style */}
       <StoicReflectionCard />
+      
+      {/* Diário - Premium Black Style */}
+      <HomeDiarySection />
     </div>
   );
 };
