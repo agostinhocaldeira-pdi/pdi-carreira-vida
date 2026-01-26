@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo, useCallback } from "react";
+import { useSearchParams } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
@@ -30,6 +31,7 @@ const getLocalDateString = (date: Date): string => {
 };
 
 const StoicReflectionSection = () => {
+  const [searchParams] = useSearchParams();
   const { celebrateAction } = useActionCelebration();
   const [isScientificModalOpen, setIsScientificModalOpen] = useState(false);
   
@@ -37,9 +39,10 @@ const StoicReflectionSection = () => {
   const formattedDate = format(today, "EEEE, d 'de' MMMM", { locale: ptBR });
   const capitalizedDate = formattedDate.charAt(0).toUpperCase() + formattedDate.slice(1);
 
-  // Diary state
+  // Diary state - check URL param for initial view mode
+  const initialViewMode = searchParams.get('view') === 'historico' ? 'historico' : 'registro';
   const { getDiario, saveDiarioEntry } = usePDIStorage();
-  const [diaryViewMode, setDiaryViewMode] = useState<DiaryViewMode>("registro");
+  const [diaryViewMode, setDiaryViewMode] = useState<DiaryViewMode>(initialViewMode);
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [isLoadingDiary, setIsLoadingDiary] = useState(false);
   const [isSavingDiary, setIsSavingDiary] = useState(false);
