@@ -94,6 +94,31 @@ const questions: Question[] = [
       },
     ],
   },
+  {
+    headline: "O que geralmente mata os seus projetos de longo prazo?",
+    options: [
+      { 
+        label: "O Cansaço", 
+        text: "Eu começo com gás total, mas a rotina me engole e eu perco a energia.", 
+        trava: "EXAUSTAO" 
+      },
+      { 
+        label: "O Perfeccionismo", 
+        text: "Eu demoro tanto planejando os detalhes que o timing passa.", 
+        trava: "INERCIA" 
+      },
+      { 
+        label: "A Novidade", 
+        text: "Eu perco o interesse assim que surge uma nova ideia mais brilhante.", 
+        trava: "DISPERSAO" 
+      },
+      { 
+        label: "A Falta de Método", 
+        text: "Eu tenho vontade, mas me perco na organização das tarefas.", 
+        trava: "LENTIDAO" 
+      },
+    ],
+  },
 ];
 
 // Placeholder for results - will be updated when user provides result content
