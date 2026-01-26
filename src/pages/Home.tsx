@@ -36,6 +36,9 @@ import { useStoicAudioPreload } from "@/hooks/useStoicAudioPreload";
 import { useDailyQuote } from "@/hooks/useDailyQuote";
 import { QuickAccessNav } from "@/components/home/QuickAccessNav";
 import { ProductivityTipsSection } from "@/components/home/ProductivityTipsSection";
+import { HomeInitiation } from "@/components/home/HomeInitiation";
+import { HomeOperational } from "@/components/home/HomeOperational";
+import { useSystemState } from "@/hooks/useSystemState";
 
 
 const Home = () => {
@@ -52,6 +55,9 @@ const Home = () => {
     allowedRoles: ["user", "gestor", "admin"],
     redirectTo: "/dashboard-empresa"
   });
+  
+  // Estado central do sistema: Iniciação vs Operacional
+  const { hasCompletedBase, isLoading: systemStateLoading } = useSystemState();
   
   const [userName, setUserName] = useState("");
   
@@ -310,6 +316,16 @@ const Home = () => {
     );
   }
 
+  // ============================================================
+  // RENDERIZAÇÃO CONDICIONAL: Iniciação vs Operacional
+  // ============================================================
+  // 
+  // hasCompletedBase = true  → Modo Operacional (usuário completou Base Pessoal)
+  // hasCompletedBase = false → Modo Iniciação (foco em completar Base Pessoal)
+  //
+  // TODO (Fase 2/3): Mover o conteúdo atual para dentro de HomeOperational
+  // ============================================================
+
   return (
     <div className="min-h-screen bg-gradient-subtle">
       {/* Modal de Primeiros Passos */}
@@ -493,454 +509,18 @@ const Home = () => {
       {/* Quick Access Navigation - Horizontal Scroll */}
       <QuickAccessNav isGestor={isGestor} />
 
-      {/* Main Content */}
+      {/* Main Content - Renderização Condicional */}
       <main className="container mx-auto px-3 sm:px-4 py-4 sm:py-8 space-y-4 sm:space-y-8">
         {/* Trial Status Banner */}
         <TrialStatusBanner />
 
-        {/* Seu Objetivo Principal - Só exibe se houver objetivo principal */}
-        {objetivos.some((obj: any) => obj.is_principal || obj.isPrincipal) && (
-          <section className="animate-slide-up">
-            <div className="rounded-xl border-2 border-accent/30 bg-gradient-to-r from-accent/10 via-accent/5 to-transparent p-4 sm:p-5 lg:p-6">
-              {objetivos
-                .filter((objetivo: any) => objetivo.is_principal || objetivo.isPrincipal)
-                .map((objetivo: any) => {
-                  // Contar metas, ações e passos para este objetivo
-                  const objetivoMetas = metas.filter((m: any) => 
-                    m.objetivo_id === objetivo.id || m.objetivoId === objetivo.id
-                  );
-                  const metasCount = objetivoMetas.length;
-                  const acoesCount = objetivoMetas.reduce((acc: number, m: any) => 
-                    acc + (m.acoes?.length || 0), 0
-                  );
-                  const passosCount = objetivoMetas.reduce((acc: number, m: any) => 
-                    acc + (m.passos?.length || 0), 0
-                  );
-
-                  // Calcular dias restantes até o prazo
-                  const dataAlvo = objetivo.data_alvo || objetivo.dataAlvo;
-                  let diasRestantes: number | null = null;
-                  if (dataAlvo) {
-                    const hoje = new Date();
-                    hoje.setHours(0, 0, 0, 0);
-                    const prazo = new Date(dataAlvo);
-                    prazo.setHours(0, 0, 0, 0);
-                    const diffTime = prazo.getTime() - hoje.getTime();
-                    diasRestantes = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-                  }
-                  
-                  return (
-                    <div key={objetivo.id} className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-                      {/* Left side - Header and Objective */}
-                      <div className="flex-1 space-y-3">
-                        <div className="flex items-center gap-2">
-                          <div className="w-8 h-8 rounded-lg bg-accent/20 flex items-center justify-center">
-                            <Focus className="w-4 h-4 text-accent" />
-                          </div>
-                          <h2 className="text-sm sm:text-base font-semibold text-foreground">
-                            Seu Objetivo Principal
-                          </h2>
-                        </div>
-                        
-                        <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-background/80 border border-accent/20 shadow-sm">
-                          <Target className="w-3.5 h-3.5 text-accent flex-shrink-0" />
-                          <span className="text-xs sm:text-sm font-medium text-foreground line-clamp-1">
-                            {objetivo.texto}
-                          </span>
-                        </div>
-                        
-                        {/* Motivational text - mobile only */}
-                        <p className="text-xs text-muted-foreground italic lg:hidden">
-                          {diasRestantes !== null && diasRestantes > 0 
-                            ? `Faltam ${diasRestantes} ${diasRestantes === 1 ? 'dia' : 'dias'}. `
-                            : diasRestantes === 0 
-                              ? 'Hoje é o prazo final! '
-                              : diasRestantes !== null 
-                                ? `Prazo passou há ${Math.abs(diasRestantes)} ${Math.abs(diasRestantes) === 1 ? 'dia' : 'dias'}. `
-                                : ''
-                          }
-                          Cada ação te aproxima do seu objetivo.
-                        </p>
-                      </div>
-                      
-                      {/* Right side - Stats (desktop) */}
-                      <div className="flex flex-wrap gap-3 sm:gap-4 lg:flex-nowrap lg:gap-6">
-                        <div className="flex items-center gap-2 lg:flex-col lg:items-center lg:gap-1 lg:px-4 lg:py-2 lg:bg-background/50 lg:rounded-lg lg:border lg:border-border/50">
-                          <Crosshair className="w-3.5 h-3.5 lg:w-5 lg:h-5 text-primary" />
-                          <span className="text-xs lg:text-sm font-medium text-muted-foreground lg:text-foreground">
-                            <span className="lg:hidden">{metasCount} {metasCount === 1 ? 'meta' : 'metas'}</span>
-                            <span className="hidden lg:inline">{metasCount}</span>
-                          </span>
-                          <span className="hidden lg:block text-xs text-muted-foreground">{metasCount === 1 ? 'meta' : 'metas'}</span>
-                        </div>
-                        <div className="flex items-center gap-2 lg:flex-col lg:items-center lg:gap-1 lg:px-4 lg:py-2 lg:bg-background/50 lg:rounded-lg lg:border lg:border-border/50">
-                          <Play className="w-3.5 h-3.5 lg:w-5 lg:h-5 text-primary" />
-                          <span className="text-xs lg:text-sm font-medium text-muted-foreground lg:text-foreground">
-                            <span className="lg:hidden">{acoesCount} {acoesCount === 1 ? 'ação' : 'ações'}</span>
-                            <span className="hidden lg:inline">{acoesCount}</span>
-                          </span>
-                          <span className="hidden lg:block text-xs text-muted-foreground">{acoesCount === 1 ? 'ação' : 'ações'}</span>
-                        </div>
-                        <div className="flex items-center gap-2 lg:flex-col lg:items-center lg:gap-1 lg:px-4 lg:py-2 lg:bg-background/50 lg:rounded-lg lg:border lg:border-border/50">
-                          <Footprints className="w-3.5 h-3.5 lg:w-5 lg:h-5 text-primary" />
-                          <span className="text-xs lg:text-sm font-medium text-muted-foreground lg:text-foreground">
-                            <span className="lg:hidden">{passosCount} {passosCount === 1 ? 'passo' : 'passos'}</span>
-                            <span className="hidden lg:inline">{passosCount}</span>
-                          </span>
-                          <span className="hidden lg:block text-xs text-muted-foreground">{passosCount === 1 ? 'passo' : 'passos'}</span>
-                        </div>
-                        {diasRestantes !== null && (
-                          <div className={`hidden lg:flex flex-col items-center gap-1 px-4 py-2 rounded-lg border ${
-                            diasRestantes > 7 
-                              ? 'bg-success/10 border-success/30' 
-                              : diasRestantes > 0 
-                                ? 'bg-warning/10 border-warning/30' 
-                                : 'bg-destructive/10 border-destructive/30'
-                          }`}>
-                            <span className={`text-sm font-bold ${
-                              diasRestantes > 7 
-                                ? 'text-success' 
-                                : diasRestantes > 0 
-                                  ? 'text-warning' 
-                                  : 'text-destructive'
-                            }`}>
-                              {diasRestantes > 0 ? diasRestantes : diasRestantes === 0 ? 'Hoje' : Math.abs(diasRestantes)}
-                            </span>
-                            <span className="text-xs text-muted-foreground">
-                              {diasRestantes > 0 
-                                ? diasRestantes === 1 ? 'dia restante' : 'dias restantes'
-                                : diasRestantes === 0 
-                                  ? 'é o prazo!'
-                                  : diasRestantes === -1 ? 'dia atrasado' : 'dias atrasados'
-                              }
-                            </span>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  );
-                })}
-            </div>
-          </section>
-        )}
-
-        {/* Agenda Section - Replaces Daily Checkout */}
-        <section className="animate-slide-up relative">
-          <Agenda />
-        </section>
-
-
-        {/* Plano de Vida Section OR Productivity Tips */}
-        <section className="animate-slide-up overflow-hidden max-w-full" style={{ animationDelay: "0.2s" }} data-section="plano-de-vida">
-          {(() => {
-            const isValoresComplete = valores.some((v: string) => String(v).trim() !== "");
-            const isAreasComplete =
-              areasVida.length > 0 &&
-              areasVida.every((area: any) => {
-                const notaAtual = area?.notaAtual ?? area?.nota_atual;
-                const notaDesejada = area?.notaDesejada ?? area?.nota_desejada;
-                return (
-                  String(notaAtual ?? "").trim() !== "" &&
-                  String(notaDesejada ?? "").trim() !== ""
-                );
-              });
-
-            const quemSouProgress = (() => {
-              let count = 0;
-              if (vvd && vvd.trim()) count++;
-              if (isValoresComplete) count++;
-              if (isAreasComplete) count++;
-              return Math.round((count / 3) * 100);
-            })();
-
-            const step1Done = quemSouProgress === 100;
-            const step2Done = objetivos.length > 0;
-            const step3Done = habilidadesCount > 0;
-
-            const allStepsComplete = step1Done && step2Done && step3Done;
-
-            // If all steps are complete, show productivity tips instead
-            if (allStepsComplete) {
-              return <ProductivityTipsSection />;
-            }
-
-            const step2Locked = !step1Done;
-            const step3Locked = !step1Done || !step2Done;
-
-            // Mensagem dinâmica do passo atual (sempre visível para evitar "piscar" no mobile)
-            let stepNumber = 1;
-            let stepTitle = "O primeiro passo da sua transformação";
-            let stepDescription = "Antes de mudar sua vida, você precisa se enxergar com clareza. Nesta etapa, você vai construir seu VVD, definir seus Valores e avaliar sua Roda da Vida.";
-
-            if (step1Done && !step2Done) {
-              stepNumber = 2;
-              stepTitle = "O segundo passo da sua transformação";
-              stepDescription = "Agora que você se conhece melhor, é hora de definir seu destino. Visualize onde quer chegar e transforme sonhos em objetivos concretos.";
-            } else if (step1Done && step2Done && !step3Done) {
-              stepNumber = 3;
-              stepTitle = "O terceiro passo da sua transformação";
-              stepDescription = "Você sabe quem é e para onde vai. Falta criar o plano de ação com metas claras para conquistar seus objetivos.";
-            }
-
-            return (
-              <Card className="shadow-medium border-primary/20">
-                <CardHeader className="pb-4">
-                  <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center shadow-lg">
-                      <Target className="w-6 h-6 text-primary-foreground" />
-                    </div>
-                    <div>
-                      <CardTitle className="text-xl sm:text-2xl">Os 3 passos para sua transformação e conquistas</CardTitle>
-                      <CardDescription>Construa sua visão e defina seus objetivos</CardDescription>
-                    </div>
-                  </div>
-                </CardHeader>
-
-                <CardContent className="space-y-3">
-                  {/* Mensagem do passo atual */}
-                  <div className="rounded-lg bg-muted/40 p-3">
-                    <p className="text-sm font-semibold text-primary">{stepTitle}</p>
-                    <p className="text-xs text-muted-foreground mt-1">{stepDescription}</p>
-                    <p className="text-[11px] text-muted-foreground mt-2">Passo {stepNumber} de 3</p>
-                  </div>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                    {/* Passo 1 - Quem sou eu */}
-                    <Button
-                      variant="outline"
-                      className="h-auto py-4 px-4 flex flex-col items-start gap-2 hover:bg-primary/5 hover:border-primary/40 transition-all group"
-                      onClick={() => navigate("/plano-vida/quem-sou")}
-                    >
-                      <div className="flex items-center gap-2 w-full">
-                        <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
-                          <span className="text-xs font-bold text-primary">1</span>
-                        </div>
-                        <span className="font-semibold text-sm sm:text-base">Quem sou eu</span>
-                      </div>
-                      <p className="text-xs text-muted-foreground text-left whitespace-normal break-words">
-                        VVD, Valores e Roda da Vida
-                      </p>
-                    </Button>
-
-                    {/* Passo 2 - Para onde vou */}
-                    <Button
-                      variant="outline"
-                      disabled={step2Locked}
-                      className={`h-auto py-4 px-4 flex flex-col items-start gap-2 transition-all group ${
-                        step2Locked ? 'opacity-50' : 'hover:bg-primary/5 hover:border-primary/40'
-                      }`}
-                      onClick={() => navigate("/plano-vida/para-onde")}
-                    >
-                      <div className="flex items-center gap-2 w-full">
-                        <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
-                          <span className="text-xs font-bold text-primary">2</span>
-                        </div>
-                        <span className="font-semibold text-sm sm:text-base">Para onde vou</span>
-                        {step2Locked && <Lock className="w-4 h-4 text-muted-foreground ml-auto" />}
-                      </div>
-                      <p className="text-xs text-muted-foreground text-left whitespace-normal break-words">
-                        Objetivos claros e concretos
-                      </p>
-                    </Button>
-
-                    {/* Passo 3 - Como chegar lá */}
-                    <Button
-                      variant="outline"
-                      disabled={step3Locked}
-                      className={`h-auto py-4 px-4 flex flex-col items-start gap-2 transition-all group ${
-                        step3Locked ? 'opacity-50' : 'hover:bg-primary/5 hover:border-primary/40'
-                      }`}
-                      onClick={() => navigate("/plano-vida/como-chegar")}
-                    >
-                      <div className="flex items-center gap-2 w-full">
-                        <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
-                          <span className="text-xs font-bold text-primary">3</span>
-                        </div>
-                        <span className="font-semibold text-sm sm:text-base">Como chegar lá</span>
-                        {step3Locked && <Lock className="w-4 h-4 text-muted-foreground ml-auto" />}
-                      </div>
-                      <p className="text-xs text-muted-foreground text-left whitespace-normal break-words">
-                        Metas e plano de ação
-                      </p>
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            );
-          })()}
-        </section>
-
-        {/* Insight Personalizado Section */}
-        <section className="animate-slide-up" style={{ animationDelay: "0.3s" }}>
-          <Collapsible open={insightOpen} onOpenChange={setInsightOpen}>
-            <div className="rounded-xl border-2 border-primary/30 bg-gradient-to-br from-primary/5 to-primary/10 overflow-hidden">
-              <div className="flex items-center justify-between p-4 sm:p-6">
-                <CollapsibleTrigger asChild>
-                  <div className="flex items-center gap-3 cursor-pointer hover:opacity-80 transition-opacity flex-1">
-                    <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center shadow-lg">
-                      <Sparkles className="w-5 h-5 sm:w-6 sm:h-6 text-primary-foreground" />
-                    </div>
-                    <div>
-                      <h3 className="text-lg font-semibold">Insight Personalizado</h3>
-                      <p className="text-xs sm:text-sm text-muted-foreground">
-                        Análise baseada no seu Plano de Vida
-                      </p>
-                    </div>
-                  </div>
-                </CollapsibleTrigger>
-                <div className="flex items-center gap-2">
-                  {/* Mobile: Show audio button even when collapsed */}
-                  {insight && !insightOpen && (
-                    <div className="sm:hidden">
-                      <InsightAudioButton insight={insight} />
-                    </div>
-                  )}
-                  <CollapsibleTrigger asChild>
-                    <Button variant="ghost" size="icon" className="h-8 w-8">
-                      <ChevronDown className={`w-5 h-5 text-muted-foreground transition-transform duration-200 ${insightOpen ? 'rotate-180' : ''}`} />
-                    </Button>
-                  </CollapsibleTrigger>
-                </div>
-              </div>
-              
-              <CollapsibleContent>
-                <div className="px-4 sm:px-6 pb-4 sm:pb-6 space-y-4">
-                  
-                  {!isAdmin && aiUsage.hasAvailablePurchase && (
-                    <div className="bg-green-50 dark:bg-green-950/20 border border-green-200 dark:border-green-800 rounded-lg p-3">
-                      <p className="text-xs sm:text-sm text-green-900 dark:text-green-200">
-                        <strong>Você tem 1 insight disponível!</strong> Clique no botão abaixo para gerar seu insight personalizado.
-                      </p>
-                    </div>
-                  )}
-                  
-                  {isAdmin && (
-                    <div className="bg-primary/10 border border-primary/20 rounded-lg p-3">
-                      <p className="text-xs sm:text-sm text-primary">
-                        <strong>Acesso Admin:</strong> Você tem insights ilimitados como administrador.
-                      </p>
-                    </div>
-                  )}
-                  
-                  {insight ? (
-                    <div className="space-y-4">
-                      <div className="bg-card rounded-lg p-4 border shadow-sm">
-                        <div className="flex items-start justify-between gap-2">
-                          <div className="prose prose-sm max-w-none whitespace-pre-line text-sm flex-1">
-                            {insight}
-                          </div>
-                          <InsightAudioButton insight={insight} />
-                        </div>
-                      </div>
-                      {/* Botão Gerar novo insight */}
-                      {!isAdmin && !aiUsage.hasAvailablePurchase ? (
-                        <Button 
-                          onClick={() => setShowAILimitModal(true)} 
-                          size="sm" 
-                          variant="outline"
-                          className="w-full sm:w-auto"
-                        >
-                          <Sparkles className="w-4 h-4 mr-2" />
-                          Gerar novo insight
-                        </Button>
-                      ) : (
-                        <Button 
-                          onClick={() => handleGenerateInsight()} 
-                          size="sm" 
-                          variant="outline"
-                          disabled={isGeneratingInsight}
-                          className="w-full sm:w-auto"
-                        >
-                          {isGeneratingInsight ? (
-                            <>
-                              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                              Gerando novo insight...
-                            </>
-                          ) : (
-                            <>
-                              <Sparkles className="w-4 h-4 mr-2" />
-                              Gerar novo insight
-                            </>
-                          )}
-                        </Button>
-                      )}
-                    </div>
-                  ) : (
-                    <TooltipProvider>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <div className="inline-block w-full">
-                            <Button 
-                              onClick={() => handleGenerateInsight()} 
-                              disabled={isGeneratingInsight || objetivos.length === 0}
-                              className="w-full"
-                              size="lg"
-                            >
-                              {isGeneratingInsight ? (
-                                <>
-                                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                                  Gerando insight...
-                                </>
-                              ) : (
-                                <>
-                                  <Sparkles className="w-4 h-4 mr-2" />
-                                  Gerar Insight
-                                </>
-                              )}
-                            </Button>
-                          </div>
-                        </TooltipTrigger>
-                        {objetivos.length === 0 && (
-                          <TooltipContent>
-                            <p className="text-sm">
-                              Para gerar insights, preencha seu Plano de Vida
-                            </p>
-                          </TooltipContent>
-                        )}
-                      </Tooltip>
-                    </TooltipProvider>
-                  )}
-                </div>
-              </CollapsibleContent>
-            </div>
-          </Collapsible>
-        </section>
-
-
-        {/* Área Restrita - Apenas para Administradores */}
-        {isAdmin && (
-          <section className="animate-slide-up" style={{ animationDelay: "0.5s" }}>
-            <Card className="shadow-medium border-destructive/20 bg-gradient-to-br from-card to-destructive/5">
-              <CardHeader>
-                <div className="flex items-center gap-2">
-                  <Shield className="w-5 h-5 text-destructive" />
-                  <CardTitle className="text-xl">Área Restrita</CardTitle>
-                </div>
-                <CardDescription>Acesso exclusivo para administradores</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-4 bg-destructive/5 rounded-lg border border-destructive/20">
-                  <div className="flex items-start gap-3">
-                    <div className="w-10 h-10 bg-destructive/10 rounded-lg flex items-center justify-center flex-shrink-0">
-                      <Lock className="w-5 h-5 text-destructive" />
-                    </div>
-                    <div>
-                      <h3 className="font-semibold text-sm sm:text-base mb-1">Painel Administrativo</h3>
-                      <p className="text-xs sm:text-sm text-muted-foreground">
-                        Gerencie usuários, visualize estatísticas e configure o sistema
-                      </p>
-                    </div>
-                  </div>
-                  <Link to="/admin" className="w-full sm:w-auto">
-                    <Button variant="destructive" className="w-full sm:w-auto gap-2">
-                      <Shield className="w-4 h-4" />
-                      Acessar Painel
-                    </Button>
-                  </Link>
-                </div>
-              </CardContent>
-            </Card>
-          </section>
+        {/* ============================================================ */}
+        {/* SWITCH: Modo Iniciação vs Modo Operacional                   */}
+        {/* ============================================================ */}
+        {hasCompletedBase ? (
+          <HomeOperational />
+        ) : (
+          <HomeInitiation />
         )}
 
       </main>

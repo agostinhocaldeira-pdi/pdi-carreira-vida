@@ -81,9 +81,9 @@ const ptTranslations = {
   planoDeVida: {
     title: 'Plano de Vida',
     description: 'Construa sua visão e defina seus objetivos',
-    whoAmI: 'Quem sou Eu',
-    whereAmIGoing: 'Para onde vou',
-    howToGetThere: 'Como chegar lá',
+    whoAmI: 'Base Pessoal',
+    whereAmIGoing: 'Direção & Objetivos',
+    howToGetThere: 'Plano de Execução',
     myEssence: 'Minha Essência',
     vvd: 'Minha Visão de Vida Desejada',
     vvdPlaceholder: 'Descreva como você imagina sua vida ideal em todos os aspectos...',
