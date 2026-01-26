@@ -204,7 +204,7 @@ serve(async (req) => {
               <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
                 <tr>
                   <td style="padding: 8px 0 24px 0;">
-                    <a href="${baseUrl}/plano-vida/quem-sou" style="display: inline-block; padding: 16px 32px; background-color: #d4a853; color: #1a1a1a; text-decoration: none; font-weight: 600; font-size: 16px; border-radius: 8px;">
+                    <a href="${baseUrl}/news" style="display: inline-block; padding: 16px 32px; background-color: #d4a853; color: #1a1a1a; text-decoration: none; font-weight: 600; font-size: 16px; border-radius: 8px;">
                       Iniciar Base Pessoal
                     </a>
                   </td>
