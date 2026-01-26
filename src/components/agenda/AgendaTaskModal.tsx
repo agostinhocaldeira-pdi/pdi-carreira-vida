@@ -20,6 +20,8 @@ interface AgendaTaskModalProps {
   onDelete?: (taskId: string) => void;
   task?: AgendaTask | null;
   selectedDate: Date;
+  initialTitle?: string;
+  initialDescription?: string;
 }
 
 const labelOptions = [
@@ -44,6 +46,8 @@ export const AgendaTaskModal = ({
   onDelete,
   task,
   selectedDate,
+  initialTitle = "",
+  initialDescription = "",
 }: AgendaTaskModalProps) => {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -67,8 +71,9 @@ export const AgendaTaskModal = ({
         setIsRecurring(task.is_recurring || false);
         setRecurrenceType(task.recurrence_type || 'daily');
       } else {
-        setTitle("");
-        setDescription("");
+        // Use initial values if provided, otherwise empty
+        setTitle(initialTitle);
+        setDescription(initialDescription);
         setDate(selectedDate);
         setTime("06:00");
         setLabelColor("green");
@@ -77,7 +82,7 @@ export const AgendaTaskModal = ({
         setRecurrenceType('daily');
       }
     }
-  }, [open, task, selectedDate]);
+  }, [open, task, selectedDate, initialTitle, initialDescription]);
 
   const handleLabelChange = (colorValue: string) => {
     setLabelColor(colorValue);
