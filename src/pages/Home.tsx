@@ -76,6 +76,9 @@ const Home = () => {
   const [prefilledTaskTitle, setPrefilledTaskTitle] = useState("");
   const [prefilledTaskDescription, setPrefilledTaskDescription] = useState("");
   
+  // Flag para habilitar agenda no modo iniciação (após "Fazer depois" + salvar tarefa)
+  const [agendaEnabledInInitiation, setAgendaEnabledInInitiation] = useState(false);
+  
   // Hook da agenda para criar tarefas
   const { createEvent } = useAgenda();
   
@@ -545,7 +548,7 @@ const Home = () => {
         {hasCompletedBase ? (
           <HomeOperational />
         ) : (
-          <HomeInitiation />
+          <HomeInitiation showAgenda={agendaEnabledInInitiation} />
         )}
 
       </main>
@@ -572,6 +575,8 @@ const Home = () => {
         }}
         onSave={async (task) => {
           await createEvent(task);
+          // Habilita a agenda no modo iniciação após salvar a tarefa do "Fazer depois"
+          setAgendaEnabledInInitiation(true);
         }}
         task={null}
         selectedDate={new Date()}

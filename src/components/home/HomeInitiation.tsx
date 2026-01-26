@@ -5,15 +5,20 @@
  * Layout:
  * - Hero Section (Educativa)
  * - Estrutura do Sistema (3 Cards: 1 ativo, 2 bloqueados)
- * - Agenda Bloqueada (Placeholder)
+ * - Agenda (Bloqueada por padrão, habilitada após "Fazer depois")
  */
 
 import { Link } from "react-router-dom";
 import { User, Target, Rocket, Lock, Compass, ArrowRight, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Agenda } from "@/components/agenda";
 
-export const HomeInitiation = () => {
+interface HomeInitiationProps {
+  showAgenda?: boolean;
+}
+
+export const HomeInitiation = ({ showAgenda = false }: HomeInitiationProps) => {
   return (
     <div className="space-y-6 sm:space-y-8">
       {/* Hero Section - Educativa */}
@@ -133,24 +138,28 @@ export const HomeInitiation = () => {
         </div>
       </section>
 
-      {/* Agenda Bloqueada - Placeholder */}
-      <Card className="bg-muted/30 border border-dashed border-border/50">
-        <CardContent className="py-10 sm:py-14">
-          <div className="flex flex-col items-center justify-center text-center space-y-4">
-            <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-muted flex items-center justify-center">
-              <Compass className="w-8 h-8 sm:w-10 sm:h-10 text-muted-foreground/50" />
+      {/* Agenda - Condicional */}
+      {showAgenda ? (
+        <Agenda />
+      ) : (
+        <Card className="bg-muted/30 border border-dashed border-border/50">
+          <CardContent className="py-10 sm:py-14">
+            <div className="flex flex-col items-center justify-center text-center space-y-4">
+              <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-muted flex items-center justify-center">
+                <Compass className="w-8 h-8 sm:w-10 sm:h-10 text-muted-foreground/50" />
+              </div>
+              <div className="space-y-2 max-w-md">
+                <h3 className="text-base sm:text-lg font-semibold text-muted-foreground/70">
+                  Agenda Estratégica
+                </h3>
+                <p className="text-sm text-muted-foreground/60 leading-relaxed">
+                  O módulo de Agenda Estratégica será ativado assim que sua Base Pessoal estiver definida.
+                </p>
+              </div>
             </div>
-            <div className="space-y-2 max-w-md">
-              <h3 className="text-base sm:text-lg font-semibold text-muted-foreground/70">
-                Agenda Estratégica
-              </h3>
-              <p className="text-sm text-muted-foreground/60 leading-relaxed">
-                O módulo de Agenda Estratégica será ativado assim que sua Base Pessoal estiver definida.
-              </p>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 };
