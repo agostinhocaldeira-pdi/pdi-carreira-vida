@@ -119,6 +119,31 @@ const questions: Question[] = [
       },
     ],
   },
+  {
+    headline: "Se você mantiver exatamente o mesmo ritmo e estratégia de hoje pelos próximos 5 anos, onde você estará?",
+    options: [
+      { 
+        label: "Burnout ou Estagnação", 
+        text: "Provavelmente com Burnout ou estagnado no mesmo nível financeiro.", 
+        trava: "EXAUSTAO" 
+      },
+      { 
+        label: "Arrependimentos", 
+        text: "Cheio de arrependimentos pelo que \"poderia ter feito\".", 
+        trava: "INERCIA" 
+      },
+      { 
+        label: "Projetos Incompletos", 
+        text: "Com vários projetos iniciados e nenhuma construção sólida finalizada.", 
+        trava: "DISPERSAO" 
+      },
+      { 
+        label: "Crescimento Limitado", 
+        text: "Terei crescido, mas sinto que poderia ter ido muito mais longe se tivesse o sistema certo.", 
+        trava: "LENTIDAO" 
+      },
+    ],
+  },
 ];
 
 // Placeholder for results - will be updated when user provides result content
