@@ -14,7 +14,7 @@ interface SubscriptionState {
 // Trial period configuration
 const TRIAL_DAYS_NEW_USERS = 30;
 const TRIAL_DAYS_LEGACY_USERS = 365; // 1 year for users before cutoff
-const LEGACY_CUTOFF_DATE = new Date('2026-01-20T00:00:00Z');
+const LEGACY_CUTOFF_DATE = new Date('2026-01-27T00:00:00Z'); // Extended: all users before this date get legacy trial
 
 // Stripe product ID for Plano Básico
 const PLANO_BASICO_PRODUCT_ID = "prod_TXWvEwloGWytPs";
