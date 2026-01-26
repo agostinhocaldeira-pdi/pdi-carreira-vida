@@ -9,6 +9,8 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { Target, TrendingUp, BookOpen, MessagesSquare, Book, Sparkles, User, Zap, Star, Shield, Lock, ChevronDown, AlertCircle, Link2, Users, Bell, HelpCircle, FileText, ClipboardCheck, Focus, Loader2, Crosshair, Play, Footprints, PartyPopper } from "lucide-react";
 import { Agenda } from "@/components/agenda";
+import { AgendaTaskModal } from "@/components/agenda/AgendaTaskModal";
+import { useAgenda } from "@/hooks/useAgenda";
 
 
 import { usePDIData } from "@/hooks/usePDIQueries";
@@ -68,6 +70,28 @@ const Home = () => {
   const [showDiaryWarningModal, setShowDiaryWarningModal] = useState(false);
   const [showPlanoVidaCompleteModal, setShowPlanoVidaCompleteModal] = useState(false);
   const [agendaOpen, setAgendaOpen] = useState(true);
+  
+  // Estados para o modal de tarefa pré-preenchida (acionado pelo FirstStepsModal)
+  const [showPrefilledTaskModal, setShowPrefilledTaskModal] = useState(false);
+  const [prefilledTaskTitle, setPrefilledTaskTitle] = useState("");
+  const [prefilledTaskDescription, setPrefilledTaskDescription] = useState("");
+  
+  // Hook da agenda para criar tarefas
+  const { createEvent } = useAgenda();
+  
+  // Listener para o evento do FirstStepsModal "Fazer depois"
+  useEffect(() => {
+    const handleOpenWithData = (event: CustomEvent<{ title: string; description: string }>) => {
+      setPrefilledTaskTitle(event.detail.title);
+      setPrefilledTaskDescription(event.detail.description);
+      setShowPrefilledTaskModal(true);
+    };
+
+    window.addEventListener('openTaskModalWithData', handleOpenWithData as EventListener);
+    return () => {
+      window.removeEventListener('openTaskModalWithData', handleOpenWithData as EventListener);
+    };
+  }, []);
   
   
   // Estados para notificações
@@ -535,6 +559,25 @@ const Home = () => {
           canGenerate={canGenerateInsight}
         />
       )}
+
+      {/* Modal de Tarefa Pré-preenchida (acionado pelo FirstStepsModal "Fazer depois") */}
+      <AgendaTaskModal
+        open={showPrefilledTaskModal}
+        onOpenChange={(open) => {
+          setShowPrefilledTaskModal(open);
+          if (!open) {
+            setPrefilledTaskTitle("");
+            setPrefilledTaskDescription("");
+          }
+        }}
+        onSave={async (task) => {
+          await createEvent(task);
+        }}
+        task={null}
+        selectedDate={new Date()}
+        initialTitle={prefilledTaskTitle}
+        initialDescription={prefilledTaskDescription}
+      />
     </div>
   );
 };
