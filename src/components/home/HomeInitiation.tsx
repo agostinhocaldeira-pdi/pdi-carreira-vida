@@ -15,6 +15,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Agenda } from "@/components/agenda";
 import { supabase } from "@/integrations/supabase/client";
+import StoicReflectionCard from "./StoicReflectionCard";
+import HomeDiarySection from "./HomeDiarySection";
 
 interface HomeInitiationProps {
   showAgenda?: boolean;
@@ -163,6 +165,12 @@ export const HomeInitiation = ({ showAgenda = false }: HomeInitiationProps) => {
           </Card>
         </div>
       </section>
+
+      {/* Reflexão Estóica do Dia */}
+      <StoicReflectionCard />
+
+      {/* Diário */}
+      <HomeDiarySection />
 
       {/* Agenda - Condicional */}
       {shouldShowAgenda ? (
