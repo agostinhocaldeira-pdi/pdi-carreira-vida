@@ -44,7 +44,31 @@ const questions: Question[] = [
       },
     ],
   },
-  // Placeholder for Q2-Q5 - will be added when user provides content
+  {
+    headline: "O quão claro está o seu futuro para você hoje?",
+    options: [
+      { 
+        label: "Ideia Vaga", 
+        text: "Tenho uma ideia vaga na cabeça, mas nada escrito ou estruturado.", 
+        trava: "INERCIA" 
+      },
+      { 
+        label: "Metas Desconectadas", 
+        text: "Tenho metas financeiras/profissionais, mas elas parecem desconectadas da vida que eu quero ter.", 
+        trava: "DISPERSAO" 
+      },
+      { 
+        label: "Plano vs Rotina", 
+        text: "Tenho um plano perfeito no papel, mas ele raramente sobrevive ao contato com a minha rotina real.", 
+        trava: "EXAUSTAO" 
+      },
+      { 
+        label: "Clareza Total", 
+        text: "Tenho clareza total, meu problema é apenas técnico/operacional no dia a dia.", 
+        trava: "LENTIDAO" 
+      },
+    ],
+  },
 ];
 
 // Placeholder for results - will be updated when user provides result content
