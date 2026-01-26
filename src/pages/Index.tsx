@@ -77,10 +77,12 @@ const Index = () => {
               O Painel de Controle da sua{" "}
               <span className="text-[#d4a853]">Vida Pessoal e Profissional.</span>
             </h1>
-            <p className="text-base sm:text-lg md:text-xl text-gray-400 mb-8 sm:mb-10 max-w-3xl mx-auto leading-relaxed">
-              Um sistema para organizar decisões, não apenas tarefas. Pare de tentar organizar sua vida 
-              em cadernos ou apps que são apenas listas vazias. O PDI conecta sua Visão de Vida à sua 
-              agenda de segunda-feira.
+            <p className="text-lg sm:text-xl md:text-2xl text-[#d4a853] font-medium mb-4">
+              Um sistema para organizar decisões, não apenas tarefas.
+            </p>
+            <p className="text-base sm:text-lg text-gray-400 mb-8 sm:mb-10 max-w-3xl mx-auto leading-relaxed">
+              Se você sente que planeja muito mas sua vida não avança, o problema não é você. 
+              É a falta de um método que conecte sua identidade à sua agenda de segunda-feira.
             </p>
             
             {/* CTA Principal */}
@@ -94,7 +96,7 @@ const Index = () => {
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
               <p className="text-sm text-gray-500">
-                30 dias grátis • Sem cartão • Cancele quando quiser
+                30 dias gratuitos • Sem cartão de crédito • Acesso imediato
               </p>
             </div>
 
@@ -184,48 +186,48 @@ const Index = () => {
           </div>
           
           <div className="grid md:grid-cols-3 gap-6 sm:gap-8">
-            {/* Coluna 1: Direção */}
+            {/* Coluna 1: A Raiz (Identidade) */}
             <div className="bg-[#252525] rounded-2xl p-6 sm:p-8 border border-[#d4a853]/30 hover:border-[#d4a853]/50 transition-all">
               <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#d4a853]/30 to-[#d4a853]/10 flex items-center justify-center mb-6">
                 <Telescope className="h-7 w-7 text-[#d4a853]" />
               </div>
               <div className="flex items-center gap-2 mb-3">
                 <span className="text-xs font-bold text-[#d4a853] bg-[#d4a853]/20 px-2 py-1 rounded-full">1</span>
-                <h3 className="text-xl font-bold text-white">Defina a Direção</h3>
+                <h3 className="text-xl font-bold text-white">A Raiz (Identidade)</h3>
               </div>
+              <p className="text-sm font-medium text-[#d4a853] mb-2">Você define o Ponto de Partida</p>
               <p className="text-gray-400 leading-relaxed">
-                Esqueça metas soltas. Comece definindo <strong className="text-white">quem você quer ser</strong> e sua 
-                Visão de Vida Desejada. O sistema usa isso como bússola.
+                Defina seus valores e Visão de Vida Desejada. Onde você quer estar daqui a 5 anos?
               </p>
             </div>
 
-            {/* Coluna 2: Estrutura */}
+            {/* Coluna 2: O Tronco (Estratégia) */}
             <div className="bg-[#252525] rounded-2xl p-6 sm:p-8 border border-purple-500/30 hover:border-purple-500/50 transition-all">
               <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-purple-500/30 to-purple-500/10 flex items-center justify-center mb-6">
                 <Cog className="h-7 w-7 text-purple-400" />
               </div>
               <div className="flex items-center gap-2 mb-3">
                 <span className="text-xs font-bold text-purple-400 bg-purple-500/20 px-2 py-1 rounded-full">2</span>
-                <h3 className="text-xl font-bold text-white">O Sistema Estrutura</h3>
+                <h3 className="text-xl font-bold text-white">O Tronco (Estratégia)</h3>
               </div>
+              <p className="text-sm font-medium text-purple-400 mb-2">O Sistema estrutura o Plano</p>
               <p className="text-gray-400 leading-relaxed">
-                Nossa tecnologia ajuda a quebrar grandes sonhos em <strong className="text-white">Objetivos, Metas e Projetos</strong> claros. 
-                O complexo se torna simples.
+                O PDI quebra esse desejo grande em Objetivos, Metas e Projetos organizados.
               </p>
             </div>
 
-            {/* Coluna 3: Execução */}
+            {/* Coluna 3: A Ação (Execução) */}
             <div className="bg-[#252525] rounded-2xl p-6 sm:p-8 border border-emerald-500/30 hover:border-emerald-500/50 transition-all">
               <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-emerald-500/30 to-emerald-500/10 flex items-center justify-center mb-6">
                 <CalendarCheck className="h-7 w-7 text-emerald-400" />
               </div>
               <div className="flex items-center gap-2 mb-3">
                 <span className="text-xs font-bold text-emerald-400 bg-emerald-500/20 px-2 py-1 rounded-full">3</span>
-                <h3 className="text-xl font-bold text-white">A Agenda Blinda</h3>
+                <h3 className="text-xl font-bold text-white">A Ação (Execução)</h3>
               </div>
+              <p className="text-sm font-medium text-emerald-400 mb-2">Você executa na Agenda</p>
               <p className="text-gray-400 leading-relaxed">
-                O PDI distribui os passos na sua <strong className="text-white">Agenda Inteligente</strong>. 
-                Você acorda sabendo exatamente qual é a prioridade do dia.
+                O sistema blinda seu tempo e entrega apenas o próximo passo. Sem ansiedade.
               </p>
             </div>
           </div>
@@ -239,8 +241,8 @@ const Index = () => {
         <div className="container mx-auto max-w-4xl">
           <div className="text-center mb-10">
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 text-white">
-              O que você encontra dentro da{" "}
-              <span className="text-[#d4a853]">plataforma:</span>
+              Tudo o que você precisa para{" "}
+              <span className="text-[#d4a853]">sair do caos.</span>
             </h2>
           </div>
           
@@ -251,47 +253,37 @@ const Index = () => {
               </div>
               <div>
                 <h4 className="font-semibold text-white mb-1">Gestão de Identidade</h4>
-                <p className="text-sm text-gray-400">Ferramentas para mapear seus valores e visão.</p>
+                <p className="text-sm text-gray-400">Pare de construir o teto antes da fundação. Defina quem você é para saber para onde ir.</p>
               </div>
             </div>
 
             <div className="flex items-start gap-4 bg-[#1a1a1a] rounded-xl p-5 border border-gray-700">
               <div className="w-10 h-10 rounded-lg bg-purple-500/20 flex items-center justify-center flex-shrink-0">
-                <CalendarCheck className="h-5 w-5 text-purple-400" />
+                <Sparkles className="h-5 w-5 text-purple-400" />
               </div>
               <div>
-                <h4 className="font-semibold text-white mb-1">Agenda Inteligente</h4>
-                <p className="text-sm text-gray-400">Integração total entre suas metas e seus compromissos.</p>
+                <h4 className="font-semibold text-white mb-1">Metas SMART Guiadas</h4>
+                <p className="text-sm text-gray-400">Transforme sonhos vagos em planos concretos com prazos e métricas claras.</p>
               </div>
             </div>
 
             <div className="flex items-start gap-4 bg-[#1a1a1a] rounded-xl p-5 border border-gray-700">
               <div className="w-10 h-10 rounded-lg bg-emerald-500/20 flex items-center justify-center flex-shrink-0">
-                <Brain className="h-5 w-5 text-emerald-400" />
+                <CalendarCheck className="h-5 w-5 text-emerald-400" />
               </div>
               <div>
-                <h4 className="font-semibold text-white mb-1">Mentor IA</h4>
-                <p className="text-sm text-gray-400">Inteligência Artificial que analisa seu progresso e sugere ajustes.</p>
+                <h4 className="font-semibold text-white mb-1">Agenda Inteligente</h4>
+                <p className="text-sm text-gray-400">Não é sobre encaixar mais coisas. É sobre garantir tempo para o que é essencial.</p>
               </div>
             </div>
 
             <div className="flex items-start gap-4 bg-[#1a1a1a] rounded-xl p-5 border border-gray-700">
-              <div className="w-10 h-10 rounded-lg bg-orange-500/20 flex items-center justify-center flex-shrink-0">
-                <BookOpen className="h-5 w-5 text-orange-400" />
-              </div>
-              <div>
-                <h4 className="font-semibold text-white mb-1">Diário de Bordo</h4>
-                <p className="text-sm text-gray-400">Para registrar aprendizados e manter a sanidade mental.</p>
-              </div>
-            </div>
-
-            <div className="flex items-start gap-4 bg-[#1a1a1a] rounded-xl p-5 border border-gray-700 sm:col-span-2 sm:max-w-md sm:mx-auto">
               <div className="w-10 h-10 rounded-lg bg-cyan-500/20 flex items-center justify-center flex-shrink-0">
-                <BarChart3 className="h-5 w-5 text-cyan-400" />
+                <Brain className="h-5 w-5 text-cyan-400" />
               </div>
               <div>
-                <h4 className="font-semibold text-white mb-1">Dashboard Visual</h4>
-                <p className="text-sm text-gray-400">Acompanhe sua evolução real, não apenas tarefas cumpridas.</p>
+                <h4 className="font-semibold text-white mb-1">Mentor IA Estratégico</h4>
+                <p className="text-sm text-gray-400">Travou? Nossa IA analisa seus objetivos e sugere o próximo passo para destravar sua ação.</p>
               </div>
             </div>
           </div>
@@ -450,11 +442,11 @@ const Index = () => {
           <Zap className="h-12 w-12 text-[#d4a853] mx-auto mb-6" />
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 text-white">
             Organize sua vida nos próximos 30 dias,{" "}
-            <span className="text-[#d4a853]">sem risco.</span>
+            <span className="text-[#d4a853]">de graça.</span>
           </h2>
           <p className="text-gray-400 mb-8 text-base sm:text-lg max-w-2xl mx-auto">
-            Experimente a plataforma completa. Se não sentir que retomou o controle da sua rotina, 
-            você não paga nada.
+            Acesse a plataforma completa. Se em um mês você não sentir que recuperou o controle do seu tempo, 
+            você não paga nada. Simples assim.
           </p>
           <div className="flex flex-col items-center gap-3">
             <Button 
@@ -465,9 +457,6 @@ const Index = () => {
               Criar Minha Conta Grátis
               <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
-            <p className="text-sm text-gray-500">
-              R$ 67/ano após o período de teste
-            </p>
           </div>
         </div>
       </section>
