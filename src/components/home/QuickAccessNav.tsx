@@ -29,19 +29,19 @@ const navItems = [
     showAlways: true 
   },
   { 
-    label: "Quem sou eu", 
+    label: "Base Pessoal", 
     icon: User, 
     path: "/plano-vida/quem-sou",
     showAlways: true 
   },
   { 
-    label: "Para onde vou", 
+    label: "Direção & Objetivos", 
     icon: Target, 
     path: "/plano-vida/para-onde",
     showAlways: true 
   },
   { 
-    label: "Como chegar lá", 
+    label: "Plano de Execução", 
     icon: Footprints, 
     path: "/plano-vida/como-chegar",
     showAlways: true 
