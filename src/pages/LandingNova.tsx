@@ -46,7 +46,7 @@ const LandingNova = () => {
   };
 
   const handleCTAClick = () => {
-    setIsModalOpen(true);
+    navigate("/signup");
   };
 
   return (
