@@ -12,8 +12,6 @@ import Index from "./pages/Index";
 import SubscriberLanding from "./pages/SubscriberLanding";
 import NotFound from "./pages/NotFound";
 import Landing from "./pages/Landing";
-import LeadP from "./pages/LeadP";
-import LeadP3 from "./pages/LeadP3";
 import Signup from "./pages/Signup";
 import Login from "./pages/Login";
 import Onboarding from "./pages/Onboarding";
@@ -56,11 +54,6 @@ import Reflexao from "./pages/Reflexao";
 import Progresso from "./pages/Progresso";
 import ListaPendencias from "./pages/ListaPendencias";
 import LandingNova from "./pages/LandingNova";
-import LandingClareza from "./pages/LandingClareza";
-import LandingDispersao from "./pages/LandingDispersao";
-import LandingRotina from "./pages/LandingRotina";
-import LandingConstancia from "./pages/LandingConstancia";
-import LandingIntegracao from "./pages/LandingIntegracao";
 import Quiz from "./pages/Quiz";
 import DesafioCodigo from "./pages/DesafioCodigo";
 import CheckoutDireto from "./pages/CheckoutDireto";
@@ -90,10 +83,7 @@ const App = () => (
               <Routes>
                 <Route path="/" element={<LandingNova />} />
                 <Route path="/news" element={<SubscriberLanding />} />
-                <Route path="/leadp" element={<Landing />} />
                 <Route path="/leadp2" element={<Index />} />
-                <Route path="/leadp3" element={<LeadP3 />} />
-                <Route path="/landing-antiga" element={<LeadP />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/signup" element={<Signup />} />
                 <Route path="/onboarding" element={<Onboarding />} />
@@ -136,11 +126,6 @@ const App = () => (
                 <Route path="/reflexao" element={<Reflexao />} />
                 <Route path="/progresso" element={<Progresso />} />
                 <Route path="/quiz" element={<Quiz />} />
-                <Route path="/lp-clareza" element={<LandingClareza />} />
-                <Route path="/lp-dispersao" element={<LandingDispersao />} />
-                <Route path="/lp-rotina" element={<LandingRotina />} />
-                <Route path="/lp-constancia" element={<LandingConstancia />} />
-                <Route path="/lp-integracao" element={<LandingIntegracao />} />
                 <Route path="/desafio-30-dias" element={<DesafioCodigo />} />
                 <Route path="/checkout-direto" element={<CheckoutDireto />} />
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

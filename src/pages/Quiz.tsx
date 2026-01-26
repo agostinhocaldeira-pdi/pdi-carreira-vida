@@ -169,7 +169,7 @@ const resultados: Record<Trava, {
     botaoTexto: "Quero conhecer o PDI",
     microcopy: "Acesso imediato • Sem cartão de crédito",
     icon: Flame,
-    landingRoute: "/lp-clareza",
+    landingRoute: "/",
   },
   INERCIA: {
     padraoOperacional: "A DIREÇÃO NÃO SUSTENTADA",
@@ -181,7 +181,7 @@ const resultados: Record<Trava, {
     botaoTexto: "Quero conhecer o PDI",
     microcopy: "Acesso imediato • Sem cartão de crédito",
     icon: Calendar,
-    landingRoute: "/lp-dispersao",
+    landingRoute: "/",
   },
   DISPERSAO: {
     padraoOperacional: "A ENERGIA FRAGMENTADA",
@@ -193,7 +193,7 @@ const resultados: Record<Trava, {
     botaoTexto: "Quero conhecer o PDI",
     microcopy: "Acesso imediato • Sem cartão de crédito",
     icon: Target,
-    landingRoute: "/lp-rotina",
+    landingRoute: "/",
   },
   LENTIDAO: {
     padraoOperacional: "O POTENCIAL SUBUTILIZADO",
@@ -205,7 +205,7 @@ const resultados: Record<Trava, {
     botaoTexto: "Quero conhecer o PDI",
     microcopy: "Acesso imediato • Sem cartão de crédito",
     icon: Brain,
-    landingRoute: "/lp-constancia",
+    landingRoute: "/",
   },
 };
 
