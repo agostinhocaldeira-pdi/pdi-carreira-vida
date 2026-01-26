@@ -323,7 +323,7 @@ const StoicInteractiveExperience = ({
           !isActive && "flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
         )}>
           <h4 className={cn(
-            "font-bold text-primary transition-all duration-500",
+            "font-bold text-white transition-all duration-500",
             isActive ? "text-lg" : "text-lg sm:text-xl",
             phase === "playing" && "animate-pulse",
             !isActive && "pr-0 sm:pr-4 flex-1"
@@ -358,7 +358,7 @@ const StoicInteractiveExperience = ({
         {isActive && (
           <div className="px-6 pb-4">
             <p className={cn(
-              "text-foreground/90 leading-relaxed transition-opacity duration-300",
+              "text-white leading-relaxed transition-opacity duration-300",
               displayedText ? "opacity-100" : "opacity-0"
             )}>
               {displayedText}
