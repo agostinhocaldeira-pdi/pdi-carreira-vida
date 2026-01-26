@@ -146,57 +146,62 @@ const questions: Question[] = [
   },
 ];
 
-// Placeholder for results - will be updated when user provides result content
+// Result content based on predominant answer
 const resultados: Record<Trava, {
-  titulo: string;
-  diagnostico: string;
-  ciencia: string;
-  primeiroPasso: string;
-  ferramenta: string;
+  padraoOperacional: string;
+  subtitulo: string;
+  oQueSignifica: string;
+  travaInvisivel: string;
+  custoLongoPrazo: string;
+  correcaoNecessaria: string;
   botaoTexto: string;
   microcopy: string;
   icon: React.ElementType;
   landingRoute: string;
 }> = {
   EXAUSTAO: {
-    titulo: "Exaustão Improdutiva",
-    diagnostico: "Você trabalha muito, mas sente que não constrói nada de valor real. O esforço se perde em urgências.",
-    ciencia: "Placeholder - aguardando conteúdo.",
-    primeiroPasso: "Placeholder - aguardando conteúdo.",
-    ferramenta: "Conheça o Sistema de Organização, Gestão e Planejamento de Vida - PDI.",
+    padraoOperacional: "O ESFORÇO REATIVO",
+    subtitulo: "(A vida respondendo ao mundo)",
+    oQueSignifica: "Você não está parado. Pelo contrário, sua capacidade de entrega é alta. O problema é que você se esforça quase sempre respondendo ao que aparece, e não construindo o que importa.",
+    travaInvisivel: "Seu dia é governado pelas urgências dos outros, não pelas suas prioridades. Você se tornou excelente em \"apagar incêndios\", o que gera muito movimento, mas pouca tração na direção da sua Visão de Vida Desejada (VVD).",
+    custoLongoPrazo: "Desgaste emocional alto e crescimento real baixo. É a famosa sensação de \"correr o dia inteiro na esteira\": muito suor, mas você termina o ano no mesmo lugar.",
+    correcaoNecessaria: "Antes de organizar sua agenda, você precisa definir critérios de decisão. Quando tudo parece importante, nada realmente é. Você precisa de um sistema que filtre o ruído antes dele virar tarefa.",
     botaoTexto: "Quero conhecer o PDI",
     microcopy: "Acesso imediato • Sem cartão de crédito",
     icon: Flame,
     landingRoute: "/lp-clareza",
   },
   INERCIA: {
-    titulo: "Frustração por Inércia",
-    diagnostico: "Você tem planos claros, mas não consegue começar o que realmente importa.",
-    ciencia: "Placeholder - aguardando conteúdo.",
-    primeiroPasso: "Placeholder - aguardando conteúdo.",
-    ferramenta: "Conheça o Sistema de Organização, Gestão e Planejamento de Vida - PDI.",
+    padraoOperacional: "A DIREÇÃO NÃO SUSTENTADA",
+    subtitulo: "(Clareza que não desce para a rotina)",
+    oQueSignifica: "Você sabe o que quer — pelo menos na teoria. Você tem visão e bons planos. O problema é que essa clareza não sobrevive ao contato com a realidade da sua segunda-feira.",
+    travaInvisivel: "Existe um \"muro\" entre o seu planejamento (o eu que sonha) e a sua execução (o eu que faz). Você planeja num cenário ideal, mas opera num ambiente que não protege esse plano. O caos engole a estratégia.",
+    custoLongoPrazo: "Frustração recorrente e a exaustiva sensação de estar sempre \"recomeçando\". Você acumula planos perfeitos na gaveta enquanto a vida acontece no improviso.",
+    correcaoNecessaria: "Você não precisa de metas melhores. Você precisa de uma ponte operacional. Transformar sua visão em decisões práticas e inegociáveis do dia a dia.",
     botaoTexto: "Quero conhecer o PDI",
     microcopy: "Acesso imediato • Sem cartão de crédito",
     icon: Calendar,
-    landingRoute: "/lp-rotina",
+    landingRoute: "/lp-dispersao",
   },
   DISPERSAO: {
-    titulo: "Ansiedade de Dispersão",
-    diagnostico: "Você começa muitos projetos com empolgação, mas não termina nenhum.",
-    ciencia: "Placeholder - aguardando conteúdo.",
-    primeiroPasso: "Placeholder - aguardando conteúdo.",
-    ferramenta: "Conheça o Sistema de Organização, Gestão e Planejamento de Vida - PDI.",
+    padraoOperacional: "A ENERGIA FRAGMENTADA",
+    subtitulo: "(Atenção sem eixo central)",
+    oQueSignifica: "Você tem iniciativa, criatividade e vontade de fazer. Mas falta um eixo central que diga o que merece continuidade e o que é apenas distração.",
+    travaInvisivel: "Você confunde novidade com progresso. O entusiasmo inicial te move, mas quando a rotina exige consistência chata, você busca o próximo projeto brilhante. Sua energia se dissipa em várias direções, sem furar o bloqueio em nenhuma.",
+    custoLongoPrazo: "Muito começo, pouca construção. Você corre o risco de olhar para trás daqui a 5 anos e ver uma coleção de projetos inacabados, sem nenhum legado sólido.",
+    correcaoNecessaria: "Essencialismo Estratégico. Você precisa definir uma \"Prioridade-Mãe\" que organize todas as outras escolhas e aprender a dizer não para boas oportunidades que desviam seu foco.",
     botaoTexto: "Quero conhecer o PDI",
     microcopy: "Acesso imediato • Sem cartão de crédito",
     icon: Target,
-    landingRoute: "/lp-dispersao",
+    landingRoute: "/lp-rotina",
   },
   LENTIDAO: {
-    titulo: "Progresso Lento",
-    diagnostico: "Você está avançando, mas numa velocidade muito menor do que sua capacidade permitiria.",
-    ciencia: "Placeholder - aguardando conteúdo.",
-    primeiroPasso: "Placeholder - aguardando conteúdo.",
-    ferramenta: "Conheça o Sistema de Organização, Gestão e Planejamento de Vida - PDI.",
+    padraoOperacional: "O POTENCIAL SUBUTILIZADO",
+    subtitulo: "(Clareza existe, falta sistema)",
+    oQueSignifica: "Você está acima da média em consciência e intenção. Você sabe onde quer chegar e tem disciplina. O que te trava não é falta de vontade, é a ineficiência do processo.",
+    travaInvisivel: "Você depende demais da sua \"memória RAM\" (sua cabeça) para organizar tudo. Isso consome uma energia mental absurda apenas para manter as coisas funcionando, sobrando pouco para a expansão e inovação.",
+    custoLongoPrazo: "Crescimento linear, quando poderia ser exponencial. Você está jogando abaixo do seu nível real porque gasta energia gerenciando o caos mental em vez de executar estratégia.",
+    correcaoNecessaria: "Externalização. Você precisa tirar o peso da decisão da sua cabeça e passá-lo para um método confiável. Um sistema externo que sustente sua execução sem depender da sua motivação diária.",
     botaoTexto: "Quero conhecer o PDI",
     microcopy: "Acesso imediato • Sem cartão de crédito",
     icon: Brain,
@@ -204,7 +209,7 @@ const resultados: Record<Trava, {
   },
 };
 
-// Ordem de desempate
+// Ordem de desempate (alfabética: A, B, C, D)
 const ordemDesempate: Trava[] = ["EXAUSTAO", "INERCIA", "DISPERSAO", "LENTIDAO"];
 
 const Diagnostico = () => {
@@ -399,54 +404,60 @@ const Diagnostico = () => {
                     })()}
                   </div>
                   <p className="text-[#1a1a1a]/80 text-sm mb-1">
-                    Onde seu esforço está se perdendo:
+                    Seu Padrão Operacional:
                   </p>
                   <h2 className="text-2xl md:text-3xl font-bold text-[#1a1a1a]">
-                    {resultados[resultTrava].titulo}
+                    {resultados[resultTrava].padraoOperacional}
                   </h2>
+                  <p className="text-[#1a1a1a]/70 text-sm mt-1">
+                    {resultados[resultTrava].subtitulo}
+                  </p>
                 </div>
 
                 {/* Result Content */}
-                <div className="p-6 md:p-8 space-y-6">
-                  {/* Diagnóstico */}
+                <div className="p-6 md:p-8 space-y-5">
+                  {/* O Que Isso Significa */}
                   <div>
                     <h3 className="font-semibold text-white mb-2 flex items-center gap-2">
                       <span className="w-1.5 h-1.5 rounded-full bg-[#d4a853]"></span>
-                      Diagnóstico
+                      O Que Isso Significa
                     </h3>
                     <p className="text-gray-300 text-sm leading-relaxed">
-                      {resultados[resultTrava].diagnostico}
+                      {resultados[resultTrava].oQueSignifica}
                     </p>
                   </div>
 
-                  {/* A Ciência */}
+                  {/* A Trava Invisível */}
                   <div className="bg-[#1a1a1a] rounded-xl p-4 border border-gray-700">
                     <h3 className="font-semibold text-white mb-2 flex items-center gap-2">
-                      <Brain className="w-4 h-4 text-[#d4a853]" />
-                      A Ciência
+                      <Heart className="w-4 h-4 text-red-400" />
+                      A Trava Invisível
                     </h3>
                     <p className="text-gray-300 text-sm leading-relaxed">
-                      {resultados[resultTrava].ciencia}
+                      {resultados[resultTrava].travaInvisivel}
                     </p>
                   </div>
 
-                  {/* Primeiro Passo */}
+                  {/* O Custo a Longo Prazo */}
                   <div>
                     <h3 className="font-semibold text-white mb-2 flex items-center gap-2">
-                      <span className="w-1.5 h-1.5 rounded-full bg-green-500"></span>
-                      O Primeiro Passo
+                      <span className="w-1.5 h-1.5 rounded-full bg-red-500"></span>
+                      O Custo a Longo Prazo
                     </h3>
                     <p className="text-gray-300 text-sm leading-relaxed">
-                      {resultados[resultTrava].primeiroPasso}
+                      {resultados[resultTrava].custoLongoPrazo}
                     </p>
                   </div>
 
-                  {/* Conheça o PDI */}
+                  {/* A Correção Necessária */}
                   <div className="bg-[#d4a853]/10 rounded-xl p-4 border border-[#d4a853]/20">
-                    <h3 className="font-semibold text-[#d4a853] flex items-center gap-2">
-                      <span className="w-1.5 h-1.5 rounded-full bg-[#d4a853]"></span>
-                      Conheça o Sistema de Organização, Gestão e Planejamento de Vida - PDI.
+                    <h3 className="font-semibold text-[#d4a853] mb-2 flex items-center gap-2">
+                      <Sparkles className="w-4 h-4" />
+                      A Correção Necessária
                     </h3>
+                    <p className="text-gray-300 text-sm leading-relaxed">
+                      {resultados[resultTrava].correcaoNecessaria}
+                    </p>
                   </div>
 
                   {/* CTA */}
