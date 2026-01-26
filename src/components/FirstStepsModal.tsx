@@ -5,7 +5,7 @@ import {
   DialogContent,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Compass, Clock } from "lucide-react";
+import { Settings2, Clock, Info } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
 const FIRST_STEPS_KEY = "pdi_first_steps_shown";
@@ -17,7 +17,6 @@ export const FirstStepsModal = () => {
 
   useEffect(() => {
     const checkFirstAccess = async () => {
-      // Verificar se há usuário autenticado
       const { data: { user } } = await supabase.auth.getUser();
       
       if (user) {
@@ -45,19 +44,16 @@ export const FirstStepsModal = () => {
           (areasVida && areasVida.length > 0) ||
           (vvd && vvd.length > 0);
         
-        // Se o usuário já usou o sistema, não mostrar o modal
         if (hasUsedSystem) {
           localStorage.setItem(FIRST_STEPS_KEY, "true");
           return;
         }
         
-        // Se não tem uso real, mostrar o modal
         const timer = setTimeout(() => {
           setOpen(true);
         }, 500);
         return () => clearTimeout(timer);
       } else {
-        // Para usuários não autenticados, usar localStorage
         const hasSeenFirstSteps = localStorage.getItem(FIRST_STEPS_KEY);
         if (!hasSeenFirstSteps) {
           const timer = setTimeout(() => {
@@ -72,10 +68,8 @@ export const FirstStepsModal = () => {
   }, []);
 
   const handleClose = async () => {
-    // Salvar no localStorage
     localStorage.setItem(FIRST_STEPS_KEY, "true");
     
-    // Se usuário autenticado, salvar no Supabase
     if (userId) {
       try {
         await supabase
@@ -106,60 +100,69 @@ export const FirstStepsModal = () => {
     <Dialog open={open} onOpenChange={(isOpen) => {
       if (!isOpen) handleClose();
     }}>
-      <DialogContent className="sm:max-w-[520px] max-h-[90vh] overflow-y-auto p-0 bg-[#1A1A1A] border border-[#D4AF37]/40 shadow-2xl">
+      <DialogContent 
+        className="sm:max-w-[520px] max-h-[90vh] overflow-y-auto p-0 bg-[#1A1A1A] border border-[#D4AF37]/40 shadow-2xl"
+        hideCloseButton
+      >
         {/* Header with Icon */}
-        <div className="pt-8 pb-4 px-6 text-center">
-          <div className="w-16 h-16 mx-auto mb-6 rounded-full bg-[#D4AF37]/15 border border-[#D4AF37]/30 flex items-center justify-center">
-            <Compass className="w-8 h-8 text-[#D4AF37]" />
+        <div className="pt-10 pb-6 px-8 text-center">
+          <div className="w-18 h-18 mx-auto mb-6 rounded-full bg-[#D4AF37]/10 border border-[#D4AF37]/30 flex items-center justify-center p-4">
+            <Settings2 className="w-10 h-10 text-[#D4AF37]" />
           </div>
           
-          <h2 className="text-2xl font-bold text-white mb-3">
-            O controle agora está com você.
+          <h2 className="text-2xl font-bold text-white mb-2">
+            O próximo passo define todo o resto.
           </h2>
-          
-          <p className="text-white/70 text-sm leading-relaxed">
-            Você deu o passo que separa os ocupados dos realizadores.
-            <br />
-            Bem-vindo ao seu novo sistema de navegação.
+        </div>
+
+        {/* Body - Main Text */}
+        <div className="px-8 pb-5">
+          <p className="text-white/70 text-sm leading-relaxed text-center">
+            Para o sistema funcionar com precisão, ele precisa primeiro entender sua base pessoal.
+            <br /><br />
+            Esse mapeamento conecta identidade, valores e prioridades — e garante que suas metas, agenda e execução avancem na direção certa, sem desperdício de energia.
           </p>
         </div>
 
-        {/* Body - Highlight Box */}
-        <div className="px-6 pb-4">
-          <div className="p-5 rounded-xl bg-[#252525] border border-white/10">
-            <p className="text-white/90 text-sm leading-relaxed">
-              <span className="font-semibold text-[#D4AF37]">O sistema iniciou em MODO INICIAÇÃO.</span>
-              <br /><br />
-              Sua Agenda e Ferramentas de Execução estão temporariamente bloqueadas. 
-              Para destravá-las, precisamos primeiro calibrar sua bússola pessoal (Passo 1).
+        {/* Status Box */}
+        <div className="px-8 pb-5">
+          <div className="p-4 rounded-lg bg-[#252525] border border-white/10 flex items-start gap-3">
+            <Info className="w-5 h-5 text-[#D4AF37] shrink-0 mt-0.5" />
+            <p className="text-white/80 text-sm leading-relaxed">
+              <span className="font-medium">Status do Sistema:</span> O Modo Operacional será ativado automaticamente após a definição da sua Base Pessoal.
             </p>
           </div>
         </div>
 
         {/* Footer - Time Expectation */}
-        <div className="px-6 pb-4">
-          <div className="flex items-center justify-center gap-2 text-white/50 text-sm">
+        <div className="px-8 pb-5">
+          <div className="flex items-center justify-center gap-2 text-[#D4AF37]/80 text-sm">
             <Clock className="w-4 h-4" />
-            <span>Investimento necessário: 30 minutos de foco total.</span>
+            <span>Tempo estimado: cerca de 30 minutos de foco tranquilo</span>
           </div>
         </div>
 
         {/* Action Buttons */}
-        <div className="px-6 pb-8 space-y-3">
+        <div className="px-8 pb-8 space-y-3">
           <Button 
             onClick={handleStartNow} 
-            className="w-full h-12 bg-[#D4AF37] hover:bg-[#C9A431] text-[#1A1A1A] font-semibold text-base"
+            className="w-full h-12 bg-[#D4AF37] hover:bg-[#C9A431] text-[#1A1A1A] font-semibold text-base shadow-lg"
           >
-            Iniciar Mapeamento Agora
+            Iniciar Base Pessoal agora
           </Button>
           
           <Button 
             variant="ghost"
             onClick={handleLater} 
-            className="w-full h-10 text-white/50 hover:text-white/70 hover:bg-white/5 font-normal text-sm"
+            className="w-full h-10 text-white/40 hover:text-white/60 hover:bg-white/5 font-normal text-sm"
           >
-            Vou fazer depois
+            Fazer isso depois
           </Button>
+          
+          {/* Microcopy */}
+          <p className="text-center text-white/30 text-xs pt-1">
+            Você poderá iniciar a qualquer momento pela Home.
+          </p>
         </div>
       </DialogContent>
     </Dialog>
