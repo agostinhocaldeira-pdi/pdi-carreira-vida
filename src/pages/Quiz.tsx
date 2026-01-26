@@ -69,6 +69,31 @@ const questions: Question[] = [
       },
     ],
   },
+  {
+    headline: "Quando surgem três demandas urgentes ao mesmo tempo, como você decide?",
+    options: [
+      { 
+        label: "Fazer Tudo", 
+        text: "Tento fazer as três, sacrificando meu tempo pessoal ou sono.", 
+        trava: "EXAUSTAO" 
+      },
+      { 
+        label: "Análise Paralisante", 
+        text: "Travo tentando analisar qual é a melhor e acabo procrastinando a decisão.", 
+        trava: "INERCIA" 
+      },
+      { 
+        label: "Quick Win", 
+        text: "Resolvo a mais rápida/fácil primeiro para sentir que estou produzindo (\"check\" rápido).", 
+        trava: "DISPERSAO" 
+      },
+      { 
+        label: "Foco Estratégico", 
+        text: "Paro, analiso qual delas move o ponteiro da minha meta principal e ignoro/delego o resto.", 
+        trava: "LENTIDAO" 
+      },
+    ],
+  },
 ];
 
 // Placeholder for results - will be updated when user provides result content
