@@ -1,19 +1,8 @@
 import { useState } from "react";
-import { HelpCircle, X, Zap, Footprints, Target, ClipboardList, Calendar, Sparkles, ListTodo, Info } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Info, Zap, Footprints, Target, ClipboardList, Calendar, Sparkles, ListTodo, CheckCircle2 } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
 import { PendingTasksModal } from "./PendingTasksModal";
-
-// Cores das categorias (tarefas manuais)
-const categoryColors = [
-  { color: 'bg-green-500', label: 'Pessoal' },
-  { color: 'bg-blue-500', label: 'Trabalho' },
-  { color: 'bg-purple-500', label: 'Estudo' },
-  { color: 'bg-orange-500', label: 'Saúde' },
-  { color: 'bg-yellow-500', label: 'Lazer' },
-  { color: 'bg-red-500', label: 'Urgente' },
-];
 
 // Origens das tarefas (círculos/ícones)
 const sourceTypes = [
@@ -26,10 +15,20 @@ const sourceTypes = [
   { icon: ListTodo, label: 'Pendência', color: 'bg-violet-500', description: 'Lista de Pendências' },
 ];
 
-// Quadrantes Eisenhower (apenas os que aparecem na agenda)
+// Categorias de tarefas manuais
+const categoryColors = [
+  { color: 'bg-green-500', label: 'Pessoal' },
+  { color: 'bg-blue-500', label: 'Trabalho' },
+  { color: 'bg-purple-500', label: 'Estudo' },
+  { color: 'bg-orange-500', label: 'Saúde' },
+  { color: 'bg-yellow-500', label: 'Lazer' },
+  { color: 'bg-red-500', label: 'Urgente' },
+];
+
+// Quadrantes Eisenhower
 const eisenhowerQuadrants = [
-  { color: 'bg-red-500', label: 'Urgente + Importante', description: 'Fazer imediatamente' },
-  { color: 'bg-orange-500', label: 'Importante, não urgente', description: 'Agendar para depois' },
+  { color: 'bg-red-500', label: 'Fazer Agora', description: 'Urgente + Importante' },
+  { color: 'bg-orange-500', label: 'Agendar', description: 'Importante, não urgente' },
 ];
 
 interface AgendaLegendProps {
@@ -44,27 +43,27 @@ export const AgendaLegend = ({ variant = 'compact' }: AgendaLegendProps) => {
   if (variant === 'inline') {
     return (
       <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-muted-foreground">
-        <span className="font-medium">Legendas:</span>
-        {categoryColors.slice(0, 4).map((item) => (
-          <div key={item.label} className="flex items-center gap-1">
+        <span className="font-medium text-foreground/70">Legendas:</span>
+        {categoryColors.slice(0, 3).map((item) => (
+          <div key={item.label} className="flex items-center gap-1.5">
             <div className={cn("w-2 h-2 rounded-full", item.color)} />
-            <span>{item.label}</span>
+            <span className="text-foreground/60">{item.label}</span>
           </div>
         ))}
         <button
           onClick={() => setModalOpen(true)}
-          className="text-primary hover:underline flex items-center gap-1"
+          className="text-muted-foreground hover:text-[#D4AF37] transition-colors flex items-center gap-1"
         >
           <Info className="w-3 h-3" />
           Ver todas
         </button>
-        <span className="text-muted-foreground/50">|</span>
+        <span className="text-border">|</span>
         <button
           onClick={() => setPendingTasksModalOpen(true)}
-          className="text-primary hover:underline flex items-center gap-1"
+          className="text-muted-foreground hover:text-[#D4AF37] transition-colors flex items-center gap-1"
         >
           <ListTodo className="w-3 h-3" />
-          Pendências
+          Radar de Ações
         </button>
         
         <LegendModal open={modalOpen} onOpenChange={setModalOpen} />
@@ -76,25 +75,22 @@ export const AgendaLegend = ({ variant = 'compact' }: AgendaLegendProps) => {
   // Versão compacta (mobile) - apenas botões que abrem modais
   return (
     <>
-      <div className="flex items-center gap-2">
-        <Button
-          variant="ghost"
-          size="sm"
+      <div className="flex items-center gap-3">
+        <button
           onClick={() => setModalOpen(true)}
-          className="text-xs text-muted-foreground hover:text-primary gap-1.5 h-8 px-2"
+          className="text-xs text-muted-foreground hover:text-[#D4AF37] transition-colors flex items-center gap-1.5"
         >
-          <HelpCircle className="w-3.5 h-3.5" />
-          <span>Legenda</span>
-        </Button>
-        <Button
-          variant="ghost"
-          size="sm"
+          <Info className="w-3.5 h-3.5" />
+          <span>Guia de Ícones</span>
+        </button>
+        <span className="text-border">|</span>
+        <button
           onClick={() => setPendingTasksModalOpen(true)}
-          className="text-xs text-muted-foreground hover:text-primary gap-1.5 h-8 px-2"
+          className="text-xs text-muted-foreground hover:text-[#D4AF37] transition-colors flex items-center gap-1.5"
         >
           <ListTodo className="w-3.5 h-3.5" />
-          <span>Pendências</span>
-        </Button>
+          <span>Radar de Ações</span>
+        </button>
       </div>
       
       <LegendModal open={modalOpen} onOpenChange={setModalOpen} />
@@ -111,28 +107,28 @@ interface LegendModalProps {
 const LegendModal = ({ open, onOpenChange }: LegendModalProps) => {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md max-h-[85vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle className="text-center">Legenda da Agenda</DialogTitle>
+      <DialogContent className="sm:max-w-md max-h-[85vh] overflow-y-auto bg-background border-border">
+        <DialogHeader className="pb-2 border-b border-border">
+          <DialogTitle className="text-base font-semibold">Guia de Ícones</DialogTitle>
         </DialogHeader>
 
-        <div className="space-y-6 py-4">
-          {/* Origem das tarefas - PRIMEIRO */}
+        <div className="space-y-5 py-3">
+          {/* Origem das tarefas */}
           <div>
-            <h3 className="text-sm font-semibold mb-3 text-foreground">
+            <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">
               Origem das Tarefas
             </h3>
-            <div className="space-y-2">
+            <div className="space-y-1">
               {sourceTypes.map((item) => {
                 const Icon = item.icon;
                 return (
-                  <div key={item.label} className="flex items-center gap-3 p-2 rounded-lg bg-muted/50">
-                    <div className={cn("w-6 h-6 rounded-full flex items-center justify-center", item.color)}>
-                      <Icon className="w-3.5 h-3.5 text-white" />
+                  <div key={item.label} className="flex items-center gap-3 py-1.5">
+                    <div className={cn("w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0", item.color)}>
+                      <Icon className="w-3 h-3 text-white" />
                     </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium">{item.label}</p>
-                      <p className="text-xs text-muted-foreground">{item.description}</p>
+                    <div className="flex items-center gap-2 flex-1 min-w-0">
+                      <span className="text-sm font-medium text-foreground">{item.label}</span>
+                      <span className="text-xs text-muted-foreground">— {item.description}</span>
                     </div>
                   </div>
                 );
@@ -140,16 +136,16 @@ const LegendModal = ({ open, onOpenChange }: LegendModalProps) => {
             </div>
           </div>
 
-          {/* Categorias de tarefas manuais */}
+          {/* Categorias */}
           <div>
-            <h3 className="text-sm font-semibold mb-3 text-foreground">
-              Categorias (Tarefas Manuais)
+            <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">
+              Categorias
             </h3>
-            <div className="grid grid-cols-2 gap-2">
+            <div className="grid grid-cols-2 gap-x-4 gap-y-1">
               {categoryColors.map((item) => (
-                <div key={item.label} className="flex items-center gap-2 p-2 rounded-lg bg-muted/50">
-                  <div className={cn("w-3 h-3 rounded-full flex-shrink-0", item.color)} />
-                  <span className="text-sm">{item.label}</span>
+                <div key={item.label} className="flex items-center gap-2 py-1">
+                  <div className={cn("w-2.5 h-2.5 rounded-full flex-shrink-0", item.color)} />
+                  <span className="text-sm text-foreground">{item.label}</span>
                 </div>
               ))}
             </div>
@@ -157,37 +153,34 @@ const LegendModal = ({ open, onOpenChange }: LegendModalProps) => {
 
           {/* Quadrantes Eisenhower */}
           <div>
-            <h3 className="text-sm font-semibold mb-3 text-foreground">
-              Quadrantes Eisenhower
+            <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">
+              Eisenhower
             </h3>
-            <div className="grid grid-cols-2 gap-2">
+            <div className="grid grid-cols-2 gap-x-4 gap-y-1">
               {eisenhowerQuadrants.map((item) => (
-                <div key={item.label} className="flex items-start gap-2 p-2 rounded-lg bg-muted/50">
-                  <div className={cn("w-3 h-3 rounded-full flex-shrink-0 mt-0.5", item.color)} />
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium">{item.label}</p>
-                    <p className="text-xs text-muted-foreground">{item.description}</p>
+                <div key={item.label} className="flex items-center gap-2 py-1">
+                  <div className={cn("w-2.5 h-2.5 rounded-full flex-shrink-0", item.color)} />
+                  <div className="min-w-0">
+                    <span className="text-sm text-foreground">{item.label}</span>
                   </div>
                 </div>
               ))}
             </div>
           </div>
 
-          {/* Indicadores visuais */}
+          {/* Indicadores */}
           <div>
-            <h3 className="text-sm font-semibold mb-3 text-foreground">
-              Indicadores
+            <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">
+              Status
             </h3>
-            <div className="space-y-2">
-              <div className="flex items-center gap-3 p-2 rounded-lg bg-muted/50">
-                <div className="w-5 h-5 rounded-full border-2 border-muted-foreground/30" />
-                <span className="text-sm">Tarefa pendente</span>
+            <div className="flex items-center gap-6">
+              <div className="flex items-center gap-2">
+                <div className="w-4 h-4 rounded-full border-2 border-muted-foreground/40" />
+                <span className="text-sm text-foreground">Pendente</span>
               </div>
-              <div className="flex items-center gap-3 p-2 rounded-lg bg-muted/50">
-                <div className="w-5 h-5 rounded-full bg-green-500 flex items-center justify-center">
-                  <span className="text-white text-xs">✓</span>
-                </div>
-                <span className="text-sm">Tarefa concluída</span>
+              <div className="flex items-center gap-2">
+                <CheckCircle2 className="w-4 h-4 text-green-500" />
+                <span className="text-sm text-foreground">Concluída</span>
               </div>
             </div>
           </div>
