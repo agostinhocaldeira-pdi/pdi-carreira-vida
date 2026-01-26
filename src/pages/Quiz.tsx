@@ -460,6 +460,37 @@ const Diagnostico = () => {
                     </p>
                   </div>
 
+                  {/* Seção Final - Comum a todos os resultados */}
+                  <div className="border-t border-gray-700 pt-6 mt-6">
+                    <h3 className="text-lg font-bold text-[#d4a853] mb-4 text-center">
+                      O Próximo Passo Inteligente
+                    </h3>
+                    <div className="space-y-4 text-gray-300 text-sm leading-relaxed">
+                      <p>
+                        Este diagnóstico não aponta falta de capacidade. Ele revela como sua energia está sendo direcionada hoje.
+                      </p>
+                      <p>
+                        Pessoas maduras não travam por preguiça. Elas travam por viverem sem um sistema de navegação confiável. Quando a direção fica clara, o esforço deixa de ser cansativo e passa a ser construtivo.
+                      </p>
+                      <div className="bg-[#1a1a1a] rounded-xl p-4 border border-gray-700">
+                        <p className="text-white font-medium mb-2">Lembre-se:</p>
+                        <ul className="space-y-1">
+                          <li className="flex items-center gap-2">
+                            <span className="w-1.5 h-1.5 rounded-full bg-[#d4a853]"></span>
+                            Clareza vem antes da produtividade.
+                          </li>
+                          <li className="flex items-center gap-2">
+                            <span className="w-1.5 h-1.5 rounded-full bg-[#d4a853]"></span>
+                            Direção vem antes da disciplina.
+                          </li>
+                        </ul>
+                      </div>
+                      <p className="text-center text-white/80 italic">
+                        Se você quer instalar esse sistema de navegação na sua vida e parar de desperdiçar esforço:
+                      </p>
+                    </div>
+                  </div>
+
                   {/* CTA */}
                   <div className="pt-4">
                     <Button
@@ -473,7 +504,7 @@ const Diagnostico = () => {
                       </span>
                     </Button>
                     <p className="text-center text-xs text-gray-400 mt-3">
-                      {resultados[resultTrava].microcopy}
+                      Transforme intenção em resultado
                     </p>
                   </div>
                 </div>
