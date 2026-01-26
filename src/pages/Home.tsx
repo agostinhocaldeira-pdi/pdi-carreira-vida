@@ -38,6 +38,7 @@ import { QuickAccessNav } from "@/components/home/QuickAccessNav";
 import { ProductivityTipsSection } from "@/components/home/ProductivityTipsSection";
 import { HomeInitiation } from "@/components/home/HomeInitiation";
 import { HomeOperational } from "@/components/home/HomeOperational";
+import { AIMentorFAB } from "@/components/home/AIMentorFAB";
 import { useSystemState } from "@/hooks/useSystemState";
 
 
@@ -524,6 +525,16 @@ const Home = () => {
         )}
 
       </main>
+
+      {/* AI Mentor FAB - Apenas no modo operacional */}
+      {hasCompletedBase && (
+        <AIMentorFAB
+          insight={insight}
+          isGenerating={isGeneratingInsight}
+          onGenerate={handleGenerateInsight}
+          canGenerate={canGenerateInsight}
+        />
+      )}
     </div>
   );
 };
