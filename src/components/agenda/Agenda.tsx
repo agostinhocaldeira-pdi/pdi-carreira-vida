@@ -197,7 +197,7 @@ export const Agenda = () => {
           {/* Add Task Link */}
           <button
             onClick={handleAddClick}
-            className="w-full text-center text-xs text-muted-foreground hover:text-[#D4AF37] transition-colors pt-2"
+            className="w-full text-center text-xs text-muted-foreground hover:text-[#D4AF37] transition-colors pt-3 pb-1"
           >
             + Lista de Tarefas avulsas
           </button>
