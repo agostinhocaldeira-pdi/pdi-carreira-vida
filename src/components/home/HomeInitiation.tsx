@@ -5,20 +5,46 @@
  * Layout:
  * - Hero Section (Educativa)
  * - Estrutura do Sistema (3 Cards: 1 ativo, 2 bloqueados)
- * - Agenda (Bloqueada por padrão, habilitada após "Fazer depois")
+ * - Agenda (Bloqueada por padrão, habilitada após "Fazer depois" ou se tiver tarefas)
  */
 
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { User, Target, Rocket, Lock, Compass, ArrowRight, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Agenda } from "@/components/agenda";
+import { supabase } from "@/integrations/supabase/client";
 
 interface HomeInitiationProps {
   showAgenda?: boolean;
 }
 
 export const HomeInitiation = ({ showAgenda = false }: HomeInitiationProps) => {
+  const [hasAgendaEvents, setHasAgendaEvents] = useState(false);
+  
+  // Verificar se usuário tem eventos na agenda (persiste após refresh)
+  useEffect(() => {
+    const checkAgendaEvents = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        const { data: events } = await supabase
+          .from('agenda_events')
+          .select('id')
+          .eq('user_id', user.id)
+          .limit(1);
+        
+        if (events && events.length > 0) {
+          setHasAgendaEvents(true);
+        }
+      }
+    };
+    
+    checkAgendaEvents();
+  }, []);
+  
+  // Mostrar agenda se prop indica OU se já tem eventos no banco
+  const shouldShowAgenda = showAgenda || hasAgendaEvents;
   return (
     <div className="space-y-6 sm:space-y-8">
       {/* Hero Section - Educativa */}
@@ -139,7 +165,7 @@ export const HomeInitiation = ({ showAgenda = false }: HomeInitiationProps) => {
       </section>
 
       {/* Agenda - Condicional */}
-      {showAgenda ? (
+      {shouldShowAgenda ? (
         <Agenda />
       ) : (
         <Card className="bg-muted/30 border border-dashed border-border/50">
