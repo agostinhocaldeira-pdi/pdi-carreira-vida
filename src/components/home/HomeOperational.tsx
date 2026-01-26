@@ -266,8 +266,7 @@ const CleanTaskCard = ({ task, linkedGoalName, onToggleComplete, onClick }: Clea
               {/* Strategy Tag - Only show if linked to a goal */}
               {linkedGoalName && (
                 <Badge 
-                  variant="secondary" 
-                  className="text-[10px] px-1.5 py-0 h-5 bg-primary/10 text-primary border-primary/20"
+                  className="text-[10px] px-1.5 py-0 h-5 bg-[#1A1A1A] text-[#D4AF37] border border-[#D4AF37]/30 font-medium"
                 >
                   🎯 {linkedGoalName}
                 </Badge>
@@ -334,20 +333,25 @@ const AgendaEstrategica = () => {
   const taskDates = getTaskDates();
   const completedCount = tasks.filter(t => t.is_completed).length;
 
-  // Helper to find linked goal name
+  // Helper to find linked goal name based on task type and text matching
   const getLinkedGoalName = (task: AgendaTask): string | undefined => {
+    // Only show tags for objective and goal type tasks
     if (task.source_type === 'objective' || task.source_type === 'goal') {
-      // Try to find matching objetivo
+      // Try to find matching objetivo via fuzzy text matching
       const linkedObjetivo = objetivos.find(obj => 
-        task.title.toLowerCase().includes(obj.texto.toLowerCase().slice(0, 20)) ||
-        obj.texto.toLowerCase().includes(task.title.toLowerCase().slice(0, 20))
+        task.title.toLowerCase().includes(obj.texto.toLowerCase().slice(0, 15)) ||
+        obj.texto.toLowerCase().includes(task.title.toLowerCase().slice(0, 15))
       );
       if (linkedObjetivo) {
-        return linkedObjetivo.texto.length > 25 
-          ? linkedObjetivo.texto.slice(0, 25) + '...'
+        return linkedObjetivo.texto.length > 30 
+          ? linkedObjetivo.texto.slice(0, 30) + '...'
           : linkedObjetivo.texto;
       }
+      
+      // If no match found but it's an objective/goal type, show a generic label
+      return task.source_type === 'objective' ? 'Objetivo' : 'Meta';
     }
+    
     return undefined;
   };
 
