@@ -5,6 +5,7 @@
  * Features:
  * - Hero Premium: Objetivo Principal em destaque (Dark/Gold)
  * - Agenda Estratégica: UI Clean com tags de objetivo
+ * - Reflexão Estóica do Dia: Seção premium black
  * - Navegação hierárquica: Estratégico vs Manutenção
  */
 
@@ -33,6 +34,7 @@ import { useAgenda } from "@/hooks/useAgenda";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { cn } from "@/lib/utils";
 import type { AgendaTask } from "@/components/agenda/AgendaTaskCard";
+import StoicReflectionCard from "./StoicReflectionCard";
 
 // ============================================================
 // HERO SECTION - Objetivo Principal Premium
@@ -488,6 +490,9 @@ export const HomeOperational = () => {
       
       {/* Agenda Estratégica - Clean UI */}
       <AgendaEstrategica />
+      
+      {/* Reflexão Estóica do Dia - Premium Black Style */}
+      <StoicReflectionCard />
     </div>
   );
 };
