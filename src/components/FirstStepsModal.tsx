@@ -3,16 +3,9 @@ import { useNavigate } from "react-router-dom";
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { 
-  Sparkles,
-  Clock,
-  Calendar
-} from "lucide-react";
+import { Compass, Clock } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
 const FIRST_STEPS_KEY = "pdi_first_steps_shown";
@@ -31,7 +24,6 @@ export const FirstStepsModal = () => {
         setUserId(user.id);
         
         // Verificar se o usuário já tem algum uso real do sistema
-        // Checamos: objetivos, metas, valores, áreas de vida ou VVD preenchido
         const [
           { data: objetivos },
           { data: metas },
@@ -106,7 +98,7 @@ export const FirstStepsModal = () => {
     navigate('/plano-vida/quem-sou');
   };
 
-  const handleSchedule = async () => {
+  const handleLater = async () => {
     await handleClose();
   };
 
@@ -114,56 +106,59 @@ export const FirstStepsModal = () => {
     <Dialog open={open} onOpenChange={(isOpen) => {
       if (!isOpen) handleClose();
     }}>
-      <DialogContent className="sm:max-w-[500px] max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
-          <div className="flex items-center gap-3 mb-2">
-            <div className="w-10 h-10 sm:w-12 sm:h-12 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0">
-              <Sparkles className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
-            </div>
-            <DialogTitle className="text-lg sm:text-xl">Parabéns pela sua decisão! 🎉</DialogTitle>
+      <DialogContent className="sm:max-w-[520px] max-h-[90vh] overflow-y-auto p-0 bg-[#1A1A1A] border border-[#D4AF37]/40 shadow-2xl">
+        {/* Header with Icon */}
+        <div className="pt-8 pb-4 px-6 text-center">
+          <div className="w-16 h-16 mx-auto mb-6 rounded-full bg-[#D4AF37]/15 border border-[#D4AF37]/30 flex items-center justify-center">
+            <Compass className="w-8 h-8 text-[#D4AF37]" />
           </div>
-          <DialogDescription className="text-sm sm:text-base">
-            Parabéns pela sua decisão de construir seu futuro com o PDI.
-          </DialogDescription>
-        </DialogHeader>
-
-        <div className="space-y-4 py-4">
-          <div className="p-4 rounded-lg bg-primary/5 border border-primary/20">
-            <h4 className="font-semibold text-foreground text-base mb-2">
-              Comece pelo Plano de Vida:
-            </h4>
-            <p className="text-sm text-foreground font-medium mb-2">
-              Faça o passo 1 "Quem sou eu"
-            </p>
-            <p className="text-sm text-muted-foreground mb-3">
-              Nesta atividade, você vai realizar exercícios de autoconhecimento. 
-              Com esse exercício você terá uma clareza maior sobre o que você realmente deseja para sua vida.
-            </p>
-            <div className="flex items-center gap-2 text-sm text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/30 p-2 rounded-md">
-              <Clock className="w-4 h-4 flex-shrink-0" />
-              <span>Essa etapa é muito importante. Faça com calma. Duração aproximada: 30 minutos.</span>
-            </div>
-          </div>
-
-          <p className="text-sm text-muted-foreground text-center">
-            Você pode fazer agora ou cadastrar uma tarefa na sua agenda, para realizar no dia e hora que ficar melhor para você.
+          
+          <h2 className="text-2xl font-bold text-white mb-3">
+            O controle agora está com você.
+          </h2>
+          
+          <p className="text-white/70 text-sm leading-relaxed">
+            Você deu o passo que separa os ocupados dos realizadores.
+            <br />
+            Bem-vindo ao seu novo sistema de navegação.
           </p>
         </div>
 
-        <div className="flex flex-col sm:flex-row gap-3 pt-2 sticky bottom-0 bg-background pb-1">
-          <Button 
-            variant="outline" 
-            onClick={handleSchedule} 
-            className="gap-2 text-sm sm:text-base flex-1"
-          >
-            <Calendar className="w-4 h-4" />
-            Vou agendar
-          </Button>
+        {/* Body - Highlight Box */}
+        <div className="px-6 pb-4">
+          <div className="p-5 rounded-xl bg-[#252525] border border-white/10">
+            <p className="text-white/90 text-sm leading-relaxed">
+              <span className="font-semibold text-[#D4AF37]">O sistema iniciou em MODO INICIAÇÃO.</span>
+              <br /><br />
+              Sua Agenda e Ferramentas de Execução estão temporariamente bloqueadas. 
+              Para destravá-las, precisamos primeiro calibrar sua bússola pessoal (Passo 1).
+            </p>
+          </div>
+        </div>
+
+        {/* Footer - Time Expectation */}
+        <div className="px-6 pb-4">
+          <div className="flex items-center justify-center gap-2 text-white/50 text-sm">
+            <Clock className="w-4 h-4" />
+            <span>Investimento necessário: 30 minutos de foco total.</span>
+          </div>
+        </div>
+
+        {/* Action Buttons */}
+        <div className="px-6 pb-8 space-y-3">
           <Button 
             onClick={handleStartNow} 
-            className="gap-2 text-sm sm:text-base flex-1"
+            className="w-full h-12 bg-[#D4AF37] hover:bg-[#C9A431] text-[#1A1A1A] font-semibold text-base"
           >
-            Fazer agora
+            Iniciar Mapeamento Agora
+          </Button>
+          
+          <Button 
+            variant="ghost"
+            onClick={handleLater} 
+            className="w-full h-10 text-white/50 hover:text-white/70 hover:bg-white/5 font-normal text-sm"
+          >
+            Vou fazer depois
           </Button>
         </div>
       </DialogContent>
