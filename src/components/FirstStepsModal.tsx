@@ -113,14 +113,9 @@ export const FirstStepsModal = () => {
           <h2 className="text-2xl font-bold text-white mb-2">
             O próximo passo define todo o resto.
           </h2>
-        </div>
-
-        {/* Body - Main Text */}
-        <div className="px-8 pb-5">
-          <p className="text-white/70 text-sm leading-relaxed text-center">
+          
+          <p className="text-white/70 text-sm leading-relaxed">
             Para o sistema funcionar com precisão, ele precisa primeiro entender sua base pessoal.
-            <br /><br />
-            Esse mapeamento conecta identidade, valores e prioridades — e garante que suas metas, agenda e execução avancem na direção certa, sem desperdício de energia.
           </p>
         </div>
 
@@ -135,11 +130,18 @@ export const FirstStepsModal = () => {
         </div>
 
         {/* Footer - Time Expectation */}
-        <div className="px-8 pb-5">
+        <div className="px-8 pb-3">
           <div className="flex items-center justify-center gap-2 text-[#D4AF37]/80 text-sm">
             <Clock className="w-4 h-4" />
             <span>Tempo estimado: cerca de 30 minutos de foco tranquilo</span>
           </div>
+        </div>
+        
+        {/* Explanation text */}
+        <div className="px-8 pb-5">
+          <p className="text-white/50 text-xs leading-relaxed text-center">
+            Esse mapeamento conecta identidade, valores e prioridades — e garante que suas metas, agenda e execução avancem na direção certa, sem desperdício de energia.
+          </p>
         </div>
 
         {/* Action Buttons */}
