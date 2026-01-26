@@ -55,6 +55,7 @@ import EisenhowerScientificModal from "@/components/EisenhowerScientificModal";
 import BeliefsScientificModal from "@/components/BeliefsScientificModal";
 import Autoavaliacao360ScientificModal from "@/components/Autoavaliacao360ScientificModal";
 import heroPdiTarget from "@/assets/hero-pdi-target.png";
+import logoPdi from "@/assets/logo_pdi.png";
 import journeyPath from "@/assets/journey-path.jpg";
 import selfDiscovery from "@/assets/self-discovery.jpg";
 import growthStairs from "@/assets/growth-stairs.jpg";
@@ -216,11 +217,11 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/30">
+    <div className="min-h-screen bg-[#1a1a1a]">
       {/* Header */}
-      <header className="fixed top-0 left-0 right-0 z-50 bg-card shadow-elegant border-b border-border">
+      <header className="fixed top-0 left-0 right-0 z-50 bg-[#1a1a1a]/95 backdrop-blur-sm border-b border-gray-800">
         <div className="container mx-auto px-3 sm:px-4 py-3 sm:py-4 flex items-center justify-center">
-          <Logo size="md" />
+          <img src={logoPdi} alt="PDI" className="h-10 w-10 object-contain" />
         </div>
       </header>
 
@@ -230,18 +231,18 @@ const Index = () => {
       <section className="pt-28 sm:pt-32 pb-12 sm:pb-16 px-4">
         <div className="container mx-auto max-w-4xl">
           <div className="text-center">
-            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-5xl font-bold mb-4 sm:mb-6 text-foreground leading-tight">
-              <span className="text-primary/90">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-5xl font-bold mb-4 sm:mb-6 text-white leading-tight">
+              <span className="text-[#d4a853]">
                 Construa uma vida e uma carreira com clareza, direção e progresso real.
               </span>
             </h1>
-            <p className="text-base sm:text-lg md:text-xl text-muted-foreground mb-6 sm:mb-8 max-w-3xl mx-auto leading-relaxed">
+            <p className="text-base sm:text-lg md:text-xl text-gray-400 mb-6 sm:mb-8 max-w-3xl mx-auto leading-relaxed">
               Sistema guiado por método, mentoria especializada e Inteligência Artificial para quem quer evoluir com clareza e consistência.
             </p>
             
             {/* Video Section */}
             <div className="w-full max-w-3xl mx-auto mb-6 sm:mb-8">
-              <div className="relative w-full rounded-xl overflow-hidden shadow-2xl border border-border/50" style={{ paddingBottom: '56.25%' }}>
+              <div className="relative w-full rounded-xl overflow-hidden shadow-2xl border border-gray-700" style={{ paddingBottom: '56.25%' }}>
                 <iframe
                   className="absolute top-0 left-0 w-full h-full"
                   src="https://www.youtube.com/embed/F50nE1vYjaY?rel=0&controls=1"
@@ -253,23 +254,23 @@ const Index = () => {
             </div>
 
             <div className="flex flex-col items-center gap-3">
-              <div className="bg-primary/10 border border-primary/20 rounded-xl px-4 py-3 inline-block text-center">
-                <p className="text-base sm:text-lg font-bold text-primary mb-1">
+              <div className="bg-[#d4a853]/10 border border-[#d4a853]/30 rounded-xl px-4 py-3 inline-block text-center">
+                <p className="text-base sm:text-lg font-bold text-[#d4a853] mb-1">
                   30 dias grátis
                 </p>
-                <p className="text-sm sm:text-base text-muted-foreground">
+                <p className="text-sm sm:text-base text-gray-400">
                   R$ 67,00/ano • Acesso completo por 12 meses
                 </p>
               </div>
               <Button 
                 size="lg" 
                 onClick={() => navigate('/signup')}
-                className="text-base sm:text-lg px-6 sm:px-8 py-5 sm:py-6 bg-primary hover:bg-primary/90"
+                className="text-base sm:text-lg px-6 sm:px-8 py-5 sm:py-6 bg-[#d4a853] hover:bg-[#c49843] text-[#1a1a1a] font-semibold"
               >
                 Começar agora
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
-              <p className="text-xs sm:text-sm text-muted-foreground">
+              <p className="text-xs sm:text-sm text-gray-500">
                 Mentoria especializada + Inteligência Artificial
               </p>
             </div>
@@ -282,24 +283,24 @@ const Index = () => {
       {/* ============================================================ */}
       
       {/* Frase motivacional */}
-      <section className="py-12 sm:py-16 px-4 bg-muted/20">
+      <section className="py-12 sm:py-16 px-4 bg-[#222222]">
         <div className="container mx-auto max-w-6xl">
           <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
             <div className="text-center lg:text-left order-1 lg:order-1">
               <div className="mb-6">
-                <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-foreground">
-                  Quem planeja tem futuro, <span className="text-primary">quem não planeja tem destino.</span>
+                <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-white">
+                  Quem planeja tem futuro, <span className="text-[#d4a853]">quem não planeja tem destino.</span>
                 </h2>
-                <p className="text-sm text-muted-foreground text-right mt-2">— Mario Nazar</p>
+                <p className="text-sm text-gray-500 text-right mt-2">— Mario Nazar</p>
               </div>
-              <p className="text-base sm:text-lg text-muted-foreground mb-4 leading-relaxed">
+              <p className="text-base sm:text-lg text-gray-400 mb-4 leading-relaxed">
                 Vi centenas de pessoas competentes travarem em suas carreiras e vida pessoal. Objetivos importantes eram deixados de lado, decisões se acumulavam e o progresso parecia impossível.
               </p>
-              <p className="text-base sm:text-lg text-muted-foreground mb-4 leading-relaxed">
+              <p className="text-base sm:text-lg text-gray-400 mb-4 leading-relaxed">
                 Não é motivação que faltava — faltava estrutura, clareza e um método para transformar intenção em ação consistente.
               </p>
-              <p className="text-base sm:text-lg text-foreground font-medium leading-relaxed">
-                Foi assim que nasceu o <strong className="text-primary">Método SEPP</strong> (Sistema de Evolução Pessoal e Profissional), testado e validado, agora aplicado no PDI – Carreira e Vida, que ajuda pessoas a transformar objetivos em resultados reais, de forma consciente e sustentável.
+              <p className="text-base sm:text-lg text-gray-300 font-medium leading-relaxed">
+                Foi assim que nasceu o <strong className="text-[#d4a853]">Método SEPP</strong> (Sistema de Evolução Pessoal e Profissional), testado e validado, agora aplicado no PDI – Carreira e Vida, que ajuda pessoas a transformar objetivos em resultados reais, de forma consciente e sustentável.
               </p>
             </div>
             <div className="flex items-center justify-center order-2 lg:order-2 mt-6 lg:mt-0">
@@ -314,120 +315,112 @@ const Index = () => {
       </section>
 
       {/* Por que agora? Section */}
-      <section className="py-12 sm:py-20 px-4 bg-gradient-to-br from-primary/5 via-background to-purple-500/5">
+      <section className="py-12 sm:py-20 px-4 bg-[#1a1a1a]">
         <div className="container mx-auto max-w-5xl">
           <div className="text-center mb-10 sm:mb-14">
-            <Badge variant="secondary" className="mb-4 text-xs sm:text-sm">
+            <span className="inline-block bg-[#d4a853]/20 text-[#d4a853] text-xs sm:text-sm px-4 py-1.5 rounded-full mb-4 border border-[#d4a853]/30">
               O momento é agora
-            </Badge>
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 sm:mb-4">
+            </span>
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 sm:mb-4 text-white">
               Por que agora?
             </h2>
-            <p className="text-muted-foreground max-w-2xl mx-auto text-sm sm:text-base">
+            <p className="text-gray-400 max-w-2xl mx-auto text-sm sm:text-base">
               Não é sobre o momento perfeito. É sobre decidir que você merece mais.
             </p>
           </div>
           
           <div className="grid md:grid-cols-2 gap-6 sm:gap-8">
             {/* Motivo 1 */}
-            <Card className="border-primary/20 bg-gradient-to-br from-card to-primary/5 hover:shadow-xl transition-all duration-300">
-              <CardContent className="p-6 sm:p-8">
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center">
-                    <span className="text-lg font-bold text-primary">1</span>
-                  </div>
-                  <h3 className="font-bold text-base sm:text-lg">
-                    Porque você sabe que pode mais
-                  </h3>
+            <div className="border border-[#d4a853]/30 bg-[#252525] rounded-xl p-6 sm:p-8 hover:shadow-xl transition-all duration-300">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-10 h-10 rounded-full bg-[#d4a853]/20 flex items-center justify-center">
+                  <span className="text-lg font-bold text-[#d4a853]">1</span>
                 </div>
-                <div className="space-y-3 text-sm sm:text-base text-muted-foreground leading-relaxed">
-                  <p>
-                    Você sente — mesmo que não diga em voz alta — que existe uma versão muito melhor de você esperando para nascer.
-                  </p>
-                  <p>
-                    Uma versão mais leve, mais clara e mais firme. Mas essa versão não aparece sozinha. Ela precisa de <strong className="text-foreground">direção</strong>. E direção precisa de um <strong className="text-foreground">plano</strong>.
-                  </p>
-                  <p className="text-primary font-medium pt-2 border-t border-border/30">
-                    O motivo para começar agora é simples: você se deve essa chance.
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
+                <h3 className="font-bold text-base sm:text-lg text-white">
+                  Porque você sabe que pode mais
+                </h3>
+              </div>
+              <div className="space-y-3 text-sm sm:text-base text-gray-400 leading-relaxed">
+                <p>
+                  Você sente — mesmo que não diga em voz alta — que existe uma versão muito melhor de você esperando para nascer.
+                </p>
+                <p>
+                  Uma versão mais leve, mais clara e mais firme. Mas essa versão não aparece sozinha. Ela precisa de <strong className="text-white">direção</strong>. E direção precisa de um <strong className="text-white">plano</strong>.
+                </p>
+                <p className="text-[#d4a853] font-medium pt-2 border-t border-gray-700">
+                  O motivo para começar agora é simples: você se deve essa chance.
+                </p>
+              </div>
+            </div>
 
             {/* Motivo 2 */}
-            <Card className="border-orange-500/20 bg-gradient-to-br from-card to-orange-500/5 hover:shadow-xl transition-all duration-300">
-              <CardContent className="p-6 sm:p-8">
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="w-10 h-10 rounded-full bg-orange-500/20 flex items-center justify-center">
-                    <span className="text-lg font-bold text-orange-500">2</span>
-                  </div>
-                  <h3 className="font-bold text-base sm:text-lg">
-                    Porque o automático está te drenando
-                  </h3>
+            <div className="border border-orange-500/30 bg-[#252525] rounded-xl p-6 sm:p-8 hover:shadow-xl transition-all duration-300">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-10 h-10 rounded-full bg-orange-500/20 flex items-center justify-center">
+                  <span className="text-lg font-bold text-orange-500">2</span>
                 </div>
-                <div className="space-y-3 text-sm sm:text-base text-muted-foreground leading-relaxed">
-                  <p>
-                    Acordar, sobreviver ao dia, dormir… repetir. Esse ciclo silencioso vai apagando sua identidade, seus sonhos e sua força.
-                  </p>
-                  <p>
-                    A verdade é dura, mas libertadora: <strong className="text-foreground">sem um mapa, você vai rodar em círculos</strong>.
-                  </p>
-                  <p className="text-orange-500 font-medium pt-2 border-t border-border/30">
-                    Começar o PDI hoje é recuperar o controle da sua própria história.
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
+                <h3 className="font-bold text-base sm:text-lg text-white">
+                  Porque o automático está te drenando
+                </h3>
+              </div>
+              <div className="space-y-3 text-sm sm:text-base text-gray-400 leading-relaxed">
+                <p>
+                  Acordar, sobreviver ao dia, dormir… repetir. Esse ciclo silencioso vai apagando sua identidade, seus sonhos e sua força.
+                </p>
+                <p>
+                  A verdade é dura, mas libertadora: <strong className="text-white">sem um mapa, você vai rodar em círculos</strong>.
+                </p>
+                <p className="text-orange-500 font-medium pt-2 border-t border-gray-700">
+                  Começar o PDI hoje é recuperar o controle da sua própria história.
+                </p>
+              </div>
+            </div>
 
             {/* Motivo 3 */}
-            <Card className="border-purple-500/20 bg-gradient-to-br from-card to-purple-500/5 hover:shadow-xl transition-all duration-300">
-              <CardContent className="p-6 sm:p-8">
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="w-10 h-10 rounded-full bg-purple-500/20 flex items-center justify-center">
-                    <span className="text-lg font-bold text-purple-500">3</span>
-                  </div>
-                  <h3 className="font-bold text-base sm:text-lg">
-                    Porque seu futuro está sendo decidido agora
-                  </h3>
+            <div className="border border-purple-500/30 bg-[#252525] rounded-xl p-6 sm:p-8 hover:shadow-xl transition-all duration-300">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-10 h-10 rounded-full bg-purple-500/20 flex items-center justify-center">
+                  <span className="text-lg font-bold text-purple-500">3</span>
                 </div>
-                <div className="space-y-3 text-sm sm:text-base text-muted-foreground leading-relaxed">
-                  <p>
-                    Existe um "você de amanhã" observando o que você faz hoje. Ele pode te agradecer… ou te cobrar.
-                  </p>
-                  <p>
-                    O futuro não acontece do nada: ele é construído por pequenas escolhas feitas agora. E escolher não fazer nada também é uma escolha — <strong className="text-foreground">normalmente a mais cara delas</strong>.
-                  </p>
-                  <p className="text-purple-500 font-medium pt-2 border-t border-border/30">
-                    Começar agora é dizer para a vida: "Eu estou no comando."
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
+                <h3 className="font-bold text-base sm:text-lg text-white">
+                  Porque seu futuro está sendo decidido agora
+                </h3>
+              </div>
+              <div className="space-y-3 text-sm sm:text-base text-gray-400 leading-relaxed">
+                <p>
+                  Existe um "você de amanhã" observando o que você faz hoje. Ele pode te agradecer… ou te cobrar.
+                </p>
+                <p>
+                  O futuro não acontece do nada: ele é construído por pequenas escolhas feitas agora. E escolher não fazer nada também é uma escolha — <strong className="text-white">normalmente a mais cara delas</strong>.
+                </p>
+                <p className="text-purple-500 font-medium pt-2 border-t border-gray-700">
+                  Começar agora é dizer para a vida: "Eu estou no comando."
+                </p>
+              </div>
+            </div>
 
             {/* Motivo 4 */}
-            <Card className="border-emerald-500/20 bg-gradient-to-br from-card to-emerald-500/5 hover:shadow-xl transition-all duration-300">
-              <CardContent className="p-6 sm:p-8">
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="w-10 h-10 rounded-full bg-emerald-500/20 flex items-center justify-center">
-                    <span className="text-lg font-bold text-emerald-500">4</span>
-                  </div>
-                  <h3 className="font-bold text-base sm:text-lg">
-                    Porque você merece viver com sentido
-                  </h3>
+            <div className="border border-emerald-500/30 bg-[#252525] rounded-xl p-6 sm:p-8 hover:shadow-xl transition-all duration-300">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-10 h-10 rounded-full bg-emerald-500/20 flex items-center justify-center">
+                  <span className="text-lg font-bold text-emerald-500">4</span>
                 </div>
-                <div className="space-y-3 text-sm sm:text-base text-muted-foreground leading-relaxed">
-                  <p>
-                    Quantas vezes você adiou seus sonhos "para quando der"? Quantas vezes colocou todo mundo na frente de você?
-                  </p>
-                  <p>
-                    Você não precisa esperar o caos, nem o próximo susto. O PDI existe para <strong className="text-foreground">te devolver o sentido que você perdeu pelo caminho</strong>.
-                  </p>
-                  <p className="text-emerald-500 font-medium pt-2 border-t border-border/30">
-                    Começar agora não é só inteligente. É um ato de amor-próprio.
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
+                <h3 className="font-bold text-base sm:text-lg text-white">
+                  Porque você merece viver com sentido
+                </h3>
+              </div>
+              <div className="space-y-3 text-sm sm:text-base text-gray-400 leading-relaxed">
+                <p>
+                  Quantas vezes você adiou seus sonhos "para quando der"? Quantas vezes colocou todo mundo na frente de você?
+                </p>
+                <p>
+                  Você não precisa esperar o caos, nem o próximo susto. O PDI existe para <strong className="text-white">te devolver o sentido que você perdeu pelo caminho</strong>.
+                </p>
+                <p className="text-emerald-500 font-medium pt-2 border-t border-gray-700">
+                  Começar agora não é só inteligente. É um ato de amor-próprio.
+                </p>
+              </div>
+            </div>
           </div>
 
           {/* CTA da Seção PAREDE */}
@@ -435,12 +428,12 @@ const Index = () => {
             <Button 
               size="lg" 
               onClick={() => handlePlanClick('gratuito')}
-              className="text-base sm:text-lg px-6 sm:px-8 py-5 sm:py-6 bg-primary hover:bg-primary/90"
+              className="text-base sm:text-lg px-6 sm:px-8 py-5 sm:py-6 bg-[#d4a853] hover:bg-[#c49843] text-[#1a1a1a] font-semibold"
             >
               Retomar o controle
               <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
-            <p className="text-xs sm:text-sm text-muted-foreground mt-3">
+            <p className="text-xs sm:text-sm text-gray-500 mt-3">
               Com mentoria especializada e apoio da Inteligência Artificial
             </p>
           </div>
@@ -452,107 +445,99 @@ const Index = () => {
       {/* ============================================================ */}
 
       {/* Confusão vs Evolução - Benefícios do sistema */}
-      <section className="py-12 sm:py-16 px-4">
+      <section className="py-12 sm:py-16 px-4 bg-[#222222]">
         <div className="container mx-auto max-w-6xl">
           <div className="text-center mb-10 sm:mb-14">
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 sm:mb-4">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 sm:mb-4 text-white">
               Como o Sistema PDI - Carreira e Vida transforma sua evolução
             </h2>
-            <p className="text-muted-foreground max-w-2xl mx-auto text-sm sm:text-base">
+            <p className="text-gray-400 max-w-2xl mx-auto text-sm sm:text-base">
               Um método estruturado para sair da intenção e ir para a ação.
             </p>
           </div>
           
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-            <Card className="border-primary/20 bg-gradient-to-br from-primary/5 to-transparent hover:shadow-lg transition-all">
-              <CardContent className="p-5 sm:p-6 text-center">
-                <div className="w-14 h-14 mx-auto rounded-full bg-primary/10 flex items-center justify-center mb-4">
-                  <Compass className="h-7 w-7 text-primary" />
-                </div>
-                <h3 className="text-lg font-semibold mb-2">Clareza e Diagnóstico</h3>
-                <p className="text-muted-foreground text-sm">
-                  Organize prioridades, identifique lacunas e defina metas concretas.
-                </p>
-              </CardContent>
-            </Card>
+            <div className="border border-[#d4a853]/30 bg-[#252525] rounded-xl p-5 sm:p-6 text-center hover:shadow-lg transition-all">
+              <div className="w-14 h-14 mx-auto rounded-full bg-[#d4a853]/20 flex items-center justify-center mb-4">
+                <Compass className="h-7 w-7 text-[#d4a853]" />
+              </div>
+              <h3 className="text-lg font-semibold mb-2 text-white">Clareza e Diagnóstico</h3>
+              <p className="text-gray-400 text-sm">
+                Organize prioridades, identifique lacunas e defina metas concretas.
+              </p>
+            </div>
             
-            <Card className="border-purple-500/20 bg-gradient-to-br from-purple-500/5 to-transparent hover:shadow-lg transition-all">
-              <CardContent className="p-5 sm:p-6 text-center">
-                <div className="w-14 h-14 mx-auto rounded-full bg-purple-500/10 flex items-center justify-center mb-4">
-                  <Target className="h-7 w-7 text-purple-500" />
-                </div>
-                <h3 className="text-lg font-semibold mb-2">Estrutura e Método</h3>
-                <p className="text-muted-foreground text-sm">
-                  Transforme intenções em ações repetíveis e mensuráveis.
-                </p>
-              </CardContent>
-            </Card>
+            <div className="border border-purple-500/30 bg-[#252525] rounded-xl p-5 sm:p-6 text-center hover:shadow-lg transition-all">
+              <div className="w-14 h-14 mx-auto rounded-full bg-purple-500/20 flex items-center justify-center mb-4">
+                <Target className="h-7 w-7 text-purple-500" />
+              </div>
+              <h3 className="text-lg font-semibold mb-2 text-white">Estrutura e Método</h3>
+              <p className="text-gray-400 text-sm">
+                Transforme intenções em ações repetíveis e mensuráveis.
+              </p>
+            </div>
             
-            <Card className="border-emerald-500/20 bg-gradient-to-br from-emerald-500/5 to-transparent hover:shadow-lg transition-all">
-              <CardContent className="p-5 sm:p-6 text-center">
-                <div className="w-14 h-14 mx-auto rounded-full bg-emerald-500/10 flex items-center justify-center mb-4">
-                  <TrendingUp className="h-7 w-7 text-emerald-500" />
-                </div>
-                <h3 className="text-lg font-semibold mb-2">Acompanhamento Contínuo</h3>
-                <p className="text-muted-foreground text-sm">
-                  Utilize tecnologia e processos do método para manter evolução consistente.
-                </p>
-              </CardContent>
-            </Card>
+            <div className="border border-emerald-500/30 bg-[#252525] rounded-xl p-5 sm:p-6 text-center hover:shadow-lg transition-all">
+              <div className="w-14 h-14 mx-auto rounded-full bg-emerald-500/20 flex items-center justify-center mb-4">
+                <TrendingUp className="h-7 w-7 text-emerald-500" />
+              </div>
+              <h3 className="text-lg font-semibold mb-2 text-white">Acompanhamento Contínuo</h3>
+              <p className="text-gray-400 text-sm">
+                Utilize tecnologia e processos do método para manter evolução consistente.
+              </p>
+            </div>
             
-            <Card className="border-orange-500/20 bg-gradient-to-br from-orange-500/5 to-transparent hover:shadow-lg transition-all">
-              <CardContent className="p-5 sm:p-6 text-center">
-                <div className="w-14 h-14 mx-auto rounded-full bg-orange-500/10 flex items-center justify-center mb-4">
-                  <User className="h-7 w-7 text-orange-500" />
-                </div>
-                <h3 className="text-lg font-semibold mb-2">Protagonismo do Usuário</h3>
-                <p className="text-muted-foreground text-sm">
-                  Você conduz sua própria jornada, com suporte e método ao seu lado.
-                </p>
-              </CardContent>
-            </Card>
+            <div className="border border-orange-500/30 bg-[#252525] rounded-xl p-5 sm:p-6 text-center hover:shadow-lg transition-all">
+              <div className="w-14 h-14 mx-auto rounded-full bg-orange-500/20 flex items-center justify-center mb-4">
+                <User className="h-7 w-7 text-orange-500" />
+              </div>
+              <h3 className="text-lg font-semibold mb-2 text-white">Protagonismo do Usuário</h3>
+              <p className="text-gray-400 text-sm">
+                Você conduz sua própria jornada, com suporte e método ao seu lado.
+              </p>
+            </div>
           </div>
         </div>
       </section>
 
       {/* O que você ganha com o Sistema */}
-      <section className="py-12 sm:py-16 px-4 bg-muted/30">
+      <section className="py-12 sm:py-16 px-4 bg-[#1a1a1a]">
         <div className="container mx-auto max-w-6xl">
           <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
             <div className="text-center lg:text-left">
-              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-6">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-6 text-white">
                 O que o Sistema PDI - Carreira e Vida faz por você
               </h2>
               <ul className="space-y-4 text-left">
                 <li className="flex items-start gap-3">
-                  <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                    <Check className="h-4 w-4 text-primary" />
+                  <div className="w-6 h-6 rounded-full bg-[#d4a853]/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <Check className="h-4 w-4 text-[#d4a853]" />
                   </div>
-                  <span className="text-base sm:text-lg text-foreground">Clareza e direção em sua carreira e vida pessoal</span>
+                  <span className="text-base sm:text-lg text-gray-300">Clareza e direção em sua carreira e vida pessoal</span>
                 </li>
                 <li className="flex items-start gap-3">
-                  <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                    <Check className="h-4 w-4 text-primary" />
+                  <div className="w-6 h-6 rounded-full bg-[#d4a853]/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <Check className="h-4 w-4 text-[#d4a853]" />
                   </div>
-                  <span className="text-base sm:text-lg text-foreground">Transformação de objetivos em ações mensuráveis</span>
+                  <span className="text-base sm:text-lg text-gray-300">Transformação de objetivos em ações mensuráveis</span>
                 </li>
                 <li className="flex items-start gap-3">
-                  <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                    <Check className="h-4 w-4 text-primary" />
+                  <div className="w-6 h-6 rounded-full bg-[#d4a853]/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <Check className="h-4 w-4 text-[#d4a853]" />
                   </div>
-                  <span className="text-base sm:text-lg text-foreground">Redução de confusão, procrastinação e decisões dispersas</span>
+                  <span className="text-base sm:text-lg text-gray-300">Redução de confusão, procrastinação e decisões dispersas</span>
                 </li>
                 <li className="flex items-start gap-3">
-                  <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                    <Check className="h-4 w-4 text-primary" />
+                  <div className="w-6 h-6 rounded-full bg-[#d4a853]/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <Check className="h-4 w-4 text-[#d4a853]" />
                   </div>
-                  <span className="text-base sm:text-lg text-foreground">Evolução contínua e sustentável</span>
+                  <span className="text-base sm:text-lg text-gray-300">Evolução contínua e sustentável</span>
                 </li>
                 <li className="flex items-start gap-3">
-                  <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                    <Check className="h-4 w-4 text-primary" />
+                  <div className="w-6 h-6 rounded-full bg-[#d4a853]/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <Check className="h-4 w-4 text-[#d4a853]" />
                   </div>
-                  <span className="text-base sm:text-lg text-foreground">Aplicação prática do método com suporte de tecnologia</span>
+                  <span className="text-base sm:text-lg text-gray-300">Aplicação prática do método com suporte de tecnologia</span>
                 </li>
               </ul>
             </div>
@@ -568,34 +553,34 @@ const Index = () => {
       </section>
 
       {/* Seção de Garantia - 30 dias grátis */}
-      <section className="py-12 sm:py-16 px-4">
+      <section className="py-12 sm:py-16 px-4 bg-[#222222]">
         <div className="container mx-auto max-w-4xl">
-          <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-accent/10 via-primary/5 to-accent/5 border-2 border-accent/30 p-8 sm:p-12">
+          <div className="relative overflow-hidden rounded-3xl bg-[#1a1a1a] border-2 border-[#d4a853]/30 p-8 sm:p-12">
             {/* Background decoration */}
-            <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-accent/20 to-transparent rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
-            <div className="absolute bottom-0 left-0 w-48 h-48 bg-gradient-to-tr from-primary/20 to-transparent rounded-full blur-3xl translate-y-1/2 -translate-x-1/2" />
+            <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-[#d4a853]/10 to-transparent rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
+            <div className="absolute bottom-0 left-0 w-48 h-48 bg-gradient-to-tr from-[#d4a853]/10 to-transparent rounded-full blur-3xl translate-y-1/2 -translate-x-1/2" />
             
             <div className="relative z-10">
               {/* Shield icon with glow effect */}
               <div className="flex justify-center mb-6">
                 <div className="relative">
-                  <div className="absolute inset-0 bg-accent/30 rounded-full blur-xl animate-pulse" />
-                  <div className="relative w-20 h-20 rounded-full bg-gradient-accent flex items-center justify-center shadow-lg shadow-accent/30">
-                    <Shield className="h-10 w-10 text-accent-foreground" />
+                  <div className="absolute inset-0 bg-[#d4a853]/30 rounded-full blur-xl animate-pulse" />
+                  <div className="relative w-20 h-20 rounded-full bg-[#d4a853] flex items-center justify-center shadow-lg shadow-[#d4a853]/30">
+                    <Shield className="h-10 w-10 text-[#1a1a1a]" />
                   </div>
                 </div>
               </div>
               
               {/* Main headline */}
               <div className="text-center mb-6">
-                <Badge className="mb-4 bg-accent/20 text-accent border-accent/30 text-xs sm:text-sm px-4 py-1">
-                  <CheckCircle2 className="h-3.5 w-3.5 mr-1.5" />
+                <span className="inline-flex items-center gap-1.5 mb-4 bg-[#d4a853]/20 text-[#d4a853] border border-[#d4a853]/30 text-xs sm:text-sm px-4 py-1 rounded-full">
+                  <CheckCircle2 className="h-3.5 w-3.5" />
                   Garantia de Avaliação
-                </Badge>
-                <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 text-accent">
+                </span>
+                <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 text-[#d4a853]">
                   30 dias para experimentar. Grátis.
                 </h2>
-                <p className="text-muted-foreground max-w-2xl mx-auto text-base sm:text-lg">
+                <p className="text-gray-400 max-w-2xl mx-auto text-base sm:text-lg">
                   Você não precisa decidir agora. Explore todas as ferramentas, construa seu PDI, 
                   e só então decida se quer continuar.
                 </p>
@@ -603,32 +588,32 @@ const Index = () => {
               
               {/* Benefits grid */}
               <div className="grid sm:grid-cols-3 gap-4 sm:gap-6 mb-8">
-                <div className="bg-background/60 backdrop-blur-sm rounded-xl p-4 sm:p-5 text-center border border-accent/20">
-                  <div className="w-10 h-10 rounded-full bg-accent/20 flex items-center justify-center mx-auto mb-3">
-                    <Zap className="h-5 w-5 text-accent" />
+                <div className="bg-[#252525] rounded-xl p-4 sm:p-5 text-center border border-[#d4a853]/20">
+                  <div className="w-10 h-10 rounded-full bg-[#d4a853]/20 flex items-center justify-center mx-auto mb-3">
+                    <Zap className="h-5 w-5 text-[#d4a853]" />
                   </div>
-                  <h4 className="font-semibold text-sm sm:text-base mb-1">Acesso Imediato</h4>
-                  <p className="text-xs sm:text-sm text-muted-foreground">
+                  <h4 className="font-semibold text-sm sm:text-base mb-1 text-white">Acesso Imediato</h4>
+                  <p className="text-xs sm:text-sm text-gray-400">
                     Comece agora mesmo com todas as funcionalidades liberadas
                   </p>
                 </div>
                 
-                <div className="bg-background/60 backdrop-blur-sm rounded-xl p-4 sm:p-5 text-center border border-accent/20">
-                  <div className="w-10 h-10 rounded-full bg-accent/20 flex items-center justify-center mx-auto mb-3">
-                    <Crown className="h-5 w-5 text-accent" />
+                <div className="bg-[#252525] rounded-xl p-4 sm:p-5 text-center border border-[#d4a853]/20">
+                  <div className="w-10 h-10 rounded-full bg-[#d4a853]/20 flex items-center justify-center mx-auto mb-3">
+                    <Crown className="h-5 w-5 text-[#d4a853]" />
                   </div>
-                  <h4 className="font-semibold text-sm sm:text-base mb-1">100% Completo</h4>
-                  <p className="text-xs sm:text-sm text-muted-foreground">
+                  <h4 className="font-semibold text-sm sm:text-base mb-1 text-white">100% Completo</h4>
+                  <p className="text-xs sm:text-sm text-gray-400">
                     Nada de versão limitada — você testa o sistema completo
                   </p>
                 </div>
                 
-                <div className="bg-background/60 backdrop-blur-sm rounded-xl p-4 sm:p-5 text-center border border-accent/20">
-                  <div className="w-10 h-10 rounded-full bg-accent/20 flex items-center justify-center mx-auto mb-3">
-                    <Heart className="h-5 w-5 text-accent" />
+                <div className="bg-[#252525] rounded-xl p-4 sm:p-5 text-center border border-[#d4a853]/20">
+                  <div className="w-10 h-10 rounded-full bg-[#d4a853]/20 flex items-center justify-center mx-auto mb-3">
+                    <Heart className="h-5 w-5 text-[#d4a853]" />
                   </div>
-                  <h4 className="font-semibold text-sm sm:text-base mb-1">Sem Compromisso</h4>
-                  <p className="text-xs sm:text-sm text-muted-foreground">
+                  <h4 className="font-semibold text-sm sm:text-base mb-1 text-white">Sem Compromisso</h4>
+                  <p className="text-xs sm:text-sm text-gray-400">
                     Cobrança só após 30 dias — se você escolher continuar
                   </p>
                 </div>
@@ -636,26 +621,26 @@ const Index = () => {
               
               {/* CTA */}
               <div className="text-center">
-                <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 bg-background/80 rounded-2xl p-4 sm:p-5 border border-accent/30 max-w-lg mx-auto">
+                <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 bg-[#252525] rounded-2xl p-4 sm:p-5 border border-[#d4a853]/30 max-w-lg mx-auto">
                   <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 rounded-full bg-accent/20 flex items-center justify-center flex-shrink-0">
-                      <span className="text-xl font-bold text-accent">30</span>
+                    <div className="w-12 h-12 rounded-full bg-[#d4a853]/20 flex items-center justify-center flex-shrink-0">
+                      <span className="text-xl font-bold text-[#d4a853]">30</span>
                     </div>
                     <div className="text-left">
-                      <p className="font-semibold text-sm sm:text-base">Dias de teste gratuito</p>
-                      <p className="text-xs sm:text-sm text-muted-foreground">Depois, apenas R$ 67/ano</p>
+                      <p className="font-semibold text-sm sm:text-base text-white">Dias de teste gratuito</p>
+                      <p className="text-xs sm:text-sm text-gray-400">Depois, apenas R$ 67/ano</p>
                     </div>
                   </div>
                   <Button 
                     size="lg"
                     onClick={() => navigate('/signup')}
-                    className="w-full sm:w-auto bg-accent hover:bg-accent/90 text-accent-foreground text-xs sm:text-base shadow-lg shadow-accent/30 px-4 sm:px-6 whitespace-nowrap"
+                    className="w-full sm:w-auto bg-[#d4a853] hover:bg-[#c49843] text-[#1a1a1a] font-semibold text-xs sm:text-base shadow-lg shadow-[#d4a853]/30 px-4 sm:px-6 whitespace-nowrap"
                   >
                     Testar grátis
                     <ArrowRight className="ml-2 h-4 w-4 flex-shrink-0" />
                   </Button>
                 </div>
-                <p className="text-xs text-muted-foreground mt-4 max-w-md mx-auto">
+                <p className="text-xs text-gray-500 mt-4 max-w-md mx-auto">
                   Sem pegadinhas. Se não gostar, basta não usar — você não paga nada.
                 </p>
               </div>
@@ -665,50 +650,50 @@ const Index = () => {
       </section>
 
       {/* Sua jornada começa aqui (Etapas 1 a 6) */}
-      <section className="py-12 sm:py-16 px-4">
+      <section className="py-12 sm:py-16 px-4 bg-[#1a1a1a]">
         <div className="container mx-auto max-w-6xl">
           <button 
             onClick={() => setIsJourneyExpanded(!isJourneyExpanded)}
             className="w-full flex items-center justify-center gap-2 mb-3 sm:mb-4 group"
           >
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center group-hover:text-primary transition-colors">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center text-white group-hover:text-[#d4a853] transition-colors">
               Sua jornada começa aqui
             </h2>
             {isJourneyExpanded ? (
-              <ChevronUp className="h-6 w-6 text-muted-foreground group-hover:text-primary transition-colors" />
+              <ChevronUp className="h-6 w-6 text-gray-400 group-hover:text-[#d4a853] transition-colors" />
             ) : (
-              <ChevronDown className="h-6 w-6 text-muted-foreground group-hover:text-primary transition-colors" />
+              <ChevronDown className="h-6 w-6 text-gray-400 group-hover:text-[#d4a853] transition-colors" />
             )}
           </button>
           
           {isJourneyExpanded && (
             <>
-              <p className="text-muted-foreground text-center mb-8 sm:mb-12 max-w-2xl mx-auto text-sm sm:text-base">
+              <p className="text-gray-400 text-center mb-8 sm:mb-12 max-w-2xl mx-auto text-sm sm:text-base">
                 Não é sobre fazer mais. É sobre fazer o que importa, com clareza e consistência.
               </p>
               
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
                 {journeySteps.map((step, index) => (
-                  <Card 
+                  <div 
                     key={index} 
-                    className="group hover:shadow-lg transition-all duration-300 border-border/50 bg-card/50 backdrop-blur-sm overflow-hidden"
+                    className="group hover:shadow-lg transition-all duration-300 border border-gray-700 bg-[#252525] rounded-xl overflow-hidden"
                   >
-                    <CardContent className="p-4 sm:p-6">
+                    <div className="p-4 sm:p-6">
                       <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-gradient-to-br ${step.color} flex items-center justify-center mb-3 sm:mb-4 group-hover:scale-110 transition-transform`}>
                         <step.icon className="h-5 w-5 sm:h-6 sm:w-6 text-white" />
                       </div>
                       <div className="flex items-center gap-2 mb-2">
-                        <span className="text-xs font-semibold text-muted-foreground bg-muted px-2 py-1 rounded-full">
+                        <span className="text-xs font-semibold text-gray-400 bg-gray-800 px-2 py-1 rounded-full">
                           Etapa {index + 1}
                         </span>
                       </div>
-                      <h3 className="text-lg sm:text-xl font-semibold mb-2">{step.title}</h3>
-                      <p className="text-muted-foreground text-xs sm:text-sm mb-3">{step.description}</p>
-                      <p className="text-xs text-primary/80 italic border-l-2 border-primary/30 pl-3">
+                      <h3 className="text-lg sm:text-xl font-semibold mb-2 text-white">{step.title}</h3>
+                      <p className="text-gray-400 text-xs sm:text-sm mb-3">{step.description}</p>
+                      <p className="text-xs text-[#d4a853]/80 italic border-l-2 border-[#d4a853]/30 pl-3">
                         {step.insight}
                       </p>
-                    </CardContent>
-                  </Card>
+                    </div>
+                  </div>
                 ))}
               </div>
             </>
@@ -719,12 +704,12 @@ const Index = () => {
             <Button 
               size="lg" 
               onClick={() => handlePlanClick('gratuito')}
-              className="text-base sm:text-lg px-6 sm:px-8 py-5 sm:py-6 bg-primary hover:bg-primary/90"
+              className="text-base sm:text-lg px-6 sm:px-8 py-5 sm:py-6 bg-[#d4a853] hover:bg-[#c49843] text-[#1a1a1a] font-semibold"
             >
               Criar meu plano
               <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
-            <p className="text-xs sm:text-sm text-muted-foreground mt-3">
+            <p className="text-xs sm:text-sm text-gray-500 mt-3">
               Método estruturado com acompanhamento humano e IA
             </p>
           </div>
@@ -736,13 +721,13 @@ const Index = () => {
       {/* ============================================================ */}
 
       {/* Por que o PDI funciona (Método SEPP) */}
-      <section className="py-12 sm:py-16 px-4 bg-muted/20">
+      <section className="py-12 sm:py-16 px-4 bg-[#222222]">
         <div className="container mx-auto max-w-4xl">
           <div className="text-center">
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-6">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-6 text-white">
               Por que o PDI – Carreira & Vida funciona
             </h2>
-            <p className="text-muted-foreground text-sm sm:text-base md:text-lg leading-relaxed max-w-3xl mx-auto">
+            <p className="text-gray-400 text-sm sm:text-base md:text-lg leading-relaxed max-w-3xl mx-auto">
               O PDI – Carreira & Vida não foi criado como uma fórmula mágica ou um método motivacional passageiro. 
               Ele funciona porque organiza, de forma prática e acessível, princípios amplamente utilizados em 
               psicologia comportamental, planejamento estratégico, desenvolvimento de carreira e gestão de metas, 
@@ -753,25 +738,25 @@ const Index = () => {
       </section>
 
       {/* Diário Digital Inteligente Section */}
-      <section className="py-12 sm:py-16 px-4 bg-gradient-to-br from-purple-500/5 via-background to-primary/5">
+      <section className="py-12 sm:py-16 px-4 bg-[#1a1a1a]">
         <div className="container mx-auto max-w-5xl">
           <div className="text-center mb-10">
-            <Badge variant="secondary" className="mb-4 text-xs sm:text-sm bg-purple-500/10 text-purple-600 border-0">
-              <BookOpen className="h-3.5 w-3.5 mr-1.5" />
+            <span className="inline-flex items-center gap-1.5 mb-4 bg-purple-500/20 text-purple-400 text-xs sm:text-sm px-4 py-1.5 rounded-full border border-purple-500/30">
+              <BookOpen className="h-3.5 w-3.5" />
               Funcionalidade Exclusiva
-            </Badge>
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-6">
+            </span>
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-6 text-white">
               Diário Digital Inteligente: por que registrar seu dia transforma sua clareza, foco e bem-estar!
             </h2>
-            <div className="text-left space-y-4 text-muted-foreground text-sm sm:text-base leading-relaxed max-w-3xl mx-auto">
+            <div className="text-left space-y-4 text-gray-400 text-sm sm:text-base leading-relaxed max-w-3xl mx-auto">
               <p>
                 Em meio à rotina acelerada, excesso de informações e múltiplas responsabilidades, muitas pessoas sentem dificuldade em organizar pensamentos, compreender emoções e perceber avanços reais na própria vida e carreira.
               </p>
               <p>
-                O <strong className="text-foreground">Diário Digital Inteligente do PDI – Carreira e Vida</strong> foi concebido exatamente para responder a esse desafio: oferecer um espaço estruturado de reflexão diária que favorece clareza mental, autorregulação emocional e consciência de progresso.
+                O <strong className="text-white">Diário Digital Inteligente do PDI – Carreira e Vida</strong> foi concebido exatamente para responder a esse desafio: oferecer um espaço estruturado de reflexão diária que favorece clareza mental, autorregulação emocional e consciência de progresso.
               </p>
               <p>
-                Essa funcionalidade não é intuitiva ou casual. Ela se apoia em fundamentos amplamente estudados pela Psicologia, especialmente pela <strong className="text-foreground">Psicologia Cognitivo-Comportamental</strong> e pela <strong className="text-foreground">Psicologia Positiva</strong>.
+                Essa funcionalidade não é intuitiva ou casual. Ela se apoia em fundamentos amplamente estudados pela Psicologia, especialmente pela <strong className="text-white">Psicologia Cognitivo-Comportamental</strong> e pela <strong className="text-white">Psicologia Positiva</strong>.
               </p>
             </div>
           </div>
@@ -782,22 +767,22 @@ const Index = () => {
               <img 
                 src={diaryMoodChart} 
                 alt="Gráfico de acompanhamento de humor do Diário Digital" 
-                className="rounded-xl shadow-lg border border-border/50 w-full h-auto"
+                className="rounded-xl shadow-lg border border-gray-700 w-full h-auto"
               />
-              <p className="text-xs text-muted-foreground text-center mt-2">
+              <p className="text-xs text-gray-500 text-center mt-2">
                 Exemplo do gráfico de acompanhamento de humor por período
               </p>
             </div>
             <div className="order-1 lg:order-2 text-left">
-              <h3 className="text-xl sm:text-2xl font-semibold mb-4 text-foreground">
+              <h3 className="text-xl sm:text-2xl font-semibold mb-4 text-white">
                 Visualize sua evolução ao longo do tempo
               </h3>
-              <div className="space-y-3 text-muted-foreground text-sm sm:text-base leading-relaxed">
+              <div className="space-y-3 text-gray-400 text-sm sm:text-base leading-relaxed">
                 <p>
-                  Além de registrar seu dia, o Diário Digital Inteligente permite que você <strong className="text-foreground">consulte todo o seu histórico por período de até um ano</strong>, revisitando anotações, conquistas e reflexões passadas.
+                  Além de registrar seu dia, o Diário Digital Inteligente permite que você <strong className="text-white">consulte todo o seu histórico por período de até um ano</strong>, revisitando anotações, conquistas e reflexões passadas.
                 </p>
                 <p>
-                  E para tornar sua jornada ainda mais clara, você tem acesso a um <strong className="text-foreground">gráfico interativo que mostra o comparativo do seu humor dia a dia</strong>, permitindo identificar padrões emocionais, momentos de maior bem-estar e períodos que merecem atenção.
+                  E para tornar sua jornada ainda mais clara, você tem acesso a um <strong className="text-white">gráfico interativo que mostra o comparativo do seu humor dia a dia</strong>, permitindo identificar padrões emocionais, momentos de maior bem-estar e períodos que merecem atenção.
                 </p>
                 <p>
                   Essa visão ampliada transforma dados em autoconhecimento — e autoconhecimento em poder de decisão.
@@ -809,27 +794,27 @@ const Index = () => {
           <div className="text-center space-y-6">
             <button
               onClick={() => setIsDiaryModalOpen(true)}
-              className="inline-flex items-center gap-2 text-wine hover:text-wine/80 font-medium text-sm sm:text-base transition-colors underline underline-offset-4"
+              className="inline-flex items-center gap-2 text-[#d4a853] hover:text-[#d4a853]/80 font-medium text-sm sm:text-base transition-colors underline underline-offset-4"
             >
               <MousePointerClick className="h-5 w-5 sm:h-4 sm:w-4 flex-shrink-0" />
               Clique aqui: Conheça o embasamento científico validado por trás desta ferramenta
             </button>
             
             <div className="flex flex-col items-center gap-3">
-              <div className="bg-primary/10 border border-primary/20 rounded-xl px-4 py-2 inline-block">
-                <p className="text-sm sm:text-base font-semibold text-primary">
-                  R$ 67,00/ano <span className="text-muted-foreground font-normal">• Acesso por 12 meses</span>
+              <div className="bg-[#d4a853]/10 border border-[#d4a853]/30 rounded-xl px-4 py-2 inline-block">
+                <p className="text-sm sm:text-base font-semibold text-[#d4a853]">
+                  R$ 67,00/ano <span className="text-gray-400 font-normal">• Acesso por 12 meses</span>
                 </p>
               </div>
               <Button 
                 size="lg" 
                 onClick={() => navigate('/signup')}
-                className="text-base sm:text-lg px-6 sm:px-8 py-5 sm:py-6 rounded-full shadow-lg hover:shadow-xl transition-all"
+                className="text-base sm:text-lg px-6 sm:px-8 py-5 sm:py-6 rounded-full shadow-lg hover:shadow-xl transition-all bg-[#d4a853] hover:bg-[#c49843] text-[#1a1a1a] font-semibold"
               >
                 Começar o diário
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
-              <p className="text-xs sm:text-sm text-muted-foreground">
+              <p className="text-xs sm:text-sm text-gray-500">
                 Reflexão guiada com insights de IA
               </p>
             </div>
@@ -838,12 +823,12 @@ const Index = () => {
       </section>
 
       {/* Tools Section - 8 Ferramentas */}
-      <section className="py-12 sm:py-16 px-4 bg-muted/30">
+      <section className="py-12 sm:py-16 px-4 bg-[#222222]">
         <div className="container mx-auto max-w-5xl">
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center mb-3 sm:mb-4">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center mb-3 sm:mb-4 text-white">
             8 ferramentas que realmente funcionam
           </h2>
-          <p className="text-muted-foreground text-center mb-8 sm:mb-10 max-w-xl mx-auto text-sm sm:text-base">
+          <p className="text-gray-400 text-center mb-8 sm:mb-10 max-w-xl mx-auto text-sm sm:text-base">
             Metodologias usadas por coaches, terapeutas e líderes de alta performance — agora na palma da sua mão.
           </p>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
@@ -858,9 +843,9 @@ const Index = () => {
               const isAutoavaliacaoCard = tool.name === "Autoavaliação 360º";
               
               return (
-                <Card 
+                <div 
                   key={index} 
-                  className="p-3 sm:p-4 hover:shadow-md transition-all cursor-pointer group"
+                  className="p-3 sm:p-4 hover:shadow-md transition-all cursor-pointer group border border-gray-700 bg-[#252525] rounded-xl"
                   onClick={() => {
                     if (isValoresCard) setIsValuesModalOpen(true);
                     else if (isRodaDaVidaCard) setIsLifeWheelModalOpen(true);
@@ -873,11 +858,11 @@ const Index = () => {
                   }}
                 >
                   <div className="flex items-center gap-2 mb-2">
-                    <CheckCircle2 className="h-4 w-4 text-primary group-hover:scale-110 transition-transform" />
-                    <span className="font-medium text-sm sm:text-base">{tool.name}</span>
+                    <CheckCircle2 className="h-4 w-4 text-[#d4a853] group-hover:scale-110 transition-transform" />
+                    <span className="font-medium text-sm sm:text-base text-white">{tool.name}</span>
                   </div>
-                  <p className="text-muted-foreground text-xs">{tool.desc}</p>
-                </Card>
+                  <p className="text-gray-400 text-xs">{tool.desc}</p>
+                </div>
               );
             })}
           </div>
@@ -885,55 +870,55 @@ const Index = () => {
       </section>
 
       {/* VVD Section - Visão de Vida Desejada */}
-      <section className="py-12 sm:py-16 px-4">
+      <section className="py-12 sm:py-16 px-4 bg-[#1a1a1a]">
         <div className="container mx-auto max-w-5xl">
           <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
             {/* Text Content */}
             <div className="order-2 lg:order-1">
-              <Badge variant="secondary" className="mb-4 text-xs sm:text-sm">
-                <Compass className="h-3.5 w-3.5 mr-1.5" />
+              <span className="inline-flex items-center gap-1.5 mb-4 bg-[#d4a853]/20 text-[#d4a853] text-xs sm:text-sm px-4 py-1.5 rounded-full border border-[#d4a853]/30">
+                <Compass className="h-3.5 w-3.5" />
                 Ferramenta Principal
-              </Badge>
-              <h2 className="text-2xl sm:text-3xl font-bold mb-4">
+              </span>
+              <h2 className="text-2xl sm:text-3xl font-bold mb-4 text-white">
                 VVD: Construa sua Visão de Vida Desejada
               </h2>
-              <p className="text-muted-foreground mb-4 text-sm sm:text-base leading-relaxed">
+              <p className="text-gray-400 mb-4 text-sm sm:text-base leading-relaxed">
                 A maioria das pessoas sabe o que <em>não</em> quer. Poucas conseguem descrever com clareza 
                 o que <em>realmente</em> desejam para suas vidas. O VVD é um processo guiado e profundo 
-                de construção da sua <strong>Visão de Vida Desejada</strong> — um texto vivo que descreve 
+                de construção da sua <strong className="text-white">Visão de Vida Desejada</strong> — um texto vivo que descreve 
                 quem você quer ser, como quer viver e o que quer conquistar nos próximos anos.
               </p>
-              <p className="text-muted-foreground mb-6 text-sm sm:text-base leading-relaxed">
+              <p className="text-gray-400 mb-6 text-sm sm:text-base leading-relaxed">
                 Não é sobre sonhar acordado. É sobre criar um norte tão claro que cada decisão do seu 
                 dia-a-dia passa a fazer sentido. <em>Quando você sabe para onde vai, o caminho aparece.</em>
               </p>
               
               <div className="space-y-3 mb-6">
                 <div className="flex items-start gap-3">
-                  <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                    <Check className="h-3.5 w-3.5 text-primary" />
+                  <div className="w-6 h-6 rounded-full bg-[#d4a853]/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <Check className="h-3.5 w-3.5 text-[#d4a853]" />
                   </div>
                   <div>
-                    <p className="font-medium text-sm sm:text-base">Processo guiado passo a passo</p>
-                    <p className="text-xs sm:text-sm text-muted-foreground">Perguntas estratégicas que extraem o melhor de você</p>
+                    <p className="font-medium text-sm sm:text-base text-white">Processo guiado passo a passo</p>
+                    <p className="text-xs sm:text-sm text-gray-400">Perguntas estratégicas que extraem o melhor de você</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-3">
-                  <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                    <Check className="h-3.5 w-3.5 text-primary" />
+                  <div className="w-6 h-6 rounded-full bg-[#d4a853]/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <Check className="h-3.5 w-3.5 text-[#d4a853]" />
                   </div>
                   <div>
-                    <p className="font-medium text-sm sm:text-base">Integração com seus objetivos</p>
-                    <p className="text-xs sm:text-sm text-muted-foreground">Cada meta que você cria se conecta à sua VVD</p>
+                    <p className="font-medium text-sm sm:text-base text-white">Integração com seus objetivos</p>
+                    <p className="text-xs sm:text-sm text-gray-400">Cada meta que você cria se conecta à sua VVD</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-3">
-                  <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                    <Check className="h-3.5 w-3.5 text-primary" />
+                  <div className="w-6 h-6 rounded-full bg-[#d4a853]/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                    <Check className="h-3.5 w-3.5 text-[#d4a853]" />
                   </div>
                   <div>
-                    <p className="font-medium text-sm sm:text-base">Documento vivo e editável</p>
-                    <p className="text-xs sm:text-sm text-muted-foreground">Sua visão evolui junto com você</p>
+                    <p className="font-medium text-sm sm:text-base text-white">Documento vivo e editável</p>
+                    <p className="text-xs sm:text-sm text-gray-400">Sua visão evolui junto com você</p>
                   </div>
                 </div>
               </div>
@@ -941,12 +926,12 @@ const Index = () => {
               <div className="flex flex-col items-start gap-2">
                 <Button 
                   onClick={() => setIsModalOpen(true)}
-                  className="text-sm sm:text-base"
+                  className="text-sm sm:text-base bg-[#d4a853] hover:bg-[#c49843] text-[#1a1a1a] font-semibold"
                 >
                   Criar minha visão
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
-                <p className="text-xs text-muted-foreground">
+                <p className="text-xs text-gray-500">
                   Mentoria guiada + apoio da IA
                 </p>
               </div>
@@ -955,27 +940,27 @@ const Index = () => {
             {/* Visual - VVD Illustration */}
             <div className="order-1 lg:order-2">
               <div className="relative">
-                <div className="bg-gradient-to-br from-primary/10 via-purple-500/10 to-pink-500/10 rounded-2xl p-6 sm:p-8 border border-primary/20">
+                <div className="bg-[#252525] rounded-2xl p-6 sm:p-8 border border-[#d4a853]/30">
                   <div className="text-center mb-6">
-                    <div className="w-16 h-16 mx-auto rounded-full bg-primary/20 flex items-center justify-center mb-4">
-                      <Compass className="h-8 w-8 text-primary" />
+                    <div className="w-16 h-16 mx-auto rounded-full bg-[#d4a853]/20 flex items-center justify-center mb-4">
+                      <Compass className="h-8 w-8 text-[#d4a853]" />
                     </div>
-                    <h3 className="text-lg font-semibold text-foreground mb-2">Sua Visão de Vida</h3>
-                    <p className="text-sm text-muted-foreground">Um norte claro para suas decisões</p>
+                    <h3 className="text-lg font-semibold text-white mb-2">Sua Visão de Vida</h3>
+                    <p className="text-sm text-gray-400">Um norte claro para suas decisões</p>
                   </div>
                   
                   <div className="space-y-3">
-                    <div className="bg-background/60 backdrop-blur-sm rounded-lg p-4 border border-border/50">
-                      <p className="text-xs text-muted-foreground mb-1">Quem você quer ser?</p>
-                      <p className="text-sm text-foreground italic">"Uma pessoa realizada, equilibrada..."</p>
+                    <div className="bg-[#1a1a1a] rounded-lg p-4 border border-gray-700">
+                      <p className="text-xs text-gray-500 mb-1">Quem você quer ser?</p>
+                      <p className="text-sm text-gray-300 italic">"Uma pessoa realizada, equilibrada..."</p>
                     </div>
-                    <div className="bg-background/60 backdrop-blur-sm rounded-lg p-4 border border-border/50">
-                      <p className="text-xs text-muted-foreground mb-1">Como quer viver?</p>
-                      <p className="text-sm text-foreground italic">"Com propósito, liberdade e conexões..."</p>
+                    <div className="bg-[#1a1a1a] rounded-lg p-4 border border-gray-700">
+                      <p className="text-xs text-gray-500 mb-1">Como quer viver?</p>
+                      <p className="text-sm text-gray-300 italic">"Com propósito, liberdade e conexões..."</p>
                     </div>
-                    <div className="bg-background/60 backdrop-blur-sm rounded-lg p-4 border border-border/50">
-                      <p className="text-xs text-muted-foreground mb-1">O que quer conquistar?</p>
-                      <p className="text-sm text-foreground italic">"Impacto positivo, crescimento..."</p>
+                    <div className="bg-[#1a1a1a] rounded-lg p-4 border border-gray-700">
+                      <p className="text-xs text-gray-500 mb-1">O que quer conquistar?</p>
+                      <p className="text-sm text-gray-300 italic">"Impacto positivo, crescimento..."</p>
                     </div>
                   </div>
                 </div>
@@ -986,16 +971,16 @@ const Index = () => {
       </section>
 
       {/* Technology Section */}
-      <section className="py-12 sm:py-20 px-4 bg-gradient-to-br from-primary/5 via-purple-500/5 to-pink-500/5">
+      <section className="py-12 sm:py-20 px-4 bg-[#222222]">
         <div className="container mx-auto max-w-6xl">
           <div className="text-center mb-8 sm:mb-12">
-            <Badge variant="secondary" className="mb-4 text-xs sm:text-sm">
+            <span className="inline-flex items-center gap-1.5 mb-4 bg-[#d4a853]/20 text-[#d4a853] text-xs sm:text-sm px-4 py-1.5 rounded-full border border-[#d4a853]/30">
               Tecnologia de ponta
-            </Badge>
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 sm:mb-4">
+            </span>
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 sm:mb-4 text-white">
               Uma plataforma moderna, feita para o seu ritmo
             </h2>
-            <p className="text-muted-foreground max-w-2xl mx-auto text-sm sm:text-base">
+            <p className="text-gray-400 max-w-2xl mx-auto text-sm sm:text-base">
               Não basta ter boas intenções. Você precisa de ferramentas que trabalhem por você — 
               lembrando, organizando, analisando. É isso que a tecnologia faz aqui.
             </p>
@@ -1003,224 +988,175 @@ const Index = () => {
 
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
             {/* AI Card */}
-            <Card className="group border-border/50 bg-card/50 backdrop-blur-sm hover:shadow-lg transition-all overflow-hidden">
-              <CardContent className="p-5 sm:p-6">
+            <div className="group border border-gray-700 bg-[#252525] rounded-xl hover:shadow-lg transition-all overflow-hidden">
+              <div className="p-5 sm:p-6">
                 <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-purple-500 to-indigo-500 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
                   <Cpu className="h-6 w-6 text-white" />
                 </div>
-                <h3 className="text-lg sm:text-xl font-semibold mb-2">Inteligência Artificial</h3>
-                <p className="text-muted-foreground text-xs sm:text-sm mb-3">
+                <h3 className="text-lg sm:text-xl font-semibold mb-2 text-white">Inteligência Artificial</h3>
+                <p className="text-gray-400 text-xs sm:text-sm mb-3">
                   Insights personalizados sobre sua jornada, gerados por IA que entende seu contexto. 
                   Como ter um coach particular disponível 24 horas.
                 </p>
-                <p className="text-xs text-primary/80 italic">
+                <p className="text-xs text-[#d4a853]/80 italic">
                   A tecnologia lê seus dados e te mostra o que você ainda não viu.
                 </p>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
 
             {/* Notifications Card */}
-            <Card className="group border-border/50 bg-card/50 backdrop-blur-sm hover:shadow-lg transition-all overflow-hidden">
-              <CardContent className="p-5 sm:p-6">
+            <div className="group border border-gray-700 bg-[#252525] rounded-xl hover:shadow-lg transition-all overflow-hidden">
+              <div className="p-5 sm:p-6">
                 <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-green-500 to-emerald-500 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
                   <Bell className="h-6 w-6 text-white" />
                 </div>
-                <h3 className="text-lg sm:text-xl font-semibold mb-2">Notificações Inteligentes</h3>
-                <p className="text-muted-foreground text-xs sm:text-sm mb-3">
-                  Lembretes por <strong>e-mail</strong> e <strong>WhatsApp</strong> na hora certa. 
+                <h3 className="text-lg sm:text-xl font-semibold mb-2 text-white">Notificações Inteligentes</h3>
+                <p className="text-gray-400 text-xs sm:text-sm mb-3">
+                  Lembretes por <strong className="text-white">e-mail</strong> e <strong className="text-white">WhatsApp</strong> na hora certa. 
                   Prazos, diário, metas — você nunca mais esquece o que importa.
                 </p>
                 <div className="flex gap-2 mt-2">
-                  <div className="flex items-center gap-1 text-xs text-muted-foreground bg-muted/50 px-2 py-1 rounded-full">
+                  <div className="flex items-center gap-1 text-xs text-gray-400 bg-gray-800 px-2 py-1 rounded-full">
                     <Mail className="h-3 w-3" /> E-mail
                   </div>
-                  <div className="flex items-center gap-1 text-xs text-muted-foreground bg-muted/50 px-2 py-1 rounded-full">
+                  <div className="flex items-center gap-1 text-xs text-gray-400 bg-gray-800 px-2 py-1 rounded-full">
                     <MessageCircle className="h-3 w-3" /> WhatsApp
                   </div>
                 </div>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
 
             {/* Calendar Integration */}
-            <Card className="group border-border/50 bg-card/50 backdrop-blur-sm hover:shadow-lg transition-all overflow-hidden">
-              <CardContent className="p-5 sm:p-6">
+            <div className="group border border-gray-700 bg-[#252525] rounded-xl hover:shadow-lg transition-all overflow-hidden">
+              <div className="p-5 sm:p-6">
                 <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
                   <Calendar className="h-6 w-6 text-white" />
                 </div>
-                <h3 className="text-lg sm:text-xl font-semibold mb-2">Google Calendar</h3>
-                <p className="text-muted-foreground text-xs sm:text-sm mb-3">
+                <h3 className="text-lg sm:text-xl font-semibold mb-2 text-white">Google Calendar</h3>
+                <p className="text-gray-400 text-xs sm:text-sm mb-3">
                   Suas metas e prazos sincronizados automaticamente na sua agenda. 
                   Sem copiar, sem esquecer, sem retrabalho.
                 </p>
-                <p className="text-xs text-primary/80 italic">
+                <p className="text-xs text-[#d4a853]/80 italic">
                   Seu planejamento de vida integrado à sua rotina real.
                 </p>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
 
             {/* Reports Card */}
-            <Card className="group border-border/50 bg-card/50 backdrop-blur-sm hover:shadow-lg transition-all overflow-hidden">
-              <CardContent className="p-5 sm:p-6">
+            <div className="group border border-gray-700 bg-[#252525] rounded-xl hover:shadow-lg transition-all overflow-hidden">
+              <div className="p-5 sm:p-6">
                 <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-orange-500 to-amber-500 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
                   <FileText className="h-6 w-6 text-white" />
                 </div>
-                <h3 className="text-lg sm:text-xl font-semibold mb-2">Relatórios Completos</h3>
-                <p className="text-muted-foreground text-xs sm:text-sm mb-3">
-                  Exporte seu PDI completo e relatórios de progresso em <strong>PDF</strong>. 
+                <h3 className="text-lg sm:text-xl font-semibold mb-2 text-white">Relatórios Completos</h3>
+                <p className="text-gray-400 text-xs sm:text-sm mb-3">
+                  Exporte seu PDI completo e relatórios de progresso em <strong className="text-white">PDF</strong>. 
                   Perfeito para compartilhar com seu gestor, coach ou terapeuta.
                 </p>
-                <div className="flex items-center gap-1 text-xs text-muted-foreground bg-muted/50 px-2 py-1 rounded-full w-fit mt-2">
+                <div className="flex items-center gap-1 text-xs text-gray-400 bg-gray-800 px-2 py-1 rounded-full w-fit mt-2">
                   <Download className="h-3 w-3" /> PDF exportável
                 </div>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
 
             {/* Mobile Card */}
-            <Card className="group border-border/50 bg-card/50 backdrop-blur-sm hover:shadow-lg transition-all overflow-hidden">
-              <CardContent className="p-5 sm:p-6">
+            <div className="group border border-gray-700 bg-[#252525] rounded-xl hover:shadow-lg transition-all overflow-hidden">
+              <div className="p-5 sm:p-6">
                 <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-pink-500 to-rose-500 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
                   <Smartphone className="h-6 w-6 text-white" />
                 </div>
-                <h3 className="text-lg sm:text-xl font-semibold mb-2">100% Responsivo</h3>
-                <p className="text-muted-foreground text-xs sm:text-sm mb-3">
+                <h3 className="text-lg sm:text-xl font-semibold mb-2 text-white">100% Responsivo</h3>
+                <p className="text-gray-400 text-xs sm:text-sm mb-3">
                   Use no celular, tablet ou computador. A experiência é fluida em qualquer tela — 
                   porque sua evolução não pode esperar você chegar em casa.
                 </p>
-                <p className="text-xs text-primary/80 italic">
+                <p className="text-xs text-[#d4a853]/80 italic">
                   Seu PDI no bolso, disponível a qualquer momento.
                 </p>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
 
             {/* Security Card */}
-            <Card className="group border-border/50 bg-card/50 backdrop-blur-sm hover:shadow-lg transition-all overflow-hidden">
-              <CardContent className="p-5 sm:p-6">
+            <div className="group border border-gray-700 bg-[#252525] rounded-xl hover:shadow-lg transition-all overflow-hidden">
+              <div className="p-5 sm:p-6">
                 <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-slate-500 to-zinc-600 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
                   <Shield className="h-6 w-6 text-white" />
                 </div>
-                <h3 className="text-lg sm:text-xl font-semibold mb-2">Segurança & LGPD</h3>
-                <p className="text-muted-foreground text-xs sm:text-sm mb-3">
+                <h3 className="text-lg sm:text-xl font-semibold mb-2 text-white">Segurança & LGPD</h3>
+                <p className="text-gray-400 text-xs sm:text-sm mb-3">
                   Seus dados são criptografados e protegidos. Você tem controle total sobre suas informações 
                   — pode exportar ou excluir quando quiser.
                 </p>
-                <p className="text-xs text-primary/80 italic">
+                <p className="text-xs text-[#d4a853]/80 italic">
                   Sua privacidade é levada a sério aqui.
                 </p>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
 
       {/* Seção de Benefícios e Limites */}
-      <section id="planos" className="py-12 sm:py-16 px-4 bg-muted/30">
+      <section id="planos" className="py-12 sm:py-16 px-4 bg-[#1a1a1a]">
         <div className="container mx-auto max-w-5xl">
           <div className="text-center mb-8">
-            <Badge variant="secondary" className="mb-4 text-xs sm:text-sm">
-              <Star className="h-3.5 w-3.5 mr-1.5" />
+            <span className="inline-flex items-center gap-1.5 mb-4 bg-[#d4a853]/20 text-[#d4a853] text-xs sm:text-sm px-4 py-1.5 rounded-full border border-[#d4a853]/30">
+              <Star className="h-3.5 w-3.5" />
               O que você recebe
-            </Badge>
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 sm:mb-4">
+            </span>
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 sm:mb-4 text-white">
               Tudo que você precisa para evoluir
             </h2>
-            <p className="text-muted-foreground max-w-2xl mx-auto text-sm sm:text-base">
-              Acesso completo a todas as ferramentas e recursos por apenas <strong className="text-primary">R$ 67/ano</strong>
+            <p className="text-gray-400 max-w-2xl mx-auto text-sm sm:text-base">
+              Acesso completo a todas as ferramentas e recursos por apenas <strong className="text-[#d4a853]">R$ 67/ano</strong>
             </p>
           </div>
 
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-8">
-            {/* Plano de Vida */}
-            <Card className="border-border/50 bg-card/50 backdrop-blur-sm">
-              <CardContent className="p-5 sm:p-6">
-                <div className="w-10 h-10 rounded-lg bg-primary/20 flex items-center justify-center mb-4">
-                  <Target className="h-5 w-5 text-primary" />
+            {[
+              { icon: Target, color: "[#d4a853]", title: "Plano de Vida Ilimitado", desc: "Objetivos, metas e ações sem limites para organizar toda sua jornada" },
+              { icon: Compass, color: "purple-500", title: "8 Ferramentas de Autoconhecimento", desc: "Roda da Vida, SWOT, VVD, SMART, Eisenhower, Valores, Crenças e mais" },
+              { icon: BookOpen, color: "pink-500", title: "Diário de Reflexão Completo", desc: "Registro diário com humor, gratidão, conquistas e gráficos de progresso" },
+              { icon: Cpu, color: "blue-500", title: "Insights de IA", desc: "1 insight personalizado por mês sobre sua jornada e evolução" },
+              { icon: TrendingUp, color: "green-500", title: "Construção Guiada", desc: "Passo a passo para construir seu PDI do zero com mentoria" },
+              { icon: Calendar, color: "orange-500", title: "Google Calendar", desc: "Sincronize suas metas e prazos com sua agenda automaticamente" },
+            ].map((item, index) => (
+              <div key={index} className="border border-gray-700 bg-[#252525] rounded-xl p-5 sm:p-6">
+                <div className={`w-10 h-10 rounded-lg bg-${item.color}/20 flex items-center justify-center mb-4`}>
+                  <item.icon className={`h-5 w-5 text-${item.color}`} />
                 </div>
-                <h3 className="font-semibold mb-2">Plano de Vida Ilimitado</h3>
-                <p className="text-sm text-muted-foreground">Objetivos, metas e ações sem limites para organizar toda sua jornada</p>
-              </CardContent>
-            </Card>
-
-            {/* Ferramentas */}
-            <Card className="border-border/50 bg-card/50 backdrop-blur-sm">
-              <CardContent className="p-5 sm:p-6">
-                <div className="w-10 h-10 rounded-lg bg-purple-500/20 flex items-center justify-center mb-4">
-                  <Compass className="h-5 w-5 text-purple-500" />
-                </div>
-                <h3 className="font-semibold mb-2">8 Ferramentas de Autoconhecimento</h3>
-                <p className="text-sm text-muted-foreground">Roda da Vida, SWOT, VVD, SMART, Eisenhower, Valores, Crenças e mais</p>
-              </CardContent>
-            </Card>
-
-            {/* Diário */}
-            <Card className="border-border/50 bg-card/50 backdrop-blur-sm">
-              <CardContent className="p-5 sm:p-6">
-                <div className="w-10 h-10 rounded-lg bg-pink-500/20 flex items-center justify-center mb-4">
-                  <BookOpen className="h-5 w-5 text-pink-500" />
-                </div>
-                <h3 className="font-semibold mb-2">Diário de Reflexão Completo</h3>
-                <p className="text-sm text-muted-foreground">Registro diário com humor, gratidão, conquistas e gráficos de progresso</p>
-              </CardContent>
-            </Card>
-
-            {/* IA */}
-            <Card className="border-border/50 bg-card/50 backdrop-blur-sm">
-              <CardContent className="p-5 sm:p-6">
-                <div className="w-10 h-10 rounded-lg bg-blue-500/20 flex items-center justify-center mb-4">
-                  <Cpu className="h-5 w-5 text-blue-500" />
-                </div>
-                <h3 className="font-semibold mb-2">Insights de IA</h3>
-                <p className="text-sm text-muted-foreground">1 insight personalizado por mês sobre sua jornada e evolução</p>
-              </CardContent>
-            </Card>
-
-            {/* Construção Guiada */}
-            <Card className="border-border/50 bg-card/50 backdrop-blur-sm">
-              <CardContent className="p-5 sm:p-6">
-                <div className="w-10 h-10 rounded-lg bg-green-500/20 flex items-center justify-center mb-4">
-                  <TrendingUp className="h-5 w-5 text-green-500" />
-                </div>
-                <h3 className="font-semibold mb-2">Construção Guiada</h3>
-                <p className="text-sm text-muted-foreground">Passo a passo para construir seu PDI do zero com mentoria</p>
-              </CardContent>
-            </Card>
-
-            {/* Integrações */}
-            <Card className="border-border/50 bg-card/50 backdrop-blur-sm">
-              <CardContent className="p-5 sm:p-6">
-                <div className="w-10 h-10 rounded-lg bg-orange-500/20 flex items-center justify-center mb-4">
-                  <Calendar className="h-5 w-5 text-orange-500" />
-                </div>
-                <h3 className="font-semibold mb-2">Google Calendar</h3>
-                <p className="text-sm text-muted-foreground">Sincronize suas metas e prazos com sua agenda automaticamente</p>
-              </CardContent>
-            </Card>
+                <h3 className="font-semibold mb-2 text-white">{item.title}</h3>
+                <p className="text-sm text-gray-400">{item.desc}</p>
+              </div>
+            ))}
           </div>
 
           {/* CTA Final */}
           <div className="text-center">
-            <div className="bg-gradient-to-r from-primary/10 via-purple-500/10 to-pink-500/10 rounded-2xl p-6 sm:p-8 border border-primary/20">
-              <h3 className="text-xl sm:text-2xl font-bold mb-2">
+            <div className="bg-[#252525] rounded-2xl p-6 sm:p-8 border border-[#d4a853]/30">
+              <h3 className="text-xl sm:text-2xl font-bold mb-2 text-white">
                 Comece sua transformação hoje
               </h3>
-              <p className="text-muted-foreground mb-4 text-sm sm:text-base">
+              <p className="text-gray-400 mb-4 text-sm sm:text-base">
                 Acesso completo por 12 meses com renovação automática
               </p>
               <div className="flex flex-col items-center gap-3">
-                <div className="bg-background/80 rounded-xl px-4 py-2 inline-block">
-                  <p className="text-lg sm:text-xl font-bold text-primary">
-                    R$ 67,00<span className="text-sm font-normal text-muted-foreground">/ano</span>
+                <div className="bg-[#1a1a1a] rounded-xl px-4 py-2 inline-block border border-gray-700">
+                  <p className="text-lg sm:text-xl font-bold text-[#d4a853]">
+                    R$ 67,00<span className="text-sm font-normal text-gray-400">/ano</span>
                   </p>
                 </div>
                 <Button 
                   size="lg"
                   onClick={() => navigate('/signup')}
-                  className="bg-primary hover:bg-primary/90 text-sm sm:text-base"
+                  className="bg-[#d4a853] hover:bg-[#c49843] text-[#1a1a1a] font-semibold text-sm sm:text-base"
                 >
                   Assinar agora
                   <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
-                <p className="text-xs text-muted-foreground">
+                <p className="text-xs text-gray-500">
                   Mentoria especializada + IA durante toda a jornada
                 </p>
               </div>
@@ -1422,25 +1358,25 @@ const Index = () => {
       </section>
 
       {/* CTA Final */}
-      <section className="py-16 sm:py-20 px-4 bg-gradient-to-br from-primary/5 via-purple-500/5 to-pink-500/5">
+      <section className="py-16 sm:py-20 px-4 bg-[#222222]">
         <div className="container mx-auto max-w-3xl text-center">
-          <Zap className="h-10 w-10 sm:h-12 sm:w-12 text-primary mx-auto mb-4" />
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 sm:mb-4">
+          <Zap className="h-10 w-10 sm:h-12 sm:w-12 text-[#d4a853] mx-auto mb-4" />
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 sm:mb-4 text-white">
             O melhor momento para começar era ontem. O segundo melhor é agora.
           </h2>
-          <p className="text-muted-foreground mb-6 sm:mb-8 text-sm sm:text-base">
+          <p className="text-gray-400 mb-6 sm:mb-8 text-sm sm:text-base">
             Você já sabe o que precisa fazer. Nós vamos te ajudar a realmente fazer.
           </p>
           <div className="flex flex-col items-center gap-2">
             <Button 
               size="lg" 
               onClick={() => handlePlanClick('gratuito')}
-              className="text-sm sm:text-base md:text-lg px-6 sm:px-8 md:px-10 py-4 sm:py-5 md:py-6 bg-primary hover:bg-primary/90 w-full sm:w-auto max-w-xs sm:max-w-none mx-auto"
+              className="text-sm sm:text-base md:text-lg px-6 sm:px-8 md:px-10 py-4 sm:py-5 md:py-6 bg-[#d4a853] hover:bg-[#c49843] text-[#1a1a1a] font-semibold w-full sm:w-auto max-w-xs sm:max-w-none mx-auto"
             >
               Assumir o comando
               <ArrowRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5" />
             </Button>
-            <p className="text-xs sm:text-sm text-muted-foreground">
+            <p className="text-xs sm:text-sm text-gray-500">
               No seu ritmo • Com suporte humano e Inteligência Artificial
             </p>
           </div>
@@ -1448,34 +1384,34 @@ const Index = () => {
       </section>
 
       {/* FAQ Quick */}
-      <section className="py-12 sm:py-16 px-4">
+      <section className="py-12 sm:py-16 px-4 bg-[#1a1a1a]">
         <div className="container mx-auto max-w-3xl">
-          <h2 className="text-xl sm:text-2xl font-bold text-center mb-6 sm:mb-8">
+          <h2 className="text-xl sm:text-2xl font-bold text-center mb-6 sm:mb-8 text-white">
             Perguntas frequentes
           </h2>
           <div className="space-y-4">
-            <div className="p-4 rounded-lg bg-muted/30">
-              <p className="font-medium mb-2 text-sm sm:text-base">Preciso de experiência com desenvolvimento pessoal?</p>
-              <p className="text-muted-foreground text-xs sm:text-sm">
+            <div className="p-4 rounded-lg bg-[#252525] border border-gray-700">
+              <p className="font-medium mb-2 text-sm sm:text-base text-white">Preciso de experiência com desenvolvimento pessoal?</p>
+              <p className="text-gray-400 text-xs sm:text-sm">
                 Não. O PDI foi feito para qualquer pessoa que queira mais clareza e direção na vida — 
                 iniciantes ou experientes.
               </p>
             </div>
-            <div className="p-4 rounded-lg bg-muted/30">
-              <p className="font-medium mb-2 text-sm sm:text-base">Quanto tempo preciso dedicar por dia?</p>
-              <p className="text-muted-foreground text-xs sm:text-sm">
+            <div className="p-4 rounded-lg bg-[#252525] border border-gray-700">
+              <p className="font-medium mb-2 text-sm sm:text-base text-white">Quanto tempo preciso dedicar por dia?</p>
+              <p className="text-gray-400 text-xs sm:text-sm">
                 5 a 10 minutos são suficientes para manter seu diário e acompanhar seu progresso.
               </p>
             </div>
-            <div className="p-4 rounded-lg bg-muted/30">
-              <p className="font-medium mb-2 text-sm sm:text-base">Posso cancelar a qualquer momento?</p>
-              <p className="text-muted-foreground text-xs sm:text-sm">
+            <div className="p-4 rounded-lg bg-[#252525] border border-gray-700">
+              <p className="font-medium mb-2 text-sm sm:text-base text-white">Posso cancelar a qualquer momento?</p>
+              <p className="text-gray-400 text-xs sm:text-sm">
                 Sim. Sem burocracia, sem perguntas. Mas apostamos que você vai querer ficar.
               </p>
             </div>
           </div>
           <div className="text-center mt-6">
-            <Button variant="link" onClick={() => navigate("/faq")}>
+            <Button variant="link" onClick={() => navigate("/faq")} className="text-[#d4a853]">
               Ver todas as perguntas →
             </Button>
           </div>
@@ -1483,27 +1419,27 @@ const Index = () => {
       </section>
 
       {/* Footer */}
-      <footer className="py-8 sm:py-12 px-4 border-t border-border/50 bg-muted/10">
+      <footer className="py-8 sm:py-12 px-4 border-t border-gray-800 bg-[#1a1a1a]">
         <div className="container mx-auto max-w-4xl">
           {/* Conheça o autor - Destacado */}
           <div 
             onClick={() => navigate("/sobre")}
-            className="flex items-center justify-center gap-4 mb-6 p-4 rounded-xl bg-gradient-to-r from-primary/10 via-purple-500/10 to-pink-500/10 border border-primary/20 cursor-pointer hover:border-primary/40 hover:shadow-lg transition-all group"
+            className="flex items-center justify-center gap-4 mb-6 p-4 rounded-xl bg-[#252525] border border-[#d4a853]/30 cursor-pointer hover:border-[#d4a853]/50 hover:shadow-lg transition-all group"
           >
             <img 
               src={agostinhoCaldeira}
               alt="Agostinho Caldeira - Criador do PDI"
-              className="w-14 h-14 sm:w-16 sm:h-16 rounded-full object-cover object-top border-2 border-primary/30 group-hover:border-primary transition-colors"
+              className="w-14 h-14 sm:w-16 sm:h-16 rounded-full object-cover object-top border-2 border-[#d4a853]/30 group-hover:border-[#d4a853] transition-colors"
             />
             <div className="text-left">
-              <p className="text-xs text-muted-foreground">Criador do Método SEPP</p>
-              <p className="font-semibold text-foreground group-hover:text-primary transition-colors">Conheça o autor</p>
-              <p className="text-sm text-muted-foreground">Agostinho Caldeira</p>
+              <p className="text-xs text-gray-500">Criador do Método SEPP</p>
+              <p className="font-semibold text-white group-hover:text-[#d4a853] transition-colors">Conheça o autor</p>
+              <p className="text-sm text-gray-400">Agostinho Caldeira</p>
             </div>
-            <ArrowRight className="h-5 w-5 text-primary opacity-0 group-hover:opacity-100 transition-opacity" />
+            <ArrowRight className="h-5 w-5 text-[#d4a853] opacity-0 group-hover:opacity-100 transition-opacity" />
           </div>
           
-          <div className="text-center text-xs sm:text-sm text-muted-foreground">
+          <div className="text-center text-xs sm:text-sm text-gray-500">
             <p>© 2024 PDI - Carreira & Vida. Todos os direitos reservados.</p>
           </div>
         </div>
