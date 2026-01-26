@@ -128,7 +128,7 @@ const HomeDiarySection = () => {
             </p>
           </div>
         </div>
-        <Link to="/diario">
+        <Link to="/reflexao?view=historico">
           <Button variant="ghost" size="sm" className="text-[#D4AF37] hover:text-[#D4AF37] hover:bg-[#D4AF37]/10 gap-1">
             Histórico
             <ChevronRight className="w-4 h-4" />
