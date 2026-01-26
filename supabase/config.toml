@@ -104,3 +104,6 @@ verify_jwt = false
 
 [functions.upload-email-asset]
 verify_jwt = false
+
+[functions.send-2day-reminder-email]
+verify_jwt = false
