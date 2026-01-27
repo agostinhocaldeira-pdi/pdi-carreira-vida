@@ -85,7 +85,8 @@ function extractPDIFromCache(cacheData: any) {
   
   // Extract VVD and values from plano_vida_summary
   const planoVida = cacheData.plano_vida_summary || {};
-  const vvd = planoVida.para_onde?.vvd_sentence || '';
+  // FIXED: Use vvd_text as primary (always filled), vvd_sentence as fallback
+  const vvd = planoVida.para_onde?.vvd_text || planoVida.para_onde?.vvd_sentence || '';
   const valores = planoVida.quem_sou?.top_valores || [];
   
   return { objetivos, metas, vvd, valores, areasVida: [] };
