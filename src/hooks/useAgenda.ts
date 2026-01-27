@@ -485,6 +485,26 @@ export const useAgenda = () => {
 
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return;
+
+    const dateStr = format(forDate || new Date(), 'yyyy-MM-dd');
+    const isRecurringTask = event.is_recurring && (event.recurrence_type === 'daily' || event.recurrence_type === 'weekly');
+
+    // OPTIMISTIC UPDATE: Update local state immediately for instant feedback
+    if (isRecurringTask) {
+      // For recurring tasks, update dailyCompletions optimistically
+      if (completed) {
+        setDailyCompletions(prev => [...prev, { event_id: taskId, completed_date: dateStr }]);
+      } else {
+        setDailyCompletions(prev => prev.filter(c => !(c.event_id === taskId && c.completed_date === dateStr)));
+      }
+    } else {
+      // For non-recurring tasks, update events optimistically
+      setEvents(prev => prev.map(e => 
+        e.id === taskId 
+          ? { ...e, is_completed: completed, completed_at: completed ? new Date().toISOString() : null }
+          : e
+      ));
+    }
     
     // If it's a pending task being marked as completed, also update the pending task
     if (event.source_type === 'pending' && event.source_id && completed) {
@@ -512,15 +532,13 @@ export const useAgenda = () => {
         return;
       } catch (error) {
         console.error('Error completing pending task:', error);
+        // Revert optimistic update on error
+        await fetchEvents();
       }
     }
 
     // For recurring tasks, use daily completions instead of global is_completed
-    const isRecurringTask = event.is_recurring && (event.recurrence_type === 'daily' || event.recurrence_type === 'weekly');
-    
     if (isRecurringTask) {
-      const dateStr = format(forDate || new Date(), 'yyyy-MM-dd');
-      
       try {
         if (completed) {
           // Add daily completion record
@@ -544,9 +562,12 @@ export const useAgenda = () => {
             .eq('completed_date', dateStr);
         }
         
-        await fetchEvents();
+        // Background refetch to sync with server (no need to wait)
+        fetchEvents();
       } catch (error) {
         console.error('Error toggling daily completion:', error);
+        // Revert optimistic update on error
+        await fetchEvents();
         toast({
           title: "Erro ao atualizar tarefa",
           description: "Não foi possível atualizar a tarefa. Tente novamente.",
@@ -554,10 +575,32 @@ export const useAgenda = () => {
         });
       }
     } else {
-      // For non-recurring tasks, use global is_completed
-      await updateEvent(taskId, { is_completed: completed });
+      // For non-recurring tasks, persist to database
+      try {
+        const { error } = await supabase
+          .from('agenda_events')
+          .update({
+            is_completed: completed,
+            completed_at: completed ? new Date().toISOString() : null
+          })
+          .eq('id', taskId);
+
+        if (error) throw error;
+        
+        // Background refetch
+        fetchEvents();
+      } catch (error) {
+        console.error('Error updating event:', error);
+        // Revert optimistic update on error
+        await fetchEvents();
+        toast({
+          title: "Erro ao atualizar tarefa",
+          description: "Não foi possível atualizar a tarefa. Tente novamente.",
+          variant: "destructive",
+        });
+      }
     }
-  }, [events, updateEvent, fetchEvents, toast]);
+  }, [events, fetchEvents, toast]);
 
   // Initial fetch
   useEffect(() => {
