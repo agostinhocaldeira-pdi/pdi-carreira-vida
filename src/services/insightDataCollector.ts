@@ -1,9 +1,11 @@
 /**
  * Service to collect all user data for comprehensive insight generation
- * This is a standalone function that can be called from any component
+ * OPTIMIZED: Uses pre-computed home cache data from overnight processing
+ * Falls back to direct queries only when cache is unavailable
  */
 
 import { supabase } from "@/integrations/supabase/client";
+import type { HomeCache } from "@/hooks/useHomeCache";
 
 export interface InsightDataPayload {
   vvd: string;
@@ -30,6 +32,210 @@ export interface InsightDataPayload {
   stoicResponses: Array<any>;
 }
 
+/**
+ * Collect insight data using pre-computed cache from overnight processing
+ * This avoids multiple real-time queries and reduces latency
+ */
+export async function collectInsightDataFromCache(cache: HomeCache): Promise<InsightDataPayload> {
+  const { data: { session } } = await supabase.auth.getSession();
+  const userId = session?.user?.id;
+
+  // Read minimal data from localStorage (these are user-side only)
+  const surveyData = JSON.parse(localStorage.getItem("userSurvey") || "{}");
+  const onboardingData = JSON.parse(localStorage.getItem("onboarding") || "{}");
+
+  // Extract VVD from cache plano vida summary
+  const vvdSentence = cache.planoVidaSummary?.para_onde?.vvd_sentence || "";
+  
+  // Extract valores from cache
+  const valores = cache.planoVidaSummary?.quem_sou?.top_valores || [];
+
+  // Extract areas vida count from cache (need to fetch details if needed)
+  const areasVida = cache.planoVidaSummary?.quem_sou?.life_areas_count > 0 
+    ? [{ avg_current: cache.planoVidaSummary.quem_sou.avg_current_score, avg_desired: cache.planoVidaSummary.quem_sou.avg_desired_score }]
+    : [];
+
+  // Extract objectives from cache hierarchy
+  const objetivos = cache.objectives || [];
+
+  // Extract goals from objectives hierarchy  
+  const metas: Array<any> = [];
+  const acoes: Array<any> = [];
+  
+  objetivos.forEach((obj: any) => {
+    if (obj.goals) {
+      obj.goals.forEach((goal: any) => {
+        metas.push({
+          id: goal.id,
+          texto: goal.texto,
+          status: goal.status,
+          data_alvo: goal.data_alvo,
+          objective_id: obj.id,
+        });
+        
+        if (goal.actions) {
+          goal.actions.forEach((action: any) => {
+            acoes.push({
+              id: action.id,
+              texto: action.texto,
+              status: action.status,
+              periodicidade: action.periodicidade,
+              goal_id: goal.id,
+              steps: action.steps || [],
+            });
+          });
+        }
+      });
+    }
+  });
+
+  // Diary data from cache
+  const diarioRecente = cache.diary?.mood_trend?.map((mood, i) => ({
+    mood,
+    index: i,
+  })) || [];
+
+  // Tools status from cache tells us what's completed
+  const toolsStatus = cache.toolsStatus;
+
+  // For detailed data not in cache, fetch only what's needed
+  let swot = null;
+  let crencas: Array<any> = [];
+  let autoavaliacao = null;
+  let habilidades: Array<any> = [];
+  let eisenhower = null;
+  let vvdParagraph = "";
+  let fullVvd = "";
+  let fullValores: string[] = valores;
+  let fullAreasVida: Array<any> = [];
+
+  if (userId) {
+    // Fetch detailed data in parallel (only the fields not in cache)
+    const [
+      vvdResult,
+      valoresResult,
+      areasResult,
+      swotResult,
+      crencasResult,
+      autoResult,
+      habResult,
+      swResult,
+      eisenResult,
+    ] = await Promise.all([
+      supabase.from('user_vvd').select('vvd_paragraph, vvd_sentence').eq('user_id', userId).maybeSingle(),
+      supabase.from('user_valores').select('valores').eq('user_id', userId).maybeSingle(),
+      supabase.from('user_life_areas').select('*').eq('user_id', userId),
+      toolsStatus.swot?.completed 
+        ? supabase.from('user_swot').select('strengths, weaknesses, opportunities, threats').eq('user_id', userId).maybeSingle()
+        : Promise.resolve({ data: null }),
+      toolsStatus.crencas?.completed
+        ? supabase.from('user_beliefs').select('limiting_belief, new_belief, transformation_answers').eq('user_id', userId)
+        : Promise.resolve({ data: [] }),
+      toolsStatus.autoavaliacao?.completed
+        ? supabase.from('user_self_assessment').select('ai_analysis, feedback_360').eq('user_id', userId).maybeSingle()
+        : Promise.resolve({ data: null }),
+      supabase.from('user_skills').select('skill_name, category').eq('user_id', userId),
+      supabase.from('user_strengths_weaknesses').select('type, texto').eq('user_id', userId),
+      toolsStatus.eisenhower?.completed
+        ? supabase.from('user_eisenhower_tasks').select('quadrant, task_text').eq('user_id', userId)
+        : Promise.resolve({ data: [] }),
+    ]);
+
+    // VVD details
+    if (vvdResult.data) {
+      vvdParagraph = vvdResult.data.vvd_paragraph || "";
+      fullVvd = vvdResult.data.vvd_sentence || "";
+    }
+
+    // Full valores list
+    if (valoresResult.data?.valores) {
+      fullValores = valoresResult.data.valores;
+    }
+
+    // Full areas vida
+    if (areasResult.data) {
+      fullAreasVida = areasResult.data;
+    }
+
+    // SWOT
+    if (swotResult.data) {
+      swot = {
+        forcas: swotResult.data.strengths || [],
+        fraquezas: swotResult.data.weaknesses || [],
+        oportunidades: swotResult.data.opportunities || [],
+        ameacas: swotResult.data.threats || [],
+      };
+    }
+
+    // Beliefs
+    if (crencasResult.data) {
+      crencas = crencasResult.data;
+    }
+
+    // Self assessment
+    if (autoResult.data) {
+      autoavaliacao = autoResult.data;
+    }
+
+    // Skills + Strengths/Weaknesses
+    habilidades = habResult.data || [];
+    if (swResult.data) {
+      habilidades = [
+        ...habilidades,
+        ...swResult.data.map((h: any) => ({
+          skill_name: h.texto,
+          category: h.type === 'forte' ? 'strength' : 'weakness',
+        })),
+      ];
+    }
+
+    // Eisenhower
+    if (eisenResult.data && eisenResult.data.length > 0) {
+      eisenhower = {
+        urgente_importante: eisenResult.data.filter((e: any) => e.quadrant === 'urgente_importante').map((e: any) => e.task_text),
+        nao_urgente_importante: eisenResult.data.filter((e: any) => e.quadrant === 'nao_urgente_importante').map((e: any) => e.task_text),
+        urgente_nao_importante: eisenResult.data.filter((e: any) => e.quadrant === 'urgente_nao_importante').map((e: any) => e.task_text),
+        nao_urgente_nao_importante: eisenResult.data.filter((e: any) => e.quadrant === 'nao_urgente_nao_importante').map((e: any) => e.task_text),
+      };
+    }
+  }
+
+  // Stoic responses from localStorage
+  let stoicResponses: Array<any> = [];
+  try {
+    const stoicData = JSON.parse(localStorage.getItem("stoicResponses") || "{}");
+    stoicResponses = Object.entries(stoicData)
+      .map(([date, response]) => ({ date, response }))
+      .slice(-5);
+  } catch (e) {
+    console.error("Error parsing stoic responses:", e);
+  }
+
+  return {
+    vvd: fullVvd || vvdSentence,
+    vvdParagraph,
+    vvdSentence: fullVvd || vvdSentence,
+    valores: fullValores,
+    areasVida: fullAreasVida.length > 0 ? fullAreasVida : areasVida,
+    surveyData,
+    onboardingData,
+    objetivos,
+    metas,
+    acoes,
+    swot,
+    crencas,
+    autoavaliacao,
+    habilidades,
+    diarioRecente,
+    eisenhower,
+    stoicResponses,
+  };
+}
+
+/**
+ * Legacy function - collect data with direct queries
+ * Used as fallback when cache is not available
+ */
 export async function collectInsightData(storage: {
   getVvd: () => Promise<string>;
   getValores: () => Promise<string[]>;
