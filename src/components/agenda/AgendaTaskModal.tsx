@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import { CalendarIcon, Clock, X } from "lucide-react";
+import { CalendarIcon, Clock, HelpCircle } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -12,6 +12,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 import { AgendaTask } from "./AgendaTaskCard";
+import { TaskExternalizationModal } from "./TaskExternalizationModal";
 
 interface AgendaTaskModalProps {
   open: boolean;
@@ -58,6 +59,7 @@ export const AgendaTaskModal = ({
   const [isRecurring, setIsRecurring] = useState(false);
   const [recurrenceType, setRecurrenceType] = useState<'daily' | 'weekly'>('daily');
   const [calendarOpen, setCalendarOpen] = useState(false);
+  const [externalizationModalOpen, setExternalizationModalOpen] = useState(false);
 
   // Reset form when modal opens/closes or task changes
   useEffect(() => {
@@ -117,12 +119,23 @@ export const AgendaTaskModal = ({
   const isReadOnly = task && task.source_type !== 'manual';
 
   return (
+    <>
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[425px] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-center">
-            {isEditMode ? (isReadOnly ? 'Detalhes da Tarefa' : 'Editar Tarefa') : 'Nova Tarefa'}
+            {isEditMode ? (isReadOnly ? 'Detalhes da Tarefa' : 'Editar Tarefa') : 'Nova tarefa avulsa'}
           </DialogTitle>
+          {!isEditMode && (
+            <button
+              type="button"
+              onClick={() => setExternalizationModalOpen(true)}
+              className="flex items-center justify-center gap-1 text-xs text-muted-foreground hover:text-primary transition-colors mt-1"
+            >
+              <HelpCircle className="w-3 h-3" />
+              Entenda o que cadastrar aqui
+            </button>
+          )}
         </DialogHeader>
 
         <div className="space-y-4 py-4">
@@ -317,10 +330,16 @@ export const AgendaTaskModal = ({
               className="flex-1 bg-primary hover:bg-primary/90"
             >
               {isEditMode ? 'Salvar' : 'Criar Tarefa'}
-            </Button>
+          </Button>
           )}
         </div>
       </DialogContent>
     </Dialog>
+    
+    <TaskExternalizationModal
+      open={externalizationModalOpen}
+      onOpenChange={setExternalizationModalOpen}
+    />
+    </>
   );
 };
