@@ -447,24 +447,17 @@ const AgendaEstrategica = () => {
             </ScrollArea>
           )}
 
-          {/* Legend */}
-          <div className="pt-2 border-t border-border/50">
+          {/* Footer Links */}
+          <div className="pt-2 border-t border-border/50 flex flex-wrap items-center justify-between gap-2">
             <AgendaLegend variant={isMobile ? 'compact' : 'inline'} />
+            <button
+              onClick={handleAddClick}
+              className="text-xs text-[#D4AF37] hover:text-[#D4AF37]/80 hover:underline transition-colors"
+            >
+              + Lista de Tarefas avulsas
+            </button>
           </div>
         </CardContent>
-
-        {/* Floating Add Button */}
-        <Button
-          onClick={handleAddClick}
-          size="icon"
-          className={cn(
-            "absolute bottom-4 right-4 w-12 h-12 rounded-full shadow-lg",
-            "bg-primary hover:bg-primary/90 text-primary-foreground",
-            "transition-transform hover:scale-105"
-          )}
-        >
-          <Plus className="w-6 h-6" />
-        </Button>
       </Card>
 
       {/* Task Modal */}
