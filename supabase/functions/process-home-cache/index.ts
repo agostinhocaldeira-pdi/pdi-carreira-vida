@@ -246,7 +246,8 @@ async function processUserCache(supabase: any, userId: string, today: string, da
 
   // Plan completion status
   const hasQuemSou = areasVida.length > 0 || (valores?.valores?.length > 0);
-  const hasParaOnde = !!vvd?.vvd_sentence;
+  // FIXED: Consider vvd_text as valid VVD (not just vvd_sentence)
+  const hasParaOnde = !!(vvd?.vvd_sentence || vvd?.vvd_text);
   const hasComoChegar = objectives.length > 0;
   const isPlanComplete = hasQuemSou && hasParaOnde && hasComoChegar;
 
@@ -308,7 +309,7 @@ async function processUserCache(supabase: any, userId: string, today: string, da
   const toolsStatus = {
     roda_da_vida: { completed: areasVida.length > 0, count: areasVida.length },
     valores: { completed: (valores?.valores?.length || 0) > 0, count: valores?.valores?.length || 0 },
-    vvd: { completed: !!vvd?.vvd_sentence, has_sentence: !!vvd?.vvd_sentence, has_paragraph: !!vvd?.vvd_paragraph },
+    vvd: { completed: !!(vvd?.vvd_sentence || vvd?.vvd_text), has_sentence: !!vvd?.vvd_sentence, has_text: !!vvd?.vvd_text, has_paragraph: !!vvd?.vvd_paragraph },
     swot: { completed: !!(swot?.strengths?.length || swot?.weaknesses?.length) },
     crencas: { completed: beliefs.length > 0, count: beliefs.length },
     autoavaliacao: { completed: !!selfAssessment?.self_answers },
@@ -333,6 +334,7 @@ async function processUserCache(supabase: any, userId: string, today: string, da
     para_onde: {
       completed: hasParaOnde,
       vvd_sentence: vvd?.vvd_sentence || null,
+      vvd_text: vvd?.vvd_text || null, // Include vvd_text for useSystemState
       has_vvd_paragraph: !!vvd?.vvd_paragraph,
     },
     como_chegar: {
