@@ -1,12 +1,16 @@
 /**
- * React Query hooks for PDI data with caching and localStorage-first pattern
+ * React Query hooks for PDI data with overnight cache-first pattern
  * 
- * Pattern: Load instantly from localStorage, then sync with Supabase in background
+ * ARCHITECTURE:
+ * 1. PRIMARY: Use pre-computed overnight cache from user_home_cache (3am processing)
+ * 2. FALLBACK: Direct Supabase queries if cache doesn't exist
+ * 3. INSTANT: localStorage provides immediate placeholder data
+ * 
+ * This eliminates real-time query latency by using overnight-processed data
  */
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabaseStorageService } from '@/services/storage/SupabaseStorageService';
-import { storageService } from '@/services/storage/StorageService';
 import { supabase } from '@/integrations/supabase/client';
 import type { Objetivo, Meta } from '@/types/pdi';
 
@@ -16,6 +20,7 @@ export const PDI_QUERY_KEYS = {
   pdiData: () => [...PDI_QUERY_KEYS.all, 'data'] as const,
   objetivos: () => [...PDI_QUERY_KEYS.all, 'objetivos'] as const,
   metas: () => [...PDI_QUERY_KEYS.all, 'metas'] as const,
+  homeCache: () => ['home-cache'] as const,
 };
 
 // Helper to check auth status
@@ -25,21 +30,107 @@ async function checkAuthStatus() {
 }
 
 /**
+ * Extract PDI data from overnight cache hierarchy
+ */
+function extractPDIFromCache(cacheData: any) {
+  const objetivos: any[] = [];
+  const metas: any[] = [];
+  
+  // Extract from objectives_data hierarchy (pre-computed overnight)
+  const objectivesData = cacheData.objectives_data || [];
+  
+  objectivesData.forEach((obj: any) => {
+    objetivos.push({
+      id: obj.id,
+      texto: obj.texto,
+      status: obj.status,
+      data_alvo: obj.data_alvo,
+      conexao_vvd: obj.conexao_vvd,
+      is_principal: obj.is_principal,
+    });
+    
+    // Extract goals from hierarchy
+    if (obj.goals) {
+      obj.goals.forEach((goal: any) => {
+        const acoes = (goal.actions || []).map((action: any) => ({
+          id: action.id,
+          acao: action.texto,
+          periodicidade: action.periodicidade,
+          status: action.status,
+        }));
+        
+        const passos = (goal.actions || []).flatMap((action: any) => 
+          (action.steps || []).map((step: any) => ({
+            id: step.id,
+            passo: step.texto,
+            concluido: step.concluido,
+          }))
+        );
+        
+        metas.push({
+          id: goal.id,
+          objetivo_id: obj.id,
+          objetivoId: obj.id,
+          texto: goal.texto,
+          data_alvo: goal.data_alvo,
+          dataAlvo: goal.data_alvo,
+          status: goal.status,
+          concluida: goal.status === 'concluido',
+          acoes,
+          passos,
+        });
+      });
+    }
+  });
+  
+  // Extract VVD and values from plano_vida_summary
+  const planoVida = cacheData.plano_vida_summary || {};
+  const vvd = planoVida.para_onde?.vvd_sentence || '';
+  const valores = planoVida.quem_sou?.top_valores || [];
+  
+  return { objetivos, metas, vvd, valores, areasVida: [] };
+}
+
+/**
  * Hook to get all PDI data (objetivos, metas, vvd, valores, areasVida)
- * Uses localStorage-first pattern for instant loading
+ * OPTIMIZED: Uses overnight cache as primary source
  */
 export function usePDIData() {
   return useQuery({
     queryKey: PDI_QUERY_KEYS.pdiData(),
     queryFn: async () => {
-      const { isAuthenticated } = await checkAuthStatus();
+      const { isAuthenticated, userId } = await checkAuthStatus();
       
-      if (isAuthenticated) {
-        // Get from Supabase (batch query)
+      if (isAuthenticated && userId) {
+        // PRIORITY 1: Try overnight cache first (fastest, pre-computed at 3am)
+        try {
+          const { data: cacheData } = await supabase
+            .from('user_home_cache')
+            .select('objectives_data, plano_vida_summary')
+            .eq('user_id', userId)
+            .maybeSingle();
+          
+          if (cacheData?.objectives_data) {
+            console.log('[usePDIData] Using overnight cache');
+            const extracted = extractPDIFromCache(cacheData);
+            
+            // Update localStorage for offline access
+            localStorage.setItem('objetivos', JSON.stringify(extracted.objetivos));
+            localStorage.setItem('metas', JSON.stringify(extracted.metas));
+            if (extracted.vvd) localStorage.setItem('vvd', extracted.vvd);
+            if (extracted.valores.length > 0) localStorage.setItem('valores', JSON.stringify(extracted.valores));
+            
+            return extracted;
+          }
+        } catch (err) {
+          console.warn('[usePDIData] Cache read failed, falling back to direct query');
+        }
+        
+        // PRIORITY 2: Direct Supabase query (for new users without cache)
         try {
           const data = await supabaseStorageService.getPDIData();
 
-          // Update localStorage as backup (only on successful fetch)
+          // Update localStorage as backup
           localStorage.setItem('objetivos', JSON.stringify(data.objetivos));
           localStorage.setItem('metas', JSON.stringify(data.metas));
           if (data.vvd) localStorage.setItem('vvd', data.vvd);
@@ -52,7 +143,7 @@ export function usePDIData() {
         }
       }
 
-      // Fallback to localStorage
+      // PRIORITY 3: Fallback to localStorage (offline or unauthenticated)
       return {
         objetivos: JSON.parse(localStorage.getItem('objetivos') || '[]'),
         metas: JSON.parse(localStorage.getItem('metas') || '[]'),
@@ -69,10 +160,9 @@ export function usePDIData() {
       valores: JSON.parse(localStorage.getItem('valores') || '[]'),
       areasVida: JSON.parse(localStorage.getItem('areasVida') || '[]'),
     }),
-    // OPTIMIZATION: Increase staleTime to prevent refetch on mount
-    staleTime: 1000 * 60 * 5, // 5 minutes
-    gcTime: 1000 * 60 * 10, // 10 minutes
-    // Don't refetch on window focus - data changes rarely
+    // OPTIMIZATION: Long staleTime since data is pre-computed overnight
+    staleTime: 1000 * 60 * 15, // 15 minutes (data is stable)
+    gcTime: 1000 * 60 * 30, // 30 minutes
     refetchOnWindowFocus: false,
     refetchOnMount: false,
   });
