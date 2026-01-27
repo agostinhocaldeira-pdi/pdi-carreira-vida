@@ -135,12 +135,12 @@ const ProgressSection = () => {
     setIsGenerating(true);
     
     try {
-      // Buscar dados da pesquisa e onboarding
-      const surveyData = JSON.parse(localStorage.getItem("userSurvey") || "{}");
-      const onboardingData = JSON.parse(localStorage.getItem("onboarding") || "{}");
+      // Collect all user data for comprehensive insight
+      const { collectInsightData } = await import('@/services/insightDataCollector');
+      const insightData = await collectInsightData(storage);
 
       const { data, error } = await supabase.functions.invoke('generate-insight', {
-        body: { vvd, valores: valoresPreenchidos, areasVida: areasPreenchidas, surveyData, onboardingData }
+        body: insightData
       });
 
       if (error) {
