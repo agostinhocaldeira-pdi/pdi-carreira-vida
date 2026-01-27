@@ -133,7 +133,7 @@ export const AgendaTaskModal = ({
               className="flex items-center justify-center gap-1 text-xs text-muted-foreground hover:text-primary transition-colors mt-1"
             >
               <HelpCircle className="w-3 h-3" />
-              Entenda o que cadastrar aqui
+              Entenda o que cadastrar clicando aqui
             </button>
           )}
         </DialogHeader>
