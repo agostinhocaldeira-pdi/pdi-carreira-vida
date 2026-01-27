@@ -144,16 +144,21 @@ export const AgendaTaskCard = ({ task, onToggleComplete, onClick }: AgendaTaskCa
           </p>
         )}
 
-        {/* Label */}
+        {/* Label with Icon */}
         <div className={cn(
           "flex items-center gap-1 sm:gap-1.5",
           isMobile ? "mt-1" : "mt-2"
         )}>
           <div className={cn(
-            "rounded-full",
-            isMobile ? "w-1.5 h-1.5" : "w-2 h-2",
+            "rounded-full flex items-center justify-center",
+            isMobile ? "w-3.5 h-3.5" : "w-4 h-4",
             dotColorClasses[displayColor]
-          )} />
+          )}>
+            <Icon className={cn(
+              "text-white",
+              isMobile ? "w-2 h-2" : "w-2.5 h-2.5"
+            )} />
+          </div>
           <span className={cn(
             "text-muted-foreground",
             isMobile ? "text-[9px]" : "text-xs"
