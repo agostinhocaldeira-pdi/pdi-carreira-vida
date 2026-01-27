@@ -28,8 +28,19 @@ const ProgressSection = () => {
     getProgressToNextLevel 
   } = useGamification();
 
-  // Use centralized home data hook (eliminates redundant localStorage reads)
-  const { progress: progressData, insight: cachedInsight, lastInsightDate, objetivos, metas, vvd, valores, areasVida } = useHomeData();
+  // Use centralized home data hook with overnight cache optimization
+  const { 
+    progress: progressData, 
+    insight: cachedInsight, 
+    lastInsightDate, 
+    objetivos, 
+    metas, 
+    vvd, 
+    valores, 
+    areasVida,
+    gamification: cachedGamification,
+    usingCache 
+  } = useHomeData();
   
   // Use pre-computed cache from overnight processing for insight generation
   const { data: homeCache, isLoading: cacheLoading } = useHomeCache();
@@ -37,9 +48,24 @@ const ProgressSection = () => {
   // Use cached role data (no blocking RPC call)
   const { isAdmin } = useUserRole();
 
+  // Prefer cached gamification data from overnight processing
+  const effectiveStreak = usingCache ? {
+    current_streak: cachedGamification.currentStreak,
+    longest_streak: cachedGamification.longestStreak,
+    total_points: cachedGamification.totalPoints,
+    level: cachedGamification.level,
+  } : streak;
+
   const unlockedAchievements = getUnlockedAchievements();
   const lockedAchievements = getLockedAchievements();
-  const levelProgress = getProgressToNextLevel();
+  const levelProgress = usingCache 
+    ? { 
+        percentage: Math.min(((cachedGamification.totalPoints % 500) / 500) * 100, 100),
+        current: cachedGamification.totalPoints % 500,
+        next: 500,
+        levelName: cachedGamification.levelName as 'Iniciante' | 'Intermediário' | 'Experiente',
+      }
+    : getProgressToNextLevel();
   const [isOpen, setIsOpen] = useState(false);
   const [isJourneyModalOpen, setIsJourneyModalOpen] = useState(false);
   const [insight, setInsight] = useState(cachedInsight);
