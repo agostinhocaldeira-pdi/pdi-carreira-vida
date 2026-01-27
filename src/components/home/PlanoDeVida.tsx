@@ -25,6 +25,7 @@ import { PDI_QUERY_KEYS, usePDIData } from "@/hooks/usePDIQueries";
 import { RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, Legend, ResponsiveContainer } from "recharts";
 import { useAIUsage } from "@/hooks/useAIUsage";
 import { AIUsageLimitModal } from "@/components/AIUsageLimitModal";
+import { useHomeCache } from "@/hooks/useHomeCache";
 
 interface PlanoDeVidaProps {
   onTabChange?: (tab: string) => void;
@@ -46,6 +47,9 @@ const PlanoDeVida = ({ onTabChange, onOpenChange, forcedTab, forcedOpen }: Plano
   // AI Usage hook for insight purchases
   const aiUsage = useAIUsage('insight');
   const [showAILimitModal, setShowAILimitModal] = useState(false);
+  
+  // Use pre-computed cache from overnight processing
+  const { data: homeCache } = useHomeCache();
   
   // React Query hook for cached data with localStorage-first pattern
   const { data: pdiData, isLoading: isQueryLoading } = usePDIData();
@@ -547,9 +551,13 @@ const PlanoDeVida = ({ onTabChange, onOpenChange, forcedTab, forcedOpen }: Plano
     setIsGeneratingInsight(true);
     
     try {
-      // Collect all user data for comprehensive insight
-      const { collectInsightData } = await import('@/services/insightDataCollector');
-      const insightData = await collectInsightData(storage);
+      // Use cache-optimized data collection (uses overnight pre-processed data)
+      const { collectInsightDataFromCache, collectInsightData } = await import('@/services/insightDataCollector');
+      
+      // Prefer cache if available, fallback to direct queries
+      const insightData = homeCache?.cacheExists 
+        ? await collectInsightDataFromCache(homeCache)
+        : await collectInsightData(storage);
       
       const { data, error } = await supabase.functions.invoke('generate-insight', {
         body: insightData

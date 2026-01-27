@@ -18,6 +18,7 @@ import LogoutButton from "@/components/LogoutButton";
 import { useAIUsage } from "@/hooks/useAIUsage";
 import { AIUsageLimitModal } from "@/components/AIUsageLimitModal";
 import { useUserRole } from "@/hooks/useUserRole";
+import { useHomeCache } from "@/hooks/useHomeCache";
 import VvdScientificModal from "@/components/VvdScientificModal";
 import ValuesScientificModal from "@/components/ValuesScientificModal";
 import { LifeWheelScientificModal } from "@/components/LifeWheelScientificModal";
@@ -28,6 +29,9 @@ const PlanoVidaQuemSou = () => {
   const storage = usePDIStorage();
   const navigate = useNavigate();
   const isMobile = useIsMobile();
+  
+  // Use pre-computed cache from overnight processing
+  const { data: homeCache } = useHomeCache();
   
   const [vvd, setVvd] = useState("");
   const [isEditingVvd, setIsEditingVvd] = useState(true);
@@ -286,9 +290,13 @@ const PlanoVidaQuemSou = () => {
     setIsGeneratingInsight(true);
 
     try {
-      // Collect all user data for comprehensive insight
-      const { collectInsightData } = await import('@/services/insightDataCollector');
-      const insightData = await collectInsightData(storage);
+      // Use cache-optimized data collection (uses overnight pre-processed data)
+      const { collectInsightDataFromCache, collectInsightData } = await import('@/services/insightDataCollector');
+      
+      // Prefer cache if available, fallback to direct queries
+      const insightData = homeCache?.cacheExists 
+        ? await collectInsightDataFromCache(homeCache)
+        : await collectInsightData(storage);
 
       const { data, error } = await supabase.functions.invoke('generate-insight', {
         body: insightData

@@ -13,6 +13,7 @@ import { toast } from "sonner";
 import { useGamification } from "@/hooks/useGamification";
 import { useHomeData } from "@/hooks/useHomeData";
 import { useUserRole } from "@/hooks/useUserRole";
+import { useHomeCache } from "@/hooks/useHomeCache";
 import { usePDIStorage } from "@/hooks/usePDIStorage";
 import { useAIUsage } from "@/hooks/useAIUsage";
 import { AIUsageLimitModal } from "@/components/AIUsageLimitModal";
@@ -28,6 +29,9 @@ const Progresso = () => {
 
   const { progress: progressData, insight: cachedInsight, lastInsightDate, objetivos, metas, vvd, valores, areasVida } = useHomeData();
   const { isAdmin } = useUserRole();
+  
+  // Use pre-computed cache from overnight processing
+  const { data: homeCache } = useHomeCache();
 
   const unlockedAchievements = getUnlockedAchievements();
   const lockedAchievements = getLockedAchievements();
@@ -122,9 +126,13 @@ const Progresso = () => {
     setIsGenerating(true);
     
     try {
-      // Collect all user data for comprehensive insight
-      const { collectInsightData } = await import('@/services/insightDataCollector');
-      const insightData = await collectInsightData(storage);
+      // Use cache-optimized data collection (uses overnight pre-processed data)
+      const { collectInsightDataFromCache, collectInsightData } = await import('@/services/insightDataCollector');
+      
+      // Prefer cache if available, fallback to direct queries
+      const insightData = homeCache?.cacheExists 
+        ? await collectInsightDataFromCache(homeCache)
+        : await collectInsightData(storage);
 
       const { data, error } = await supabase.functions.invoke('generate-insight', {
         body: insightData
