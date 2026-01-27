@@ -332,8 +332,8 @@ const Home = () => {
   
   const totalUnread = unreadSupportMessages + unreadManagerMessages + unreadEmployeeMessages;
 
-  // Mostrar loading enquanto verifica role
-  if (roleLoading) {
+  // Mostrar loading enquanto verifica role OU estado do sistema
+  if (roleLoading || systemStateLoading) {
     return (
       <div className="min-h-screen bg-gradient-subtle flex items-center justify-center">
         <div className="text-center">
