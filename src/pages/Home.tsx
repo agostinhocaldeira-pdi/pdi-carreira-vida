@@ -176,12 +176,12 @@ const Home = () => {
     
     setIsGeneratingInsight(true);
     try {
-      const vvd = await storage.getVvd();
-      const valores = await storage.getValores();
-      const areasVida = await storage.getAreasVida();
-      
+      // Collect all user data for comprehensive insight
+      const { collectInsightData } = await import('@/services/insightDataCollector');
+      const insightData = await collectInsightData(storage);
+
       const response = await supabase.functions.invoke('generate-insight', {
-        body: { vvd, valores, areasVida, objetivos }
+        body: insightData
       });
       
       if (response.error) throw response.error;
