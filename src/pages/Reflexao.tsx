@@ -1,7 +1,6 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
-import StoicReflectionCard from "@/components/home/StoicReflectionCard";
 import StoicReflectionSection from "@/components/home/StoicReflectionSection";
 
 const Reflexao = () => {
@@ -17,10 +16,10 @@ const Reflexao = () => {
           </Link>
           <div>
             <h1 className="text-lg sm:text-xl font-bold text-foreground">
-              Reflexão & Diário
+              Diário
             </h1>
             <p className="text-xs sm:text-sm text-muted-foreground">
-              Cultive sua mente e registre sua jornada
+              Registre sua jornada
             </p>
           </div>
         </div>
@@ -28,13 +27,8 @@ const Reflexao = () => {
 
       {/* Main Content */}
       <main className="container mx-auto px-4 py-6 space-y-6">
-        {/* Stoic Reflection Card */}
+        {/* Diary Section */}
         <section className="animate-slide-up">
-          <StoicReflectionCard />
-        </section>
-
-        {/* Diary & Reflection Section */}
-        <section className="animate-slide-up" style={{ animationDelay: "0.1s" }}>
           <StoicReflectionSection />
         </section>
       </main>
