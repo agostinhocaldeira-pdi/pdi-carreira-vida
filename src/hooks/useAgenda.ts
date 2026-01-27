@@ -267,7 +267,7 @@ export const useAgenda = () => {
             label: quadrantInfo.label,
             label_color: colorMap[task.quadrant] || 'orange',
             is_recurring: true,
-            recurrence_type: task.quadrant === 'urgent-important' ? 'daily' : undefined,
+            recurrence_type: 'daily', // Ambos quadrantes agora são diários para aparecer todos os dias
           });
         }
       });
