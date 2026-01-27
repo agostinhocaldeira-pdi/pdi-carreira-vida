@@ -85,9 +85,6 @@ export const HomeInitiation = ({ showAgenda = false }: HomeInitiationProps) => {
                 <div className="w-12 h-12 rounded-full bg-[#D4AF37]/20 flex items-center justify-center">
                   <User className="w-6 h-6 text-[#D4AF37]" />
                 </div>
-                <span className="text-xs font-medium text-[#D4AF37] bg-[#D4AF37]/10 px-2 py-1 rounded-full">
-                  Passo 1
-                </span>
               </div>
               <CardTitle className="text-lg sm:text-xl font-bold text-white">
                 Base Pessoal
@@ -115,12 +112,7 @@ export const HomeInitiation = ({ showAgenda = false }: HomeInitiationProps) => {
                 <div className="w-12 h-12 rounded-full bg-muted flex items-center justify-center">
                   <Target className="w-6 h-6 text-muted-foreground/50" />
                 </div>
-                <div className="flex items-center gap-1.5">
-                  <Lock className="w-4 h-4 text-muted-foreground/50" />
-                  <span className="text-xs font-medium text-muted-foreground/50">
-                    Passo 2
-                  </span>
-                </div>
+                <Lock className="w-4 h-4 text-muted-foreground/50" />
               </div>
               <CardTitle className="text-lg sm:text-xl font-bold text-muted-foreground/70">
                 Direção & Objetivos
@@ -143,12 +135,7 @@ export const HomeInitiation = ({ showAgenda = false }: HomeInitiationProps) => {
                 <div className="w-12 h-12 rounded-full bg-muted flex items-center justify-center">
                   <Rocket className="w-6 h-6 text-muted-foreground/50" />
                 </div>
-                <div className="flex items-center gap-1.5">
-                  <Lock className="w-4 h-4 text-muted-foreground/50" />
-                  <span className="text-xs font-medium text-muted-foreground/50">
-                    Passo 3
-                  </span>
-                </div>
+                <Lock className="w-4 h-4 text-muted-foreground/50" />
               </div>
               <CardTitle className="text-lg sm:text-xl font-bold text-muted-foreground/70">
                 Plano de Execução
