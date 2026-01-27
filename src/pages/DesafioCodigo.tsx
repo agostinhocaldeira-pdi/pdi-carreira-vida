@@ -1,22 +1,78 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Lightbulb, TrendingDown, Zap, Sprout, Clapperboard, HelpCircle, ChevronLeft, ChevronRight, Rocket } from "lucide-react";
+import { Lightbulb, TrendingDown, Zap, Sprout, Clapperboard, HelpCircle, ChevronLeft, ChevronRight, Rocket, Lock, Check } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { desafioData } from "@/data/desafioCodigoData";
+import { useChallengeProgress } from "@/hooks/useChallengeProgress";
+import { toast } from "sonner";
 import codigoEssencialCover from "@/assets/codigo-essencial-cover.png";
 
 const DesafioCodigo = () => {
   const [currentDay, setCurrentDay] = useState<number | null>(null);
   const [responses, setResponses] = useState<Record<string, string>>({});
+  const [isCompleting, setIsCompleting] = useState(false);
+  
+  const { 
+    isLoading, 
+    completeDay, 
+    isDayCompleted, 
+    isDayAccessible, 
+    getDayStatus,
+    getNextAvailableDay 
+  } = useChallengeProgress();
 
   const handleInputChange = (key: string, value: string) => {
     setResponses(prev => ({ ...prev, [key]: value }));
   };
 
   const currentExercise = currentDay !== null ? desafioData[currentDay - 1] : null;
+
+  const handleDaySelect = (day: number) => {
+    const status = getDayStatus(day);
+    if (status === 'locked') {
+      toast.error("Este dia ainda está bloqueado. Complete o dia anterior primeiro.");
+      return;
+    }
+    setCurrentDay(day);
+  };
+
+  const handleCompleteDay = async () => {
+    if (currentDay === null) return;
+    
+    if (isDayCompleted(currentDay)) {
+      // Already completed, just move to next
+      const nextDay = Math.min(30, currentDay + 1);
+      if (isDayAccessible(nextDay)) {
+        setCurrentDay(nextDay);
+      } else {
+        toast.info("Volte amanhã para fazer o próximo dia!");
+      }
+      return;
+    }
+
+    setIsCompleting(true);
+    const success = await completeDay(currentDay);
+    setIsCompleting(false);
+
+    if (success) {
+      toast.success(`Dia ${currentDay} concluído! 🎉`);
+      
+      if (currentDay < 30) {
+        toast.info("Volte amanhã para fazer o próximo dia!");
+      } else {
+        toast.success("Parabéns! Você completou o desafio de 30 dias! 🏆");
+      }
+    }
+  };
+
+  const handleStartChallenge = () => {
+    const nextDay = getNextAvailableDay();
+    setCurrentDay(nextDay);
+  };
 
   // Intro Screen
   if (currentDay === null) {
@@ -71,8 +127,8 @@ const DesafioCodigo = () => {
             </div>
 
             <div className="flex justify-center pt-8">
-              <Button onClick={() => setCurrentDay(1)} size="lg" className="bg-gradient-to-r from-[#d4a853] to-[#b8912f] hover:from-[#e5b964] hover:to-[#c9a240] text-[#1a1a1a] font-bold text-lg px-12 py-6 rounded-xl shadow-lg shadow-[#d4a853]/30">
-                <Rocket className="w-5 h-5 mr-2" /> Iniciar o Desafio
+              <Button onClick={handleStartChallenge} size="lg" className="bg-gradient-to-r from-[#d4a853] to-[#b8912f] hover:from-[#e5b964] hover:to-[#c9a240] text-[#1a1a1a] font-bold text-lg px-12 py-6 rounded-xl shadow-lg shadow-[#d4a853]/30">
+                <Rocket className="w-5 h-5 mr-2" /> {isLoading ? "Carregando..." : "Iniciar o Desafio"}
               </Button>
             </div>
           </motion.div>
@@ -110,14 +166,45 @@ const DesafioCodigo = () => {
             </div>
           </div>
 
-          {/* Day Navigation */}
+          {/* Day Navigation with lock states */}
           <ScrollArea className="w-full">
             <div className="flex gap-2 pb-2">
-              {Array.from({ length: 30 }, (_, i) => i + 1).map((day) => (
-                <button key={day} onClick={() => setCurrentDay(day)} className={`flex-shrink-0 px-4 py-2 rounded-lg text-sm font-medium transition-all ${currentDay === day ? 'bg-gradient-to-r from-[#d4a853] to-[#b8912f] text-[#1a1a1a] shadow-lg' : 'bg-[#252525] text-gray-400 hover:bg-[#333] hover:text-white border border-[#333]'}`}>
-                  DIA {day}
-                </button>
-              ))}
+              <TooltipProvider>
+                {Array.from({ length: 30 }, (_, i) => i + 1).map((day) => {
+                  const status = getDayStatus(day);
+                  const isLocked = status === 'locked';
+                  const isCompleted = status === 'completed';
+                  
+                  return (
+                    <Tooltip key={day}>
+                      <TooltipTrigger asChild>
+                        <button 
+                          onClick={() => handleDaySelect(day)} 
+                          disabled={isLocked}
+                          className={`flex-shrink-0 px-4 py-2 rounded-lg text-sm font-medium transition-all flex items-center gap-1.5 ${
+                            currentDay === day 
+                              ? 'bg-gradient-to-r from-[#d4a853] to-[#b8912f] text-[#1a1a1a] shadow-lg' 
+                              : isLocked
+                                ? 'bg-[#1f1f1f] text-gray-600 cursor-not-allowed border border-[#2a2a2a]'
+                                : isCompleted
+                                  ? 'bg-[#2a2a2a] text-green-400 border border-green-500/30 hover:bg-[#333]'
+                                  : 'bg-[#252525] text-gray-400 hover:bg-[#333] hover:text-white border border-[#333]'
+                          }`}
+                        >
+                          {isLocked && <Lock className="w-3 h-3" />}
+                          {isCompleted && <Check className="w-3 h-3" />}
+                          DIA {day}
+                        </button>
+                      </TooltipTrigger>
+                      {isLocked && (
+                        <TooltipContent>
+                          <p>Complete o dia {day - 1} primeiro</p>
+                        </TooltipContent>
+                      )}
+                    </Tooltip>
+                  );
+                })}
+              </TooltipProvider>
             </div>
             <ScrollBar orientation="horizontal" className="h-2" />
           </ScrollArea>
@@ -240,13 +327,58 @@ const DesafioCodigo = () => {
                 </div>
               </section>
 
-              <div className="flex justify-between pt-8 border-t border-[#333]">
-                <Button variant="outline" onClick={() => setCurrentDay(Math.max(1, currentDay - 1))} disabled={currentDay === 1} className="border-[#333] text-gray-400 hover:text-white hover:bg-[#252525] disabled:opacity-30">
-                  <ChevronLeft className="w-4 h-4 mr-2" /> Dia Anterior
-                </Button>
-                <Button onClick={() => setCurrentDay(Math.min(30, currentDay + 1))} disabled={currentDay === 30} className="bg-gradient-to-r from-[#d4a853] to-[#b8912f] text-[#1a1a1a] hover:from-[#e5b964] hover:to-[#c9a240] disabled:opacity-30">
-                  Próximo Dia <ChevronRight className="w-4 h-4 ml-2" />
-                </Button>
+              {/* Footer navigation with completion button */}
+              <div className="flex flex-col gap-4 pt-8 border-t border-[#333]">
+                {/* Complete Day Button */}
+                {!isDayCompleted(currentDay) && (
+                  <Button 
+                    onClick={handleCompleteDay} 
+                    disabled={isCompleting}
+                    className="w-full bg-gradient-to-r from-green-500 to-green-600 text-white hover:from-green-600 hover:to-green-700 font-bold text-lg py-6"
+                  >
+                    {isCompleting ? "Salvando..." : `✅ Concluir Dia ${currentDay}`}
+                  </Button>
+                )}
+                
+                {isDayCompleted(currentDay) && (
+                  <div className="w-full bg-green-500/10 border border-green-500/30 rounded-lg py-4 text-center">
+                    <span className="text-green-400 font-medium flex items-center justify-center gap-2">
+                      <Check className="w-5 h-5" /> Dia {currentDay} concluído!
+                    </span>
+                  </div>
+                )}
+
+                {/* Navigation buttons */}
+                <div className="flex justify-between">
+                  <Button 
+                    variant="outline" 
+                    onClick={() => {
+                      const prevDay = currentDay - 1;
+                      if (prevDay >= 1 && getDayStatus(prevDay) !== 'locked') {
+                        setCurrentDay(prevDay);
+                      }
+                    }} 
+                    disabled={currentDay === 1} 
+                    className="border-[#333] text-gray-400 hover:text-white hover:bg-[#252525] disabled:opacity-30"
+                  >
+                    <ChevronLeft className="w-4 h-4 mr-2" /> Dia Anterior
+                  </Button>
+                  
+                  <Button 
+                    onClick={() => {
+                      const nextDay = currentDay + 1;
+                      if (nextDay <= 30 && getDayStatus(nextDay) !== 'locked') {
+                        setCurrentDay(nextDay);
+                      } else if (getDayStatus(nextDay) === 'locked') {
+                        toast.info("Volte amanhã para fazer o próximo dia!");
+                      }
+                    }} 
+                    disabled={currentDay === 30 || (currentDay < 30 && getDayStatus(currentDay + 1) === 'locked' && !isDayCompleted(currentDay))} 
+                    className="bg-gradient-to-r from-[#d4a853] to-[#b8912f] text-[#1a1a1a] hover:from-[#e5b964] hover:to-[#c9a240] disabled:opacity-30"
+                  >
+                    Próximo Dia <ChevronRight className="w-4 h-4 ml-2" />
+                  </Button>
+                </div>
               </div>
             </motion.article>
           )}
