@@ -74,6 +74,7 @@ const DesafioCodigo = () => {
   const handleStartChallenge = () => {
     const nextDay = getNextAvailableDay();
     setCurrentDay(nextDay);
+    window.scrollTo({ top: 0, behavior: 'instant' });
   };
 
   // Intro Screen
