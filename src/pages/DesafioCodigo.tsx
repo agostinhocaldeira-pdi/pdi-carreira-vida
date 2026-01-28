@@ -4,7 +4,7 @@ import { Lightbulb, TrendingDown, Zap, Sprout, Clapperboard, HelpCircle, Chevron
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
+
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { desafioData } from "@/data/desafioCodigoData";
 import { useChallengeProgress } from "@/hooks/useChallengeProgress";
@@ -167,7 +167,7 @@ const DesafioCodigo = () => {
           </div>
 
           {/* Day Navigation with lock states */}
-          <ScrollArea className="w-full">
+          <div className="w-full overflow-hidden">
             <div className="flex gap-2 pb-2">
               <TooltipProvider>
                 {Array.from({ length: 30 }, (_, i) => i + 1).map((day) => {
@@ -206,8 +206,7 @@ const DesafioCodigo = () => {
                 })}
               </TooltipProvider>
             </div>
-            <ScrollBar orientation="horizontal" className="h-2" />
-          </ScrollArea>
+          </div>
         </div>
       </header>
 
