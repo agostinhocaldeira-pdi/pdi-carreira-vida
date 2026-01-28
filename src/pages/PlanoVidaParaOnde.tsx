@@ -256,9 +256,16 @@ const PlanoVidaParaOnde = () => {
       status: obj.status?.replace('-', ' ') || 'a fazer',
       is_principal: obj.isPrincipal,
     }));
-    storage.saveObjetivos(objetivosToSave as any).catch(error => {
+    
+    // CRITICAL: Save to Supabase and invalidate cache BEFORE showing modal
+    try {
+      await storage.saveObjetivos(objetivosToSave as any);
+      // Invalidate cache so the new objective appears immediately on other pages
+      await queryClient.invalidateQueries({ queryKey: PDI_QUERY_KEYS.pdiData() });
+    } catch (error) {
       console.error("Background objetivos sync error:", error);
-    });
+    }
+    
     setObjetivo({ texto: "", dataAlvo: "", conexaoVvd: "", status: "em-andamento", isPrincipal: false });
     
     setObjetivoRecemCriado(novoObjetivo.id);
