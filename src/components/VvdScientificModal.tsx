@@ -57,7 +57,7 @@ const VvdScientificModal = ({ open, onOpenChange }: VvdScientificModalProps) => 
             <section>
               <h3 className="font-semibold text-foreground mb-2">Por que a VVD vem antes de metas e ações</h3>
               <p className="mb-3">
-                No Método SEPP, nada começa por tarefas ou listas de objetivos isolados.
+                No sistema PDI, nada começa por tarefas ou listas de objetivos isolados.
               </p>
               <p className="mb-2">A lógica é simples:</p>
               <p className="font-medium text-foreground mb-3 italic">
