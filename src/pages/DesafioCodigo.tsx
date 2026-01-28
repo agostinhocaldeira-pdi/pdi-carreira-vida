@@ -168,10 +168,38 @@ const DesafioCodigo = () => {
               </div>
             </div>
             <div className="flex items-center gap-2">
-              <Button variant="ghost" size="icon" onClick={() => setCurrentDay(Math.max(1, currentDay - 1))} disabled={currentDay === 1} className="text-gray-400 hover:text-white disabled:opacity-30">
+               <Button
+                 variant="ghost"
+                 size="icon"
+                 onClick={() => {
+                   const prevDay = currentDay - 1;
+                   if (prevDay >= 1 && getDayStatus(prevDay) !== 'locked') {
+                     setCurrentDay(prevDay);
+                   }
+                 }}
+                 disabled={
+                   currentDay === 1 ||
+                   (currentDay > 1 && getDayStatus(currentDay - 1) === 'locked')
+                 }
+                 className="text-gray-400 hover:text-white disabled:opacity-30"
+               >
                 <ChevronLeft className="w-5 h-5" />
               </Button>
-              <Button variant="ghost" size="icon" onClick={() => setCurrentDay(Math.min(30, currentDay + 1))} disabled={currentDay === 30} className="text-gray-400 hover:text-white disabled:opacity-30">
+               <Button
+                 variant="ghost"
+                 size="icon"
+                 onClick={() => {
+                   const nextDay = currentDay + 1;
+                   if (nextDay <= 30 && getDayStatus(nextDay) !== 'locked') {
+                     setCurrentDay(nextDay);
+                   }
+                 }}
+                 disabled={
+                   currentDay === 30 ||
+                   (currentDay < 30 && getDayStatus(currentDay + 1) === 'locked')
+                 }
+                 className="text-gray-400 hover:text-white disabled:opacity-30"
+               >
                 <ChevronRight className="w-5 h-5" />
               </Button>
             </div>
