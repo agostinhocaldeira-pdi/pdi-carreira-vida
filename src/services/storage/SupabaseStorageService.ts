@@ -335,6 +335,16 @@ class SupabaseStorageService {
       if (deleteError) console.error('Error deleting objectives:', deleteError);
     }
 
+    // Helper to normalize status from code format (with hyphens) to DB format (with spaces)
+    const normalizeStatus = (status: string | undefined): string => {
+      if (!status) return 'a fazer';
+      // Convert hyphenated status to space-separated (DB format)
+      const normalized = status.replace(/-/g, ' ');
+      // Validate against allowed values
+      const allowedStatuses = ['concluido', 'a fazer', 'pendente', 'em andamento'];
+      return allowedStatuses.includes(normalized) ? normalized : 'a fazer';
+    };
+
     // Update existing objectives
     for (const obj of existingObjetivos) {
       const { error: updateError } = await supabase
@@ -343,7 +353,7 @@ class SupabaseStorageService {
           texto: obj.texto,
           data_alvo: obj.data_alvo || null,
           conexao_vvd: obj.conexao_vvd || null,
-          status: obj.status?.replace('-', ' ') || 'a fazer',
+          status: normalizeStatus(obj.status),
           is_principal: obj.is_principal ?? (obj as any).isPrincipal ?? false,
           updated_at: new Date().toISOString(),
         })
@@ -362,7 +372,7 @@ class SupabaseStorageService {
           texto: obj.texto,
           data_alvo: obj.data_alvo || null,
           conexao_vvd: obj.conexao_vvd || null,
-          status: obj.status?.replace('-', ' ') || 'a fazer',
+          status: normalizeStatus(obj.status),
           is_principal: obj.is_principal ?? (obj as any).isPrincipal ?? false,
         })));
 
