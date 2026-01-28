@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { Lightbulb, TrendingDown, Zap, Sprout, Clapperboard, HelpCircle, ChevronLeft, ChevronRight, Rocket, Lock, Check } from "lucide-react";
+import { Lightbulb, TrendingDown, Zap, Sprout, Clapperboard, HelpCircle, ChevronLeft, ChevronRight, Rocket, Lock, Check, Home } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -12,6 +13,7 @@ import { toast } from "sonner";
 import codigoEssencialCover from "@/assets/codigo-essencial-cover.png";
 
 const DesafioCodigo = () => {
+  const navigate = useNavigate();
   const [currentDay, setCurrentDay] = useState<number | null>(null);
   const [responses, setResponses] = useState<Record<string, string>>({});
   const [isCompleting, setIsCompleting] = useState(false);
@@ -148,6 +150,14 @@ const DesafioCodigo = () => {
         <div className="container mx-auto px-4 py-3">
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-3">
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                onClick={() => navigate('/home')} 
+                className="text-gray-400 hover:text-white hover:bg-[#252525]"
+              >
+                <Home className="w-5 h-5" />
+              </Button>
               <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-[#d4a853] to-[#b8912f] flex items-center justify-center">
                 <span className="font-bold text-[#1a1a1a] text-sm">30</span>
               </div>
