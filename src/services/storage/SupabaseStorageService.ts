@@ -300,27 +300,74 @@ class SupabaseStorageService {
 
   async saveObjetivos(objetivos: Objetivo[]): Promise<void> {
     const userId = await this.getUserId();
-    if (!userId) return;
+    if (!userId) {
+      console.error('saveObjetivos: No user ID found - user may not be authenticated');
+      return;
+    }
 
-    // For now, we'll do a simple replace strategy
-    // In production, you'd want proper upsert logic
-    await supabase.from('user_objectives').delete().eq('user_id', userId);
+    // Helper to check if an ID is a valid UUID
+    const isValidUUID = (id: any): boolean => {
+      if (typeof id !== 'string') return false;
+      const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+      return uuidRegex.test(id);
+    };
 
-    if (objetivos.length === 0) return;
+    // Separate existing objectives (with valid UUIDs) from new ones
+    const existingObjetivos = objetivos.filter(obj => isValidUUID(String(obj.id)));
+    const newObjetivos = objetivos.filter(obj => !isValidUUID(String(obj.id)));
 
-    const { error } = await supabase
+    // Get current objectives from database to find ones to delete
+    const { data: currentObjetivos } = await supabase
       .from('user_objectives')
-      .insert(objetivos.map(obj => ({
-        user_id: userId,
-        texto: obj.texto,
-        data_alvo: obj.data_alvo || null,
-        conexao_vvd: obj.conexao_vvd || null,
-        status: obj.status?.replace('-', ' ') || 'a fazer',
-        // Accept both snake_case and camelCase for compatibility
-        is_principal: obj.is_principal ?? (obj as any).isPrincipal ?? false,
-      })));
+      .select('id')
+      .eq('user_id', userId);
 
-    if (error) console.error('Error saving objetivos:', error);
+    const currentIds = new Set((currentObjetivos || []).map(o => o.id));
+    const keepIds = new Set(existingObjetivos.map(o => String(o.id)));
+    
+    // Delete objectives that are no longer in the list
+    const idsToDelete = [...currentIds].filter(id => !keepIds.has(id));
+    if (idsToDelete.length > 0) {
+      const { error: deleteError } = await supabase
+        .from('user_objectives')
+        .delete()
+        .in('id', idsToDelete);
+      if (deleteError) console.error('Error deleting objectives:', deleteError);
+    }
+
+    // Update existing objectives
+    for (const obj of existingObjetivos) {
+      const { error: updateError } = await supabase
+        .from('user_objectives')
+        .update({
+          texto: obj.texto,
+          data_alvo: obj.data_alvo || null,
+          conexao_vvd: obj.conexao_vvd || null,
+          status: obj.status?.replace('-', ' ') || 'a fazer',
+          is_principal: obj.is_principal ?? (obj as any).isPrincipal ?? false,
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', String(obj.id))
+        .eq('user_id', userId);
+      
+      if (updateError) console.error('Error updating objective:', updateError);
+    }
+
+    // Insert new objectives (without specifying id - let DB generate UUID)
+    if (newObjetivos.length > 0) {
+      const { error: insertError } = await supabase
+        .from('user_objectives')
+        .insert(newObjetivos.map(obj => ({
+          user_id: userId,
+          texto: obj.texto,
+          data_alvo: obj.data_alvo || null,
+          conexao_vvd: obj.conexao_vvd || null,
+          status: obj.status?.replace('-', ' ') || 'a fazer',
+          is_principal: obj.is_principal ?? (obj as any).isPrincipal ?? false,
+        })));
+
+      if (insertError) console.error('Error inserting new objectives:', insertError);
+    }
   }
 
   // ============================================
