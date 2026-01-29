@@ -1,9 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { ArrowRight, CheckCircle2 } from "lucide-react";
 
-// Import video
-import journalVideo from "@/assets/journal-video.mp4";
-
 interface HeroSectionProps {
   onCTA: () => void;
 }
@@ -30,18 +27,16 @@ const HeroSection = ({ onCTA }: HeroSectionProps) => {
           </p>
         </div>
 
-        {/* Video Preview */}
+        {/* Video Preview - YouTube Embed */}
         <div className="relative mx-auto max-w-5xl mb-12">
-          <div className="relative rounded-2xl overflow-hidden shadow-2xl border border-border/50">
-            <video 
-              src={journalVideo} 
-              autoPlay
-              loop
-              muted
-              playsInline
-              className="w-full h-auto"
+          <div className="relative rounded-2xl overflow-hidden shadow-2xl border border-border/50 aspect-video">
+            <iframe
+              src="https://www.youtube.com/embed/jatbs2MI37w?autoplay=1&mute=1&loop=1&playlist=jatbs2MI37w&controls=0&showinfo=0&rel=0&modestbranding=1"
+              title="PDI - Carreira e Vida"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+              className="absolute inset-0 w-full h-full"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-background/20 to-transparent pointer-events-none" />
           </div>
         </div>
 
