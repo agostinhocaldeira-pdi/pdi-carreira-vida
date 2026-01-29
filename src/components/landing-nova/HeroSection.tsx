@@ -29,13 +29,15 @@ const HeroSection = ({ onCTA }: HeroSectionProps) => {
 
         {/* Video Preview - YouTube Embed */}
         <div className="relative mx-auto max-w-5xl mb-12">
-          <div className="relative rounded-2xl overflow-hidden shadow-2xl border border-border/50 aspect-video">
+          <div className="relative rounded-2xl overflow-hidden shadow-2xl border border-border/50 aspect-video bg-black">
             <iframe
-              src="https://www.youtube.com/embed/jatbs2MI37w?autoplay=1&mute=1&loop=1&playlist=jatbs2MI37w&controls=0&showinfo=0&rel=0&modestbranding=1"
+              src="https://www.youtube-nocookie.com/embed/jatbs2MI37w?autoplay=1&mute=1&loop=1&playlist=jatbs2MI37w&controls=0&rel=0&modestbranding=1&playsinline=1"
               title="PDI - Carreira e Vida"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
               allowFullScreen
-              className="absolute inset-0 w-full h-full"
+              loading="lazy"
+              referrerPolicy="strict-origin-when-cross-origin"
+              className="absolute inset-0 w-full h-full border-0"
             />
           </div>
         </div>
