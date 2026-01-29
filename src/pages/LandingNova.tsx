@@ -115,18 +115,6 @@ const LandingNova = () => {
                 />
               </div>
 
-              <p className="text-xs text-gray-500 mt-2">
-                Se não carregar, abra diretamente:{" "}
-                <a
-                  className="underline text-gray-300 hover:text-white"
-                  href="https://youtu.be/jatbs2MI37w"
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  assistir no YouTube
-                </a>
-                .
-              </p>
             </div>
           </div>
         </div>
