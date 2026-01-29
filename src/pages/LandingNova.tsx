@@ -101,15 +101,32 @@ const LandingNova = () => {
 
             {/* Video Section */}
             <div className="w-full max-w-3xl mx-auto">
-              <div className="relative w-full rounded-xl overflow-hidden shadow-2xl border border-gray-700" style={{ paddingBottom: '56.25%' }}>
+              <div
+                className="relative w-full rounded-xl overflow-hidden shadow-2xl border border-gray-700 bg-black"
+                style={{ paddingBottom: "56.25%" }}
+              >
                 <iframe
-                  className="absolute top-0 left-0 w-full h-full"
-                  src="https://www.youtube.com/embed/F50nE1vYjaY?rel=0&controls=1"
+                  className="absolute top-0 left-0 w-full h-full border-0"
+                  src="https://www.youtube-nocookie.com/embed/jatbs2MI37w?rel=0&controls=1&modestbranding=1&playsinline=1"
                   title="PDI - Carreira e Vida"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  referrerPolicy="strict-origin-when-cross-origin"
                   allowFullScreen
                 />
               </div>
+
+              <p className="text-xs text-gray-500 mt-2">
+                Se não carregar, abra diretamente:{" "}
+                <a
+                  className="underline text-gray-300 hover:text-white"
+                  href="https://youtu.be/jatbs2MI37w"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  assistir no YouTube
+                </a>
+                .
+              </p>
             </div>
           </div>
         </div>
