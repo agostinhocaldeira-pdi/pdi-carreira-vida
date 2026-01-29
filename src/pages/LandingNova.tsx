@@ -455,7 +455,7 @@ const LandingNova = () => {
             <Button 
               size="lg" 
               onClick={handleCTAClick}
-              className="text-lg px-10 py-6 bg-[#d4a853] hover:bg-[#c49843] text-[#1a1a1a] font-bold uppercase tracking-wide"
+              className="text-base sm:text-lg px-6 sm:px-10 py-5 sm:py-6 bg-[#d4a853] hover:bg-[#c49843] text-[#1a1a1a] font-bold uppercase tracking-wide w-full sm:w-auto max-w-xs sm:max-w-none"
             >
               Criar Minha Conta Grátis
               <ArrowRight className="ml-2 h-5 w-5" />
