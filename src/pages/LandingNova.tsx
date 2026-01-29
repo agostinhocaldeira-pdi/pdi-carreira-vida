@@ -84,9 +84,9 @@ const LandingNova = () => {
               É a falta de um método que conecte sua identidade à sua agenda de segunda-feira.
             </p>
             {/* Video Section */}
-            <div className="w-full max-w-3xl mx-auto mb-10">
+            <div className="w-full max-w-none sm:max-w-3xl mx-auto mb-10 -mx-4 sm:mx-auto px-0 sm:px-0">
               <div
-                className="relative w-full rounded-xl overflow-hidden shadow-2xl border border-gray-700 bg-black"
+                className="relative w-full overflow-hidden shadow-2xl border-y sm:border border-gray-700 bg-black sm:rounded-xl"
                 style={{ paddingBottom: "56.25%" }}
               >
                 <iframe
