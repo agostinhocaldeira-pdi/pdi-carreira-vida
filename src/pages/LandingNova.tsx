@@ -83,24 +83,8 @@ const LandingNova = () => {
               Se você sente que planeja muito mas sua vida não avança, o problema não é você. 
               É a falta de um método que conecte sua identidade à sua agenda de segunda-feira.
             </p>
-            
-            {/* CTA Principal */}
-            <div className="flex flex-col items-center gap-4 mb-10">
-              <Button 
-                size="lg" 
-                onClick={handleCTAClick}
-                className="text-lg px-8 py-6 bg-[#d4a853] hover:bg-[#c49843] text-[#1a1a1a] font-bold uppercase tracking-wide"
-              >
-                Começar Teste Grátis
-                <ArrowRight className="ml-2 h-5 w-5" />
-              </Button>
-              <p className="text-sm text-gray-500">
-                30 dias gratuitos • Sem cartão de crédito • Acesso imediato
-              </p>
-            </div>
-
             {/* Video Section */}
-            <div className="w-full max-w-3xl mx-auto">
+            <div className="w-full max-w-3xl mx-auto mb-10">
               <div
                 className="relative w-full rounded-xl overflow-hidden shadow-2xl border border-gray-700 bg-black"
                 style={{ paddingBottom: "56.25%" }}
@@ -114,7 +98,21 @@ const LandingNova = () => {
                   allowFullScreen
                 />
               </div>
+            </div>
 
+            {/* CTA Principal */}
+            <div className="flex flex-col items-center gap-4">
+              <Button 
+                size="lg" 
+                onClick={handleCTAClick}
+                className="text-base sm:text-lg px-6 sm:px-8 py-5 sm:py-6 bg-[#d4a853] hover:bg-[#c49843] text-[#1a1a1a] font-bold uppercase tracking-wide"
+              >
+                Começar Teste Grátis
+                <ArrowRight className="ml-2 h-5 w-5" />
+              </Button>
+              <p className="text-sm text-gray-500">
+                30 dias gratuitos • Sem cartão de crédito • Acesso imediato
+              </p>
             </div>
           </div>
         </div>
