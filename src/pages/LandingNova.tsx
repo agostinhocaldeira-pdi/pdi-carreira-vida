@@ -103,11 +103,11 @@ const LandingNova = () => {
                 onClick={handleCTAClick}
                 className="text-base sm:text-lg px-6 sm:px-8 py-5 sm:py-6 bg-[#d4a853] hover:bg-[#c49843] text-[#1a1a1a] font-bold uppercase tracking-wide"
               >
-                Começar Teste Grátis
+                Começar
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
               <p className="text-sm text-gray-500">
-                30 dias gratuitos • Sem cartão de crédito • Acesso imediato
+                Recupere clareza e direção nos primeiros 7 dias.
               </p>
             </div>
           </div>
