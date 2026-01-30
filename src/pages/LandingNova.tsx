@@ -445,15 +445,18 @@ const LandingNova = () => {
             Acesse a plataforma completa. Se em um mês você não sentir que recuperou o controle do seu tempo, 
             você não paga nada. Simples assim.
           </p>
-          <div className="flex flex-col items-center gap-3">
+          <div className="flex flex-col items-center gap-4">
             <Button 
               size="lg" 
               onClick={handleCTAClick}
               className="text-base sm:text-lg px-6 sm:px-10 py-5 sm:py-6 bg-[#d4a853] hover:bg-[#c49843] text-[#1a1a1a] font-bold uppercase tracking-wide w-full sm:w-auto max-w-xs sm:max-w-none"
             >
-              Criar Minha Conta Grátis
+              Começar
               <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
+            <p className="text-sm text-gray-500">
+              Recupere clareza e direção nos primeiros 7 dias.
+            </p>
           </div>
         </div>
       </section>
