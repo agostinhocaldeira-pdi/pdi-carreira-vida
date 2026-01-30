@@ -73,15 +73,11 @@ const LandingNova = () => {
         <div className="container mx-auto max-w-4xl">
           <div className="text-center">
             <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-4 sm:mb-6 text-white leading-tight">
-              O Painel de Controle da sua{" "}
-              <span className="text-[#d4a853]">Vida Pessoal e Profissional.</span>
+              Transforme semanas ocupadas em{" "}
+              <span className="text-[#d4a853]">progresso real de vida e carreira.</span>
             </h1>
-            <p className="text-lg sm:text-xl md:text-2xl text-[#d4a853] font-medium mb-4">
-              Um sistema para organizar decisões, não apenas tarefas.
-            </p>
             <p className="text-base sm:text-lg text-gray-400 mb-8 sm:mb-10 max-w-3xl mx-auto leading-relaxed">
-              Se você sente que planeja muito mas sua vida não avança, o problema não é você. 
-              É a falta de um método que conecte sua identidade à sua agenda de segunda-feira.
+              O sistema PDI organiza decisões e prioridades para levar sua vida ao que realmente gera resultados — não apenas à execução de tarefas.
             </p>
             {/* Video Section */}
             <div className="w-full max-w-none sm:max-w-3xl mx-auto mb-10 -mx-4 sm:mx-auto px-0 sm:px-0">
