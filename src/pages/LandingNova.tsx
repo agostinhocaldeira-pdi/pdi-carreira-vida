@@ -167,8 +167,8 @@ const LandingNova = () => {
 
             {/* Destaque principal */}
             <div className="relative mt-8 bg-gradient-to-br from-[#d4a853]/20 via-[#d4a853]/10 to-[#1a1a1a] rounded-2xl p-6 sm:p-8 border-2 border-[#d4a853] shadow-[0_0_30px_rgba(212,168,83,0.3)]">
-              <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                <span className="bg-[#d4a853] text-[#1a1a1a] text-xs font-bold uppercase tracking-wider px-4 py-1 rounded-full">
+              <div className="absolute -top-3 left-1/2 -translate-x-1/2 w-max">
+                <span className="bg-[#d4a853] text-[#1a1a1a] text-[10px] sm:text-xs font-bold uppercase tracking-wider px-3 sm:px-4 py-1 rounded-full whitespace-nowrap">
                   O Problema Central
                 </span>
               </div>
