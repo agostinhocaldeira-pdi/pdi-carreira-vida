@@ -123,8 +123,8 @@ const Index = () => {
         <div className="container mx-auto max-w-4xl">
           <div className="text-center mb-8">
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 text-white">
-              Por que pessoas organizadas continuam{" "}
-              <span className="text-[#d4a853]">frustradas?</span>
+              Por que pessoas se esforçam tanto mas não alcançam{" "}
+              <span className="text-[#d4a853]">resultados?</span>
             </h2>
           </div>
           
