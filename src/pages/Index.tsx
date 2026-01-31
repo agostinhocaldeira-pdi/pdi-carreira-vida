@@ -283,7 +283,7 @@ const Index = () => {
               </div>
               <div>
                 <h4 className="font-semibold text-white mb-1">Mentor IA Estratégico</h4>
-                <p className="text-sm text-gray-400">Travou? Nossa IA analisa seus objetivos e sugere o próximo passo para destravar sua ação.</p>
+                <p className="text-sm text-gray-400">Se sente perdido? Peça ajuda para nosso mentor de IA, que vai te ajudar a ter clareza do próximo passo a executar.</p>
               </div>
             </div>
           </div>
