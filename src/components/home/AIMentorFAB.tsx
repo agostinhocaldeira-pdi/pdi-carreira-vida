@@ -38,21 +38,28 @@ export const AIMentorFAB = ({
   return (
     <>
       {/* Floating Action Button - Positioned above the "+" button on mobile */}
-      <Button
-        onClick={() => setIsOpen(true)}
+      {/* Container with static glow ring when insight is available */}
+      <div 
         className={cn(
-          "fixed z-50 w-14 h-14 rounded-full shadow-xl transition-all duration-300",
-          "bg-gradient-to-br from-[#D4AF37] to-[#B8860B] hover:from-[#E5C158] hover:to-[#D4AF37]",
-          "text-black border-2 border-[#D4AF37]/50",
-          "hover:scale-110 hover:shadow-2xl",
-          // Mobile: above the "+" button | Desktop: normal position
-          "bottom-24 right-4 sm:bottom-6 sm:right-6",
-          hasInsight && "animate-pulse"
+          "fixed z-50 bottom-24 right-4 sm:bottom-6 sm:right-6",
+          hasInsight && "before:absolute before:inset-0 before:rounded-full before:bg-[#D4AF37]/30 before:blur-md before:-z-10"
         )}
-        size="icon"
       >
-        <Sparkles className="w-6 h-6" />
-      </Button>
+        <Button
+          onClick={() => setIsOpen(true)}
+          className={cn(
+            "w-14 h-14 rounded-full shadow-xl transition-all duration-300",
+            "bg-gradient-to-br from-[#D4AF37] to-[#B8860B] hover:from-[#E5C158] hover:to-[#D4AF37]",
+            "text-black border-2 border-[#D4AF37]/50",
+            "hover:scale-110 hover:shadow-2xl",
+            // Subtle ring glow when insight is ready (no animation)
+            hasInsight && "ring-4 ring-[#D4AF37]/40 shadow-[0_0_20px_rgba(212,175,55,0.4)]"
+          )}
+          size="icon"
+        >
+          <Sparkles className="w-6 h-6" />
+        </Button>
+      </div>
 
       {/* Drawer/Modal */}
       <Drawer open={isOpen} onOpenChange={setIsOpen}>
