@@ -23,7 +23,8 @@ import {
   CalendarCheck,
   Target,
   Brain,
-  Sparkles
+  Sparkles,
+  Instagram
 } from "lucide-react";
 import logoPdi from "@/assets/logo_pdi.png";
 import WhatsAppButton from "@/components/WhatsAppButton";
@@ -515,8 +516,18 @@ const LandingNova = () => {
       {/* Footer */}
       <footer className="py-8 sm:py-12 px-4 border-t border-gray-800 bg-[#1a1a1a]">
         <div className="container mx-auto max-w-4xl">
-          <div className="text-center text-xs sm:text-sm text-gray-500">
-            <p>© 2024 PDI - Carreira & Vida. Todos os direitos reservados.</p>
+          <div className="flex flex-col items-center gap-4">
+            <a 
+              href="https://www.instagram.com/pdicarreiraevida/" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="w-10 h-10 rounded-full bg-[#d4a853]/10 flex items-center justify-center hover:bg-[#d4a853]/20 transition-colors"
+            >
+              <Instagram className="w-5 h-5 text-[#d4a853]" />
+            </a>
+            <p className="text-xs sm:text-sm text-gray-500">
+              © 2024 PDI - Carreira & Vida. Todos os direitos reservados.
+            </p>
           </div>
         </div>
       </footer>
