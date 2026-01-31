@@ -194,7 +194,7 @@ const LandingNova = () => {
               <span className="text-[#d4a853]">Vida Consciente.</span>
             </h2>
             <p className="text-gray-400 max-w-2xl mx-auto text-base sm:text-lg">
-              O PDI não é um "balde de tarefas". É um sistema guiado que traduz sua visão em execução.
+              O PDI não é um "balde de tarefas". É um sistema guiado que traduz sua visão em execução, em <strong className="text-[#d4a853] font-semibold">3 grandes pilares</strong>
             </p>
           </div>
           
@@ -206,7 +206,7 @@ const LandingNova = () => {
               </div>
               <div className="flex items-center gap-2 mb-3">
                 <span className="text-xs font-bold text-[#d4a853] bg-[#d4a853]/20 px-2 py-1 rounded-full">1</span>
-                <h3 className="text-xl font-bold text-white">A Raiz (Identidade)</h3>
+                <h3 className="text-xl font-bold text-white">A Identidade</h3>
               </div>
               <p className="text-sm font-medium text-[#d4a853] mb-2">Você define o Ponto de Partida</p>
               <p className="text-gray-400 leading-relaxed">
@@ -221,7 +221,7 @@ const LandingNova = () => {
               </div>
               <div className="flex items-center gap-2 mb-3">
                 <span className="text-xs font-bold text--purple-400 bg-purple-500/20 px-2 py-1 rounded-full">2</span>
-                <h3 className="text-xl font-bold text-white">O Tronco (Estratégia)</h3>
+                <h3 className="text-xl font-bold text-white">A Estratégia</h3>
               </div>
               <p className="text-sm font-medium text-purple-400 mb-2">O Sistema estrutura o Plano</p>
               <p className="text-gray-400 leading-relaxed">
@@ -236,7 +236,7 @@ const LandingNova = () => {
               </div>
               <div className="flex items-center gap-2 mb-3">
                 <span className="text-xs font-bold text-emerald-400 bg-emerald-500/20 px-2 py-1 rounded-full">3</span>
-                <h3 className="text-xl font-bold text-white">A Ação (Execução)</h3>
+                <h3 className="text-xl font-bold text-white">A Execução</h3>
               </div>
               <p className="text-sm font-medium text-emerald-400 mb-2">Você executa na Agenda</p>
               <p className="text-gray-400 leading-relaxed">
