@@ -163,6 +163,22 @@ const LandingNova = () => {
                 </p>
               </div>
             </div>
+
+            {/* Destaque principal */}
+            <div className="relative mt-8 bg-gradient-to-br from-[#d4a853]/20 via-[#d4a853]/10 to-[#1a1a1a] rounded-2xl p-6 sm:p-8 border-2 border-[#d4a853] shadow-[0_0_30px_rgba(212,168,83,0.3)]">
+              <div className="absolute -top-3 left-1/2 -translate-x-1/2">
+                <span className="bg-[#d4a853] text-[#1a1a1a] text-xs font-bold uppercase tracking-wider px-4 py-1 rounded-full">
+                  O Problema Central
+                </span>
+              </div>
+              <h3 className="text-xl sm:text-2xl font-bold text-[#d4a853] mb-3 text-center mt-2">
+                Falta de foco no essencial
+              </h3>
+              <p className="text-gray-300 text-center text-base sm:text-lg leading-relaxed">
+                Você se esforça muito, mas executa tarefas que não geram grandes resultados. 
+                <strong className="text-white"> Quando deveria ter ao menos uma tarefa no dia que faz você avançar.</strong>
+              </p>
+            </div>
           </div>
         </div>
       </section>
