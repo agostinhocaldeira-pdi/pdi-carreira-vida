@@ -5,6 +5,10 @@ import { Mic, MicOff } from "lucide-react";
 import { useSpeechRecognition } from "@/hooks/useSpeechRecognition";
 import { TooltipProvider, Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
 import audioRespira from "@/assets/audio-respira.mp4";
+
+interface PassoCincoProps {
+  preloadedAudio?: HTMLAudioElement | null;
+}
 type Stage = 
   | "pergunta" 
   | "resposta" 
@@ -78,7 +82,7 @@ const VoiceButton = ({ onTranscript }: { onTranscript: (text: string) => void })
   );
 };
 
-export const PassoCinco = () => {
+export const PassoCinco = ({ preloadedAudio }: PassoCincoProps) => {
   const navigate = useNavigate();
   const [stage, setStage] = useState<Stage>("pergunta");
   const [userInput, setUserInput] = useState("");
@@ -107,11 +111,20 @@ export const PassoCinco = () => {
 
   useEffect(() => {
     if (stage === "respiracao") {
-      // Start audio
-      const audio = new Audio(audioRespira);
-      audio.loop = true;
+      // Use preloaded audio if available, otherwise create new
+      let audio: HTMLAudioElement;
+      
+      if (preloadedAudio) {
+        audio = preloadedAudio;
+        audioRef.current = audio;
+      } else {
+        audio = new Audio(audioRespira);
+        audio.loop = true;
+        audioRef.current = audio;
+      }
+      
+      // Start playing
       audio.play().catch(() => {});
-      audioRef.current = audio;
 
       setBreathPhase("inspire");
       const timer1 = setTimeout(() => {
@@ -121,17 +134,19 @@ export const PassoCinco = () => {
         setBreathPhase(null);
         setStage("nomeacao");
       }, 8000);
+      
       return () => {
         clearTimeout(timer1);
         clearTimeout(timer2);
         // Stop audio when leaving this stage
         if (audioRef.current) {
           audioRef.current.pause();
+          audioRef.current.currentTime = 0;
           audioRef.current = null;
         }
       };
     }
-  }, [stage]);
+  }, [stage, preloadedAudio]);
 
   const handleSubmitStep = () => {
     if (userInput.trim()) {
