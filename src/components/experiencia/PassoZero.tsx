@@ -1,15 +1,15 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, MutableRefObject } from "react";
 import { Phone, PhoneOff, Volume2, Mic } from "lucide-react";
-import ringtoneAudio from "@/assets/ringtone.m4a";
 
 interface PassoZeroProps {
   onAdvance: () => void;
+  preloadedAudio?: MutableRefObject<HTMLAudioElement | null>;
 }
 
-export const PassoZero = ({ onAdvance }: PassoZeroProps) => {
+export const PassoZero = ({ onAdvance, preloadedAudio }: PassoZeroProps) => {
   const [currentTime, setCurrentTime] = useState("");
   const [isRinging, setIsRinging] = useState(true);
-  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const localAudioRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
     const updateTime = () => {
@@ -23,39 +23,50 @@ export const PassoZero = ({ onAdvance }: PassoZeroProps) => {
     return () => clearInterval(interval);
   }, []);
 
-  // Start playing ringtone on mount
+  // Start playing ringtone on mount - use preloaded audio if available
   useEffect(() => {
-    // Prevent creating multiple audio instances
-    if (audioRef.current) {
-      return;
+    // Use preloaded audio from parent if available
+    if (preloadedAudio?.current) {
+      const audio = preloadedAudio.current;
+      localAudioRef.current = audio;
+      
+      // Try to play immediately (already preloaded)
+      audio.play().catch(() => {
+        // Autoplay blocked - will start on first interaction
+      });
+      
+      return; // Don't clean up preloaded audio here
     }
     
-    // Create audio element
+    // Fallback: create audio if not preloaded
+    if (localAudioRef.current) return;
+    
+    const ringtoneAudio = "/assets/ringtone.m4a";
     const audio = new Audio(ringtoneAudio);
     audio.loop = true;
-    audioRef.current = audio;
+    localAudioRef.current = audio;
     
-    // Try to play (may be blocked by browser autoplay policy)
-    audio.play().catch(() => {
-      // Autoplay blocked - will start on first interaction
-    });
+    audio.play().catch(() => {});
 
-    // Cleanup: stop audio when component unmounts
     return () => {
       audio.pause();
       audio.currentTime = 0;
       audio.src = "";
-      audioRef.current = null;
+      localAudioRef.current = null;
     };
-  }, []);
+  }, [preloadedAudio]);
 
   const handleInteraction = () => {
     // Stop the ringtone immediately
-    if (audioRef.current) {
-      audioRef.current.pause();
-      audioRef.current.currentTime = 0;
-      audioRef.current.src = "";
-      audioRef.current = null;
+    if (localAudioRef.current) {
+      localAudioRef.current.pause();
+      localAudioRef.current.currentTime = 0;
+      localAudioRef.current.src = "";
+      localAudioRef.current = null;
+    }
+    // Also clean up preloaded ref
+    if (preloadedAudio?.current) {
+      preloadedAudio.current = null;
     }
     
     setIsRinging(false);
