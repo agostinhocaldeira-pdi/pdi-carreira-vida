@@ -1,6 +1,9 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
+import { Mic, MicOff } from "lucide-react";
+import { useSpeechRecognition } from "@/hooks/useSpeechRecognition";
+import { TooltipProvider, Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
 
 type Stage = 
   | "pergunta" 
@@ -13,6 +16,59 @@ type Stage =
   | "desfecho" 
   | "revelacao" 
   | "final";
+
+// Voice Button component for dictation
+const VoiceButton = ({ onTranscript }: { onTranscript: (text: string) => void }) => {
+  const { transcript, isListening, isSupported, startListening, stopListening } = useSpeechRecognition();
+
+  useEffect(() => {
+    if (transcript) {
+      onTranscript(transcript);
+    }
+  }, [transcript, onTranscript]);
+
+  if (!isSupported) {
+    return null;
+  }
+
+  const handleClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (isListening) {
+      stopListening();
+    } else {
+      startListening();
+    }
+  };
+
+  return (
+    <TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <button
+            type="button"
+            onClick={handleClick}
+            className={`absolute right-3 top-3 p-2 rounded-lg transition-all duration-200 ${
+              isListening
+                ? "bg-red-500/20 text-red-400 animate-pulse"
+                : "bg-white/10 text-white/50 hover:text-white hover:bg-white/20"
+            }`}
+            aria-label={isListening ? "Parar gravação" : "Ditar resposta"}
+          >
+            {isListening ? (
+              <MicOff className="h-5 w-5" />
+            ) : (
+              <Mic className="h-5 w-5" />
+            )}
+          </button>
+        </TooltipTrigger>
+        <TooltipContent side="left">
+          <p>{isListening ? "Clique para parar" : "Clique para ditar"}</p>
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
+  );
+};
 
 export const PassoCinco = () => {
   const navigate = useNavigate();
@@ -110,12 +166,17 @@ export const PassoCinco = () => {
               transition={{ delay: 1 }}
               className="w-full max-w-sm"
             >
-              <textarea
-                value={userInput}
-                onChange={(e) => setUserInput(e.target.value)}
-                placeholder="Digite aqui..."
-                className="w-full h-32 p-4 bg-white/5 border border-white/10 rounded-xl text-white placeholder:text-white/30 resize-none focus:outline-none focus:border-white/30"
-              />
+              <div className="relative">
+                <textarea
+                  value={userInput}
+                  onChange={(e) => setUserInput(e.target.value)}
+                  placeholder="Digite ou dite sua resposta..."
+                  className="w-full h-32 p-4 pr-12 bg-white/5 border border-white/10 rounded-xl text-white placeholder:text-white/30 resize-none focus:outline-none focus:border-white/30"
+                />
+                <VoiceButton 
+                  onTranscript={(text) => setUserInput(prev => prev ? `${prev} ${text}` : text)} 
+                />
+              </div>
 
               <button
                 onClick={handleSubmitStep}
