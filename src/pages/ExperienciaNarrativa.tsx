@@ -8,6 +8,8 @@ import { PassoCinco } from "@/components/experiencia/PassoCinco";
 import ringtoneAudio from "@/assets/ringtone.m4a";
 import audioRespira from "@/assets/audio-respira.mp4";
 import { motion, AnimatePresence } from "framer-motion";
+import { Button } from "@/components/ui/button";
+import { Play, ArrowRight } from "lucide-react";
 
 export type ExperienciaStep = 0 | 1 | 2 | 3 | 4 | 5;
 
@@ -19,7 +21,10 @@ interface PreloadedAudios {
 const ExperienciaNarrativa = () => {
   const [currentStep, setCurrentStep] = useState<ExperienciaStep>(0);
   const [isAudioReady, setIsAudioReady] = useState(false);
+  const [showIntro, setShowIntro] = useState(true);
+  const [isVideoPlaying, setIsVideoPlaying] = useState(false);
   const preloadedAudiosRef = useRef<PreloadedAudios>({ ringtone: null, respira: null });
+  const iframeRef = useRef<HTMLIFrameElement>(null);
 
   // Preload ALL audios immediately on page load
   useEffect(() => {
@@ -82,17 +87,111 @@ const ExperienciaNarrativa = () => {
     setCurrentStep((prev) => Math.min(prev + 1, 5) as ExperienciaStep);
   };
 
-  // Loading screen while audio is being preloaded
-  if (!isAudioReady) {
+  const handleWatchVideo = () => {
+    setIsVideoPlaying(true);
+    // YouTube Shorts typically last around 60 seconds max
+    // We'll auto-advance after the video ends (estimated ~60 seconds)
+    setTimeout(() => {
+      setShowIntro(false);
+    }, 60000);
+  };
+
+  const handleSkipToExperience = () => {
+    setShowIntro(false);
+  };
+
+  // Intro screen with YouTube Shorts video
+  if (showIntro) {
     return (
-      <div className="min-h-screen bg-black text-white flex items-center justify-center px-8">
-        <motion.p
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          className="text-white/70 text-lg text-center"
+      <div className="min-h-screen bg-black text-white flex flex-col items-center justify-center px-4 py-8">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="w-full max-w-sm flex flex-col items-center gap-6"
         >
-          Estamos preparando sua experiência...
-        </motion.p>
+          {/* YouTube Shorts-style container */}
+          <div className="relative w-full aspect-[9/16] max-h-[70vh] bg-gray-900 rounded-2xl overflow-hidden shadow-2xl border border-gray-800">
+            {!isVideoPlaying ? (
+              // Thumbnail/Preview state
+              <div className="absolute inset-0 flex items-center justify-center">
+                <iframe
+                  ref={iframeRef}
+                  src="https://www.youtube-nocookie.com/embed/dZybFglDt80?modestbranding=1&rel=0&showinfo=0&controls=0"
+                  className="w-full h-full"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                  title="PDI - Introdução"
+                />
+                {/* Play overlay */}
+                <div className="absolute inset-0 bg-black/40 flex items-center justify-center pointer-events-none">
+                  <div className="w-16 h-16 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center">
+                    <Play className="w-8 h-8 text-white fill-white ml-1" />
+                  </div>
+                </div>
+              </div>
+            ) : (
+              // Playing state
+              <iframe
+                ref={iframeRef}
+                src="https://www.youtube-nocookie.com/embed/dZybFglDt80?autoplay=1&modestbranding=1&rel=0&showinfo=0&controls=1"
+                className="w-full h-full"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+                title="PDI - Introdução"
+              />
+            )}
+            
+            {/* Shorts-style branding */}
+            <div className="absolute top-4 left-4 flex items-center gap-2">
+              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-red-500 to-pink-500 flex items-center justify-center">
+                <Play className="w-4 h-4 text-white fill-white ml-0.5" />
+              </div>
+              <span className="text-white text-sm font-semibold">Shorts</span>
+            </div>
+          </div>
+
+          {/* Buttons */}
+          <div className="w-full flex flex-col gap-3">
+            {!isVideoPlaying ? (
+              <Button
+                onClick={handleWatchVideo}
+                className="w-full h-12 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-xl"
+              >
+                <Play className="w-5 h-5 mr-2" />
+                Assistir o vídeo
+              </Button>
+            ) : (
+              <Button
+                onClick={handleSkipToExperience}
+                className="w-full h-12 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-xl"
+              >
+                <ArrowRight className="w-5 h-5 mr-2" />
+                Continuar
+              </Button>
+            )}
+            
+            <Button
+              onClick={handleSkipToExperience}
+              variant="outline"
+              className="w-full h-12 border-gray-600 text-white hover:bg-gray-800 font-semibold rounded-xl"
+            >
+              <ArrowRight className="w-5 h-5 mr-2" />
+              Começar a experiência
+            </Button>
+          </div>
+
+          {/* Loading indicator */}
+          {!isAudioReady && (
+            <motion.p
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="text-white/50 text-sm text-center"
+            >
+              Preparando áudios...
+            </motion.p>
+          )}
+        </motion.div>
       </div>
     );
   }
