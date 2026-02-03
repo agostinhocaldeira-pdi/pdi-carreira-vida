@@ -129,12 +129,12 @@ export const PassoUm = ({ onAdvance }: PassoUmProps) => {
       const timer = setTimeout(() => {
         addMessage(currentMessages[messageIndex]);
         setMessageIndex((prev) => prev + 1);
-      }, delay + messageIndex * 1200);
+      }, 400 + messageIndex * 500);
       return () => clearTimeout(timer);
     } else {
       const buttonTimer = setTimeout(() => {
         setShowButton(true);
-      }, 800);
+      }, 300);
       return () => clearTimeout(buttonTimer);
     }
   }, [stage, messageIndex, addMessage]);
