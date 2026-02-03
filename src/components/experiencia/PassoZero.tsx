@@ -115,7 +115,7 @@ export const PassoZero = ({ onAdvance, preloadedAudio }: PassoZeroProps) => {
         <h1 className="text-2xl font-light text-white mb-2">PDI</h1>
 
         {/* Call Status */}
-        <p className={`text-white/60 text-lg ${isRinging ? 'animate-pulse' : ''}`}>
+        <p className={`text-lg ${isRinging ? 'animate-pulse text-white/60' : 'text-red-500'}`}>
           {isRinging ? "chamada recebida..." : "chamada finalizada"}
         </p>
 
