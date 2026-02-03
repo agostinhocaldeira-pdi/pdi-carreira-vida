@@ -72,7 +72,7 @@ export const PassoUm = ({ onAdvance }: PassoUmProps) => {
     "Essa distância entre vida real e vida desejada, não aconteceu por acaso.",
     "ALGUÉM ESTÁ DECIDINDO SUA VIDA POR VOCÊ.",
     "E não é uma pessoa.",
-    "É um modo de viver.",
+    "É um <strong>\"modo de viver\"</strong>.",
     "continua aqui, que eu vou te explicar",
   ];
 
