@@ -80,6 +80,11 @@ export const PassoQuatro = ({ onAdvance }: PassoQuatroProps) => {
   };
 
   const revelationTexts = [
+    'O jeito de parar o "modo de viver" é fazer menos',
+    "Ter clareza sobre a vida que quer viver, um objetivo por vez, poucas metas em execução, pequenas ações diárias, mas transformadoras.",
+  ];
+
+  const revelationBoldTexts = [
     "Meta demais cria ilusão.",
     "Ação sem intenção cria cansaço.",
   ];
@@ -209,7 +214,7 @@ export const PassoQuatro = ({ onAdvance }: PassoQuatroProps) => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="flex-1 flex flex-col items-center justify-center p-8 space-y-6"
+            className="flex-1 flex flex-col items-center justify-center p-8 space-y-5"
           >
             {revelationTexts.map((text, index) => (
               <motion.p
@@ -217,7 +222,19 @@ export const PassoQuatro = ({ onAdvance }: PassoQuatroProps) => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 1.5 }}
-                className="text-white/80 text-xl text-center leading-relaxed"
+                className="text-white/80 text-lg sm:text-xl text-center leading-relaxed"
+              >
+                {text}
+              </motion.p>
+            ))}
+
+            {revelationBoldTexts.map((text, index) => (
+              <motion.p
+                key={`bold-${index}`}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 3 + index * 1.2 }}
+                className="text-white text-lg sm:text-xl text-center leading-relaxed font-bold"
               >
                 {text}
               </motion.p>
@@ -226,7 +243,7 @@ export const PassoQuatro = ({ onAdvance }: PassoQuatroProps) => {
             <motion.button
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ delay: 3.5 }}
+              transition={{ delay: 6 }}
               onClick={() => setStage("ancora")}
               className="mt-8 py-3.5 px-8 bg-white/10 hover:bg-white/15 border border-white/20 rounded-xl text-white font-medium transition-all"
             >
