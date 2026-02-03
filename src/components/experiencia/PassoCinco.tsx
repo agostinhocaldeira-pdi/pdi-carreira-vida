@@ -155,9 +155,7 @@ export const PassoCinco = () => {
               transition={{ delay: 0.5 }}
               className="text-white/80 text-xl text-center leading-relaxed mb-8"
             >
-              Qual é o próximo passo,{"\n"}
-              pequeno o suficiente,{"\n"}
-              que te aproxima do que <span className="font-bold text-white">realmente</span> importa?
+              Qual é o pequeno passo que cabe no seu dia, pequeno o suficiente para fazer sem mexer na sua rotina, mas que te aproxima do que <span className="font-bold text-white">realmente</span> importa?
             </motion.p>
 
             <motion.div
