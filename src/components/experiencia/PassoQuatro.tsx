@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { GripVertical, AlertCircle } from "lucide-react";
+import { GripVertical } from "lucide-react";
 
 interface PassoQuatroProps {
   onAdvance: () => void;
@@ -24,18 +24,32 @@ const actions = [
 ];
 
 const villainMessages = [
-  "isso é urgente",
-  "só mais essa tarefa",
-  "depois você organiza",
-  "você não tem tempo pra isso",
+  "Você está com fome",
+  "tem mensagem no whatsapp",
+  "vem ver esse reels",
+  "café?",
 ];
 
 export const PassoQuatro = ({ onAdvance }: PassoQuatroProps) => {
   const [stage, setStage] = useState<"objective" | "actions" | "revelation" | "ancora">("objective");
   const [selectedObjective, setSelectedObjective] = useState("");
   const [selectedActions, setSelectedActions] = useState<number[]>([]);
-  const [villainIndex, setVillainIndex] = useState(-1);
-  const [showRevelation, setShowRevelation] = useState(false);
+  const [activeVillain, setActiveVillain] = useState<string | null>(null);
+  const [villainQueue, setVillainQueue] = useState<string[]>([...villainMessages]);
+
+  // Show villain bubble that blocks interaction
+  const showNextVillain = () => {
+    if (villainQueue.length > 0) {
+      const [next, ...rest] = villainQueue;
+      setActiveVillain(next);
+      setVillainQueue(rest);
+      
+      // Auto-dismiss after 1.2 seconds
+      setTimeout(() => {
+        setActiveVillain(null);
+      }, 1200);
+    }
+  };
 
   const handleSelectObjective = (obj: string) => {
     setSelectedObjective(obj);
@@ -43,16 +57,18 @@ export const PassoQuatro = ({ onAdvance }: PassoQuatroProps) => {
   };
 
   const handleToggleAction = (id: number) => {
+    if (activeVillain) return; // Block interaction while villain is showing
+    
     setSelectedActions((prev) => {
       const newSelection = prev.includes(id)
         ? prev.filter((a) => a !== id)
         : [...prev, id];
 
-      // Trigger villain messages
-      if (newSelection.length > 0 && villainIndex < villainMessages.length - 1) {
+      // Trigger villain after each selection (if queue not empty)
+      if (newSelection.length > prev.length && villainQueue.length > 0) {
         setTimeout(() => {
-          setVillainIndex((v) => v + 1);
-        }, 1500);
+          showNextVillain();
+        }, 800);
       }
 
       return newSelection;
@@ -60,7 +76,6 @@ export const PassoQuatro = ({ onAdvance }: PassoQuatroProps) => {
   };
 
   const handleContinueFromActions = () => {
-    setShowRevelation(true);
     setStage("revelation");
   };
 
@@ -151,24 +166,31 @@ export const PassoQuatro = ({ onAdvance }: PassoQuatroProps) => {
               ))}
             </div>
 
-            {/* Villain interruptions */}
+            {/* Floating villain bubble overlay */}
             <AnimatePresence>
-              {villainIndex >= 0 && (
+              {activeVillain && (
                 <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
-                  className="mt-4 p-3 bg-red-500/10 border border-red-500/20 rounded-lg flex items-center gap-2"
+                  className="fixed inset-0 z-50 flex items-center justify-center bg-black/60"
                 >
-                  <AlertCircle className="w-4 h-4 text-red-400" />
-                  <span className="text-red-300 text-sm italic">
-                    {villainMessages[villainIndex]}
-                  </span>
+                  <motion.div
+                    initial={{ scale: 0.8, opacity: 0, y: 20 }}
+                    animate={{ scale: 1, opacity: 1, y: 0 }}
+                    exit={{ scale: 0.8, opacity: 0, y: -20 }}
+                    transition={{ type: "spring", damping: 20, stiffness: 300 }}
+                    className="bg-white rounded-2xl px-6 py-4 shadow-2xl max-w-[80%]"
+                  >
+                    <p className="text-gray-800 text-lg font-medium text-center">
+                      {activeVillain}
+                    </p>
+                  </motion.div>
                 </motion.div>
               )}
             </AnimatePresence>
 
-            {selectedActions.length >= 2 && (
+            {selectedActions.length >= 2 && !activeVillain && (
               <motion.button
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
