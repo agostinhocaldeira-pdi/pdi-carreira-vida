@@ -184,7 +184,7 @@ export const PassoDois = ({ onAdvance }: PassoDoisProps) => {
         };
       case "cena4":
         return {
-          question: "Como você lida com projetos que demoram meses?",
+          question: "Como você lida com atividades ou projetos que demoram meses?",
           options: ["Abandono", "Me frustro", "Esqueço", "Persisto com dor", "Construo com calma"],
         };
       default:
