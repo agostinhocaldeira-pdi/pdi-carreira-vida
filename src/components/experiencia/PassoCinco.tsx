@@ -1,10 +1,10 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Mic, MicOff } from "lucide-react";
 import { useSpeechRecognition } from "@/hooks/useSpeechRecognition";
 import { TooltipProvider, Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
-
+import audioRespira from "@/assets/audio-respira.mp4";
 type Stage = 
   | "pergunta" 
   | "resposta" 
@@ -103,8 +103,16 @@ export const PassoCinco = () => {
     "PDI — Plano de Desenvolvimento Individual.",
   ];
 
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+
   useEffect(() => {
     if (stage === "respiracao") {
+      // Start audio
+      const audio = new Audio(audioRespira);
+      audio.loop = true;
+      audio.play().catch(() => {});
+      audioRef.current = audio;
+
       setBreathPhase("inspire");
       const timer1 = setTimeout(() => {
         setBreathPhase("expire");
@@ -116,6 +124,11 @@ export const PassoCinco = () => {
       return () => {
         clearTimeout(timer1);
         clearTimeout(timer2);
+        // Stop audio when leaving this stage
+        if (audioRef.current) {
+          audioRef.current.pause();
+          audioRef.current = null;
+        }
       };
     }
   }, [stage]);
