@@ -216,6 +216,14 @@ export const PassoQuatro = ({ onAdvance }: PassoQuatroProps) => {
             exit={{ opacity: 0 }}
             className="flex-1 flex flex-col items-center justify-center p-8 space-y-5"
           >
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="text-white/50 text-sm sm:text-base text-center mb-2"
+            >
+              na tela anterior, tentaram sabotar de novo.
+            </motion.p>
+
             {revelationTexts.map((text, index) => (
               <motion.p
                 key={index}
