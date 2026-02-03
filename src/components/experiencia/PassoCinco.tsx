@@ -20,12 +20,20 @@ type Stage =
 // Voice Button component for dictation
 const VoiceButton = ({ onTranscript }: { onTranscript: (text: string) => void }) => {
   const { transcript, isListening, isSupported, startListening, stopListening } = useSpeechRecognition();
+  const [lastTranscript, setLastTranscript] = useState("");
 
   useEffect(() => {
-    if (transcript) {
+    if (transcript && transcript !== lastTranscript) {
       onTranscript(transcript);
+      setLastTranscript(transcript);
     }
-  }, [transcript, onTranscript]);
+  }, [transcript, lastTranscript, onTranscript]);
+
+  // Reset lastTranscript when starting a new recording
+  const handleStartListening = () => {
+    setLastTranscript("");
+    startListening();
+  };
 
   if (!isSupported) {
     return null;
@@ -37,7 +45,7 @@ const VoiceButton = ({ onTranscript }: { onTranscript: (text: string) => void })
     if (isListening) {
       stopListening();
     } else {
-      startListening();
+      handleStartListening();
     }
   };
 

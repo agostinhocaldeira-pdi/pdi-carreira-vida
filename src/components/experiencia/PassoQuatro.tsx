@@ -92,7 +92,7 @@ export const PassoQuatro = ({ onAdvance }: PassoQuatroProps) => {
 
   const ancoraTexts = [
     "Perceba que você não precisa de mais força, mais tempo, mais ferramentas.",
-    'Ter clareza para focar no que realmente importa para você, mas que encaixe na sua vida real, sem deixar o "dia-a-dia" te derrubar.',
+    'Ter clareza para focar no que realmente importa para você, mas que encaixe na sua vida real, sem deixar o "modo de viver" te derrubar.',
     "você precisa de um sistema que te traga essa clareza nas decisões e sustentem o processo.",
   ];
 
