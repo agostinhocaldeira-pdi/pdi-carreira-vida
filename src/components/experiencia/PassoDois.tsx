@@ -57,8 +57,9 @@ export const PassoDois = ({ onAdvance }: PassoDoisProps) => {
       "Quando você está fazendo algo que o resultado vai demorar pra chegar, ele tenta te impedir.",
     ],
     encerramento: [
-      "Esse padrão explica o cansaço.",
-      "Agora faz sentido olhar para objetivos.",
+      "Esse modo de viver cansa.",
+      "Mas existe um jeito de superar isso.",
+      "Agora, faz sentido falarmos de objetivos.",
     ],
     porta: [
       "Mas para isso, preciso te levar para nosso tiktok secreto.",
