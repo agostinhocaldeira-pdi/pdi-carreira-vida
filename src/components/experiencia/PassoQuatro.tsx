@@ -17,9 +17,9 @@ const objectives = [
 const actions = [
   { id: 1, text: "Responder e-mails urgentes", isDistraction: true },
   { id: 2, text: "Planejar próxima semana", isDistraction: false },
-  { id: 3, text: "Resolver pendência do banco", isDistraction: true },
+  { id: 3, text: "Praticar exercícios físicos diariamente", isDistraction: true },
   { id: 4, text: "Ler sobre investimentos", isDistraction: false },
-  { id: 5, text: "Organizar arquivos do computador", isDistraction: true },
+  { id: 5, text: "Arrumar emprego paralelo ou renda extra", isDistraction: true },
   { id: 6, text: "Definir próximo passo claro", isDistraction: false },
 ];
 
