@@ -210,9 +210,7 @@ export const PassoCinco = () => {
             }}
             exit={{ opacity: 0 }}
             transition={{ 
-              duration: 0.15,
-              repeat: Infinity,
-              repeatType: "loop",
+              duration: 0.5,
             }}
             className="flex-1 flex items-center justify-center p-8 bg-white"
             style={{
@@ -235,8 +233,6 @@ export const PassoCinco = () => {
               }}
               transition={{ 
                 duration: 1.5,
-                repeat: Infinity,
-                repeatType: "reverse",
                 ease: "easeInOut",
               }}
               className="text-gray-600 text-lg text-center italic font-bold"
