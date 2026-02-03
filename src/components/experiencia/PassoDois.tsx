@@ -169,6 +169,13 @@ export const PassoDois = ({ onAdvance }: PassoDoisProps) => {
           question: "O quão claro está seu futuro hoje?",
           options: scaleOptions,
           isScale: true,
+          scaleLabels: [
+            "Não sei para onde estou indo",
+            "Imagino que vou chegar em algum lugar melhor",
+            "Vai continuar do mesmo jeito",
+            "Vou conquistar meu objetivo",
+            "Vou viver uma vida do jeito que eu realmente desejo viver",
+          ],
         };
       case "cena3":
         return {
@@ -217,7 +224,8 @@ export const PassoDois = ({ onAdvance }: PassoDoisProps) => {
                 </p>
 
                 <div className="space-y-3">
-                  {questionData.isScale ? (
+                {questionData.isScale ? (
+                  <div className="space-y-4">
                     <div className="flex justify-between gap-2">
                       {questionData.options.map((option) => (
                         <button
@@ -229,6 +237,16 @@ export const PassoDois = ({ onAdvance }: PassoDoisProps) => {
                         </button>
                       ))}
                     </div>
+                    {questionData.scaleLabels && (
+                      <div className="space-y-1.5 pt-2">
+                        {questionData.scaleLabels.map((label, index) => (
+                          <p key={index} className="text-white/40 text-xs text-center">
+                            <span className="text-white/60 font-medium">{index + 1}.</span> {label}
+                          </p>
+                        ))}
+                      </div>
+                    )}
+                  </div>
                   ) : (
                     questionData.options.map((option) => (
                       <button
