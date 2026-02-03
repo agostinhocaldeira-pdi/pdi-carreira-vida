@@ -43,21 +43,21 @@ export const PassoDois = ({ onAdvance }: PassoDoisProps) => {
     ],
     recovery: [
       "(Ele insiste em tentar interromper)",
-      "E olha só: repare que isso acontece todos os dias na sua vida. <strong>Quando a clareza aparece, esse modo de viver reage.</strong>",
+      'E olha só: repare que isso acontece todos os dias na sua vida. <strong>Quando a clareza aparece, esse "modo de viver" reage.</strong>',
       "Você não faz, não é por preguiça",
-      "é o condicionamento desse modo de viver.",
+      'é o condicionamento desse <strong>"modo de viver"</strong>.',
       "Bom... vamos tentar continuar sem novas interferências.",
     ],
     feedback3: [
       "Urgência não é critério.",
-      "Aqui o \"modo de viver\" gosta de mandar em você. Ele só quer que você faça cada vez mais, sem pensar.",
+      'Aqui o <strong>"modo de viver"</strong> gosta de mandar em você. Ele só quer que você faça cada vez mais, sem pensar.',
     ],
     feedback4: [
-      "O modo de viver quer tudo para agora.",
+      'O <strong>"modo de viver"</strong> quer tudo para agora.',
       "Quando você está fazendo algo que o resultado vai demorar pra chegar, ele tenta te impedir.",
     ],
     encerramento: [
-      "Esse modo de viver cansa.",
+      'Esse <strong>"modo de viver"</strong> cansa.',
       "Mas existe um jeito de superar isso.",
       "Agora, faz sentido falarmos de objetivos.",
     ],

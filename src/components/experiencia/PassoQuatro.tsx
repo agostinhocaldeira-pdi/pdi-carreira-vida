@@ -80,7 +80,7 @@ export const PassoQuatro = ({ onAdvance }: PassoQuatroProps) => {
   };
 
   const revelationTexts = [
-    'O jeito de parar o "modo de viver" é fazer menos',
+    'O jeito de parar o <strong>"modo de viver"</strong> é fazer menos',
     "Ter clareza sobre a vida que quer viver, um objetivo por vez, poucas metas em execução, pequenas ações diárias, mas transformadoras.",
   ];
 
