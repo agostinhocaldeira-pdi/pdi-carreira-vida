@@ -369,7 +369,7 @@ export const PassoCinco = () => {
               >
                 <button
                   onClick={() => advanceText(nomeacaoTexts, "desfecho")}
-                  className="mt-8 py-3 px-6 text-white/50 hover:text-white/70 transition-colors"
+                  className="mt-8 w-14 h-14 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20 text-white/70 hover:text-white text-3xl transition-all active:scale-95"
                 >
                   →
                 </button>
@@ -418,7 +418,7 @@ export const PassoCinco = () => {
               >
                 <button
                   onClick={() => advanceText(desfechoTexts, "revelacao")}
-                  className="mt-8 py-3 px-6 text-white/50 hover:text-white/70 transition-colors"
+                  className="mt-8 w-14 h-14 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20 text-white/70 hover:text-white text-3xl transition-all active:scale-95"
                 >
                   →
                 </button>
@@ -469,7 +469,7 @@ export const PassoCinco = () => {
               >
                 <button
                   onClick={() => advanceText(revelacaoTexts, "final")}
-                  className="mt-8 py-3 px-6 text-white/50 hover:text-white/70 transition-colors"
+                  className="mt-8 w-14 h-14 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20 text-white/70 hover:text-white text-3xl transition-all active:scale-95"
                 >
                   →
                 </button>
