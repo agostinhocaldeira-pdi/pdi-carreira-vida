@@ -53,7 +53,7 @@ export const PassoUm = ({ onAdvance }: PassoUmProps) => {
   ];
 
   const questionMessages = [
-    "posso te fazer uma pergunta estranha?",
+    "vou te fazer uma pergunta estranha",
     "não é sobre produtividade",
     "nem sobre metas",
     "é sobre a vida que vc tá vivendo agora",
