@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { Lock } from "lucide-react";
 import { VillainInterruption } from "./VillainInterruption";
 import { PasswordGate } from "./PasswordGate";
 
@@ -197,36 +198,49 @@ export const PassoDois = ({ onAdvance }: PassoDoisProps) => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
-              className="w-full max-w-sm space-y-8"
+              className="w-full max-w-sm space-y-6"
             >
-              <p className="text-white/90 text-xl text-center leading-relaxed whitespace-pre-line">
-                {questionData.question}
-              </p>
+              {/* Title with lock - only on first question */}
+              {stage === "cena1" && (
+                <div className="flex items-center justify-center gap-2 mb-2">
+                  <Lock className="w-4 h-4 text-white/40" />
+                  <p className="text-white/40 text-sm text-center">
+                    Responda essas perguntas para descobrir como o modo de viver age na sua vida
+                  </p>
+                </div>
+              )}
 
-              <div className="space-y-3">
-                {questionData.isScale ? (
-                  <div className="flex justify-between gap-2">
-                    {questionData.options.map((option) => (
+              {/* Question card with border */}
+              <div className={stage === "cena1" ? "border border-white/20 rounded-2xl p-6 space-y-6" : "space-y-8"}>
+                <p className="text-white/90 text-xl text-center leading-relaxed whitespace-pre-line">
+                  {questionData.question}
+                </p>
+
+                <div className="space-y-3">
+                  {questionData.isScale ? (
+                    <div className="flex justify-between gap-2">
+                      {questionData.options.map((option) => (
+                        <button
+                          key={option}
+                          onClick={() => handleAnswer(option)}
+                          className="flex-1 py-4 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-white text-lg font-medium transition-all active:scale-95"
+                        >
+                          {option}
+                        </button>
+                      ))}
+                    </div>
+                  ) : (
+                    questionData.options.map((option) => (
                       <button
                         key={option}
                         onClick={() => handleAnswer(option)}
-                        className="flex-1 py-4 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-white text-lg font-medium transition-all active:scale-95"
+                        className="w-full py-3.5 px-6 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-white/80 text-base transition-all active:scale-[0.98]"
                       >
                         {option}
                       </button>
-                    ))}
-                  </div>
-                ) : (
-                  questionData.options.map((option) => (
-                    <button
-                      key={option}
-                      onClick={() => handleAnswer(option)}
-                      className="w-full py-3.5 px-6 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-white/80 text-base transition-all active:scale-[0.98]"
-                    >
-                      {option}
-                    </button>
-                  ))
-                )}
+                    ))
+                  )}
+                </div>
               </div>
             </motion.div>
           ) : (
