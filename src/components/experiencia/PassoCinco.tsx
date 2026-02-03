@@ -295,7 +295,7 @@ export const PassoCinco = () => {
               animate={{ opacity: 1, y: 0 }}
               className="text-white/60 text-lg text-center leading-relaxed mb-4"
             >
-              Antes de finalizar, tente isso:
+              Antes de finalizar, quero que você faça algo por você.
             </motion.p>
 
             <motion.p
