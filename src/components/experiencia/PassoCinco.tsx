@@ -520,7 +520,7 @@ export const PassoCinco = () => {
               </p>
 
               <button
-                onClick={() => navigate("/signup")}
+                onClick={() => navigate("/comecar")}
                 className="py-4 px-12 bg-white text-black font-semibold rounded-xl text-lg transition-all active:scale-[0.98] hover:bg-white/90"
               >
                 Acessar o PDI
