@@ -293,7 +293,7 @@ export const PassoUm = ({ onAdvance }: PassoUmProps) => {
               animate={{ opacity: 1, y: 0 }}
               className="space-y-2 w-full"
             >
-              <p className="text-white/60 text-sm mb-3">E qual vida você deseja viver?</p>
+              <p className="text-white text-xl font-bold mb-3">E qual vida você deseja viver?</p>
               {vidaDesejadaOptions.map((option) => (
                 <ChatButton
                   key={option}
