@@ -1,4 +1,6 @@
+import { useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import tvStaticNoise from "@/assets/tv-static-noise.m4a";
 
 interface VillainInterruptionProps {
   text: string;
@@ -6,6 +8,29 @@ interface VillainInterruptionProps {
 }
 
 export const VillainInterruption = ({ text, isVisible }: VillainInterruptionProps) => {
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+
+  useEffect(() => {
+    if (isVisible) {
+      // Create and play audio when visible
+      const audio = new Audio(tvStaticNoise);
+      audio.loop = false;
+      audioRef.current = audio;
+      
+      audio.play().catch(() => {
+        // Autoplay blocked
+      });
+
+      // Cleanup when visibility changes or component unmounts
+      return () => {
+        audio.pause();
+        audio.currentTime = 0;
+        audio.src = "";
+        audioRef.current = null;
+      };
+    }
+  }, [isVisible]);
+
   return (
     <AnimatePresence>
       {isVisible && (
