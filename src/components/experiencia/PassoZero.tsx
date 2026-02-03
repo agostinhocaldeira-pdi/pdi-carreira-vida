@@ -78,8 +78,7 @@ export const PassoZero = ({ onAdvance, preloadedAudio }: PassoZeroProps) => {
 
   return (
     <div
-      className="min-h-screen bg-[#0b141a] flex flex-col cursor-pointer select-none"
-      onClick={handleInteraction}
+      className="min-h-screen bg-[#0b141a] flex flex-col select-none"
     >
       {/* Status Bar */}
       <div className="flex justify-between items-center px-6 py-3 text-white/80 text-sm">
