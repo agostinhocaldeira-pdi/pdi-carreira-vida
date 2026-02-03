@@ -1,5 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Phone, PhoneOff, Volume2, Mic } from "lucide-react";
+import ringtoneAudio from "@/assets/ringtone.m4a";
 
 interface PassoZeroProps {
   onAdvance: () => void;
@@ -8,6 +9,7 @@ interface PassoZeroProps {
 export const PassoZero = ({ onAdvance }: PassoZeroProps) => {
   const [currentTime, setCurrentTime] = useState("");
   const [isRinging, setIsRinging] = useState(true);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
     const updateTime = () => {
@@ -21,7 +23,30 @@ export const PassoZero = ({ onAdvance }: PassoZeroProps) => {
     return () => clearInterval(interval);
   }, []);
 
+  // Start playing ringtone on mount
+  useEffect(() => {
+    const audio = new Audio(ringtoneAudio);
+    audio.loop = true;
+    audioRef.current = audio;
+    
+    // Try to play (may be blocked by browser autoplay policy)
+    audio.play().catch(() => {
+      // Autoplay blocked - will start on first interaction
+    });
+
+    return () => {
+      audio.pause();
+      audio.currentTime = 0;
+    };
+  }, []);
+
   const handleInteraction = () => {
+    // Stop the ringtone immediately
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current.currentTime = 0;
+    }
+    
     setIsRinging(false);
     setTimeout(() => {
       onAdvance();
