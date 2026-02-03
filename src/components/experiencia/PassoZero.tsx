@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, MutableRefObject } from "react";
 import { Phone, PhoneOff, Volume2, Mic } from "lucide-react";
+import pdiLogo from "@/assets/logo_pdi.png";
 
 interface PassoZeroProps {
   onAdvance: () => void;
@@ -107,8 +108,8 @@ export const PassoZero = ({ onAdvance, preloadedAudio }: PassoZeroProps) => {
       {/* Main Call Screen */}
       <div className="flex-1 flex flex-col items-center justify-center px-8">
         {/* Avatar */}
-        <div className={`w-28 h-28 rounded-full bg-gradient-to-br from-[#25D366] to-[#128C7E] flex items-center justify-center mb-6 ${isRinging ? 'animate-pulse' : ''}`}>
-          <span className="text-4xl font-bold text-white">PDI</span>
+        <div className={`w-28 h-28 rounded-full bg-white flex items-center justify-center mb-6 overflow-hidden ${isRinging ? 'animate-pulse' : ''}`}>
+          <img src={pdiLogo} alt="PDI" className="w-20 h-20 object-contain" />
         </div>
 
         {/* Contact Name */}
