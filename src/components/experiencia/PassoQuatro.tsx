@@ -90,9 +90,12 @@ export const PassoQuatro = ({ onAdvance }: PassoQuatroProps) => {
   ];
 
   const ancoraTexts = [
-    "Você não precisa de mais força.",
-    "Precisa de um sistema que sustente suas decisões.",
+    "Perceba que você não precisa de mais força, mais tempo, mais ferramentas.",
+    'Ter clareza para focar no que realmente importa para você, mas que encaixe na sua vida real, sem deixar o "dia-a-dia" te derrubar.',
+    "você precisa de um sistema que te traga essa clareza nas decisões e sustentem o processo.",
   ];
+
+  const ancoraBoldText = "Você precisa de menos.";
 
   const transitionText = "Agora falta só um nível.\nO mais ignorado de todos.";
 
@@ -266,25 +269,53 @@ export const PassoQuatro = ({ onAdvance }: PassoQuatroProps) => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="flex-1 flex flex-col items-center justify-center p-8 space-y-6"
+            className="flex-1 flex flex-col items-center justify-center p-6 sm:p-8 space-y-4 sm:space-y-5"
           >
-            {ancoraTexts.map((text, index) => (
-              <motion.p
-                key={index}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 1.5 }}
-                className="text-white/80 text-xl text-center leading-relaxed"
-              >
-                {text}
-              </motion.p>
-            ))}
+            {/* First text */}
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.5 }}
+              className="text-white/80 text-lg sm:text-xl text-center leading-relaxed"
+            >
+              {ancoraTexts[0]}
+            </motion.p>
+
+            {/* Bold text */}
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 1.5 }}
+              className="text-white text-lg sm:text-xl text-center leading-relaxed font-bold"
+            >
+              {ancoraBoldText}
+            </motion.p>
+
+            {/* Second text */}
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 3 }}
+              className="text-white/80 text-base sm:text-lg text-center leading-relaxed"
+            >
+              {ancoraTexts[1]}
+            </motion.p>
+
+            {/* Third text */}
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 4.5 }}
+              className="text-white/80 text-base sm:text-lg text-center leading-relaxed"
+            >
+              {ancoraTexts[2]}
+            </motion.p>
 
             <motion.p
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 3.5 }}
-              className="text-white/50 text-lg text-center leading-relaxed whitespace-pre-line pt-4"
+              transition={{ delay: 6 }}
+              className="text-white/50 text-base sm:text-lg text-center leading-relaxed whitespace-pre-line pt-4"
             >
               {transitionText}
             </motion.p>
@@ -292,9 +323,9 @@ export const PassoQuatro = ({ onAdvance }: PassoQuatroProps) => {
             <motion.button
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ delay: 5 }}
+              transition={{ delay: 7.5 }}
               onClick={onAdvance}
-              className="mt-8 py-4 px-10 bg-white text-black font-semibold rounded-xl text-base transition-all active:scale-[0.98]"
+              className="mt-6 py-4 px-10 bg-white text-black font-semibold rounded-xl text-base transition-all active:scale-[0.98]"
             >
               Próximo nível
             </motion.button>
