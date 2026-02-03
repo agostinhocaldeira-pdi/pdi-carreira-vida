@@ -25,6 +25,7 @@ export const PassoZero = ({ onAdvance }: PassoZeroProps) => {
 
   // Start playing ringtone on mount
   useEffect(() => {
+    // Create audio element
     const audio = new Audio(ringtoneAudio);
     audio.loop = true;
     audioRef.current = audio;
@@ -34,9 +35,13 @@ export const PassoZero = ({ onAdvance }: PassoZeroProps) => {
       // Autoplay blocked - will start on first interaction
     });
 
+    // Cleanup: stop audio when component unmounts
     return () => {
-      audio.pause();
-      audio.currentTime = 0;
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current.currentTime = 0;
+        audioRef.current = null;
+      }
     };
   }, []);
 
@@ -45,6 +50,7 @@ export const PassoZero = ({ onAdvance }: PassoZeroProps) => {
     if (audioRef.current) {
       audioRef.current.pause();
       audioRef.current.currentTime = 0;
+      audioRef.current = null;
     }
     
     setIsRinging(false);
