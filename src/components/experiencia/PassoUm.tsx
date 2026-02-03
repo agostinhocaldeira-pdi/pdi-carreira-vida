@@ -62,6 +62,7 @@ export const PassoUm = ({ onAdvance }: PassoUmProps) => {
   const recovery1Messages = [
     "Ops... isso não fazia parte da conversa.",
     "alguém tentou te tirar daqui.",
+    "acho que não querem que você preste atenção aqui.",
     "alguma semelhança com a vida real?",
     "Desculpe por isso... Vamos continuar",
     "o tema é sobre a vida que vc tá vivendo agora",
