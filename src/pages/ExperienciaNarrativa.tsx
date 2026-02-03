@@ -174,7 +174,7 @@ const ExperienciaNarrativa = () => {
             <Button
               onClick={handleSkipToExperience}
               variant="outline"
-              className="w-full h-12 border-gray-600 text-white hover:bg-gray-800 font-semibold rounded-xl"
+              className="w-full h-12 border-gray-600 bg-transparent text-gray-300 hover:bg-gray-800 hover:text-white font-semibold rounded-xl"
             >
               <ArrowRight className="w-5 h-5 mr-2" />
               Começar a experiência
