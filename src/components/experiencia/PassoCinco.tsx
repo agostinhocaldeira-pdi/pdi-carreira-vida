@@ -78,7 +78,7 @@ export const PassoCinco = () => {
   const [textIndex, setTextIndex] = useState(0);
 
   const nomeacaoTexts = [
-    "O modo de viver que te sabota",
+    'O <strong>"modo de viver"</strong> que te sabota',
     "é o Piloto Automático.",
   ];
 

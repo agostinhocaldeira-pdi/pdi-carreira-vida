@@ -83,7 +83,7 @@ export const PassoUm = ({ onAdvance }: PassoUmProps) => {
   ];
 
   const encerramentoMessages = [
-    "A partir de agora, você vai começar a perceber esse modo de viver no seu dia a dia.",
+    'A partir de agora, você vai começar a perceber esse <strong>"modo de viver"</strong> no seu dia a dia.',
   ];
 
   const portaSecretaMessages = [
