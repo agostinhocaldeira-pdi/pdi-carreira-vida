@@ -93,8 +93,8 @@ export const PassoCinco = () => {
   const desfechoTexts = [
     "Você não elimina o Piloto Automático.",
     "Você aprende a não ser governado por ele.",
-    "Isso é maturidade.",
-    "Isso é alinhamento.",
+    "é um processo",
+    "guiado por método",
   ];
 
   const revelacaoTexts = [
