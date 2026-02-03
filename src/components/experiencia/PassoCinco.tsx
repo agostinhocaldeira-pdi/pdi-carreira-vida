@@ -123,8 +123,18 @@ export const PassoCinco = ({ preloadedAudio }: PassoCincoProps) => {
         audioRef.current = audio;
       }
       
-      // Start playing
-      audio.play().catch(() => {});
+      // Reset to beginning and start playing immediately
+      audio.currentTime = 0;
+      audio.loop = true;
+      
+      const playAudio = async () => {
+        try {
+          await audio.play();
+        } catch {
+          // Autoplay blocked
+        }
+      };
+      playAudio();
 
       setBreathPhase("inspire");
       const timer1 = setTimeout(() => {
