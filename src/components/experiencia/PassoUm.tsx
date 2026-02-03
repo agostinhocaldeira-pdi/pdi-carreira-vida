@@ -69,11 +69,11 @@ export const PassoUm = ({ onAdvance }: PassoUmProps) => {
   ];
 
   const revelacaoMessages = [
-    "Isso não aconteceu por acaso.",
-    "Alguém está decidindo sua vida por você.",
+    "Essa distância entre vida real e vida desejada, não aconteceu por acaso.",
+    "ALGUÉM ESTÁ DECIDINDO SUA VIDA POR VOCÊ.",
     "E não é uma pessoa.",
     "É um modo de viver.",
-    "vou te contar mais à frente",
+    "continua aqui, que eu vou te explicar",
   ];
 
   const ancoraMessages = [
