@@ -184,9 +184,18 @@ export const PassoCinco = () => {
             <motion.p
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="text-white/60 text-lg text-center leading-relaxed mb-8"
+              className="text-white/60 text-lg text-center leading-relaxed mb-4"
             >
               Antes de finalizar, tente isso:
+            </motion.p>
+
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 1.5 }}
+              className="text-white/80 text-xl text-center font-medium mb-4"
+            >
+              Está preparado?
             </motion.p>
 
             <motion.button
@@ -196,7 +205,7 @@ export const PassoCinco = () => {
               onClick={() => setStage("respiracao")}
               className="py-4 px-10 bg-white/10 hover:bg-white/15 border border-white/20 rounded-xl text-white font-medium transition-all"
             >
-              Estou pronto
+              SIM
             </motion.button>
           </motion.div>
         )}
