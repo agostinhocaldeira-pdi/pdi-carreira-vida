@@ -21,15 +21,15 @@ export const PasswordGate = ({ password, onSuccess, buttonText }: PasswordGatePr
     "Preparando conteúdo...",
   ];
 
-  const handleCopy = async () => {
-    await navigator.clipboard.writeText(password);
+  const handleCopy = () => {
+    // Simulated copy - just visual feedback
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
 
-  const handlePaste = async () => {
-    const text = await navigator.clipboard.readText();
-    setInputValue(text);
+  const handlePaste = () => {
+    // Simulated paste - fills the password field directly
+    setInputValue(password);
   };
 
   const handleSubmit = () => {
@@ -96,17 +96,17 @@ export const PasswordGate = ({ password, onSuccess, buttonText }: PasswordGatePr
         </div>
       </div>
 
-      <div className="space-y-5">
+      <div className="space-y-4">
         {/* Password display field with copy */}
         <div className="space-y-2">
           <p className="text-white/60 text-sm text-center">senha de acesso</p>
           <div className="flex items-center gap-2">
-            <div className="flex-1 px-4 py-3.5 bg-[#202c33] border border-white/10 rounded-xl text-white text-center text-lg tracking-widest font-mono">
+            <div className="flex-1 min-w-0 px-3 py-3 bg-[#202c33] border border-white/10 rounded-xl text-white text-center text-base sm:text-lg tracking-widest font-mono truncate">
               {password}
             </div>
             <button
               onClick={handleCopy}
-              className="p-3.5 bg-[#202c33] border border-white/10 rounded-xl text-white/70 hover:text-[#25D366] hover:border-[#25D366]/50 transition-all"
+              className="shrink-0 p-3 bg-[#202c33] border border-white/10 rounded-xl text-white/70 hover:text-[#25D366] hover:border-[#25D366]/50 transition-all"
               title="Copiar senha"
             >
               <Copy className={`w-5 h-5 ${copied ? 'text-[#25D366]' : ''}`} />
@@ -123,11 +123,11 @@ export const PasswordGate = ({ password, onSuccess, buttonText }: PasswordGatePr
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
               placeholder="Cole aqui"
-              className="flex-1 px-4 py-3.5 bg-[#202c33] border border-white/10 rounded-xl text-white placeholder:text-white/40 focus:outline-none focus:border-[#25D366]/50 text-center text-lg tracking-widest"
+              className="flex-1 min-w-0 px-3 py-3 bg-[#202c33] border border-white/10 rounded-xl text-white placeholder:text-white/40 focus:outline-none focus:border-[#25D366]/50 text-center text-base sm:text-lg tracking-widest"
             />
             <button
               onClick={handlePaste}
-              className="p-3.5 bg-[#202c33] border border-white/10 rounded-xl text-white/70 hover:text-[#25D366] hover:border-[#25D366]/50 transition-all"
+              className="shrink-0 p-3 bg-[#202c33] border border-white/10 rounded-xl text-white/70 hover:text-[#25D366] hover:border-[#25D366]/50 transition-all"
               title="Colar senha"
             >
               <ClipboardPaste className="w-5 h-5" />
