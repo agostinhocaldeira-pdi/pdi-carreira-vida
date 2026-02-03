@@ -42,11 +42,11 @@ export const PassoDois = ({ onAdvance }: PassoDoisProps) => {
       "vira frustração elegante.",
     ],
     recovery: [
-      "isso foi uma tentativa de interrupção",
-      "quando a clareza aparece, esse modo de viver reage",
-      "não é preguiça",
-      "é condicionamento",
-      "já passou, podemos continuar",
+      "(Ele insiste em tentar interromper)",
+      "E olha só: repare que isso acontece todos os dias na sua vida. <strong>Quando a clareza aparece, esse modo de viver reage.</strong>",
+      "Você não faz, não é por preguiça",
+      "é o condicionamento desse modo de viver.",
+      "Bom... vamos tentar continuar sem novas interferências.",
     ],
     feedback3: [
       "Urgência não é critério.",
@@ -273,10 +273,9 @@ export const PassoDois = ({ onAdvance }: PassoDoisProps) => {
                   key={index}
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="text-white/70 text-lg text-center leading-relaxed"
-                >
-                  {text}
-                </motion.p>
+                  className="text-white/70 text-lg text-center leading-relaxed [&_strong]:text-white [&_strong]:font-semibold"
+                  dangerouslySetInnerHTML={{ __html: text }}
+                />
               ))}
 
               {showContinue && (
