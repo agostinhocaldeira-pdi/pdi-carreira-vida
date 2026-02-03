@@ -88,11 +88,20 @@ export const PassoCinco = () => {
             <motion.p
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
+              className="text-white/50 text-sm sm:text-base text-center leading-relaxed mb-4"
+            >
+              Se você sabe a vida que realmente quer viver, e tem um objetivo definido, responda:
+            </motion.p>
+
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.5 }}
               className="text-white/80 text-xl text-center leading-relaxed mb-8"
             >
               Qual é o próximo passo,{"\n"}
               pequeno o suficiente,{"\n"}
-              que te aproxima do que importa?
+              que te aproxima do que <span className="font-bold text-white">realmente</span> importa?
             </motion.p>
 
             <motion.div
