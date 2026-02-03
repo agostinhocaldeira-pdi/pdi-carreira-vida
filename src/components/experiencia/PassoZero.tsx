@@ -1,10 +1,10 @@
-import { useState, useEffect, useRef, MutableRefObject } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Phone, PhoneOff, Volume2, Mic } from "lucide-react";
 import pdiLogo from "@/assets/logo_pdi.png";
 
 interface PassoZeroProps {
   onAdvance: () => void;
-  preloadedAudio?: MutableRefObject<HTMLAudioElement | null>;
+  preloadedAudio?: HTMLAudioElement | null;
 }
 
 export const PassoZero = ({ onAdvance, preloadedAudio }: PassoZeroProps) => {
@@ -27,16 +27,15 @@ export const PassoZero = ({ onAdvance, preloadedAudio }: PassoZeroProps) => {
   // Start playing ringtone on mount - use preloaded audio if available
   useEffect(() => {
     // Use preloaded audio from parent if available
-    if (preloadedAudio?.current) {
-      const audio = preloadedAudio.current;
-      localAudioRef.current = audio;
+    if (preloadedAudio) {
+      localAudioRef.current = preloadedAudio;
       
       // Try to play immediately (already preloaded)
-      audio.play().catch(() => {
+      preloadedAudio.play().catch(() => {
         // Autoplay blocked - will start on first interaction
       });
       
-      return; // Don't clean up preloaded audio here
+      return; // Don't clean up preloaded audio here - parent manages it
     }
     
     // Fallback: create audio if not preloaded
@@ -62,12 +61,11 @@ export const PassoZero = ({ onAdvance, preloadedAudio }: PassoZeroProps) => {
     if (localAudioRef.current) {
       localAudioRef.current.pause();
       localAudioRef.current.currentTime = 0;
-      localAudioRef.current.src = "";
+      // Only clear src if we created the audio locally
+      if (!preloadedAudio) {
+        localAudioRef.current.src = "";
+      }
       localAudioRef.current = null;
-    }
-    // Also clean up preloaded ref
-    if (preloadedAudio?.current) {
-      preloadedAudio.current = null;
     }
     
     setIsRinging(false);
