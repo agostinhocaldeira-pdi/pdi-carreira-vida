@@ -143,7 +143,7 @@ const LandingExperiencia = () => {
       {/* ============================================================ */}
       {/* SIGNUP SECTION - No topo */}
       {/* ============================================================ */}
-      <section className="pt-8 pb-12 px-4">
+      <section className="pt-8 pb-8 md:pb-12 px-4">
         <div className="container mx-auto max-w-md">
           <Card className="shadow-large bg-[#222222] border-gray-700">
             <CardHeader className="space-y-2 text-center pb-4 sm:pb-6">
