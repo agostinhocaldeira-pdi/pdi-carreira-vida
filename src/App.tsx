@@ -57,6 +57,7 @@ import LandingNova from "./pages/LandingNova";
 import Quiz from "./pages/Quiz";
 import DesafioCodigo from "./pages/DesafioCodigo";
 import CheckoutDireto from "./pages/CheckoutDireto";
+import ExperienciaNarrativa from "./pages/ExperienciaNarrativa";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -128,6 +129,7 @@ const App = () => (
                 <Route path="/quiz" element={<Quiz />} />
                 <Route path="/desafio-30-dias" element={<DesafioCodigo />} />
                 <Route path="/checkout-direto" element={<CheckoutDireto />} />
+                <Route path="/experiencia" element={<ExperienciaNarrativa />} />
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                 <Route path="*" element={<NotFound />} />
                 <Route path="*" element={<NotFound />} />
