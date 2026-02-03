@@ -62,6 +62,8 @@ export const PassoDois = ({ onAdvance }: PassoDoisProps) => {
       "Agora, faz sentido falarmos de objetivos.",
     ],
     porta: [
+      "Isso é sinal que você quer mudanças...",
+      "Vou te ajudar.",
       "Mas para isso, preciso te levar para nosso tiktok secreto.",
       "Você vai precisar de uma nova senha:",
       "TK4h25",
