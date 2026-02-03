@@ -50,7 +50,7 @@ export const PassoDois = ({ onAdvance }: PassoDoisProps) => {
     ],
     feedback3: [
       "Urgência não é critério.",
-      "Aqui o Piloto Automático gosta de mandar.",
+      "Aqui o \"modo de viver\" gosta de mandar em você. Ele só quer que você faça cada vez mais, sem pensar.",
     ],
     feedback4: [
       "Não é falta de vontade.",
