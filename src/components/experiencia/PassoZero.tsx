@@ -30,10 +30,19 @@ export const PassoZero = ({ onAdvance, preloadedAudio }: PassoZeroProps) => {
     if (preloadedAudio) {
       localAudioRef.current = preloadedAudio;
       
-      // Try to play immediately (already preloaded)
-      preloadedAudio.play().catch(() => {
-        // Autoplay blocked - will start on first interaction
-      });
+      // Reset to beginning and play immediately
+      preloadedAudio.currentTime = 0;
+      preloadedAudio.loop = true;
+      
+      // Use a small delay to ensure the audio element is ready
+      const playAudio = async () => {
+        try {
+          await preloadedAudio.play();
+        } catch {
+          // Autoplay blocked - will start on first interaction
+        }
+      };
+      playAudio();
       
       return; // Don't clean up preloaded audio here - parent manages it
     }
