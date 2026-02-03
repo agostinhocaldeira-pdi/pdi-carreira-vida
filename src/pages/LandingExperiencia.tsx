@@ -143,14 +143,140 @@ const LandingExperiencia = () => {
       {/* ============================================================ */}
       {/* SIGNUP SECTION - No topo */}
       {/* ============================================================ */}
-      <section className="pt-8 pb-8 md:pb-12 px-4">
-        <div className="container mx-auto max-w-md">
-          <Card className="shadow-large bg-[#222222] border-0 md:border md:border-gray-700">
-            <CardHeader className="space-y-2 text-center pb-4 sm:pb-6">
+      <section className="pt-8 pb-8 md:pb-12">
+        {/* Mobile: sem card, full-width */}
+        <div className="md:hidden px-4">
+          <div className="space-y-2 text-center pb-4">
+            <div className="flex justify-center mb-2">
+              <Logo size="lg" showText={false} />
+            </div>
+            <h1 className="text-2xl font-bold text-white">PDI - Carreira & Vida</h1>
+            <p className="text-gray-400">
+              Um sistema para organizar seus objetivos com clareza.
+            </p>
+            <div className="pt-4">
+              <p className="text-lg font-bold text-[#d4a853] mb-2">
+                Acesso completo por 30 dias
+              </p>
+              <p className="text-sm text-gray-400">
+                Use o sistema completo por 30 dias para estruturar seus objetivos, metas e próximos passos com mais clareza.
+                <br />
+                Sem compromisso. Cancele quando quiser.
+              </p>
+            </div>
+          </div>
+          <form onSubmit={handleSubmit} className="space-y-3">
+            <div className="space-y-2">
+              <Label htmlFor="name-mobile" className="text-gray-300">Como podemos te chamar?</Label>
+              <Input
+                id="name-mobile"
+                type="text"
+                placeholder="Seu nome"
+                value={formData.name}
+                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                required
+                disabled={isLoading}
+                className="bg-[#1a1a1a] border-gray-600 text-white placeholder:text-gray-500"
+              />
+            </div>
+
+            <div className="space-y-1">
+              <Label htmlFor="email-mobile" className="text-gray-300">E-mail</Label>
+              <Input
+                id="email-mobile"
+                type="email"
+                placeholder="seu@email.com"
+                value={formData.email}
+                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                required
+                disabled={isLoading}
+                className="bg-[#1a1a1a] border-gray-600 text-white placeholder:text-gray-500"
+              />
+              <p className="text-xs text-gray-500">Usado para salvar seu progresso e acessar o sistema.</p>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="password-mobile" className="text-gray-300">Crie uma senha para acessar sua conta</Label>
+              <div className="relative">
+                <Input
+                  id="password-mobile"
+                  type={showPassword ? "text" : "password"}
+                  placeholder="Mínimo 6 caracteres"
+                  value={formData.password}
+                  onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                  required
+                  className="pr-10 bg-[#1a1a1a] border-gray-600 text-white placeholder:text-gray-500"
+                  disabled={isLoading}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white transition-colors"
+                  disabled={isLoading}
+                >
+                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                </button>
+              </div>
+            </div>
+
+            <div className="flex items-start space-x-2 pt-2">
+              <Checkbox 
+                id="lgpd-mobile" 
+                checked={lgpdAccepted}
+                onCheckedChange={(checked) => setLgpdAccepted(checked === true)}
+                disabled={isLoading}
+                className="border-gray-600 data-[state=checked]:bg-[#d4a853] data-[state=checked]:border-[#d4a853]"
+              />
+              <label htmlFor="lgpd-mobile" className="text-xs text-gray-400 cursor-pointer leading-relaxed">
+                Ao criar sua conta, você concorda com os{" "}
+                <button 
+                  type="button" 
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setShowLGPDModal(true);
+                  }}
+                  className="text-[#d4a853] hover:underline"
+                >
+                  Termos de Uso e Política de Privacidade
+                </button>
+                .
+              </label>
+            </div>
+
+            <Button 
+              type="submit" 
+              className="w-full mt-4 bg-[#d4a853] hover:bg-[#c49843] text-[#1a1a1a] font-semibold" 
+              size="lg" 
+              disabled={isLoading}
+            >
+              {isLoading ? (
+                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+              ) : (
+                <UserPlus className="w-4 h-4 mr-2" />
+              )}
+              {isLoading ? "Processando..." : "Acessar o sistema"}
+            </Button>
+            <p className="text-center text-xs text-gray-500">Leva menos de 1 minuto</p>
+          </form>
+
+          <div className="mt-6 text-center">
+            <p className="text-sm text-gray-400">
+              Já tem conta?{" "}
+              <Link to="/login" className="text-[#d4a853] hover:underline font-medium">
+                Entrar
+              </Link>
+            </p>
+          </div>
+        </div>
+
+        {/* Desktop: card com borda */}
+        <div className="hidden md:block container mx-auto max-w-md px-4">
+          <Card className="shadow-large bg-[#222222] border border-gray-700">
+            <CardHeader className="space-y-2 text-center pb-6">
               <div className="flex justify-center mb-2">
                 <Logo size="lg" showText={false} />
               </div>
-              <CardTitle className="text-2xl sm:text-3xl font-bold text-white">PDI - Carreira & Vida</CardTitle>
+              <CardTitle className="text-3xl font-bold text-white">PDI - Carreira & Vida</CardTitle>
               <CardDescription className="text-gray-400">
                 Um sistema para organizar seus objetivos com clareza.
               </CardDescription>
@@ -165,8 +291,8 @@ const LandingExperiencia = () => {
                 </p>
               </div>
             </CardHeader>
-            <CardContent className="px-4 sm:px-6">
-              <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
+            <CardContent className="px-6">
+              <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="space-y-2">
                   <Label htmlFor="name" className="text-gray-300">Como podemos te chamar?</Label>
                   <Input
@@ -246,7 +372,7 @@ const LandingExperiencia = () => {
 
                 <Button 
                   type="submit" 
-                  className="w-full mt-4 sm:mt-6 bg-[#d4a853] hover:bg-[#c49843] text-[#1a1a1a] font-semibold" 
+                  className="w-full mt-6 bg-[#d4a853] hover:bg-[#c49843] text-[#1a1a1a] font-semibold" 
                   size="lg" 
                   disabled={isLoading}
                 >
