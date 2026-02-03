@@ -53,8 +53,8 @@ export const PassoDois = ({ onAdvance }: PassoDoisProps) => {
       "Aqui o \"modo de viver\" gosta de mandar em você. Ele só quer que você faça cada vez mais, sem pensar.",
     ],
     feedback4: [
-      "Não é falta de vontade.",
-      "É falta de arquitetura.",
+      "O modo de viver quer tudo para agora.",
+      "Quando você está fazendo algo que o resultado vai demorar pra chegar, ele tenta te impedir.",
     ],
     encerramento: [
       "Esse padrão explica o cansaço.",
