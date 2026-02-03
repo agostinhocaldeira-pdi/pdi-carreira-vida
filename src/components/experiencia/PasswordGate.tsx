@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Lock, Loader2, CheckCircle } from "lucide-react";
+import { Lock, Loader2, CheckCircle, Copy, ClipboardPaste } from "lucide-react";
 
 interface PasswordGateProps {
   password: string;
@@ -12,6 +12,7 @@ export const PasswordGate = ({ password, onSuccess, buttonText }: PasswordGatePr
   const [stage, setStage] = useState<"input" | "loading" | "success">("input");
   const [inputValue, setInputValue] = useState("");
   const [loadingStep, setLoadingStep] = useState(0);
+  const [copied, setCopied] = useState(false);
 
   const loadingSteps = [
     "Verificando credenciais...",
@@ -19,6 +20,17 @@ export const PasswordGate = ({ password, onSuccess, buttonText }: PasswordGatePr
     "Conectando ao sistema...",
     "Preparando conteúdo...",
   ];
+
+  const handleCopy = async () => {
+    await navigator.clipboard.writeText(password);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  const handlePaste = async () => {
+    const text = await navigator.clipboard.readText();
+    setInputValue(text);
+  };
 
   const handleSubmit = () => {
     if (inputValue === password) {
@@ -84,14 +96,44 @@ export const PasswordGate = ({ password, onSuccess, buttonText }: PasswordGatePr
         </div>
       </div>
 
-      <div className="space-y-3">
-        <input
-          type="text"
-          value={inputValue}
-          onChange={(e) => setInputValue(e.target.value)}
-          placeholder="Cole a senha aqui"
-          className="w-full px-4 py-3.5 bg-[#202c33] border border-white/10 rounded-xl text-white placeholder:text-white/40 focus:outline-none focus:border-[#25D366]/50 text-center text-lg tracking-widest"
-        />
+      <div className="space-y-5">
+        {/* Password display field with copy */}
+        <div className="space-y-2">
+          <p className="text-white/60 text-sm text-center">senha de acesso</p>
+          <div className="flex items-center gap-2">
+            <div className="flex-1 px-4 py-3.5 bg-[#202c33] border border-white/10 rounded-xl text-white text-center text-lg tracking-widest font-mono">
+              {password}
+            </div>
+            <button
+              onClick={handleCopy}
+              className="p-3.5 bg-[#202c33] border border-white/10 rounded-xl text-white/70 hover:text-[#25D366] hover:border-[#25D366]/50 transition-all"
+              title="Copiar senha"
+            >
+              <Copy className={`w-5 h-5 ${copied ? 'text-[#25D366]' : ''}`} />
+            </button>
+          </div>
+        </div>
+
+        {/* Password input field with paste */}
+        <div className="space-y-2">
+          <p className="text-white/60 text-sm text-center">digite a senha</p>
+          <div className="flex items-center gap-2">
+            <input
+              type="text"
+              value={inputValue}
+              onChange={(e) => setInputValue(e.target.value)}
+              placeholder="Cole aqui"
+              className="flex-1 px-4 py-3.5 bg-[#202c33] border border-white/10 rounded-xl text-white placeholder:text-white/40 focus:outline-none focus:border-[#25D366]/50 text-center text-lg tracking-widest"
+            />
+            <button
+              onClick={handlePaste}
+              className="p-3.5 bg-[#202c33] border border-white/10 rounded-xl text-white/70 hover:text-[#25D366] hover:border-[#25D366]/50 transition-all"
+              title="Colar senha"
+            >
+              <ClipboardPaste className="w-5 h-5" />
+            </button>
+          </div>
+        </div>
 
         <button
           onClick={handleSubmit}
