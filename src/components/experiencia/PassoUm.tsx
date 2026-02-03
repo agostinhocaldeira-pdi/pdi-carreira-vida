@@ -77,8 +77,9 @@ export const PassoUm = ({ onAdvance }: PassoUmProps) => {
   ];
 
   const ancoraMessages = [
-    "O importante agora é você perceber que isso não é uma reflexão solta.",
-    "Tudo o que acontece aqui segue uma lógica.",
+    "Não é difícil de entender, mas é importante que você entenda que é importante saber",
+    "Tudo o que vou te mostrar, segue uma lógica. Nada inventado, nada de frases ou treinamentos motivacionais. Não foi criado por Gurus da internet.",
+    "É algo profundo, mas surpreendentemente simples",
   ];
 
   const encerramentoMessages = [
