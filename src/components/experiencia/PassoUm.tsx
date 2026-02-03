@@ -219,16 +219,15 @@ export const PassoUm = ({ onAdvance }: PassoUmProps) => {
             <p className="text-white/70 text-center text-sm pt-2">Percebe a distância?</p>
           </motion.div>
         )}
-      </div>
 
-      {/* Bottom Actions */}
-      <div className="p-4 bg-[#0b141a] border-t border-white/5">
+        {/* Bot Buttons - Inside Chat */}
         <AnimatePresence mode="wait">
           {stage === "intro" && showButton && (
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
+              className="self-start"
             >
               <ChatButton
                 text="ok"
@@ -242,6 +241,7 @@ export const PassoUm = ({ onAdvance }: PassoUmProps) => {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
+              className="self-start"
             >
               <ChatButton
                 text="ok"
@@ -258,6 +258,7 @@ export const PassoUm = ({ onAdvance }: PassoUmProps) => {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
+              className="self-start"
             >
               <ChatButton
                 text="Continuar"
@@ -270,9 +271,9 @@ export const PassoUm = ({ onAdvance }: PassoUmProps) => {
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              className="space-y-2"
+              className="space-y-2 w-full"
             >
-              <p className="text-white/60 text-sm text-center mb-3">Qual dessas descreve sua vida atual?</p>
+              <p className="text-white/60 text-sm mb-3">Qual dessas descreve sua vida atual?</p>
               {vidaAtualOptions.map((option) => (
                 <ChatButton
                   key={option}
@@ -288,9 +289,9 @@ export const PassoUm = ({ onAdvance }: PassoUmProps) => {
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              className="space-y-2"
+              className="space-y-2 w-full"
             >
-              <p className="text-white/60 text-sm text-center mb-3">E qual vida você deseja viver?</p>
+              <p className="text-white/60 text-sm mb-3">E qual vida você deseja viver?</p>
               {vidaDesejadaOptions.map((option) => (
                 <ChatButton
                   key={option}
@@ -307,6 +308,7 @@ export const PassoUm = ({ onAdvance }: PassoUmProps) => {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 2 }}
+              className="self-start"
             >
               <ChatButton
                 text="Continuar"
@@ -319,6 +321,7 @@ export const PassoUm = ({ onAdvance }: PassoUmProps) => {
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
+              className="self-start"
             >
               <ChatButton
                 text="Entendi"
@@ -331,6 +334,7 @@ export const PassoUm = ({ onAdvance }: PassoUmProps) => {
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
+              className="self-start"
             >
               <ChatButton
                 text="Continuar"
@@ -343,6 +347,7 @@ export const PassoUm = ({ onAdvance }: PassoUmProps) => {
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
+              className="self-start"
             >
               <ChatButton
                 text="Próximo"
@@ -355,6 +360,7 @@ export const PassoUm = ({ onAdvance }: PassoUmProps) => {
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
+              className="self-start"
             >
               <ChatButton
                 text="Abrir conteúdo secreto"
@@ -364,6 +370,7 @@ export const PassoUm = ({ onAdvance }: PassoUmProps) => {
           )}
         </AnimatePresence>
       </div>
+
     </div>
   );
 };
