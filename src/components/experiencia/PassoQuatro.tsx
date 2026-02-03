@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { GripVertical } from "lucide-react";
+import { GripVertical, ChevronDown } from "lucide-react";
 
 interface PassoQuatroProps {
   onAdvance: () => void;
@@ -79,15 +79,16 @@ export const PassoQuatro = ({ onAdvance }: PassoQuatroProps) => {
     setStage("revelation");
   };
 
-  const revelationTexts = [
-    'O jeito de parar o "modo de viver" é fazer menos',
-    "Ter clareza sobre a vida que quer viver, um objetivo por vez, poucas metas em execução, pequenas ações diárias, mas transformadoras.",
+  const revelationTitle = 'O jeito de parar o "modo de viver" é fazer menos';
+  
+  const revelationSteps = [
+    "Ter clareza sobre a vida que quer viver",
+    "ter um objetivo por vez",
+    "ter poucas metas em execução",
+    "Realizar pequenas ações diárias (conectadas com a meta, objetivo e vida).",
   ];
 
-  const revelationBoldTexts = [
-    "Meta demais cria ilusão.",
-    "Ação sem intenção cria cansaço.",
-  ];
+  const revelationFinalText = "Meta demais cria ilusão. Ação sem intenção cria cansaço.";
 
   const ancoraTexts = [
     "Perceba que você não precisa de mais força, mais tempo, mais ferramentas.",
@@ -217,44 +218,60 @@ export const PassoQuatro = ({ onAdvance }: PassoQuatroProps) => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="flex-1 flex flex-col items-center justify-center p-8 space-y-5"
+            className="flex-1 flex flex-col items-center justify-center p-6 sm:p-8"
           >
             <motion.p
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="text-white/50 text-sm sm:text-base text-center mb-2"
+              className="text-white/50 text-sm sm:text-base text-center mb-6"
             >
               na tela anterior, tentaram sabotar de novo.
             </motion.p>
 
-            {revelationTexts.map((text, index) => (
-              <motion.p
-                key={index}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 1.5 }}
-                className="text-white/80 text-lg sm:text-xl text-center leading-relaxed"
-              >
-                {text}
-              </motion.p>
-            ))}
+            {/* Title */}
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 1 }}
+              className="text-white text-lg sm:text-xl text-center leading-relaxed font-semibold mb-8"
+            >
+              {revelationTitle}
+            </motion.p>
 
-            {revelationBoldTexts.map((text, index) => (
-              <motion.p
-                key={`bold-${index}`}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 3 + index * 1.2 }}
-                className="text-white text-lg sm:text-xl text-center leading-relaxed font-bold"
-              >
-                {text}
-              </motion.p>
-            ))}
+            {/* Steps with arrows */}
+            <div className="flex flex-col items-center space-y-2">
+              {revelationSteps.map((step, index) => (
+                <motion.div
+                  key={index}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 2 + index * 1 }}
+                  className="flex flex-col items-center"
+                >
+                  <p className="text-white/80 text-base sm:text-lg text-center leading-relaxed">
+                    {step}
+                  </p>
+                  {index < revelationSteps.length - 1 && (
+                    <ChevronDown className="w-5 h-5 text-white/40 my-1" />
+                  )}
+                </motion.div>
+              ))}
+            </div>
+
+            {/* Final text */}
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 7 }}
+              className="text-white text-base sm:text-lg text-center leading-relaxed font-semibold mt-8"
+            >
+              {revelationFinalText}
+            </motion.p>
 
             <motion.button
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ delay: 6 }}
+              transition={{ delay: 8.5 }}
               onClick={() => setStage("ancora")}
               className="mt-8 py-3.5 px-8 bg-white/10 hover:bg-white/15 border border-white/20 rounded-xl text-white font-medium transition-all"
             >
