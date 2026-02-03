@@ -65,7 +65,7 @@ export const PassoUm = ({ onAdvance }: PassoUmProps) => {
     "acho que alguém não quer que você tenha foco nessa conversa.",
     "alguma semelhança com a vida real?",
     "Desculpe por isso... Vamos continuar",
-    "o tema é sobre a vida que vc tá vivendo agora",
+    "o tema é sobre <strong>a vida que vc tá vivendo agora</strong>",
   ];
 
   const revelacaoMessages = [
