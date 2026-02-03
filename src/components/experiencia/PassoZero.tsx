@@ -25,7 +25,7 @@ export const PassoZero = ({ onAdvance }: PassoZeroProps) => {
     setIsRinging(false);
     setTimeout(() => {
       onAdvance();
-    }, 800);
+    }, 2000);
   };
 
   return (
