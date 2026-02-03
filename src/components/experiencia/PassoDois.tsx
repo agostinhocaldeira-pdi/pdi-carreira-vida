@@ -211,9 +211,9 @@ export const PassoDois = ({ onAdvance }: PassoDoisProps) => {
               {/* Title with lock - only on first question */}
               {stage === "cena1" && (
                 <div className="flex items-center justify-center gap-2 mb-2">
-                  <Lock className="w-4 h-4 text-white/40" />
-                  <p className="text-white/40 text-sm text-center">
-                    Responda essas perguntas para descobrir como o modo de viver age na sua vida
+                  <Lock className="w-4 h-4 text-white" />
+                  <p className="text-white text-sm text-center">
+                    Responda essas perguntas para descobrir como o <strong>"modo de viver"</strong> age na sua vida
                   </p>
                 </div>
               )}
