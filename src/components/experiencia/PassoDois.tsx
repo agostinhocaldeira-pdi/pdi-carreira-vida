@@ -282,14 +282,21 @@ export const PassoDois = ({ onAdvance }: PassoDoisProps) => {
               ))}
 
               {showContinue && (
-                <motion.button
+                <motion.div
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  onClick={handleContinue}
-                  className="w-full mt-8 py-3.5 bg-white/10 hover:bg-white/15 border border-white/20 rounded-xl text-white font-medium transition-all"
+                  className="flex flex-col items-center mt-8"
                 >
-                  {stage === "encerramento" ? "Está preparado?" : "Continuar"}
-                </motion.button>
+                  {stage === "encerramento" && (
+                    <p className="text-white/70 text-sm mb-3">Podemos seguir?</p>
+                  )}
+                  <motion.button
+                    onClick={handleContinue}
+                    className="w-full py-3.5 bg-white/10 hover:bg-white/15 border border-white/20 rounded-xl text-white font-medium transition-all"
+                  >
+                    {stage === "encerramento" ? "SIM" : "Continuar"}
+                  </motion.button>
+                </motion.div>
               )}
             </motion.div>
           )}
