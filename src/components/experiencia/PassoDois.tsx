@@ -286,7 +286,7 @@ export const PassoDois = ({ onAdvance }: PassoDoisProps) => {
                   onClick={handleContinue}
                   className="w-full mt-8 py-3.5 bg-white/10 hover:bg-white/15 border border-white/20 rounded-xl text-white font-medium transition-all"
                 >
-                  Continuar
+                  {stage === "encerramento" ? "Está preparado?" : "Continuar"}
                 </motion.button>
               )}
             </motion.div>
