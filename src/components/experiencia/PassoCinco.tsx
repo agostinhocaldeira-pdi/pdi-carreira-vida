@@ -357,9 +357,8 @@ export const PassoCinco = () => {
                 className={`text-xl text-center leading-relaxed ${
                   index === 1 ? 'text-white font-medium' : 'text-white/70'
                 }`}
-              >
-                {text}
-              </motion.p>
+                dangerouslySetInnerHTML={{ __html: text }}
+              />
             ))}
 
             {textIndex < nomeacaoTexts.length - 1 ? (
