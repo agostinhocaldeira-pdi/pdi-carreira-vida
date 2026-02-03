@@ -138,35 +138,35 @@ export const PassoQuatro = ({ onAdvance }: PassoQuatroProps) => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="flex-1 flex flex-col p-4 sm:p-6"
+            className="flex-1 flex flex-col p-4 sm:p-6 max-h-[100dvh] overflow-y-auto"
           >
-            <div className="mb-3 sm:mb-4">
-              <p className="text-white/50 text-xs sm:text-sm mb-1">Objetivo selecionado:</p>
-              <p className="text-white text-base sm:text-lg">{selectedObjective}</p>
+            <div className="mb-2 sm:mb-4">
+              <p className="text-white/50 text-xs sm:text-sm mb-0.5">Objetivo selecionado:</p>
+              <p className="text-white text-sm sm:text-lg">{selectedObjective}</p>
             </div>
 
-            <p className="text-white/70 text-center text-sm sm:text-base mb-3">
+            <p className="text-white/70 text-center text-xs sm:text-base mb-2">
               Nem tudo que ocupa te leva pra frente.
             </p>
 
-            <p className="text-white/50 text-xs sm:text-sm mb-3 text-center">
+            <p className="text-white/50 text-xs mb-2 text-center">
               Selecione as ações que você faria para atingir o objetivo "{selectedObjective}"
             </p>
 
-            <div className="space-y-1.5 sm:space-y-2 flex-1">
+            <div className="space-y-1 sm:space-y-2">
               {actions.map((action) => (
                 <motion.button
                   key={action.id}
                   onClick={() => handleToggleAction(action.id)}
                   whileTap={{ scale: 0.98 }}
-                  className={`w-full py-2.5 sm:py-3.5 px-3 sm:px-4 rounded-xl border transition-all flex items-center gap-2 sm:gap-3 ${
+                  className={`w-full py-2 sm:py-3.5 px-3 sm:px-4 rounded-xl border transition-all flex items-center gap-2 sm:gap-3 ${
                     selectedActions.includes(action.id)
                       ? 'bg-white/15 border-white/30'
                       : 'bg-white/5 border-white/10 hover:bg-white/10'
                   }`}
                 >
                   <GripVertical className="w-4 h-4 text-white/30 shrink-0" />
-                  <span className="text-white/80 text-left flex-1 text-sm sm:text-base">{action.text}</span>
+                  <span className="text-white/80 text-left flex-1 text-xs sm:text-base">{action.text}</span>
                   {selectedActions.includes(action.id) && (
                     <span className="text-white/40 text-sm shrink-0">✓</span>
                   )}
@@ -203,7 +203,7 @@ export const PassoQuatro = ({ onAdvance }: PassoQuatroProps) => {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 onClick={handleContinueFromActions}
-                className="mt-6 w-full py-4 bg-white/10 hover:bg-white/15 border border-white/20 rounded-xl text-white font-medium transition-all"
+                className="mt-4 w-full py-3 bg-white/10 hover:bg-white/15 border border-white/20 rounded-xl text-white font-medium transition-all"
               >
                 Continuar
               </motion.button>
