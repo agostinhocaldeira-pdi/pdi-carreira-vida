@@ -150,7 +150,7 @@ const ExperienciaNarrativa = () => {
             {!isVideoPlaying ? (
               // Black screen with question mark before playing
               <div className="w-full h-full bg-black flex items-center justify-center">
-                <HelpCircle className="w-24 h-24 text-white" strokeWidth={1.5} />
+                <span className="text-white text-[12rem] font-light select-none">?</span>
               </div>
             ) : (
               // Playing state with JS API enabled
