@@ -33,29 +33,23 @@ const eisenhowerQuadrants = [
 
 interface AgendaLegendProps {
   variant?: 'inline' | 'compact';
+  onAddTask?: () => void;
 }
 
-export const AgendaLegend = ({ variant = 'compact' }: AgendaLegendProps) => {
+export const AgendaLegend = ({ variant = 'compact', onAddTask }: AgendaLegendProps) => {
   const [modalOpen, setModalOpen] = useState(false);
   const [pendingTasksModalOpen, setPendingTasksModalOpen] = useState(false);
 
   // Versão inline (desktop) - mostra legenda resumida
   if (variant === 'inline') {
     return (
-      <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-muted-foreground">
-        <span className="font-medium text-foreground/70">Legendas:</span>
-        {categoryColors.slice(0, 3).map((item) => (
-          <div key={item.label} className="flex items-center gap-1.5">
-            <div className={cn("w-2 h-2 rounded-full", item.color)} />
-            <span className="text-foreground/60">{item.label}</span>
-          </div>
-        ))}
+      <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted-foreground">
         <button
           onClick={() => setModalOpen(true)}
           className="text-muted-foreground hover:text-[#D4AF37] transition-colors flex items-center gap-1"
         >
           <Info className="w-3 h-3" />
-          Ver todas
+          + Ícones
         </button>
         <span className="text-border">|</span>
         <button
@@ -63,8 +57,19 @@ export const AgendaLegend = ({ variant = 'compact' }: AgendaLegendProps) => {
           className="text-muted-foreground hover:text-[#D4AF37] transition-colors flex items-center gap-1"
         >
           <ListTodo className="w-3 h-3" />
-          Radar de Ações
+          + Ações
         </button>
+        {onAddTask && (
+          <>
+            <span className="text-border">|</span>
+            <button
+              onClick={onAddTask}
+              className="text-muted-foreground hover:text-[#D4AF37] transition-colors"
+            >
+              + Micro Pendências
+            </button>
+          </>
+        )}
         
         <LegendModal open={modalOpen} onOpenChange={setModalOpen} />
         <PendingTasksModal open={pendingTasksModalOpen} onOpenChange={setPendingTasksModalOpen} />
@@ -75,22 +80,33 @@ export const AgendaLegend = ({ variant = 'compact' }: AgendaLegendProps) => {
   // Versão compacta (mobile) - apenas botões que abrem modais
   return (
     <>
-      <div className="flex items-center gap-3">
+      <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-[11px]">
         <button
           onClick={() => setModalOpen(true)}
-          className="text-xs text-muted-foreground hover:text-[#D4AF37] transition-colors flex items-center gap-1.5"
+          className="text-muted-foreground hover:text-[#D4AF37] transition-colors flex items-center gap-1"
         >
-          <Info className="w-3.5 h-3.5" />
-          <span>Guia de Ícones</span>
+          <Info className="w-3 h-3" />
+          <span>+ Ícones</span>
         </button>
         <span className="text-border">|</span>
         <button
           onClick={() => setPendingTasksModalOpen(true)}
-          className="text-xs text-muted-foreground hover:text-[#D4AF37] transition-colors flex items-center gap-1.5"
+          className="text-muted-foreground hover:text-[#D4AF37] transition-colors flex items-center gap-1"
         >
-          <ListTodo className="w-3.5 h-3.5" />
-          <span>Radar de Ações</span>
+          <ListTodo className="w-3 h-3" />
+          <span>+ Ações</span>
         </button>
+        {onAddTask && (
+          <>
+            <span className="text-border">|</span>
+            <button
+              onClick={onAddTask}
+              className="text-muted-foreground hover:text-[#D4AF37] transition-colors"
+            >
+              + Micro Pendências
+            </button>
+          </>
+        )}
       </div>
       
       <LegendModal open={modalOpen} onOpenChange={setModalOpen} />

@@ -189,18 +189,10 @@ export const Agenda = () => {
             </ScrollArea>
           )}
 
-          {/* Legend */}
+          {/* Legend with Add Task */}
           <div className="pt-2 border-t border-border/50">
-            <AgendaLegend variant={isMobile ? 'compact' : 'inline'} />
+            <AgendaLegend variant={isMobile ? 'compact' : 'inline'} onAddTask={handleAddClick} />
           </div>
-
-          {/* Add Task Link */}
-          <button
-            onClick={handleAddClick}
-            className="w-full text-center text-xs text-muted-foreground hover:text-[#D4AF37] transition-colors pt-3 pb-1"
-          >
-            + Lista de Tarefas avulsas
-          </button>
         </CardContent>
       </Card>
 
