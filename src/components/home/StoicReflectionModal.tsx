@@ -67,13 +67,13 @@ export const StoicReflectionModal = ({ open, onOpenChange }: StoicReflectionModa
 
       const { data, error } = await supabase
         .from('diary_entries')
-        .select('reflections')
+        .select('stoic_response')
         .eq('user_id', session.session.user.id)
         .eq('entry_date', format(today, 'yyyy-MM-dd'))
         .maybeSingle();
 
-      if (!error && data?.reflections) {
-        setUserResponse(data.reflections);
+      if (!error && data?.stoic_response) {
+        setUserResponse(data.stoic_response);
         setIsSaved(true);
       } else {
         setUserResponse("");
@@ -139,24 +139,24 @@ export const StoicReflectionModal = ({ open, onOpenChange }: StoicReflectionModa
         .maybeSingle();
 
       if (existingEntry) {
-        // Update existing entry
+        // Update existing entry - only stoic_response field
         const { error } = await supabase
           .from('diary_entries')
           .update({ 
-            reflections: userResponse,
+            stoic_response: userResponse,
             updated_at: new Date().toISOString()
           })
           .eq('id', existingEntry.id);
 
         if (error) throw error;
       } else {
-        // Create new entry
+        // Create new entry with only stoic_response
         const { error } = await supabase
           .from('diary_entries')
           .insert({
             user_id: session.session.user.id,
             entry_date: entryDate,
-            reflections: userResponse,
+            stoic_response: userResponse,
           });
 
         if (error) throw error;
