@@ -225,7 +225,7 @@ const Home = () => {
               </div>
 
               {/* Desafio - Now with subscription check */}
-              <div className="col-span-1 sm:col-span-1">
+              <div className="col-span-1">
                 <HubCard
                   title="Desafio"
                   icon={<Zap className="w-full h-full" />}
@@ -239,13 +239,12 @@ const Home = () => {
               </div>
 
               {/* Painel de Controle */}
-              <div className="col-span-2 sm:col-span-1">
+              <div className="col-span-1">
                 <HubCard
-                  title="Painel de Controle"
-                  description={!isMobile ? "Acompanhe seus objetivos, agenda e realize suas ações diárias." : undefined}
+                  title="Painel"
                   icon={<LayoutDashboard className="w-full h-full" />}
                   to="/control-panel"
-                  variant="primary"
+                  variant="compact"
                   isLocked={isInitiationMode}
                   lockMessage="Complete a Base Pessoal primeiro"
                   tooltipContent="Acesse o painel completo com agenda, objetivos, metas e ações do dia."
