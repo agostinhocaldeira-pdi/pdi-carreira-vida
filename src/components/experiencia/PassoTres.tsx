@@ -5,6 +5,7 @@ import pdiLogo from "@/assets/logo_pdi.png";
 
 interface PassoTresProps {
   onAdvance: () => void;
+  autoPlay?: boolean;
 }
 
 const comments = [
@@ -67,7 +68,7 @@ const getAvatarUrl = (name: string) => {
   return `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=${color}&color=fff&size=80&bold=true`;
 };
 
-export const PassoTres = ({ onAdvance }: PassoTresProps) => {
+export const PassoTres = ({ onAdvance, autoPlay = false }: PassoTresProps) => {
   const [showButton, setShowButton] = useState(false);
   const [likes, setLikes] = useState(324);
   const [liked, setLiked] = useState(false);
@@ -95,23 +96,25 @@ export const PassoTres = ({ onAdvance }: PassoTresProps) => {
     <div className="min-h-screen bg-black flex flex-col relative overflow-hidden">
       {/* YouTube video background */}
       <div className="absolute inset-0">
-        <iframe
-          src="https://www.youtube-nocookie.com/embed/8c7GdfmuXCQ?autoplay=1&mute=1&loop=1&playlist=8c7GdfmuXCQ&controls=0&showinfo=0&rel=0&modestbranding=1&playsinline=1"
-          title="TikTok Video"
-          className="w-full h-full object-cover"
-          style={{ 
-            position: 'absolute',
-            top: '50%',
-            left: '50%',
-            transform: 'translate(-50%, -50%)',
-            minWidth: '100%',
-            minHeight: '100%',
-            width: 'auto',
-            height: 'auto',
-          }}
-          allow="autoplay; encrypted-media"
-          allowFullScreen
-        />
+        {autoPlay && (
+          <iframe
+            src="https://www.youtube-nocookie.com/embed/8c7GdfmuXCQ?autoplay=1&mute=1&loop=1&playlist=8c7GdfmuXCQ&controls=0&showinfo=0&rel=0&modestbranding=1&playsinline=1"
+            title="TikTok Video"
+            className="w-full h-full object-cover"
+            style={{ 
+              position: 'absolute',
+              top: '50%',
+              left: '50%',
+              transform: 'translate(-50%, -50%)',
+              minWidth: '100%',
+              minHeight: '100%',
+              width: 'auto',
+              height: 'auto',
+            }}
+            allow="autoplay; encrypted-media"
+            allowFullScreen
+          />
+        )}
       </div>
 
       {/* Gradient overlay */}
