@@ -154,7 +154,7 @@ const LandingExperiencia = () => {
             <p className="text-gray-400">
               Um sistema para organizar seus objetivos com clareza.
             </p>
-            <div className="pt-4">
+            <div className="pt-4 border border-[#d4a853]/40 rounded-lg p-4 bg-[#d4a853]/5">
               <p className="text-lg font-bold text-[#d4a853] mb-2">
                 Acesso completo por 30 dias
               </p>
@@ -280,7 +280,7 @@ const LandingExperiencia = () => {
               <CardDescription className="text-gray-400">
                 Um sistema para organizar seus objetivos com clareza.
               </CardDescription>
-              <div className="pt-4">
+              <div className="pt-4 border border-[#d4a853]/40 rounded-lg p-4 bg-[#d4a853]/5">
                 <p className="text-lg font-bold text-[#d4a853] mb-2">
                   Acesso completo por 30 dias
                 </p>
