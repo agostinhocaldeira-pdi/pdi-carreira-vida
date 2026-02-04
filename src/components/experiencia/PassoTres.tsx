@@ -93,10 +93,12 @@ export const PassoTres = ({ onAdvance, autoPlay = false }: PassoTresProps) => {
   const [showComments, setShowComments] = useState(false);
   const playerRef = useRef<any>(null);
   const apiLoadedRef = useRef(false);
+  const videoEndedRef = useRef(false);
 
   const onPlayerStateChange = useCallback((event: { data: number }) => {
     // YouTube PlayerState.ENDED = 0
-    if (event.data === 0) {
+    if (event.data === 0 && !videoEndedRef.current) {
+      videoEndedRef.current = true;
       setShowButton(true);
     }
   }, []);
@@ -129,7 +131,15 @@ export const PassoTres = ({ onAdvance, autoPlay = false }: PassoTresProps) => {
       initializePlayer();
     }
 
+    // Fallback: show button after 10 seconds if video doesn't trigger end event
+    const fallbackTimer = setTimeout(() => {
+      if (!videoEndedRef.current) {
+        setShowButton(true);
+      }
+    }, 10000);
+
     return () => {
+      clearTimeout(fallbackTimer);
       playerRef.current = null;
     };
   }, [autoPlay, initializePlayer]);
@@ -219,7 +229,7 @@ export const PassoTres = ({ onAdvance, autoPlay = false }: PassoTresProps) => {
             onClick={onAdvance}
             className="w-full py-4 bg-white text-black font-semibold rounded-xl text-base transition-all active:scale-[0.98]"
           >
-            Acessar protocolo
+            Conhecer protocolo
           </motion.button>
         )}
       </div>
