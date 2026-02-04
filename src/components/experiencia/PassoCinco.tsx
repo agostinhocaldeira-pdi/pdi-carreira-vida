@@ -310,6 +310,14 @@ export const PassoCinco = ({ preloadedAudio }: PassoCincoProps) => {
             <motion.p
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
+              className="text-white/60 text-base text-center leading-relaxed"
+            >
+              não dê ouvidos ao sabotador. O passo que você definir nunca será "pouco demais", porque:
+            </motion.p>
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 2 }}
               className="text-white/80 text-xl text-center leading-relaxed"
             >
               Passo possível não impressiona.
@@ -317,7 +325,7 @@ export const PassoCinco = ({ preloadedAudio }: PassoCincoProps) => {
             <motion.p
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 1.5 }}
+              transition={{ delay: 3.5 }}
               className="text-white/80 text-xl text-center leading-relaxed"
             >
               Ele sustenta.
@@ -326,7 +334,7 @@ export const PassoCinco = ({ preloadedAudio }: PassoCincoProps) => {
             <motion.button
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ delay: 3.5 }}
+              transition={{ delay: 5.5 }}
               onClick={() => setStage("presenca")}
               className="mt-8 py-3.5 px-8 bg-white/10 hover:bg-white/15 border border-white/20 rounded-xl text-white font-medium transition-all"
             >
