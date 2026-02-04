@@ -17,7 +17,7 @@ export interface HubCardProps {
   to: string;
   isLocked?: boolean;
   lockMessage?: string;
-  variant?: 'primary' | 'highlighted' | 'default' | 'compact' | 'feature';
+  variant?: 'primary' | 'highlighted' | 'default' | 'compact' | 'feature' | 'premium-black';
   tooltipContent?: string;
   badge?: string;
   children?: ReactNode;
@@ -48,6 +48,7 @@ export const HubCard = ({
   const isHighlighted = variant === 'highlighted';
   const isCompact = variant === 'compact';
   const isFeature = variant === 'feature';
+  const isPremiumBlack = variant === 'premium-black';
 
   const cardContent = (
     <motion.div
@@ -61,16 +62,19 @@ export const HubCard = ({
           "relative overflow-hidden transition-all duration-300 cursor-pointer group h-full border",
           // Primary variant - dark premium style
           isPrimary && "bg-card border-border shadow-sm hover:shadow-md hover:border-primary/20",
-          // Highlighted variant - dark with gold accent
+          // Highlighted variant - dark with gold accent (for Base Pessoal)
           isHighlighted && !isLocked && "bg-[#1A1F2C] border-[#D4AF37]/50 shadow-lg hover:shadow-xl hover:border-[#D4AF37]",
+          // Premium Black variant - exclusive black premium style
+          isPremiumBlack && !isLocked && "bg-[#0D0D0D] border-[#333] shadow-lg hover:shadow-xl hover:border-[#D4AF37]/50",
+          isPremiumBlack && isLocked && "bg-[#1A1A1A] border-[#333]/50",
           // Compact variant - smaller cards
           isCompact && "bg-card border-border/50 hover:border-primary/30 hover:shadow-sm",
           // Feature variant - medium sized feature cards
           isFeature && "bg-card border-border/50 hover:border-primary/30 hover:shadow-md",
-          // Locked state
-          isLocked && "bg-muted/30 border-border/20 opacity-60 cursor-not-allowed",
+          // Locked state (for non premium-black variants)
+          isLocked && !isPremiumBlack && "bg-muted/30 border-border/20 opacity-60 cursor-not-allowed",
           // Default state
-          !isPrimary && !isHighlighted && !isCompact && !isFeature && !isLocked && "bg-card border-border/50 hover:border-primary/30 hover:shadow-md",
+          !isPrimary && !isHighlighted && !isCompact && !isFeature && !isPremiumBlack && !isLocked && "bg-card border-border/50 hover:border-primary/30 hover:shadow-md",
           className
         )}
         onClick={handleClick}
@@ -109,15 +113,18 @@ export const HubCard = ({
             "rounded-lg flex items-center justify-center shrink-0",
             isHighlighted 
               ? "w-10 h-10 bg-[#D4AF37]/20" 
-              : isCompact 
-                ? "w-8 h-8 bg-primary/10" 
-                : "w-10 h-10 bg-primary/10",
-            isLocked && "bg-muted/50"
+              : isPremiumBlack
+                ? "w-8 h-8 bg-[#D4AF37]/20"
+                : isCompact 
+                  ? "w-8 h-8 bg-primary/10" 
+                  : "w-10 h-10 bg-primary/10",
+            isLocked && !isPremiumBlack && "bg-muted/50"
           )}>
             <div className={cn(
-              isHighlighted ? "text-[#D4AF37]" : "text-primary",
-              isLocked && "text-muted-foreground/40",
-              isCompact ? "w-4 h-4" : "w-5 h-5"
+              isHighlighted ? "text-[#D4AF37]" : isPremiumBlack ? "text-[#D4AF37]" : "text-primary",
+              isLocked && !isPremiumBlack && "text-muted-foreground/40",
+              isLocked && isPremiumBlack && "text-[#D4AF37]/50",
+              isCompact || isPremiumBlack ? "w-4 h-4" : "w-5 h-5"
             )}>
               {icon}
             </div>
@@ -127,9 +134,10 @@ export const HubCard = ({
           <div className="mt-3 flex-1">
             <h3 className={cn(
               "font-semibold leading-tight",
-              isHighlighted ? "text-white" : "text-foreground",
-              isLocked && "text-muted-foreground/60",
-              isCompact ? "text-sm" : "text-base"
+              isHighlighted ? "text-white" : isPremiumBlack ? "text-white" : "text-foreground",
+              isLocked && !isPremiumBlack && "text-muted-foreground/60",
+              isLocked && isPremiumBlack && "text-white/50",
+              isCompact || isPremiumBlack ? "text-sm" : "text-base"
             )}>
               {title}
             </h3>
