@@ -4,6 +4,18 @@ import { GripVertical, ChevronDown, Search, Heart, MessageCircle, Home, PlusSqua
 import useEmblaCarousel from "embla-carousel-react";
 import logoPdi from "@/assets/logo_pdi.png";
 
+// Instagram explore images
+import explore1 from "@/assets/experiencia/explore-1.jpeg";
+import explore2 from "@/assets/experiencia/explore-2.jpeg";
+import explore3 from "@/assets/experiencia/explore-3.jpeg";
+import explore4 from "@/assets/experiencia/explore-4.jpeg";
+import explore5 from "@/assets/experiencia/explore-5.jpeg";
+import explore6 from "@/assets/experiencia/explore-6.jpeg";
+import explore7 from "@/assets/experiencia/explore-7.jpeg";
+import explore8 from "@/assets/experiencia/explore-8.jpeg";
+import explore9 from "@/assets/experiencia/explore-9.jpeg";
+import explore10 from "@/assets/experiencia/explore-10.jpeg";
+
 interface PassoQuatroProps {
   onAdvance: () => void;
 }
@@ -154,20 +166,19 @@ export const PassoQuatro = ({ onAdvance }: PassoQuatroProps) => {
 
   const transitionText = "Agora falta só um nível.\nO mais ignorado de todos.";
 
-  // Instagram explore grid data - random placeholder colors and one PDI logo
+  // Instagram explore grid data - real images with PDI logo
   const instagramPosts = [
-    { id: 1, type: "color", color: "bg-gradient-to-br from-pink-500 to-orange-400" },
-    { id: 2, type: "color", color: "bg-gradient-to-br from-blue-400 to-purple-500" },
-    { id: 3, type: "color", color: "bg-gradient-to-br from-green-400 to-teal-500" },
-    { id: 4, type: "pdi", color: "" },
-    { id: 5, type: "color", color: "bg-gradient-to-br from-yellow-400 to-red-500" },
-    { id: 6, type: "color", color: "bg-gradient-to-br from-indigo-400 to-blue-600" },
-    { id: 7, type: "color", color: "bg-gradient-to-br from-rose-400 to-pink-600" },
-    { id: 8, type: "color", color: "bg-gradient-to-br from-cyan-400 to-blue-500" },
-    { id: 9, type: "color", color: "bg-gradient-to-br from-amber-400 to-orange-600" },
-    { id: 10, type: "color", color: "bg-gradient-to-br from-violet-400 to-purple-600" },
-    { id: 11, type: "color", color: "bg-gradient-to-br from-lime-400 to-green-600" },
-    { id: 12, type: "color", color: "bg-gradient-to-br from-fuchsia-400 to-pink-600" },
+    { id: 1, type: "image", image: explore1, objectPosition: "center 20%" },
+    { id: 2, type: "image", image: explore2, objectPosition: "center 25%" },
+    { id: 3, type: "image", image: explore3, objectPosition: "center 20%" },
+    { id: 4, type: "pdi", image: logoPdi, objectPosition: "center" },
+    { id: 5, type: "image", image: explore4, objectPosition: "center 15%" },
+    { id: 6, type: "image", image: explore5, objectPosition: "center 20%" },
+    { id: 7, type: "image", image: explore6, objectPosition: "center 20%" },
+    { id: 8, type: "image", image: explore7, objectPosition: "center 20%" },
+    { id: 9, type: "image", image: explore8, objectPosition: "center 20%" },
+    { id: 10, type: "image", image: explore9, objectPosition: "center 30%" },
+    { id: 11, type: "image", image: explore10, objectPosition: "center 25%" },
   ];
 
   const handleInstagramPostClick = (post: typeof instagramPosts[0]) => {
@@ -201,16 +212,15 @@ export const PassoQuatro = ({ onAdvance }: PassoQuatroProps) => {
                     key={post.id}
                     onClick={() => handleInstagramPostClick(post)}
                     whileTap={{ scale: 0.95 }}
-                    className={`aspect-square relative ${post.type === "color" ? post.color : "bg-white/10"} flex items-center justify-center`}
+                    className="aspect-square relative overflow-hidden flex items-center justify-center bg-black"
                   >
-                    {post.type === "pdi" && (
-                      <img 
-                        src={logoPdi} 
-                        alt="PDI" 
-                        className="w-full h-full object-cover"
-                      />
-                    )}
-                    {post.type === "color" && (
+                    <img 
+                      src={post.image} 
+                      alt={post.type === "pdi" ? "PDI" : "Explore post"}
+                      className="w-full h-full object-cover"
+                      style={{ objectPosition: post.objectPosition }}
+                    />
+                    {post.type === "image" && (
                       <div className="absolute inset-0 flex items-end p-2">
                         <div className="flex gap-2 text-white/80">
                           <Heart className="w-3 h-3" />
