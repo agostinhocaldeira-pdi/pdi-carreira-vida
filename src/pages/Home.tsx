@@ -229,7 +229,7 @@ const Home = () => {
                 <HubCard
                   title="Desafio"
                   icon={<Zap className="w-full h-full" />}
-                  to="/desafio-codigo"
+                  to="/desafio-30-dias"
                   variant="premium-black"
                   isLocked={isInitiationMode || !hasActiveSubscription}
                   lockMessage={isInitiationMode ? "Requer Base Pessoal" : "Exclusivo para assinantes"}
