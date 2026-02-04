@@ -133,12 +133,14 @@ export const HubCard = ({
             )}>
               {title}
             </h3>
+            {/* Description hidden on mobile for compact cards */}
             {description && (
               <p className={cn(
                 "mt-1 leading-relaxed",
                 isHighlighted ? "text-gray-400" : "text-muted-foreground",
                 isLocked && "text-muted-foreground/40",
-                isCompact ? "text-xs" : "text-sm"
+                isCompact ? "text-xs hidden" : "text-sm",
+                isFeature && "hidden sm:block"
               )}>
                 {description}
               </p>
