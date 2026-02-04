@@ -1,22 +1,11 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Play, Heart, MessageCircle, X } from "lucide-react";
+import { Heart, MessageCircle, X } from "lucide-react";
 import pdiLogo from "@/assets/logo_pdi.png";
 
 interface PassoTresProps {
   onAdvance: () => void;
 }
-
-const tiktokMessages = [
-  "Oi.",
-  "Eu resolvi te ligar, porque essa parte é importante e eu quero impedir que tentem nos sabotar novamente.",
-  "Não é sobre fazer mais coisas.",
-  "É sobre o que você está tentando alcançar.",
-  "Você escolhe um objetivo, a vida aperta, e você se sente fraco.",
-  "Mas o problema não foi você.",
-  "Foi o objetivo.",
-  "vou te mostrar",
-];
 
 const comments = [
   { name: "Ana Silva", text: "Isso mudou minha vida! 🙌" },
@@ -79,25 +68,18 @@ const getAvatarUrl = (name: string) => {
 };
 
 export const PassoTres = ({ onAdvance }: PassoTresProps) => {
-  const [messageIndex, setMessageIndex] = useState(0);
   const [showButton, setShowButton] = useState(false);
   const [likes, setLikes] = useState(324);
   const [liked, setLiked] = useState(false);
   const [showComments, setShowComments] = useState(false);
 
   useEffect(() => {
-    if (messageIndex < tiktokMessages.length) {
-      const timer = setTimeout(() => {
-        setMessageIndex((prev) => prev + 1);
-      }, 2000);
-      return () => clearTimeout(timer);
-    } else {
-      const timer = setTimeout(() => {
-        setShowButton(true);
-      }, 1000);
-      return () => clearTimeout(timer);
-    }
-  }, [messageIndex]);
+    // Show button after video plays for a bit
+    const timer = setTimeout(() => {
+      setShowButton(true);
+    }, 9000);
+    return () => clearTimeout(timer);
+  }, []);
 
   const handleLike = () => {
     if (!liked) {
@@ -111,18 +93,32 @@ export const PassoTres = ({ onAdvance }: PassoTresProps) => {
 
   return (
     <div className="min-h-screen bg-black flex flex-col relative overflow-hidden">
-      {/* TikTok-style interface */}
-      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/20 to-black/80" />
-
-      {/* Fake video background */}
-      <div className="absolute inset-0 flex items-center justify-center">
-        <div className="w-24 h-24 rounded-full bg-white/5 flex items-center justify-center">
-          <Play className="w-10 h-10 text-white/20 ml-1" />
-        </div>
+      {/* YouTube video background */}
+      <div className="absolute inset-0">
+        <iframe
+          src="https://www.youtube-nocookie.com/embed/8c7GdfmuXCQ?autoplay=1&mute=1&loop=1&playlist=8c7GdfmuXCQ&controls=0&showinfo=0&rel=0&modestbranding=1&playsinline=1"
+          title="TikTok Video"
+          className="w-full h-full object-cover"
+          style={{ 
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            minWidth: '100%',
+            minHeight: '100%',
+            width: 'auto',
+            height: 'auto',
+          }}
+          allow="autoplay; encrypted-media"
+          allowFullScreen
+        />
       </div>
 
+      {/* Gradient overlay */}
+      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/20 to-black/80 pointer-events-none" />
+
       {/* TikTok side icons */}
-      <div className="absolute right-4 bottom-32 flex flex-col items-center gap-6">
+      <div className="absolute right-4 bottom-32 flex flex-col items-center gap-6 z-20">
         {/* Profile */}
         <div className="flex flex-col items-center gap-1">
           <img 
@@ -158,32 +154,14 @@ export const PassoTres = ({ onAdvance }: PassoTresProps) => {
         </button>
       </div>
 
-      {/* Content overlay */}
+      {/* Button overlay at bottom */}
       <div className="relative z-10 flex-1 flex flex-col justify-end p-6 pb-24">
-        <div className="space-y-3 max-w-[85%]">
-          <AnimatePresence mode="popLayout">
-            {tiktokMessages.slice(0, messageIndex).map((msg, index) => (
-              <motion.p
-                key={index}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0 }}
-                className={`text-white leading-relaxed ${
-                  index === messageIndex - 1 ? 'text-lg' : 'text-base opacity-60'
-                }`}
-              >
-                {msg}
-              </motion.p>
-            ))}
-          </AnimatePresence>
-        </div>
-
         {showButton && (
           <motion.button
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             onClick={onAdvance}
-            className="mt-8 w-full py-4 bg-white text-black font-semibold rounded-xl text-base transition-all active:scale-[0.98]"
+            className="w-full py-4 bg-white text-black font-semibold rounded-xl text-base transition-all active:scale-[0.98]"
           >
             Acessar protocolo
           </motion.button>
