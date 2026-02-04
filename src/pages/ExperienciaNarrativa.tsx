@@ -130,22 +130,14 @@ const ExperienciaNarrativa = () => {
           {/* YouTube Shorts-style container - reduced size for mobile first fold */}
           <div className="relative w-full aspect-[9/16] max-h-[55vh] bg-gray-900 rounded-2xl overflow-hidden shadow-2xl border border-gray-800">
             {!isVideoPlaying ? (
-              // Thumbnail/Preview state
-              <div className="absolute inset-0 flex items-center justify-center">
-                <iframe
-                  src="https://www.youtube-nocookie.com/embed/dZybFglDt80?modestbranding=1&rel=0&showinfo=0&controls=0&enablejsapi=1&origin=https://pdicarreiraevida.lovable.app"
-                  className="w-full h-full"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                  title="PDI - Introdução"
-                />
-                {/* Play overlay */}
-                <div className="absolute inset-0 bg-black/40 flex items-center justify-center pointer-events-none">
-                  <div className="w-16 h-16 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center">
-                    <Play className="w-8 h-8 text-white fill-white ml-1" />
-                  </div>
-                </div>
-              </div>
+              // Thumbnail/Preview state - clean, no overlay icons
+              <iframe
+                src="https://www.youtube-nocookie.com/embed/dZybFglDt80?modestbranding=1&rel=0&showinfo=0&controls=0&enablejsapi=1&origin=https://pdicarreiraevida.lovable.app"
+                className="w-full h-full"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+                title="PDI - Introdução"
+              />
             ) : (
               // Playing state with JS API enabled
               <iframe
