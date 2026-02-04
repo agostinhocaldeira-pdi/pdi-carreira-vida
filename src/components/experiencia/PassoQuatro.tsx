@@ -474,12 +474,12 @@ export const PassoQuatro = ({ onAdvance }: PassoQuatroProps) => {
                   transition={{ duration: 0.5 }}
                   className="space-y-2 sm:space-y-4"
                 >
-                  <div className="mb-1 sm:mb-4">
+                  <div className="mb-6 sm:mb-8">
                     <p className="text-white/50 text-xs sm:text-sm mb-0.5">Objetivo selecionado:</p>
                     <p className="text-white text-sm sm:text-lg">{selectedObjective}</p>
                   </div>
 
-                  <p className="text-white text-center text-sm sm:text-base font-semibold mb-1">
+                  <p className="text-white text-center text-sm sm:text-base font-semibold mb-3 sm:mb-4">
                     Selecione as 3 ações que você faria para atingir o objetivo "{selectedObjective}"
                   </p>
 
