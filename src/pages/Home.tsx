@@ -156,7 +156,7 @@ const Home = () => {
         </header>
 
         {/* Main Content */}
-        <main className="container mx-auto px-4 py-6 space-y-8 max-w-5xl">
+        <main className="container mx-auto px-4 py-6 space-y-10 max-w-5xl">
           {/* Trial Status Banner */}
           <TrialStatusBanner />
 
@@ -285,7 +285,7 @@ const Home = () => {
             icon={<GraduationCap className="w-3.5 h-3.5 text-primary" />} 
             title="Base de Conhecimento"
           >
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3">
+            <div className="grid grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-3">
               {/* Trilha PDI - Featured */}
               <HubCard
                 title="Trilha PDI"
@@ -339,7 +339,7 @@ const Home = () => {
             icon={<Zap className="w-3.5 h-3.5 text-primary" />} 
             title="Recursos Adicionais"
           >
-            <div className="grid grid-cols-2 sm:flex sm:flex-wrap gap-2">
+            <div className="grid grid-cols-3 sm:flex sm:flex-wrap gap-2">
               {/* Quick Links as square cards on mobile */}
               {[
                 { icon: <TrendingUp className="w-5 h-5" />, label: "Progresso", to: "/progresso" },
