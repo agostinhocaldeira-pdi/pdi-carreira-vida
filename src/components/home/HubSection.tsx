@@ -14,11 +14,13 @@ interface HubSectionProps {
 
 export const HubSection = ({ icon, title, children, className }: HubSectionProps) => (
   <section className={cn("space-y-4", className)}>
-    <div className="flex items-center gap-2">
-      <div className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
-        {icon}
+    <div className="pb-2 border-b border-border/50">
+      <div className="flex items-center gap-2">
+        <div className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+          {icon}
+        </div>
+        <h2 className="text-base sm:text-lg font-semibold text-foreground">{title}</h2>
       </div>
-      <h2 className="text-base sm:text-lg font-semibold text-foreground">{title}</h2>
     </div>
     {children}
   </section>
