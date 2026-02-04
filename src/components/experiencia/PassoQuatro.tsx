@@ -237,7 +237,7 @@ export const PassoQuatro = ({ onAdvance }: PassoQuatroProps) => {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 2 }}
-              className="text-white/30 text-xs text-center py-2 italic"
+              className="text-white/70 text-base sm:text-lg text-center py-2 font-bold"
             >
               Toque na imagem que te chama atenção...
             </motion.p>
