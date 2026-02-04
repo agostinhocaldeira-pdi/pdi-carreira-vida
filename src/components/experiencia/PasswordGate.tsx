@@ -6,9 +6,17 @@ interface PasswordGateProps {
   password: string;
   onSuccess: () => void;
   buttonText: string;
+  onBeforeSuccess?: () => void;
+  beforeSuccessDelay?: number;
 }
 
-export const PasswordGate = ({ password, onSuccess, buttonText }: PasswordGateProps) => {
+export const PasswordGate = ({ 
+  password, 
+  onSuccess, 
+  buttonText,
+  onBeforeSuccess,
+  beforeSuccessDelay = 0,
+}: PasswordGateProps) => {
   const [stage, setStage] = useState<"input" | "loading" | "success">("input");
   const [inputValue, setInputValue] = useState("");
   const [loadingStep, setLoadingStep] = useState(0);
@@ -43,7 +51,11 @@ export const PasswordGate = ({ password, onSuccess, buttonText }: PasswordGatePr
           clearInterval(interval);
           setTimeout(() => {
             setStage("success");
-            setTimeout(onSuccess, 1500);
+            // Trigger before success callback (e.g., start video)
+            if (onBeforeSuccess) {
+              onBeforeSuccess();
+            }
+            setTimeout(onSuccess, 1500 + beforeSuccessDelay);
           }, 800);
         }
       }, 700);

@@ -7,6 +7,7 @@ import { ChatButton } from "./ChatButton";
 
 interface PassoDoisProps {
   onAdvance: () => void;
+  onPrepareNextStep?: () => void;
 }
 
 type Stage = 
@@ -33,7 +34,7 @@ const reflexaoVilaoScreens = [
   "Bom... vamos tentar continuar sem novas interferências.",
 ];
 
-export const PassoDois = ({ onAdvance }: PassoDoisProps) => {
+export const PassoDois = ({ onAdvance, onPrepareNextStep }: PassoDoisProps) => {
   const [stage, setStage] = useState<Stage>("cena1");
   const [showVillain, setShowVillain] = useState(false);
   const [currentFeedback, setCurrentFeedback] = useState<string[]>([]);
@@ -184,6 +185,8 @@ export const PassoDois = ({ onAdvance }: PassoDoisProps) => {
           password="TK4h25"
           onSuccess={onAdvance}
           buttonText="TikTok secreto"
+          onBeforeSuccess={onPrepareNextStep}
+          beforeSuccessDelay={500}
         />
       </div>
     );

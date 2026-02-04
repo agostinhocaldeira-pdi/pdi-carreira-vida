@@ -23,6 +23,7 @@ const ExperienciaNarrativa = () => {
   const [isAudioReady, setIsAudioReady] = useState(false);
   const [showIntro, setShowIntro] = useState(true);
   const [isVideoPlaying, setIsVideoPlaying] = useState(false);
+  const [isTiktokVideoReady, setIsTiktokVideoReady] = useState(false);
   const preloadedAudiosRef = useRef<PreloadedAudios>({ ringtone: null, respira: null });
 
   // Preload ALL audios immediately on page load
@@ -97,6 +98,10 @@ const ExperienciaNarrativa = () => {
 
   const advanceStep = () => {
     setCurrentStep((prev) => Math.min(prev + 1, 5) as ExperienciaStep);
+  };
+
+  const prepareTiktokVideo = () => {
+    setIsTiktokVideoReady(true);
   };
 
   const handleWatchVideo = () => {
@@ -186,8 +191,8 @@ const ExperienciaNarrativa = () => {
       <AnimatePresence mode="wait">
         {currentStep === 0 && <PassoZero onAdvance={advanceStep} preloadedAudio={preloadedAudiosRef.current.ringtone} />}
         {currentStep === 1 && <PassoUm onAdvance={advanceStep} />}
-        {currentStep === 2 && <PassoDois onAdvance={advanceStep} />}
-        {currentStep === 3 && <PassoTres onAdvance={advanceStep} />}
+        {currentStep === 2 && <PassoDois onAdvance={advanceStep} onPrepareNextStep={prepareTiktokVideo} />}
+        {currentStep === 3 && <PassoTres onAdvance={advanceStep} autoPlay={isTiktokVideoReady} />}
         {currentStep === 4 && <PassoQuatro onAdvance={advanceStep} />}
         {currentStep === 5 && <PassoCinco preloadedAudio={preloadedAudiosRef.current.respira} />}
       </AnimatePresence>
