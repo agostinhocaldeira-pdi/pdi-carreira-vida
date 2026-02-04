@@ -24,7 +24,6 @@ const ExperienciaNarrativa = () => {
   const [showIntro, setShowIntro] = useState(true);
   const [isVideoPlaying, setIsVideoPlaying] = useState(false);
   const preloadedAudiosRef = useRef<PreloadedAudios>({ ringtone: null, respira: null });
-  const iframeRef = useRef<HTMLIFrameElement>(null);
 
   // Preload ALL audios immediately on page load
   useEffect(() => {
@@ -83,17 +82,35 @@ const ExperienciaNarrativa = () => {
     };
   }, []);
 
+  // YouTube API listener for video end
+  useEffect(() => {
+    if (!showIntro) return;
+
+    const handleMessage = (event: MessageEvent) => {
+      // Only accept messages from YouTube
+      if (event.origin !== "https://www.youtube-nocookie.com" && event.origin !== "https://www.youtube.com") return;
+      
+      try {
+        const data = typeof event.data === "string" ? JSON.parse(event.data) : event.data;
+        // YouTube sends playerState: 0 when video ends
+        if (data.event === "onStateChange" && data.info === 0) {
+          setShowIntro(false);
+        }
+      } catch {
+        // Ignore non-JSON messages
+      }
+    };
+
+    window.addEventListener("message", handleMessage);
+    return () => window.removeEventListener("message", handleMessage);
+  }, [showIntro]);
+
   const advanceStep = () => {
     setCurrentStep((prev) => Math.min(prev + 1, 5) as ExperienciaStep);
   };
 
   const handleWatchVideo = () => {
     setIsVideoPlaying(true);
-    // YouTube Shorts typically last around 60 seconds max
-    // We'll auto-advance after the video ends (estimated ~60 seconds)
-    setTimeout(() => {
-      setShowIntro(false);
-    }, 60000);
   };
 
   const handleSkipToExperience = () => {
@@ -110,14 +127,13 @@ const ExperienciaNarrativa = () => {
           transition={{ duration: 0.5 }}
           className="w-full max-w-sm flex flex-col items-center gap-6"
         >
-          {/* YouTube Shorts-style container */}
-          <div className="relative w-full aspect-[9/16] max-h-[70vh] bg-gray-900 rounded-2xl overflow-hidden shadow-2xl border border-gray-800">
+          {/* YouTube Shorts-style container - reduced size for mobile first fold */}
+          <div className="relative w-full aspect-[9/16] max-h-[55vh] bg-gray-900 rounded-2xl overflow-hidden shadow-2xl border border-gray-800">
             {!isVideoPlaying ? (
               // Thumbnail/Preview state
               <div className="absolute inset-0 flex items-center justify-center">
                 <iframe
-                  ref={iframeRef}
-                  src="https://www.youtube-nocookie.com/embed/dZybFglDt80?modestbranding=1&rel=0&showinfo=0&controls=0"
+                  src="https://www.youtube-nocookie.com/embed/dZybFglDt80?modestbranding=1&rel=0&showinfo=0&controls=0&enablejsapi=1&origin=https://pdicarreiraevida.lovable.app"
                   className="w-full h-full"
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                   allowFullScreen
@@ -131,10 +147,9 @@ const ExperienciaNarrativa = () => {
                 </div>
               </div>
             ) : (
-              // Playing state
+              // Playing state with JS API enabled
               <iframe
-                ref={iframeRef}
-                src="https://www.youtube-nocookie.com/embed/dZybFglDt80?autoplay=1&modestbranding=1&rel=0&showinfo=0&controls=1"
+                src="https://www.youtube-nocookie.com/embed/dZybFglDt80?autoplay=1&modestbranding=1&rel=0&showinfo=0&controls=1&enablejsapi=1&origin=https://pdicarreiraevida.lovable.app"
                 className="w-full h-full"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                 allowFullScreen
