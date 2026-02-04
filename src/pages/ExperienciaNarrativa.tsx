@@ -24,6 +24,7 @@ const ExperienciaNarrativa = () => {
   const [showIntro, setShowIntro] = useState(true);
   const [isVideoPlaying, setIsVideoPlaying] = useState(false);
   const preloadedAudiosRef = useRef<PreloadedAudios>({ ringtone: null, respira: null });
+  const iframeRef = useRef<HTMLIFrameElement>(null);
 
   // Preload ALL audios immediately on page load
   useEffect(() => {
@@ -84,7 +85,7 @@ const ExperienciaNarrativa = () => {
 
   // YouTube API listener for video end
   useEffect(() => {
-    if (!showIntro) return;
+    if (!showIntro || !isVideoPlaying) return;
 
     const handleMessage = (event: MessageEvent) => {
       // Only accept messages from YouTube
@@ -102,8 +103,25 @@ const ExperienciaNarrativa = () => {
     };
 
     window.addEventListener("message", handleMessage);
-    return () => window.removeEventListener("message", handleMessage);
-  }, [showIntro]);
+
+    // Send "listening" command to YouTube iframe to enable postMessage events
+    const sendListeningCommand = () => {
+      if (iframeRef.current?.contentWindow) {
+        iframeRef.current.contentWindow.postMessage(
+          JSON.stringify({ event: "listening" }),
+          "*"
+        );
+      }
+    };
+
+    // Send the listening command after a short delay to ensure iframe is ready
+    const timerId = setTimeout(sendListeningCommand, 500);
+
+    return () => {
+      window.removeEventListener("message", handleMessage);
+      clearTimeout(timerId);
+    };
+  }, [showIntro, isVideoPlaying]);
 
   const advanceStep = () => {
     setCurrentStep((prev) => Math.min(prev + 1, 5) as ExperienciaStep);
@@ -141,6 +159,7 @@ const ExperienciaNarrativa = () => {
             ) : (
               // Playing state with JS API enabled
               <iframe
+                ref={iframeRef}
                 src="https://www.youtube-nocookie.com/embed/dZybFglDt80?autoplay=1&modestbranding=1&rel=0&showinfo=0&controls=1&enablejsapi=1&origin=https://pdicarreiraevida.lovable.app"
                 className="w-full h-full"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
