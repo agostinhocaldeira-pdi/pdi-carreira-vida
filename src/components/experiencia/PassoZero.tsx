@@ -11,6 +11,7 @@ export const PassoZero = ({ onAdvance, preloadedAudio }: PassoZeroProps) => {
   const [currentTime, setCurrentTime] = useState("");
   const [isRinging, setIsRinging] = useState(true);
   const localAudioRef = useRef<HTMLAudioElement | null>(null);
+  const actionInProgressRef = useRef(false);
 
   useEffect(() => {
     const updateTime = () => {
@@ -66,6 +67,10 @@ export const PassoZero = ({ onAdvance, preloadedAudio }: PassoZeroProps) => {
   }, [preloadedAudio]);
 
   const handleInteraction = () => {
+    // Prevent rapid double-clicks from advancing multiple steps
+    if (actionInProgressRef.current) return;
+    actionInProgressRef.current = true;
+    
     // Stop the ringtone immediately
     if (localAudioRef.current) {
       localAudioRef.current.pause();
