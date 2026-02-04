@@ -53,7 +53,7 @@ export const AgendaLegend = ({ variant = 'compact', onAddTask }: AgendaLegendPro
         </button>
         <span className="text-border">|</span>
         <button
-          onClick={() => setPendingTasksModalOpen(true)}
+          onClick={onAddTask}
           className="text-muted-foreground hover:text-[#D4AF37] transition-colors flex items-center gap-1"
         >
           <ListTodo className="w-3 h-3" />
@@ -63,7 +63,7 @@ export const AgendaLegend = ({ variant = 'compact', onAddTask }: AgendaLegendPro
           <>
             <span className="text-border">|</span>
             <button
-              onClick={onAddTask}
+              onClick={() => setPendingTasksModalOpen(true)}
               className="text-muted-foreground hover:text-[#D4AF37] transition-colors"
             >
               + Micro Pendências
@@ -90,7 +90,7 @@ export const AgendaLegend = ({ variant = 'compact', onAddTask }: AgendaLegendPro
         </button>
         <span className="text-border">|</span>
         <button
-          onClick={() => setPendingTasksModalOpen(true)}
+          onClick={onAddTask}
           className="text-muted-foreground hover:text-[#D4AF37] transition-colors flex items-center gap-1"
         >
           <ListTodo className="w-3 h-3" />
@@ -100,7 +100,7 @@ export const AgendaLegend = ({ variant = 'compact', onAddTask }: AgendaLegendPro
           <>
             <span className="text-border">|</span>
             <button
-              onClick={onAddTask}
+              onClick={() => setPendingTasksModalOpen(true)}
               className="text-muted-foreground hover:text-[#D4AF37] transition-colors"
             >
               + Micro Pendências
