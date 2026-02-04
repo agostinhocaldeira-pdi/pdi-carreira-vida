@@ -111,7 +111,7 @@ const Home = () => {
 
   return (
     <TooltipProvider>
-      <div className="min-h-screen bg-background">
+      <div className="min-h-screen bg-white">
         {/* Modals */}
         <FirstStepsModal />
         {newAchievement && (
@@ -188,7 +188,7 @@ const Home = () => {
                   description={!isMobile ? "Identidade, Valores e Roda da Vida" : undefined}
                   icon={<User className="w-full h-full" />}
                   to="/plano-vida/quem-sou"
-                  variant={isInitiationMode ? "highlighted" : "compact"}
+                  variant="highlighted"
                   badge={isInitiationMode ? `${baseProgress}%` : step1Done ? "✓" : undefined}
                   tooltipContent="Defina quem você é: sua essência (VVD), seus valores fundamentais e as áreas da sua vida que precisam de atenção."
                   className="aspect-square sm:aspect-auto"
@@ -224,16 +224,16 @@ const Home = () => {
                 />
               </div>
 
-              {/* Desafio - Now with subscription check */}
+              {/* Desafio - Premium Black style */}
               <div className="col-span-1">
                 <HubCard
                   title="Desafio"
                   icon={<Zap className="w-full h-full" />}
                   to="/desafio-codigo"
-                  variant="compact"
+                  variant="premium-black"
                   isLocked={isInitiationMode || !hasActiveSubscription}
                   lockMessage={isInitiationMode ? "Requer Base Pessoal" : "Exclusivo para assinantes"}
-                  tooltipContent="Participe do Desafio do Código Essencial - 21 dias de transformação."
+                  tooltipContent="Participe do Desafio do Código Essencial - 21 dias de transformação. Exclusivo Plano Black."
                   className="aspect-square sm:aspect-auto"
                 />
               </div>
