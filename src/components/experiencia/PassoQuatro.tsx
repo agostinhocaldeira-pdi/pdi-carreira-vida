@@ -140,7 +140,7 @@ export const PassoQuatro = ({ onAdvance }: PassoQuatroProps) => {
             exit={{ opacity: 0 }}
             className="flex-1 flex flex-col p-4 sm:p-6"
           >
-            <p className="text-white/70 text-sm sm:text-base text-center mb-4">
+            <p className="text-white text-base sm:text-xl text-center mb-4 font-semibold">
               Vamos fazer um exercício prático para você entender melhor
             </p>
             
