@@ -131,12 +131,12 @@ export const PassoTres = ({ onAdvance, autoPlay = false }: PassoTresProps) => {
       initializePlayer();
     }
 
-    // Fallback: show button after 10 seconds if video doesn't trigger end event
+    // Fallback: show button after 15 seconds if video doesn't trigger end event
     const fallbackTimer = setTimeout(() => {
       if (!videoEndedRef.current) {
         setShowButton(true);
       }
-    }, 10000);
+    }, 15000);
 
     return () => {
       clearTimeout(fallbackTimer);
