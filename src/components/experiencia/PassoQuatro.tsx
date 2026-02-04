@@ -43,6 +43,7 @@ export const PassoQuatro = ({ onAdvance }: PassoQuatroProps) => {
   const [selectedActions, setSelectedActions] = useState<number[]>([]);
   const [activeVillain, setActiveVillain] = useState<string | null>(null);
   const [villainQueue, setVillainQueue] = useState<string[]>([...villainMessages]);
+  const [showActionsContent, setShowActionsContent] = useState(false);
   
   // Positions for each objective card
   const [cardPositions, setCardPositions] = useState<Array<{ x: number; y: number; rotate: number }>>(
@@ -76,7 +77,12 @@ export const PassoQuatro = ({ onAdvance }: PassoQuatroProps) => {
 
   const handleSelectObjective = (obj: string) => {
     setSelectedObjective(obj);
+    setShowActionsContent(false);
     setStage("actions");
+    // Show content after intro phrase
+    setTimeout(() => {
+      setShowActionsContent(true);
+    }, 2500);
   };
 
   const handleToggleAction = (id: number) => {
@@ -185,39 +191,71 @@ export const PassoQuatro = ({ onAdvance }: PassoQuatroProps) => {
             exit={{ opacity: 0 }}
             className="flex-1 flex flex-col p-4 sm:p-6 max-h-[100dvh] overflow-y-auto"
           >
-            <div className="mb-2 sm:mb-4">
-              <p className="text-white/50 text-xs sm:text-sm mb-0.5">Objetivo selecionado:</p>
-              <p className="text-white text-sm sm:text-lg">{selectedObjective}</p>
-            </div>
+            {/* Intro phrase first */}
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+              className="text-white/80 text-center text-sm sm:text-lg italic mb-6"
+            >
+              (às vezes é difícil escolher um objetivo, não é mesmo?)
+            </motion.p>
 
-            <p className="text-white/70 text-center text-xs sm:text-base mb-2">
-              Nem tudo que ocupa te leva pra frente.
-            </p>
-
-            <p className="text-white/50 text-xs mb-2 text-center">
-              Selecione as ações que você faria para atingir o objetivo "{selectedObjective}"
-            </p>
-
-            <div className="space-y-1 sm:space-y-2">
-              {actions.map((action) => (
-                <motion.button
-                  key={action.id}
-                  onClick={() => handleToggleAction(action.id)}
-                  whileTap={{ scale: 0.98 }}
-                  className={`w-full py-2 sm:py-3.5 px-3 sm:px-4 rounded-xl border transition-all flex items-center gap-2 sm:gap-3 ${
-                    selectedActions.includes(action.id)
-                      ? 'bg-white/15 border-white/30'
-                      : 'bg-white/5 border-white/10 hover:bg-white/10'
-                  }`}
+            <AnimatePresence>
+              {showActionsContent && (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 0.5 }}
+                  className="space-y-4"
                 >
-                  <GripVertical className="w-4 h-4 text-white/30 shrink-0" />
-                  <span className="text-white/80 text-left flex-1 text-xs sm:text-base">{action.text}</span>
-                  {selectedActions.includes(action.id) && (
-                    <span className="text-white/40 text-sm shrink-0">✓</span>
+                  <div className="mb-2 sm:mb-4">
+                    <p className="text-white/50 text-xs sm:text-sm mb-0.5">Objetivo selecionado:</p>
+                    <p className="text-white text-sm sm:text-lg">{selectedObjective}</p>
+                  </div>
+
+                  <p className="text-white/70 text-center text-xs sm:text-base mb-2">
+                    Nem tudo que ocupa te leva pra frente.
+                  </p>
+
+                  <p className="text-white/50 text-xs mb-2 text-center">
+                    Selecione as ações que você faria para atingir o objetivo "{selectedObjective}"
+                  </p>
+
+                  <div className="space-y-1 sm:space-y-2">
+                    {actions.map((action) => (
+                      <motion.button
+                        key={action.id}
+                        onClick={() => handleToggleAction(action.id)}
+                        whileTap={{ scale: 0.98 }}
+                        className={`w-full py-2 sm:py-3.5 px-3 sm:px-4 rounded-xl border transition-all flex items-center gap-2 sm:gap-3 ${
+                          selectedActions.includes(action.id)
+                            ? 'bg-white/15 border-white/30'
+                            : 'bg-white/5 border-white/10 hover:bg-white/10'
+                        }`}
+                      >
+                        <GripVertical className="w-4 h-4 text-white/30 shrink-0" />
+                        <span className="text-white/80 text-left flex-1 text-xs sm:text-base">{action.text}</span>
+                        {selectedActions.includes(action.id) && (
+                          <span className="text-white/40 text-sm shrink-0">✓</span>
+                        )}
+                      </motion.button>
+                    ))}
+                  </div>
+
+                  {selectedActions.length >= 2 && !activeVillain && (
+                    <motion.button
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      onClick={handleContinueFromActions}
+                      className="mt-4 w-full py-3 bg-white/10 hover:bg-white/15 border border-white/20 rounded-xl text-white font-medium transition-all"
+                    >
+                      Continuar
+                    </motion.button>
                   )}
-                </motion.button>
-              ))}
-            </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
 
             {/* Floating villain bubble overlay */}
             <AnimatePresence>
@@ -235,24 +273,13 @@ export const PassoQuatro = ({ onAdvance }: PassoQuatroProps) => {
                     transition={{ type: "spring", damping: 20, stiffness: 300 }}
                     className="bg-white rounded-2xl px-6 py-4 shadow-2xl max-w-[80%]"
                   >
-                    <p className="text-gray-800 text-lg font-medium text-center">
+                    <p className="text-foreground text-lg font-medium text-center">
                       {activeVillain}
                     </p>
                   </motion.div>
                 </motion.div>
               )}
             </AnimatePresence>
-
-            {selectedActions.length >= 2 && !activeVillain && (
-              <motion.button
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                onClick={handleContinueFromActions}
-                className="mt-4 w-full py-3 bg-white/10 hover:bg-white/15 border border-white/20 rounded-xl text-white font-medium transition-all"
-              >
-                Continuar
-              </motion.button>
-            )}
           </motion.div>
         )}
 
