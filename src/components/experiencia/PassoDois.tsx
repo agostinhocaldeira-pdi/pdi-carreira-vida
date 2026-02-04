@@ -276,9 +276,9 @@ export const PassoDois = ({ onAdvance, onPrepareNextStep }: PassoDoisProps) => {
                       ))}
                     </div>
                     {questionData.scaleLabels && (
-                      <div className="space-y-1.5 pt-2">
+                      <div className="space-y-1 pt-2">
                         {questionData.scaleLabels.map((label, index) => (
-                          <p key={index} className="text-white/40 text-xs text-center">
+                          <p key={index} className="text-white/40 text-[11px] text-left leading-tight">
                             <span className="text-white/60 font-medium">{index + 1}.</span> {label}
                           </p>
                         ))}
