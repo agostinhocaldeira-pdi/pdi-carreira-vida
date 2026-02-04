@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { GripVertical, ChevronDown } from "lucide-react";
 
@@ -30,12 +30,35 @@ const villainMessages = [
   "café?",
 ];
 
+// Generate random position within bounds
+const getRandomPosition = () => ({
+  x: (Math.random() - 0.5) * 120, // -60 to 60 pixels
+  y: (Math.random() - 0.5) * 80,  // -40 to 40 pixels
+  rotate: (Math.random() - 0.5) * 8, // -4 to 4 degrees
+});
+
 export const PassoQuatro = ({ onAdvance }: PassoQuatroProps) => {
   const [stage, setStage] = useState<"objective" | "actions" | "revelation" | "ancora">("objective");
   const [selectedObjective, setSelectedObjective] = useState("");
   const [selectedActions, setSelectedActions] = useState<number[]>([]);
   const [activeVillain, setActiveVillain] = useState<string | null>(null);
   const [villainQueue, setVillainQueue] = useState<string[]>([...villainMessages]);
+  
+  // Positions for each objective card
+  const [cardPositions, setCardPositions] = useState<Array<{ x: number; y: number; rotate: number }>>(
+    objectives.map(() => ({ x: 0, y: 0, rotate: 0 }))
+  );
+
+  // Shuffle card positions every 600ms
+  useEffect(() => {
+    if (stage !== "objective") return;
+    
+    const interval = setInterval(() => {
+      setCardPositions(objectives.map(() => getRandomPosition()));
+    }, 600);
+    
+    return () => clearInterval(interval);
+  }, [stage]);
 
   // Show villain bubble that blocks interaction
   const showNextVillain = () => {
@@ -119,17 +142,38 @@ export const PassoQuatro = ({ onAdvance }: PassoQuatroProps) => {
               Escolha um objetivo
             </h2>
 
-            <div className="space-y-2 sm:space-y-3">
-              {objectives.map((obj) => (
-                <button
+            <div className="space-y-2 sm:space-y-3 relative">
+              {objectives.map((obj, index) => (
+                <motion.button
                   key={obj}
                   onClick={() => handleSelectObjective(obj)}
-                  className="w-full py-3 sm:py-4 px-4 sm:px-6 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-white/80 text-left text-sm sm:text-base transition-all active:scale-[0.98]"
+                  animate={{
+                    x: cardPositions[index].x,
+                    y: cardPositions[index].y,
+                    rotate: cardPositions[index].rotate,
+                  }}
+                  transition={{
+                    type: "spring",
+                    stiffness: 300,
+                    damping: 20,
+                  }}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  className="w-full py-3 sm:py-4 px-4 sm:px-6 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-white/80 text-left text-sm sm:text-base transition-colors cursor-pointer relative z-10"
                 >
                   {obj}
-                </button>
+                </motion.button>
               ))}
             </div>
+            
+            <motion.p
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 2 }}
+              className="text-white/30 text-xs text-center mt-6 italic"
+            >
+              Difícil focar quando tudo se move, não é?
+            </motion.p>
           </motion.div>
         )}
 
