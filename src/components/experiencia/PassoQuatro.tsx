@@ -49,13 +49,13 @@ export const PassoQuatro = ({ onAdvance }: PassoQuatroProps) => {
     objectives.map(() => ({ x: 0, y: 0, rotate: 0 }))
   );
 
-  // Shuffle card positions every 600ms
+  // Shuffle card positions every 900ms
   useEffect(() => {
     if (stage !== "objective") return;
     
     const interval = setInterval(() => {
       setCardPositions(objectives.map(() => getRandomPosition()));
-    }, 600);
+    }, 900);
     
     return () => clearInterval(interval);
   }, [stage]);
@@ -142,7 +142,7 @@ export const PassoQuatro = ({ onAdvance }: PassoQuatroProps) => {
               Escolha um objetivo
             </h2>
 
-            <div className="space-y-2 sm:space-y-3 relative">
+            <div className="grid grid-cols-2 gap-3 sm:gap-4">
               {objectives.map((obj, index) => (
                 <motion.button
                   key={obj}
@@ -159,7 +159,7 @@ export const PassoQuatro = ({ onAdvance }: PassoQuatroProps) => {
                   }}
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
-                  className="w-full py-3 sm:py-4 px-4 sm:px-6 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-white/80 text-left text-sm sm:text-base transition-colors cursor-pointer relative z-10"
+                  className="aspect-square p-3 sm:p-4 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-white/80 text-xs sm:text-sm transition-colors cursor-pointer relative z-10 flex items-center justify-center text-center"
                 >
                   {obj}
                 </motion.button>
