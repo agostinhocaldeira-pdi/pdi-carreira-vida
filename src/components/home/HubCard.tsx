@@ -106,17 +106,17 @@ export const HubCard = ({
         {/* Content wrapper */}
         <div className={cn(
           "flex flex-col h-full",
-          isCompact ? "p-3" : isFeature ? "p-4" : "p-4 sm:p-5"
+          isCompact || isHighlighted || isPremiumBlack ? "p-2 sm:p-3" : isFeature ? "p-4" : "p-4 sm:p-5"
         )}>
           {/* Icon */}
           <div className={cn(
             "rounded-lg flex items-center justify-center shrink-0",
             isHighlighted 
-              ? "w-10 h-10 bg-[#D4AF37]/20" 
+              ? "w-7 h-7 sm:w-10 sm:h-10 bg-[#D4AF37]/20" 
               : isPremiumBlack
-                ? "w-8 h-8 bg-[#D4AF37]/20"
+                ? "w-7 h-7 sm:w-8 sm:h-8 bg-[#D4AF37]/20"
                 : isCompact 
-                  ? "w-8 h-8 bg-primary/10" 
+                  ? "w-7 h-7 sm:w-8 sm:h-8 bg-primary/10" 
                   : "w-10 h-10 bg-primary/10",
             isLocked && !isPremiumBlack && "bg-muted/50"
           )}>
@@ -124,20 +124,20 @@ export const HubCard = ({
               isHighlighted ? "text-[#D4AF37]" : isPremiumBlack ? "text-[#D4AF37]" : "text-primary",
               isLocked && !isPremiumBlack && "text-muted-foreground/40",
               isLocked && isPremiumBlack && "text-[#D4AF37]/50",
-              isCompact || isPremiumBlack ? "w-4 h-4" : "w-5 h-5"
+              isCompact || isPremiumBlack || isHighlighted ? "w-3.5 h-3.5 sm:w-4 sm:h-4" : "w-5 h-5"
             )}>
               {icon}
             </div>
           </div>
 
           {/* Text content */}
-          <div className="mt-3 flex-1">
+          <div className="mt-2 sm:mt-3 flex-1">
             <h3 className={cn(
               "font-semibold leading-tight",
-              isHighlighted ? "text-white" : isPremiumBlack ? "text-white" : "text-foreground",
+              isHighlighted ? "text-white text-[11px] sm:text-base" : isPremiumBlack ? "text-white" : "text-foreground",
               isLocked && !isPremiumBlack && "text-muted-foreground/60",
               isLocked && isPremiumBlack && "text-white/50",
-              isCompact || isPremiumBlack ? "text-sm" : "text-base"
+              (isCompact || isPremiumBlack) && !isHighlighted ? "text-[11px] sm:text-sm" : !isHighlighted && "text-base"
             )}>
               {title}
             </h3>
