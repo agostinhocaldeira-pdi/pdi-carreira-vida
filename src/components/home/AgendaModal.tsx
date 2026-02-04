@@ -14,11 +14,11 @@ interface AgendaModalProps {
 export const AgendaModal = ({ open, onOpenChange }: AgendaModalProps) => {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto p-0">
+      <DialogContent className="w-[95vw] max-w-2xl h-[85vh] max-h-[85vh] overflow-hidden p-0 flex flex-col">
         <DialogHeader className="sr-only">
           <DialogTitle>Agenda Estratégica</DialogTitle>
         </DialogHeader>
-        <div className="p-0">
+        <div className="flex-1 overflow-y-auto">
           <Agenda />
         </div>
       </DialogContent>
