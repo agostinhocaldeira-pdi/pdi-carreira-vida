@@ -4,6 +4,18 @@ import { GripVertical, ChevronDown, Search, Heart, MessageCircle, Home, PlusSqua
 import useEmblaCarousel from "embla-carousel-react";
 import logoPdi from "@/assets/logo_pdi.png";
 
+// Instagram explore images
+import explore1 from "@/assets/experiencia/explore-1.jpeg";
+import explore2 from "@/assets/experiencia/explore-2.jpeg";
+import explore3 from "@/assets/experiencia/explore-3.jpeg";
+import explore4 from "@/assets/experiencia/explore-4.jpeg";
+import explore5 from "@/assets/experiencia/explore-5.jpeg";
+import explore6 from "@/assets/experiencia/explore-6.jpeg";
+import explore7 from "@/assets/experiencia/explore-7.jpeg";
+import explore8 from "@/assets/experiencia/explore-8.jpeg";
+import explore9 from "@/assets/experiencia/explore-9.jpeg";
+import explore10 from "@/assets/experiencia/explore-10.jpeg";
+
 interface PassoQuatroProps {
   onAdvance: () => void;
 }
