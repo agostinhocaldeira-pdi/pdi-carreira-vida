@@ -189,7 +189,7 @@ export const PassoQuatro = ({ onAdvance }: PassoQuatroProps) => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="flex-1 flex flex-col p-4 sm:p-6 max-h-[100dvh] overflow-y-auto"
+            className="flex-1 flex flex-col p-4 sm:p-6 pt-12 sm:pt-16 max-h-[100dvh] overflow-y-auto"
           >
             {/* Intro phrase first */}
             <motion.p
