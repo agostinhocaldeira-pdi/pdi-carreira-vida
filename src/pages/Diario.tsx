@@ -150,7 +150,7 @@ const Diario = () => {
             <div className="space-y-3">
               <Label>Como você está se sentindo hoje?</Label>
               <RadioGroup value={entrada.humor} onValueChange={(value) => setEntrada({ ...entrada, humor: value })}>
-                <div className="flex gap-4">
+                <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
                   <div className="flex items-center space-x-2">
                     <RadioGroupItem value="feliz" id="feliz" />
                     <Label htmlFor="feliz" className="flex items-center gap-2 cursor-pointer">
