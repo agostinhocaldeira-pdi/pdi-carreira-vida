@@ -185,18 +185,18 @@ export const PassoQuatro = ({ onAdvance }: PassoQuatroProps) => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="flex-1 flex flex-col bg-black"
+            className="h-[100dvh] flex flex-col bg-black overflow-hidden"
           >
             {/* Instagram Header */}
-            <div className="flex items-center justify-between px-4 py-3 border-b border-white/10">
-              <span className="text-white font-semibold text-lg">Explorar</span>
+            <div className="flex items-center justify-between px-4 py-2 border-b border-white/10 shrink-0">
+              <span className="text-white font-semibold text-base">Explorar</span>
               <Search className="w-5 h-5 text-white" />
             </div>
 
-            {/* Explore Grid */}
-            <div className="flex-1 overflow-y-auto">
-              <div className="grid grid-cols-3 gap-0.5">
-                {instagramPosts.map((post) => (
+            {/* Explore Grid - constrained to fit viewport */}
+            <div className="flex-1 min-h-0 px-0.5 py-0.5">
+              <div className="grid grid-cols-3 gap-0.5 h-full">
+                {instagramPosts.slice(0, 9).map((post) => (
                   <motion.button
                     key={post.id}
                     onClick={() => handleInstagramPostClick(post)}
@@ -213,8 +213,8 @@ export const PassoQuatro = ({ onAdvance }: PassoQuatroProps) => {
                     {post.type === "color" && (
                       <div className="absolute inset-0 flex items-end p-2">
                         <div className="flex gap-2 text-white/80">
-                          <Heart className="w-4 h-4" />
-                          <MessageCircle className="w-4 h-4" />
+                          <Heart className="w-3 h-3" />
+                          <MessageCircle className="w-3 h-3" />
                         </div>
                       </div>
                     )}
@@ -223,24 +223,24 @@ export const PassoQuatro = ({ onAdvance }: PassoQuatroProps) => {
               </div>
             </div>
 
-            {/* Instagram Bottom Nav */}
-            <div className="flex items-center justify-around py-3 border-t border-white/10 bg-black">
-              <Home className="w-6 h-6 text-white/50" />
-              <Search className="w-6 h-6 text-white" />
-              <PlusSquare className="w-6 h-6 text-white/50" />
-              <Heart className="w-6 h-6 text-white/50" />
-              <User className="w-6 h-6 text-white/50" />
-            </div>
-
             {/* Hint text */}
             <motion.p
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 2 }}
-              className="text-white/70 text-base sm:text-lg text-center py-2 font-bold"
+              className="text-white/70 text-sm text-center py-2 font-bold shrink-0"
             >
               Toque na imagem que te chama atenção...
             </motion.p>
+
+            {/* Instagram Bottom Nav */}
+            <div className="flex items-center justify-around py-2 border-t border-white/10 bg-black shrink-0">
+              <Home className="w-5 h-5 text-white/50" />
+              <Search className="w-5 h-5 text-white" />
+              <PlusSquare className="w-5 h-5 text-white/50" />
+              <Heart className="w-5 h-5 text-white/50" />
+              <User className="w-5 h-5 text-white/50" />
+            </div>
           </motion.div>
         )}
 
