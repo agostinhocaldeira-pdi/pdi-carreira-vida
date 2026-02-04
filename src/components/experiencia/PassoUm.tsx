@@ -21,6 +21,7 @@ type Stage =
   | "revelacao" 
   | "ancora" 
   | "encerramento" 
+  | "reflexaoVilao"
   | "portaSecreta" 
   | "senhaInput";
 
@@ -48,6 +49,14 @@ export const PassoUm = ({ onAdvance }: PassoUmProps) => {
   const [vidaDesejadaChoice, setVidaDesejadaChoice] = useState("");
   const [showButton, setShowButton] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
+  const [reflexaoScreen, setReflexaoScreen] = useState(0);
+
+  const reflexaoVilaoScreens = [
+    "Ele insiste em tentar interromper",
+    'Repare uma coisa: todos os dias na sua vida algo tenta te interromper quando a clareza aparece. É assim que o <strong>"modo de viver"</strong> age.',
+    'Você não faz o que precisa, não é por preguiça<br/><br/>é o condicionamento desse <strong>"modo de viver"</strong>.',
+    "Bom... vamos tentar continuar sem novas interferências.",
+  ];
 
   const introMessages = [
     "tentei te ligar agora, mas você não pode me atender...",
@@ -154,8 +163,23 @@ export const PassoUm = ({ onAdvance }: PassoUmProps) => {
     setMessageIndex(0);
     setShowButton(false);
     setIsTyping(false);
+    setReflexaoScreen(0);
     setStage(nextStage);
   };
+
+  // Auto-advance for reflexaoVilao screens
+  useEffect(() => {
+    if (stage !== "reflexaoVilao") return;
+    
+    // Don't auto-advance on the last screen (index 3)
+    if (reflexaoScreen >= 3) return;
+    
+    const timer = setTimeout(() => {
+      setReflexaoScreen((prev) => prev + 1);
+    }, 2000);
+    
+    return () => clearTimeout(timer);
+  }, [stage, reflexaoScreen]);
 
   const handleVidaAtualChoice = (choice: string) => {
     setVidaAtualChoice(choice);
@@ -172,6 +196,16 @@ export const PassoUm = ({ onAdvance }: PassoUmProps) => {
       <VillainInterruption
         text="isso é só curiosidade&#10;não vai mudar nada"
         isVisible={true}
+      />
+    );
+  }
+
+  if (stage === "reflexaoVilao") {
+    return (
+      <ReflexaoVilaoScreen
+        screens={reflexaoVilaoScreens}
+        currentScreen={reflexaoScreen}
+        onContinue={() => handleNextStage("portaSecreta")}
       />
     );
   }
@@ -367,7 +401,7 @@ export const PassoUm = ({ onAdvance }: PassoUmProps) => {
             >
               <ChatButton
                 text="Próximo"
-                onClick={() => handleNextStage("portaSecreta")}
+                onClick={() => handleNextStage("reflexaoVilao")}
               />
             </motion.div>
           )}
@@ -387,6 +421,63 @@ export const PassoUm = ({ onAdvance }: PassoUmProps) => {
         </AnimatePresence>
       </div>
 
+    </div>
+  );
+};
+
+// Reflexão Vilão - Full screen slideshow
+const ReflexaoVilaoScreen = ({ 
+  screens, 
+  currentScreen, 
+  onContinue 
+}: { 
+  screens: string[]; 
+  currentScreen: number; 
+  onContinue: () => void;
+}) => {
+  return (
+    <div className="min-h-screen bg-[#0b141a] flex flex-col items-center justify-center p-6">
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={currentScreen}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -20 }}
+          transition={{ duration: 0.5 }}
+          className="text-center max-w-md"
+        >
+          <p 
+            className="text-white text-xl leading-relaxed [&_strong]:font-semibold"
+            dangerouslySetInnerHTML={{ __html: screens[currentScreen] }}
+          />
+          
+          {currentScreen === 3 && (
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.5 }}
+              className="mt-8"
+            >
+              <ChatButton
+                text="Continuar"
+                onClick={onContinue}
+              />
+            </motion.div>
+          )}
+        </motion.div>
+      </AnimatePresence>
+      
+      {/* Progress dots */}
+      <div className="flex gap-2 mt-8">
+        {screens.map((_, index) => (
+          <div
+            key={index}
+            className={`w-2 h-2 rounded-full transition-colors duration-300 ${
+              index === currentScreen ? 'bg-white' : 'bg-white/30'
+            }`}
+          />
+        ))}
+      </div>
     </div>
   );
 };
