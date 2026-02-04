@@ -250,23 +250,23 @@ export const PassoQuatro = ({ onAdvance }: PassoQuatroProps) => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="flex-1 flex flex-col bg-white"
+            className="h-[100dvh] flex flex-col bg-white overflow-hidden"
           >
-            {/* Instagram Post Header */}
-            <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200">
-              <div className="flex items-center gap-3">
-                <ArrowLeft className="w-6 h-6 text-black" />
-                <span className="text-black font-semibold text-lg">Posts</span>
+            {/* Instagram Post Header - compact */}
+            <div className="flex items-center justify-between px-3 py-2 border-b border-gray-200 shrink-0">
+              <div className="flex items-center gap-2">
+                <ArrowLeft className="w-5 h-5 text-black" />
+                <span className="text-black font-semibold text-sm">Posts</span>
               </div>
-              <button className="px-4 py-1.5 bg-gray-100 rounded-lg text-black font-medium text-sm">
+              <button className="px-3 py-1 bg-gray-100 rounded-lg text-black font-medium text-xs">
                 Seguir
               </button>
             </div>
 
-            {/* Post Author */}
-            <div className="flex items-center justify-between px-4 py-3">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-yellow-400 via-pink-500 to-purple-600 p-0.5">
+            {/* Post Author - compact */}
+            <div className="flex items-center justify-between px-3 py-2 shrink-0">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-yellow-400 via-pink-500 to-purple-600 p-0.5">
                   <div className="w-full h-full rounded-full bg-white p-0.5">
                     <img 
                       src={logoPdi} 
@@ -275,27 +275,27 @@ export const PassoQuatro = ({ onAdvance }: PassoQuatroProps) => {
                     />
                   </div>
                 </div>
-                <span className="text-black font-semibold text-sm">pdicarreiraevida</span>
+                <span className="text-black font-semibold text-xs">pdicarreiraevida</span>
               </div>
-              <MoreHorizontal className="w-5 h-5 text-black" />
+              <MoreHorizontal className="w-4 h-4 text-black" />
             </div>
 
-            {/* Carousel */}
-            <div className="relative">
-              <div className="overflow-hidden" ref={emblaRef}>
-                <div className="flex">
+            {/* Carousel - flexible height */}
+            <div className="relative flex-1 min-h-0">
+              <div className="overflow-hidden h-full" ref={emblaRef}>
+                <div className="flex h-full">
                   {carouselSlides.map((slide, index) => (
                     <div 
                       key={index} 
-                      className="flex-[0_0_100%] min-w-0 aspect-square bg-white flex flex-col items-center justify-center p-8 relative"
+                      className="flex-[0_0_100%] min-w-0 h-full bg-white flex flex-col items-center justify-center p-4 relative"
                     >
                       <p 
-                        className="text-black text-xl sm:text-2xl font-bold text-center leading-relaxed"
+                        className="text-black text-base sm:text-xl font-bold text-center leading-relaxed"
                         dangerouslySetInnerHTML={{ __html: slide }}
                       />
                       {/* Swipe hint - show on all slides except last */}
                       {index < carouselSlides.length - 1 && (
-                        <div className="absolute bottom-4 left-0 right-0 flex items-center justify-center gap-1 text-gray-400 text-xs">
+                        <div className="absolute bottom-2 left-0 right-0 flex items-center justify-center gap-1 text-gray-400 text-xs">
                           <span>arraste para o lado</span>
                           <span>→</span>
                         </div>
@@ -306,13 +306,13 @@ export const PassoQuatro = ({ onAdvance }: PassoQuatroProps) => {
               </div>
               
               {/* Slide counter */}
-              <div className="absolute top-4 right-4 bg-black/70 text-white text-xs px-2 py-1 rounded-full">
+              <div className="absolute top-2 right-2 bg-black/70 text-white text-xs px-2 py-0.5 rounded-full">
                 {currentSlide + 1}/{carouselSlides.length}
               </div>
             </div>
 
-            {/* Dots indicator */}
-            <div className="flex justify-center gap-1.5 py-3">
+            {/* Dots indicator - compact */}
+            <div className="flex justify-center gap-1 py-1.5 shrink-0">
               {carouselSlides.map((_, index) => (
                 <div 
                   key={index}
@@ -323,77 +323,58 @@ export const PassoQuatro = ({ onAdvance }: PassoQuatroProps) => {
               ))}
             </div>
 
-            {/* Post Actions */}
-            <div className="flex items-center justify-between px-4 py-2">
-              <div className="flex items-center gap-4">
-                <Heart className="w-6 h-6 text-black" />
-                <MessageCircle className="w-6 h-6 text-black" />
-                <Send className="w-6 h-6 text-black" />
-              </div>
-              <Bookmark className="w-6 h-6 text-black" />
-            </div>
-
-            {/* Date */}
-            <p className="px-4 text-gray-500 text-xs">20 de janeiro</p>
-
-            {/* Post Author Footer */}
-            <div className="flex items-center justify-between px-4 py-3 border-t border-gray-100 mt-2">
+            {/* Post Actions - compact */}
+            <div className="flex items-center justify-between px-3 py-1.5 shrink-0">
               <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-yellow-400 via-pink-500 to-purple-600 p-0.5">
-                  <div className="w-full h-full rounded-full bg-white p-0.5">
-                    <img 
-                      src={logoPdi} 
-                      alt="PDI" 
-                      className="w-full h-full rounded-full object-cover"
-                    />
-                  </div>
-                </div>
-                <span className="text-black font-semibold text-sm">pdicarreiraevida</span>
+                <Heart className="w-5 h-5 text-black" />
+                <MessageCircle className="w-5 h-5 text-black" />
+                <Send className="w-5 h-5 text-black" />
               </div>
-              <MoreHorizontal className="w-5 h-5 text-black" />
+              <Bookmark className="w-5 h-5 text-black" />
             </div>
 
-            {/* Final content - appears only when on last slide */}
-            <AnimatePresence>
-              {showFinalContent && currentSlide === carouselSlides.length - 1 && (
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="flex-1 flex flex-col items-center justify-center p-6 bg-black"
-                >
-                  <motion.p
-                    initial={{ opacity: 0, y: 20 }}
+            {/* Final content OR hint - appears at bottom */}
+            <div className="shrink-0">
+              <AnimatePresence mode="wait">
+                {showFinalContent && currentSlide === carouselSlides.length - 1 ? (
+                  <motion.div
+                    key="final"
+                    initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.3 }}
-                    className="text-white/70 text-base sm:text-lg text-center leading-relaxed whitespace-pre-line mb-8"
+                    className="flex flex-col items-center p-4 bg-black"
                   >
-                    {transitionText}
-                  </motion.p>
+                    <motion.p
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ delay: 0.2 }}
+                      className="text-white/70 text-sm text-center leading-relaxed whitespace-pre-line mb-3"
+                    >
+                      {transitionText}
+                    </motion.p>
 
-                  <motion.button
+                    <motion.button
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ delay: 0.8 }}
+                      onClick={onAdvance}
+                      className="py-3 px-8 bg-white text-black font-semibold rounded-xl text-sm transition-all active:scale-[0.98]"
+                    >
+                      Próximo nível
+                    </motion.button>
+                  </motion.div>
+                ) : (
+                  <motion.p
+                    key="hint"
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
-                    transition={{ delay: 1 }}
-                    onClick={onAdvance}
-                    className="py-4 px-10 bg-white text-black font-semibold rounded-xl text-base transition-all active:scale-[0.98]"
+                    transition={{ delay: 1.5 }}
+                    className="text-gray-400 text-xs text-center py-2 italic"
                   >
-                    Próximo nível
-                  </motion.button>
-                </motion.div>
-              )}
-            </AnimatePresence>
-
-            {/* Hint if not at last slide */}
-            {!showFinalContent && (
-              <motion.p
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 1.5 }}
-                className="text-gray-400 text-xs text-center py-3 italic"
-              >
-                Deslize para o lado →
-              </motion.p>
-            )}
+                    Deslize para o lado →
+                  </motion.p>
+                )}
+              </AnimatePresence>
+            </div>
           </motion.div>
         )}
 
