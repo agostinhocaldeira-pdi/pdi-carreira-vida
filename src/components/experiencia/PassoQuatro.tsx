@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { GripVertical, ChevronDown } from "lucide-react";
+import { GripVertical, ChevronDown, Search, Heart, MessageCircle, Home, PlusSquare, User } from "lucide-react";
+import logoPdi from "@/assets/logo_pdi.png";
 
 interface PassoQuatroProps {
   onAdvance: () => void;
@@ -38,7 +39,7 @@ const getRandomPosition = () => ({
 });
 
 export const PassoQuatro = ({ onAdvance }: PassoQuatroProps) => {
-  const [stage, setStage] = useState<"objective" | "actions" | "revelation" | "ancora">("objective");
+  const [stage, setStage] = useState<"instagram" | "objective" | "actions" | "revelation" | "ancora">("instagram");
   const [selectedObjective, setSelectedObjective] = useState("");
   const [selectedActions, setSelectedActions] = useState<number[]>([]);
   const [activeVillain, setActiveVillain] = useState<string | null>(null);
@@ -129,9 +130,96 @@ export const PassoQuatro = ({ onAdvance }: PassoQuatroProps) => {
 
   const transitionText = "Agora falta só um nível.\nO mais ignorado de todos.";
 
+  // Instagram explore grid data - random placeholder colors and one PDI logo
+  const instagramPosts = [
+    { id: 1, type: "color", color: "bg-gradient-to-br from-pink-500 to-orange-400" },
+    { id: 2, type: "color", color: "bg-gradient-to-br from-blue-400 to-purple-500" },
+    { id: 3, type: "color", color: "bg-gradient-to-br from-green-400 to-teal-500" },
+    { id: 4, type: "pdi", color: "" },
+    { id: 5, type: "color", color: "bg-gradient-to-br from-yellow-400 to-red-500" },
+    { id: 6, type: "color", color: "bg-gradient-to-br from-indigo-400 to-blue-600" },
+    { id: 7, type: "color", color: "bg-gradient-to-br from-rose-400 to-pink-600" },
+    { id: 8, type: "color", color: "bg-gradient-to-br from-cyan-400 to-blue-500" },
+    { id: 9, type: "color", color: "bg-gradient-to-br from-amber-400 to-orange-600" },
+    { id: 10, type: "color", color: "bg-gradient-to-br from-violet-400 to-purple-600" },
+    { id: 11, type: "color", color: "bg-gradient-to-br from-lime-400 to-green-600" },
+    { id: 12, type: "color", color: "bg-gradient-to-br from-fuchsia-400 to-pink-600" },
+  ];
+
+  const handleInstagramPostClick = (post: typeof instagramPosts[0]) => {
+    if (post.type === "pdi") {
+      setStage("objective");
+    }
+  };
+
   return (
     <div className="min-h-screen bg-black flex flex-col">
       <AnimatePresence mode="wait">
+        {stage === "instagram" && (
+          <motion.div
+            key="instagram"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="flex-1 flex flex-col bg-black"
+          >
+            {/* Instagram Header */}
+            <div className="flex items-center justify-between px-4 py-3 border-b border-white/10">
+              <span className="text-white font-semibold text-lg">Explorar</span>
+              <Search className="w-5 h-5 text-white" />
+            </div>
+
+            {/* Explore Grid */}
+            <div className="flex-1 overflow-y-auto">
+              <div className="grid grid-cols-3 gap-0.5">
+                {instagramPosts.map((post) => (
+                  <motion.button
+                    key={post.id}
+                    onClick={() => handleInstagramPostClick(post)}
+                    whileTap={{ scale: 0.95 }}
+                    className={`aspect-square relative ${post.type === "color" ? post.color : "bg-white/10"} flex items-center justify-center`}
+                  >
+                    {post.type === "pdi" && (
+                      <img 
+                        src={logoPdi} 
+                        alt="PDI" 
+                        className="w-full h-full object-cover"
+                      />
+                    )}
+                    {post.type === "color" && (
+                      <div className="absolute inset-0 flex items-end p-2">
+                        <div className="flex gap-2 text-white/80">
+                          <Heart className="w-4 h-4" />
+                          <MessageCircle className="w-4 h-4" />
+                        </div>
+                      </div>
+                    )}
+                  </motion.button>
+                ))}
+              </div>
+            </div>
+
+            {/* Instagram Bottom Nav */}
+            <div className="flex items-center justify-around py-3 border-t border-white/10 bg-black">
+              <Home className="w-6 h-6 text-white/50" />
+              <Search className="w-6 h-6 text-white" />
+              <PlusSquare className="w-6 h-6 text-white/50" />
+              <Heart className="w-6 h-6 text-white/50" />
+              <User className="w-6 h-6 text-white/50" />
+            </div>
+
+            {/* Hint text */}
+            <motion.p
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 2 }}
+              className="text-white/30 text-xs text-center py-2 italic"
+            >
+              Toque na imagem que te chama atenção...
+            </motion.p>
+          </motion.div>
+        )}
+
         {stage === "objective" && (
           <motion.div
             key="objective"
