@@ -39,7 +39,7 @@ const getRandomPosition = () => ({
 });
 
 export const PassoQuatro = ({ onAdvance }: PassoQuatroProps) => {
-  const [stage, setStage] = useState<"instagram" | "objective" | "actions" | "revelation" | "ancora">("instagram");
+  const [stage, setStage] = useState<"objective" | "actions" | "revelation" | "instagram" | "ancora">("objective");
   const [selectedObjective, setSelectedObjective] = useState("");
   const [selectedActions, setSelectedActions] = useState<number[]>([]);
   const [activeVillain, setActiveVillain] = useState<string | null>(null);
@@ -148,7 +148,7 @@ export const PassoQuatro = ({ onAdvance }: PassoQuatroProps) => {
 
   const handleInstagramPostClick = (post: typeof instagramPosts[0]) => {
     if (post.type === "pdi") {
-      setStage("objective");
+      setStage("ancora");
     }
   };
 
@@ -427,7 +427,7 @@ export const PassoQuatro = ({ onAdvance }: PassoQuatroProps) => {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 8.5 }}
-              onClick={() => setStage("ancora")}
+              onClick={() => setStage("instagram")}
               className="mt-8 py-3.5 px-8 bg-white/10 hover:bg-white/15 border border-white/20 rounded-xl text-white font-medium transition-all"
             >
               Continuar
