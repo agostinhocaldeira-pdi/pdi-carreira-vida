@@ -4,6 +4,7 @@ import { ChatMessage } from "./ChatMessage";
 import { ChatButton } from "./ChatButton";
 import { VillainInterruption } from "./VillainInterruption";
 import { PasswordGate } from "./PasswordGate";
+import { TypingIndicator } from "./TypingIndicator";
 
 interface PassoUmProps {
   onAdvance: () => void;
@@ -46,6 +47,7 @@ export const PassoUm = ({ onAdvance }: PassoUmProps) => {
   const [vidaAtualChoice, setVidaAtualChoice] = useState("");
   const [vidaDesejadaChoice, setVidaDesejadaChoice] = useState("");
   const [showButton, setShowButton] = useState(false);
+  const [isTyping, setIsTyping] = useState(false);
 
   const introMessages = [
     "tentei te ligar agora, mas você não pode me atender...",
@@ -99,7 +101,6 @@ export const PassoUm = ({ onAdvance }: PassoUmProps) => {
 
   useEffect(() => {
     let currentMessages: string[] = [];
-    let delay = 1000;
 
     switch (stage) {
       case "intro":
@@ -128,11 +129,18 @@ export const PassoUm = ({ onAdvance }: PassoUmProps) => {
     }
 
     if (messageIndex < currentMessages.length) {
-      const timer = setTimeout(() => {
+      // Show typing indicator first
+      setIsTyping(true);
+      
+      const typingDuration = 800 + Math.random() * 400; // Random typing time between 800-1200ms
+      
+      const typingTimer = setTimeout(() => {
+        setIsTyping(false);
         addMessage(currentMessages[messageIndex]);
         setMessageIndex((prev) => prev + 1);
-      }, 400 + messageIndex * 500);
-      return () => clearTimeout(timer);
+      }, typingDuration);
+      
+      return () => clearTimeout(typingTimer);
     } else {
       const buttonTimer = setTimeout(() => {
         setShowButton(true);
@@ -145,6 +153,7 @@ export const PassoUm = ({ onAdvance }: PassoUmProps) => {
     setMessages([]);
     setMessageIndex(0);
     setShowButton(false);
+    setIsTyping(false);
     setStage(nextStage);
   };
 
@@ -192,12 +201,12 @@ export const PassoUm = ({ onAdvance }: PassoUmProps) => {
         </div>
       </div>
 
-      {/* Chat Area */}
       <div className="flex-1 overflow-y-auto p-4 space-y-2 flex flex-col">
         <AnimatePresence mode="popLayout">
           {messages.map((msg, index) => (
             <ChatMessage key={`${stage}-${index}`} text={msg} delay={0} />
           ))}
+          {isTyping && <TypingIndicator key="typing" />}
         </AnimatePresence>
 
         {/* Comparação */}
