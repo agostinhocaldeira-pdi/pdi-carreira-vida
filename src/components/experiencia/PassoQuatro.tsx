@@ -353,9 +353,9 @@ export const PassoQuatro = ({ onAdvance }: PassoQuatroProps) => {
               <MoreHorizontal className="w-5 h-5 text-black" />
             </div>
 
-            {/* Final content - appears after last slide */}
+            {/* Final content - appears only when on last slide */}
             <AnimatePresence>
-              {showFinalContent && (
+              {showFinalContent && currentSlide === carouselSlides.length - 1 && (
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
