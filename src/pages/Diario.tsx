@@ -66,6 +66,12 @@ const Diario = () => {
   }, [getDiarioByDate, today]);
 
   const handleSave = async () => {
+    // Validate mood selection is required
+    if (!entrada.humor) {
+      toast.error("Por favor, selecione como você está se sentindo hoje.");
+      return;
+    }
+
     setIsSaving(true);
     try {
       const diarioEntry = {
