@@ -9,7 +9,7 @@ import ringtoneAudio from "@/assets/ringtone.m4a";
 import audioRespira from "@/assets/audio-respira.mp4";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { Play, ArrowRight } from "lucide-react";
+import { HelpCircle, ArrowRight, Play } from "lucide-react";
 
 export type ExperienciaStep = 0 | 1 | 2 | 3 | 4 | 5;
 
@@ -148,14 +148,10 @@ const ExperienciaNarrativa = () => {
           {/* YouTube Shorts-style container - reduced size for mobile first fold */}
           <div className="relative w-full aspect-[9/16] max-h-[55vh] bg-gray-900 rounded-2xl overflow-hidden shadow-2xl border border-gray-800">
             {!isVideoPlaying ? (
-              // Thumbnail/Preview state - clean, no overlay icons
-              <iframe
-                src="https://www.youtube-nocookie.com/embed/dZybFglDt80?modestbranding=1&rel=0&showinfo=0&controls=0&enablejsapi=1&origin=https://pdicarreiraevida.lovable.app"
-                className="w-full h-full"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-                title="PDI - Introdução"
-              />
+              // Black screen with question mark before playing
+              <div className="w-full h-full bg-black flex items-center justify-center">
+                <HelpCircle className="w-24 h-24 text-white" strokeWidth={1.5} />
+              </div>
             ) : (
               // Playing state with JS API enabled
               <iframe
