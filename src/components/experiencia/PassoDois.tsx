@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Lock } from "lucide-react";
 import { VillainInterruption } from "./VillainInterruption";
 import { PasswordGate } from "./PasswordGate";
+import { ChatButton } from "./ChatButton";
 
 interface PassoDoisProps {
   onAdvance: () => void;
@@ -14,7 +15,7 @@ type Stage =
   | "cena2" 
   | "feedback2" 
   | "villain" 
-  | "recovery" 
+  | "reflexaoVilao"
   | "cena3" 
   | "feedback3" 
   | "cena4" 
@@ -25,12 +26,20 @@ type Stage =
 
 const scaleOptions = ["1", "2", "3", "4", "5"];
 
+const reflexaoVilaoScreens = [
+  "Ele insiste em tentar interromper",
+  'Repare uma coisa: todos os dias na sua vida algo tenta te interromper quando a clareza aparece. É assim que o <strong>"modo de viver"</strong> age.',
+  'Você não faz o que precisa, não é por preguiça<br/><br/>é o condicionamento desse <strong>"modo de viver"</strong>.',
+  "Bom... vamos tentar continuar sem novas interferências.",
+];
+
 export const PassoDois = ({ onAdvance }: PassoDoisProps) => {
   const [stage, setStage] = useState<Stage>("cena1");
   const [showVillain, setShowVillain] = useState(false);
   const [currentFeedback, setCurrentFeedback] = useState<string[]>([]);
   const [feedbackIndex, setFeedbackIndex] = useState(0);
   const [showContinue, setShowContinue] = useState(false);
+  const [reflexaoScreen, setReflexaoScreen] = useState(0);
 
   const feedbacks: Record<string, string[]> = {
     feedback1: [
@@ -40,13 +49,6 @@ export const PassoDois = ({ onAdvance }: PassoDoisProps) => {
     feedback2: [
       "Clareza que não desce para a rotina",
       "vira frustração elegante.",
-    ],
-    recovery: [
-      "(Ele insiste em tentar interromper)",
-      'E olha só: repare que isso acontece todos os dias na sua vida. <strong>Quando a clareza aparece, esse "modo de viver" reage.</strong>',
-      "Você não faz, não é por preguiça",
-      'é o condicionamento desse <strong>"modo de viver"</strong>.',
-      "Bom... vamos tentar continuar sem novas interferências.",
     ],
     feedback3: [
       "Urgência não é critério.",
@@ -91,6 +93,20 @@ export const PassoDois = ({ onAdvance }: PassoDoisProps) => {
     setStage(feedbackKey as Stage);
   };
 
+  // Auto-advance for reflexaoVilao screens
+  useEffect(() => {
+    if (stage !== "reflexaoVilao") return;
+    
+    // Don't auto-advance on the last screen (index 3)
+    if (reflexaoScreen >= 3) return;
+    
+    const timer = setTimeout(() => {
+      setReflexaoScreen((prev) => prev + 1);
+    }, 2000);
+    
+    return () => clearTimeout(timer);
+  }, [stage, reflexaoScreen]);
+
   const handleAnswer = (answer: string) => {
     switch (stage) {
       case "cena1":
@@ -100,7 +116,8 @@ export const PassoDois = ({ onAdvance }: PassoDoisProps) => {
         setShowVillain(true);
         setTimeout(() => {
           setShowVillain(false);
-          startFeedback("recovery", "cena3");
+          setReflexaoScreen(0);
+          setStage("reflexaoVilao");
         }, 2500);
         break;
       case "cena3":
@@ -121,9 +138,6 @@ export const PassoDois = ({ onAdvance }: PassoDoisProps) => {
       case "feedback1":
         setStage("cena2");
         break;
-      case "recovery":
-        setStage("cena3");
-        break;
       case "feedback3":
         setStage("cena4");
         break;
@@ -139,11 +153,26 @@ export const PassoDois = ({ onAdvance }: PassoDoisProps) => {
     }
   };
 
+  const handleReflexaoContinue = () => {
+    setReflexaoScreen(0);
+    setStage("cena3");
+  };
+
   if (showVillain) {
     return (
       <VillainInterruption
         text="fecha isso&#10;vai viver"
         isVisible={true}
+      />
+    );
+  }
+
+  if (stage === "reflexaoVilao") {
+    return (
+      <ReflexaoVilaoScreen
+        screens={reflexaoVilaoScreens}
+        currentScreen={reflexaoScreen}
+        onContinue={handleReflexaoContinue}
       />
     );
   }
@@ -301,6 +330,65 @@ export const PassoDois = ({ onAdvance }: PassoDoisProps) => {
             </motion.div>
           )}
         </AnimatePresence>
+      </div>
+    </div>
+  );
+};
+
+// Reflexão Vilão - Full screen slideshow
+const ReflexaoVilaoScreen = ({ 
+  screens, 
+  currentScreen, 
+  onContinue 
+}: { 
+  screens: string[]; 
+  currentScreen: number; 
+  onContinue: () => void;
+}) => {
+  return (
+    <div className="min-h-screen bg-black flex flex-col items-center justify-center p-6">
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={currentScreen}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -20 }}
+          transition={{ duration: 0.5 }}
+          className="text-center max-w-md"
+        >
+          <p 
+            className="text-white/80 text-xl leading-relaxed [&_strong]:text-white [&_strong]:font-semibold"
+            dangerouslySetInnerHTML={{ __html: screens[currentScreen] }}
+          />
+          
+          {currentScreen === 3 && (
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.5 }}
+              className="mt-8"
+            >
+              <motion.button
+                onClick={onContinue}
+                className="w-full py-3.5 bg-white/10 hover:bg-white/15 border border-white/20 rounded-xl text-white font-medium transition-all"
+              >
+                Continuar
+              </motion.button>
+            </motion.div>
+          )}
+        </motion.div>
+      </AnimatePresence>
+      
+      {/* Progress dots */}
+      <div className="flex gap-2 mt-8">
+        {screens.map((_, index) => (
+          <div
+            key={index}
+            className={`w-2 h-2 rounded-full transition-colors duration-300 ${
+              index === currentScreen ? 'bg-white' : 'bg-white/30'
+            }`}
+          />
+        ))}
       </div>
     </div>
   );
