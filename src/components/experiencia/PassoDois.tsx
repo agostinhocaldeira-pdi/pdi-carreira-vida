@@ -101,9 +101,12 @@ export const PassoDois = ({ onAdvance, onPrepareNextStep }: PassoDoisProps) => {
     // Don't auto-advance on the last screen (index 3)
     if (reflexaoScreen >= 3) return;
     
+    // Longer texts need more reading time
+    const readingTime = reflexaoScreen === 0 ? 2500 : 4000;
+    
     const timer = setTimeout(() => {
       setReflexaoScreen((prev) => prev + 1);
-    }, 2000);
+    }, readingTime);
     
     return () => clearTimeout(timer);
   }, [stage, reflexaoScreen]);
