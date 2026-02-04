@@ -185,10 +185,8 @@ export const PassoQuatro = ({ onAdvance }: PassoQuatroProps) => {
     { id: 12, type: "image", image: explore1, objectPosition: "center 20%" },
   ];
 
-  const handleInstagramPostClick = (post: typeof instagramPosts[0]) => {
-    if (post.type === "pdi") {
-      setStage("carousel");
-    }
+  const handleInstagramPostClick = () => {
+    setStage("carousel");
   };
 
   return (
@@ -214,7 +212,7 @@ export const PassoQuatro = ({ onAdvance }: PassoQuatroProps) => {
                 {instagramPosts.slice(0, 12).map((post) => (
                   <motion.button
                     key={post.id}
-                    onClick={() => handleInstagramPostClick(post)}
+                    onClick={handleInstagramPostClick}
                     whileTap={{ scale: 0.95 }}
                     className="relative overflow-hidden bg-black"
                   >
@@ -245,14 +243,13 @@ export const PassoQuatro = ({ onAdvance }: PassoQuatroProps) => {
               </div>
             </div>
 
-            {/* Hint text */}
             <motion.p
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 2 }}
               className="text-white/70 text-sm text-center py-3 font-bold shrink-0"
             >
-              Toque na imagem que te chama atenção...
+              qual imagem representa mais você?
             </motion.p>
 
             {/* Instagram Bottom Nav */}
