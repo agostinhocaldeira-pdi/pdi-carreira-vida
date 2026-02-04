@@ -45,6 +45,7 @@ import { AchievementNotification } from "@/components/gamification/AchievementNo
 import { useGamification } from "@/hooks/useGamification";
 import { SatisfactionSurveyModal } from "@/components/SatisfactionSurveyModal";
 import { useSatisfactionSurvey } from "@/hooks/useSatisfactionSurvey";
+import { useDailyQuote } from "@/hooks/useDailyQuote";
 import { HubCard } from "@/components/home/HubCard";
 import { HubSection } from "@/components/home/HubSection";
 import { DiaryQuickCard } from "@/components/home/DiaryQuickCard";
@@ -64,6 +65,7 @@ const Home = () => {
   });
   const { newAchievement, dismissNewAchievement, checkAndUnlockAchievements } = useGamification();
   const { showSurvey, setShowSurvey, completedSection } = useSatisfactionSurvey();
+  const { quote: dailyQuote } = useDailyQuote();
 
   // Determine mode
   const isInitiationMode = !hasCompletedBase;
@@ -352,17 +354,19 @@ const Home = () => {
             </div>
           </HubSection>
 
-          {/* Footer Quote */}
-          <motion.div 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.3 }}
-            className="text-center py-8"
-          >
-            <p className="text-lg font-semibold text-foreground">
-              O hábito certo elimina debate.
-            </p>
-          </motion.div>
+          {/* Footer Quote - Daily rotation */}
+          {dailyQuote && (
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.3 }}
+              className="text-center py-8"
+            >
+              <p className="text-lg font-semibold text-foreground">
+                {dailyQuote}
+              </p>
+            </motion.div>
+          )}
         </main>
       </div>
     </TooltipProvider>
