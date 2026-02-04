@@ -189,14 +189,14 @@ export const PassoQuatro = ({ onAdvance }: PassoQuatroProps) => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="flex-1 flex flex-col p-4 sm:p-6 pt-12 sm:pt-16 max-h-[100dvh] overflow-y-auto"
+            className="flex-1 flex flex-col p-3 sm:p-6 pt-6 sm:pt-12 max-h-[100dvh] overflow-y-auto"
           >
             {/* Intro phrase first */}
             <motion.p
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6 }}
-              className="text-white/80 text-center text-sm sm:text-lg italic mb-6"
+              className="text-white/80 text-center text-sm sm:text-lg italic mb-3 sm:mb-6"
             >
               (às vezes é difícil escolher um objetivo, não é mesmo?)
             </motion.p>
@@ -207,22 +207,18 @@ export const PassoQuatro = ({ onAdvance }: PassoQuatroProps) => {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ duration: 0.5 }}
-                  className="space-y-4"
+                  className="space-y-2 sm:space-y-4"
                 >
-                  <div className="mb-2 sm:mb-4">
+                  <div className="mb-1 sm:mb-4">
                     <p className="text-white/50 text-xs sm:text-sm mb-0.5">Objetivo selecionado:</p>
                     <p className="text-white text-sm sm:text-lg">{selectedObjective}</p>
                   </div>
 
-                  <p className="text-white/70 text-center text-xs sm:text-base mb-2">
-                    Nem tudo que ocupa te leva pra frente.
+                  <p className="text-white text-center text-sm sm:text-base font-semibold mb-1">
+                    Selecione as 3 ações que você faria para atingir o objetivo "{selectedObjective}"
                   </p>
 
-                  <p className="text-white/50 text-xs mb-2 text-center">
-                    Selecione as ações que você faria para atingir o objetivo "{selectedObjective}"
-                  </p>
-
-                  <div className="space-y-1 sm:space-y-2">
+                  <div className="space-y-1">
                     {actions.map((action) => (
                       <motion.button
                         key={action.id}
