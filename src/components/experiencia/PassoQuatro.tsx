@@ -166,20 +166,19 @@ export const PassoQuatro = ({ onAdvance }: PassoQuatroProps) => {
 
   const transitionText = "Agora falta só um nível.\nO mais ignorado de todos.";
 
-  // Instagram explore grid data - random placeholder colors and one PDI logo
+  // Instagram explore grid data - real images with PDI logo
   const instagramPosts = [
-    { id: 1, type: "color", color: "bg-gradient-to-br from-pink-500 to-orange-400" },
-    { id: 2, type: "color", color: "bg-gradient-to-br from-blue-400 to-purple-500" },
-    { id: 3, type: "color", color: "bg-gradient-to-br from-green-400 to-teal-500" },
-    { id: 4, type: "pdi", color: "" },
-    { id: 5, type: "color", color: "bg-gradient-to-br from-yellow-400 to-red-500" },
-    { id: 6, type: "color", color: "bg-gradient-to-br from-indigo-400 to-blue-600" },
-    { id: 7, type: "color", color: "bg-gradient-to-br from-rose-400 to-pink-600" },
-    { id: 8, type: "color", color: "bg-gradient-to-br from-cyan-400 to-blue-500" },
-    { id: 9, type: "color", color: "bg-gradient-to-br from-amber-400 to-orange-600" },
-    { id: 10, type: "color", color: "bg-gradient-to-br from-violet-400 to-purple-600" },
-    { id: 11, type: "color", color: "bg-gradient-to-br from-lime-400 to-green-600" },
-    { id: 12, type: "color", color: "bg-gradient-to-br from-fuchsia-400 to-pink-600" },
+    { id: 1, type: "image", image: explore1, objectPosition: "center 20%" },
+    { id: 2, type: "image", image: explore2, objectPosition: "center 25%" },
+    { id: 3, type: "image", image: explore3, objectPosition: "center 20%" },
+    { id: 4, type: "pdi", image: logoPdi, objectPosition: "center" },
+    { id: 5, type: "image", image: explore4, objectPosition: "center 15%" },
+    { id: 6, type: "image", image: explore5, objectPosition: "center 20%" },
+    { id: 7, type: "image", image: explore6, objectPosition: "center 20%" },
+    { id: 8, type: "image", image: explore7, objectPosition: "center 20%" },
+    { id: 9, type: "image", image: explore8, objectPosition: "center 20%" },
+    { id: 10, type: "image", image: explore9, objectPosition: "center 30%" },
+    { id: 11, type: "image", image: explore10, objectPosition: "center 25%" },
   ];
 
   const handleInstagramPostClick = (post: typeof instagramPosts[0]) => {
