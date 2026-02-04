@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { GripVertical, ChevronDown, Search, Heart, MessageCircle, Home, PlusSquare, User, ArrowLeft, MoreHorizontal, Send, Bookmark } from "lucide-react";
 import useEmblaCarousel from "embla-carousel-react";
@@ -15,6 +15,9 @@ import explore7 from "@/assets/experiencia/explore-7.jpeg";
 import explore8 from "@/assets/experiencia/explore-8.jpeg";
 import explore9 from "@/assets/experiencia/explore-9.jpeg";
 import explore10 from "@/assets/experiencia/explore-10.jpeg";
+
+// PDI promo video
+import pdiPromoVideo from "@/assets/experiencia/pdi-promo-video.mp4";
 
 interface PassoQuatroProps {
   onAdvance: () => void;
@@ -166,12 +169,12 @@ export const PassoQuatro = ({ onAdvance }: PassoQuatroProps) => {
 
   const transitionText = "Agora falta só um nível.\nO mais ignorado de todos.";
 
-  // Instagram explore grid data - real images with PDI logo
+  // Instagram explore grid data - 12 posts (4 rows x 3 cols), PDI video in position 4
   const instagramPosts = [
     { id: 1, type: "image", image: explore1, objectPosition: "center 20%" },
     { id: 2, type: "image", image: explore2, objectPosition: "center 25%" },
     { id: 3, type: "image", image: explore3, objectPosition: "center 20%" },
-    { id: 4, type: "pdi", image: logoPdi, objectPosition: "center" },
+    { id: 4, type: "pdi", video: pdiPromoVideo, objectPosition: "center" },
     { id: 5, type: "image", image: explore4, objectPosition: "center 15%" },
     { id: 6, type: "image", image: explore5, objectPosition: "center 20%" },
     { id: 7, type: "image", image: explore6, objectPosition: "center 20%" },
@@ -179,6 +182,7 @@ export const PassoQuatro = ({ onAdvance }: PassoQuatroProps) => {
     { id: 9, type: "image", image: explore8, objectPosition: "center 20%" },
     { id: 10, type: "image", image: explore9, objectPosition: "center 30%" },
     { id: 11, type: "image", image: explore10, objectPosition: "center 25%" },
+    { id: 12, type: "image", image: explore1, objectPosition: "center 20%" },
   ];
 
   const handleInstagramPostClick = (post: typeof instagramPosts[0]) => {
@@ -199,35 +203,43 @@ export const PassoQuatro = ({ onAdvance }: PassoQuatroProps) => {
             className="h-[100dvh] flex flex-col bg-black overflow-hidden"
           >
             {/* Instagram Header */}
-            <div className="flex items-center justify-between px-4 py-2 border-b border-white/10 shrink-0">
-              <span className="text-white font-semibold text-base">Explorar</span>
-              <Search className="w-5 h-5 text-white" />
+            <div className="flex items-center justify-between px-4 py-3 shrink-0">
+              <span className="text-white font-semibold text-lg">Explorar</span>
+              <Search className="w-6 h-6 text-white" />
             </div>
 
-            {/* Explore Grid - constrained to fit viewport */}
-            <div className="flex-1 min-h-0 px-0.5 py-0.5">
-              <div className="grid grid-cols-3 gap-0.5 h-full">
-                {instagramPosts.slice(0, 9).map((post) => (
+            {/* Explore Grid - 4 rows x 3 cols matching reference */}
+            <div className="flex-1 min-h-0 overflow-hidden">
+              <div className="grid grid-cols-3 grid-rows-4 gap-0.5 h-full">
+                {instagramPosts.slice(0, 12).map((post) => (
                   <motion.button
                     key={post.id}
                     onClick={() => handleInstagramPostClick(post)}
                     whileTap={{ scale: 0.95 }}
-                    className="aspect-square relative overflow-hidden flex items-center justify-center bg-black"
+                    className="relative overflow-hidden bg-black"
                   >
-                    <img 
-                      src={post.image} 
-                      alt={post.type === "pdi" ? "PDI" : "Explore post"}
-                      className="w-full h-full object-cover"
-                      style={{ objectPosition: post.objectPosition }}
-                    />
-                    {post.type === "image" && (
-                      <div className="absolute inset-0 flex items-end p-2">
-                        <div className="flex gap-2 text-white/80">
-                          <Heart className="w-3 h-3" />
-                          <MessageCircle className="w-3 h-3" />
-                        </div>
-                      </div>
+                    {post.type === "pdi" ? (
+                      <video 
+                        src={post.video}
+                        autoPlay
+                        loop
+                        muted
+                        playsInline
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <img 
+                        src={post.image} 
+                        alt="Explore post"
+                        className="w-full h-full object-cover"
+                        style={{ objectPosition: post.objectPosition }}
+                      />
                     )}
+                    {/* Like/Comment overlay icons */}
+                    <div className="absolute bottom-2 left-2 flex gap-2">
+                      <Heart className="w-4 h-4 text-white drop-shadow-lg" />
+                      <MessageCircle className="w-4 h-4 text-white drop-shadow-lg" />
+                    </div>
                   </motion.button>
                 ))}
               </div>
@@ -238,18 +250,18 @@ export const PassoQuatro = ({ onAdvance }: PassoQuatroProps) => {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 2 }}
-              className="text-white/70 text-sm text-center py-2 font-bold shrink-0"
+              className="text-white/70 text-sm text-center py-3 font-bold shrink-0"
             >
               Toque na imagem que te chama atenção...
             </motion.p>
 
             {/* Instagram Bottom Nav */}
-            <div className="flex items-center justify-around py-2 border-t border-white/10 bg-black shrink-0">
-              <Home className="w-5 h-5 text-white/50" />
-              <Search className="w-5 h-5 text-white" />
-              <PlusSquare className="w-5 h-5 text-white/50" />
-              <Heart className="w-5 h-5 text-white/50" />
-              <User className="w-5 h-5 text-white/50" />
+            <div className="flex items-center justify-around py-3 border-t border-white/10 bg-black shrink-0">
+              <Home className="w-6 h-6 text-white/50" />
+              <Search className="w-6 h-6 text-white" />
+              <PlusSquare className="w-6 h-6 text-white/50" />
+              <Heart className="w-6 h-6 text-white/50" />
+              <User className="w-6 h-6 text-white/50" />
             </div>
           </motion.div>
         )}
