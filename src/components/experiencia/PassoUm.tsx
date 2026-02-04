@@ -204,7 +204,12 @@ export const PassoUm = ({ onAdvance }: PassoUmProps) => {
       <div className="flex-1 overflow-y-auto p-4 space-y-2 flex flex-col">
         <AnimatePresence mode="popLayout">
           {messages.map((msg, index) => (
-            <ChatMessage key={`${stage}-${index}`} text={msg} delay={0} />
+            <ChatMessage 
+              key={`${stage}-${index}`} 
+              text={msg} 
+              delay={0} 
+              isTemporary={msg.includes("624798")}
+            />
           ))}
           {isTyping && <TypingIndicator key="typing" />}
         </AnimatePresence>
