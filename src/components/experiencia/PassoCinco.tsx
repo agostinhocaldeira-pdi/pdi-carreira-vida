@@ -5,6 +5,7 @@ import { Mic, MicOff } from "lucide-react";
 import { useSpeechRecognition } from "@/hooks/useSpeechRecognition";
 import { TooltipProvider, Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip";
 import audioRespira from "@/assets/audio-respira.mp4";
+import tvStaticNoise from "@/assets/tv-static-noise.m4a";
 
 interface PassoCincoProps {
   preloadedAudio?: HTMLAudioElement | null;
@@ -157,6 +158,24 @@ export const PassoCinco = ({ preloadedAudio }: PassoCincoProps) => {
       };
     }
   }, [stage, preloadedAudio]);
+
+  // Play TV static noise when villain stage is active
+  useEffect(() => {
+    if (stage === "villain") {
+      const audio = new Audio(tvStaticNoise);
+      audio.loop = false;
+      
+      audio.play().catch(() => {
+        // Autoplay blocked
+      });
+
+      return () => {
+        audio.pause();
+        audio.currentTime = 0;
+        audio.src = "";
+      };
+    }
+  }, [stage]);
 
   const handleSubmitStep = () => {
     if (userInput.trim()) {
