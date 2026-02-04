@@ -104,8 +104,7 @@ export const PassoCinco = ({ preloadedAudio }: PassoCincoProps) => {
 
   const revelacaoTexts = [
     "E é exatamente isso",
-    "que você vai encontrar no sistema",
-    "PDI — Plano de Desenvolvimento Individual.",
+    "que você vai encontrar no sistema\nPDI — Plano de Desenvolvimento Individual.",
   ];
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -514,8 +513,8 @@ export const PassoCinco = ({ preloadedAudio }: PassoCincoProps) => {
                 key={index}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                className={`text-xl text-center leading-relaxed ${
-                  index === 2 ? 'text-white font-semibold' : 'text-white/70'
+                className={`text-xl text-center leading-relaxed whitespace-pre-line ${
+                  index === 1 ? 'text-white font-semibold' : 'text-white/70'
                 }`}
               >
                 {text}
