@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { GripVertical, ChevronDown, Search, Heart, MessageCircle, Home, PlusSquare, User } from "lucide-react";
+import { GripVertical, ChevronDown, Search, Heart, MessageCircle, Home, PlusSquare, User, ArrowLeft, MoreHorizontal, Send, Bookmark } from "lucide-react";
+import useEmblaCarousel from "embla-carousel-react";
 import logoPdi from "@/assets/logo_pdi.png";
 
 interface PassoQuatroProps {
@@ -31,6 +32,13 @@ const villainMessages = [
   "café?",
 ];
 
+const carouselSlides = [
+  'Você não precisa de "mais". Precisa de "menos"',
+  "Perceba que você não precisa de mais força, mais tempo, mais ferramentas. Você precisa de menos.",
+  'Ter clareza para focar no que realmente importa para você, mas que encaixe na sua vida real, sem deixar o <strong>"modo de viver"</strong> te derrubar.',
+  "Você precisa de um sistema que te traga essa clareza nas decisões e sustentem o processo.",
+];
+
 // Generate random position within bounds
 const getRandomPosition = () => ({
   x: (Math.random() - 0.5) * 120, // -60 to 60 pixels
@@ -39,12 +47,16 @@ const getRandomPosition = () => ({
 });
 
 export const PassoQuatro = ({ onAdvance }: PassoQuatroProps) => {
-  const [stage, setStage] = useState<"objective" | "actions" | "revelation" | "instagram" | "ancora">("objective");
+  const [stage, setStage] = useState<"objective" | "actions" | "revelation" | "instagram" | "carousel">("objective");
   const [selectedObjective, setSelectedObjective] = useState("");
   const [selectedActions, setSelectedActions] = useState<number[]>([]);
   const [activeVillain, setActiveVillain] = useState<string | null>(null);
   const [villainQueue, setVillainQueue] = useState<string[]>([...villainMessages]);
   const [showActionsContent, setShowActionsContent] = useState(false);
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const [showFinalContent, setShowFinalContent] = useState(false);
+  
+  const [emblaRef, emblaApi] = useEmblaCarousel({ loop: false });
   
   // Positions for each objective card
   const [cardPositions, setCardPositions] = useState<Array<{ x: number; y: number; rotate: number }>>(
@@ -61,6 +73,26 @@ export const PassoQuatro = ({ onAdvance }: PassoQuatroProps) => {
     
     return () => clearInterval(interval);
   }, [stage]);
+
+  // Track carousel slide changes
+  useEffect(() => {
+    if (!emblaApi) return;
+    
+    const onSelect = () => {
+      const index = emblaApi.selectedScrollSnap();
+      setCurrentSlide(index);
+      
+      // Show final content when reaching the last slide
+      if (index === carouselSlides.length - 1) {
+        setTimeout(() => setShowFinalContent(true), 800);
+      }
+    };
+    
+    emblaApi.on("select", onSelect);
+    return () => {
+      emblaApi.off("select", onSelect);
+    };
+  }, [emblaApi]);
 
   // Show villain bubble that blocks interaction
   const showNextVillain = () => {
@@ -120,14 +152,6 @@ export const PassoQuatro = ({ onAdvance }: PassoQuatroProps) => {
 
   const revelationFinalText = "Meta demais cria ilusão. Ação sem intenção cria cansaço.";
 
-  const ancoraTexts = [
-    "Perceba que você não precisa de mais força, mais tempo, mais ferramentas.",
-    'Ter clareza para focar no que realmente importa para você, mas que encaixe na sua vida real, sem deixar o "modo de viver" te derrubar.',
-    "você precisa de um sistema que te traga essa clareza nas decisões e sustentem o processo.",
-  ];
-
-  const ancoraBoldText = "Você precisa de menos.";
-
   const transitionText = "Agora falta só um nível.\nO mais ignorado de todos.";
 
   // Instagram explore grid data - random placeholder colors and one PDI logo
@@ -148,7 +172,7 @@ export const PassoQuatro = ({ onAdvance }: PassoQuatroProps) => {
 
   const handleInstagramPostClick = (post: typeof instagramPosts[0]) => {
     if (post.type === "pdi") {
-      setStage("ancora");
+      setStage("carousel");
     }
   };
 
@@ -217,6 +241,152 @@ export const PassoQuatro = ({ onAdvance }: PassoQuatroProps) => {
             >
               Toque na imagem que te chama atenção...
             </motion.p>
+          </motion.div>
+        )}
+
+        {stage === "carousel" && (
+          <motion.div
+            key="carousel"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="flex-1 flex flex-col bg-white"
+          >
+            {/* Instagram Post Header */}
+            <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200">
+              <div className="flex items-center gap-3">
+                <ArrowLeft className="w-6 h-6 text-black" />
+                <span className="text-black font-semibold text-lg">Posts</span>
+              </div>
+              <button className="px-4 py-1.5 bg-gray-100 rounded-lg text-black font-medium text-sm">
+                Seguir
+              </button>
+            </div>
+
+            {/* Post Author */}
+            <div className="flex items-center justify-between px-4 py-3">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-yellow-400 via-pink-500 to-purple-600 p-0.5">
+                  <div className="w-full h-full rounded-full bg-white p-0.5">
+                    <img 
+                      src={logoPdi} 
+                      alt="PDI" 
+                      className="w-full h-full rounded-full object-cover"
+                    />
+                  </div>
+                </div>
+                <span className="text-black font-semibold text-sm">pdicarreiraevida</span>
+              </div>
+              <MoreHorizontal className="w-5 h-5 text-black" />
+            </div>
+
+            {/* Carousel */}
+            <div className="relative">
+              <div className="overflow-hidden" ref={emblaRef}>
+                <div className="flex">
+                  {carouselSlides.map((slide, index) => (
+                    <div 
+                      key={index} 
+                      className="flex-[0_0_100%] min-w-0 aspect-square bg-white flex items-center justify-center p-8"
+                    >
+                      <p 
+                        className="text-black text-xl sm:text-2xl font-bold text-center leading-relaxed"
+                        dangerouslySetInnerHTML={{ __html: slide }}
+                      />
+                    </div>
+                  ))}
+                </div>
+              </div>
+              
+              {/* Slide counter */}
+              <div className="absolute top-4 right-4 bg-black/70 text-white text-xs px-2 py-1 rounded-full">
+                {currentSlide + 1}/{carouselSlides.length}
+              </div>
+            </div>
+
+            {/* Dots indicator */}
+            <div className="flex justify-center gap-1.5 py-3">
+              {carouselSlides.map((_, index) => (
+                <div 
+                  key={index}
+                  className={`w-1.5 h-1.5 rounded-full transition-colors ${
+                    index === currentSlide ? "bg-blue-500" : "bg-gray-300"
+                  }`}
+                />
+              ))}
+            </div>
+
+            {/* Post Actions */}
+            <div className="flex items-center justify-between px-4 py-2">
+              <div className="flex items-center gap-4">
+                <Heart className="w-6 h-6 text-black" />
+                <MessageCircle className="w-6 h-6 text-black" />
+                <Send className="w-6 h-6 text-black" />
+              </div>
+              <Bookmark className="w-6 h-6 text-black" />
+            </div>
+
+            {/* Date */}
+            <p className="px-4 text-gray-500 text-xs">20 de janeiro</p>
+
+            {/* Post Author Footer */}
+            <div className="flex items-center justify-between px-4 py-3 border-t border-gray-100 mt-2">
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-yellow-400 via-pink-500 to-purple-600 p-0.5">
+                  <div className="w-full h-full rounded-full bg-white p-0.5">
+                    <img 
+                      src={logoPdi} 
+                      alt="PDI" 
+                      className="w-full h-full rounded-full object-cover"
+                    />
+                  </div>
+                </div>
+                <span className="text-black font-semibold text-sm">pdicarreiraevida</span>
+              </div>
+              <MoreHorizontal className="w-5 h-5 text-black" />
+            </div>
+
+            {/* Final content - appears after last slide */}
+            <AnimatePresence>
+              {showFinalContent && (
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="flex-1 flex flex-col items-center justify-center p-6 bg-black"
+                >
+                  <motion.p
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.3 }}
+                    className="text-white/70 text-base sm:text-lg text-center leading-relaxed whitespace-pre-line mb-8"
+                  >
+                    {transitionText}
+                  </motion.p>
+
+                  <motion.button
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 1 }}
+                    onClick={onAdvance}
+                    className="py-4 px-10 bg-white text-black font-semibold rounded-xl text-base transition-all active:scale-[0.98]"
+                  >
+                    Próximo nível
+                  </motion.button>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            {/* Hint if not at last slide */}
+            {!showFinalContent && (
+              <motion.p
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 1.5 }}
+                className="text-gray-400 text-xs text-center py-3 italic"
+              >
+                Deslize para o lado →
+              </motion.p>
+            )}
           </motion.div>
         )}
 
@@ -431,75 +601,6 @@ export const PassoQuatro = ({ onAdvance }: PassoQuatroProps) => {
               className="mt-8 py-3.5 px-8 bg-white/10 hover:bg-white/15 border border-white/20 rounded-xl text-white font-medium transition-all"
             >
               Continuar
-            </motion.button>
-          </motion.div>
-        )}
-
-        {stage === "ancora" && (
-          <motion.div
-            key="ancora"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="flex-1 flex flex-col items-center justify-center p-6 sm:p-8 space-y-4 sm:space-y-5"
-          >
-            {/* First text */}
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.5 }}
-              className="text-white/80 text-lg sm:text-xl text-center leading-relaxed"
-            >
-              {ancoraTexts[0]}
-            </motion.p>
-
-            {/* Bold text */}
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 1.5 }}
-              className="text-white text-lg sm:text-xl text-center leading-relaxed font-bold"
-            >
-              {ancoraBoldText}
-            </motion.p>
-
-            {/* Second text */}
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 3 }}
-              className="text-white/80 text-base sm:text-lg text-center leading-relaxed"
-            >
-              {ancoraTexts[1]}
-            </motion.p>
-
-            {/* Third text */}
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 4.5 }}
-              className="text-white/80 text-base sm:text-lg text-center leading-relaxed"
-            >
-              {ancoraTexts[2]}
-            </motion.p>
-
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 6 }}
-              className="text-white/50 text-base sm:text-lg text-center leading-relaxed whitespace-pre-line pt-4"
-            >
-              {transitionText}
-            </motion.p>
-
-            <motion.button
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 7.5 }}
-              onClick={onAdvance}
-              className="mt-6 py-4 px-10 bg-white text-black font-semibold rounded-xl text-base transition-all active:scale-[0.98]"
-            >
-              Próximo nível
             </motion.button>
           </motion.div>
         )}
