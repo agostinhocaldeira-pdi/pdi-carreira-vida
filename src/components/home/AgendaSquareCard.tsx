@@ -1,13 +1,15 @@
 /**
  * AgendaSquareCard - Card quadrado da Agenda Estratégica para mobile
+ * Abre um modal com a agenda ao invés de navegar para o painel
  */
 
-import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 import { Calendar, Lock } from "lucide-react";
 import { motion } from "framer-motion";
 import { Card } from "@/components/ui/card";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
+import { AgendaModal } from "./AgendaModal";
 
 interface AgendaSquareCardProps {
   className?: string;
@@ -15,11 +17,11 @@ interface AgendaSquareCardProps {
 }
 
 export const AgendaSquareCard = ({ className, isLocked = false }: AgendaSquareCardProps) => {
-  const navigate = useNavigate();
+  const [modalOpen, setModalOpen] = useState(false);
 
   const handleClick = () => {
     if (isLocked) return;
-    navigate("/control-panel");
+    setModalOpen(true);
   };
 
   const cardContent = (
@@ -63,19 +65,24 @@ export const AgendaSquareCard = ({ className, isLocked = false }: AgendaSquareCa
   );
 
   return (
-    <Tooltip>
-      <TooltipTrigger asChild>
-        {cardContent}
-      </TooltipTrigger>
-      <TooltipContent side="bottom" className="max-w-xs">
-        <p className="text-sm">
-          {isLocked 
-            ? "Será ativada após completar a Base Pessoal." 
-            : "Organize suas tarefas e compromissos diários."
-          }
-        </p>
-      </TooltipContent>
-    </Tooltip>
+    <>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          {cardContent}
+        </TooltipTrigger>
+        <TooltipContent side="bottom" className="max-w-xs">
+          <p className="text-sm">
+            {isLocked 
+              ? "Será ativada após completar a Base Pessoal." 
+              : "Organize suas tarefas e compromissos diários."
+            }
+          </p>
+        </TooltipContent>
+      </Tooltip>
+
+      {/* Agenda Modal */}
+      <AgendaModal open={modalOpen} onOpenChange={setModalOpen} />
+    </>
   );
 };
 
