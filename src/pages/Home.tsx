@@ -52,6 +52,10 @@ import { HubSection } from "@/components/home/HubSection";
 import { DiaryQuickCard } from "@/components/home/DiaryQuickCard";
 import { StoicQuickCard } from "@/components/home/StoicQuickCard";
 import { AgendaLockedCard } from "@/components/home/AgendaLockedCard";
+import { StoicSquareCard } from "@/components/home/StoicSquareCard";
+import { DiarySquareCard } from "@/components/home/DiarySquareCard";
+import { AgendaSquareCard } from "@/components/home/AgendaSquareCard";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const Home = () => {
   const navigate = useNavigate();
@@ -68,6 +72,7 @@ const Home = () => {
   const { showSurvey, setShowSurvey, completedSection } = useSatisfactionSurvey();
   const { quote: dailyQuote } = useDailyQuote();
   const { status: subscriptionStatus } = useSubscription();
+  const isMobile = useIsMobile();
   
   // Subscription check for Desafio card
   const hasActiveSubscription = subscriptionStatus === 'active';
@@ -180,12 +185,13 @@ const Home = () => {
               <div className="col-span-1">
                 <HubCard
                   title="Base Pessoal"
-                  description={window.innerWidth >= 640 ? "Identidade, Valores e Roda da Vida" : undefined}
+                  description={!isMobile ? "Identidade, Valores e Roda da Vida" : undefined}
                   icon={<User className="w-full h-full" />}
                   to="/plano-vida/quem-sou"
                   variant={isInitiationMode ? "highlighted" : "compact"}
                   badge={isInitiationMode ? `${baseProgress}%` : step1Done ? "✓" : undefined}
                   tooltipContent="Defina quem você é: sua essência (VVD), seus valores fundamentais e as áreas da sua vida que precisam de atenção."
+                  className="aspect-square sm:aspect-auto"
                 />
               </div>
 
@@ -200,6 +206,7 @@ const Home = () => {
                   lockMessage="Requer Base Pessoal"
                   badge={step2Done ? "✓" : undefined}
                   tooltipContent="Defina para onde você quer ir: crie objetivos claros conectados à sua essência."
+                  className="aspect-square sm:aspect-auto"
                 />
               </div>
 
@@ -213,6 +220,7 @@ const Home = () => {
                   isLocked={isInitiationMode || !step2Done}
                   lockMessage={isInitiationMode ? "Requer Base Pessoal" : "Defina objetivos primeiro"}
                   tooltipContent="Transforme seus objetivos em ação: defina passos concretos e rotinas diárias."
+                  className="aspect-square sm:aspect-auto"
                 />
               </div>
 
@@ -226,6 +234,7 @@ const Home = () => {
                   isLocked={isInitiationMode || !hasActiveSubscription}
                   lockMessage={isInitiationMode ? "Requer Base Pessoal" : "Exclusivo para assinantes"}
                   tooltipContent="Participe do Desafio do Código Essencial - 21 dias de transformação."
+                  className="aspect-square sm:aspect-auto"
                 />
               </div>
 
@@ -233,13 +242,14 @@ const Home = () => {
               <div className="col-span-2 sm:col-span-1">
                 <HubCard
                   title="Painel de Controle"
-                  description={window.innerWidth >= 640 ? "Acompanhe seus objetivos, agenda e realize suas ações diárias." : undefined}
+                  description={!isMobile ? "Acompanhe seus objetivos, agenda e realize suas ações diárias." : undefined}
                   icon={<LayoutDashboard className="w-full h-full" />}
                   to="/control-panel"
                   variant="primary"
                   isLocked={isInitiationMode}
                   lockMessage="Complete a Base Pessoal primeiro"
                   tooltipContent="Acesse o painel completo com agenda, objetivos, metas e ações do dia."
+                  className="aspect-square sm:aspect-auto"
                 />
               </div>
             </div>
@@ -252,16 +262,21 @@ const Home = () => {
             icon={<Feather className="w-3.5 h-3.5 text-primary" />} 
             title="Dedique 5 minutos por dia"
           >
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-              {/* Reflexão Estóica */}
-              <StoicQuickCard />
-
-              {/* Diário */}
-              <DiaryQuickCard />
-
-              {/* Agenda Locked Card (only in initiation mode) */}
-              {isInitiationMode && <AgendaLockedCard />}
-            </div>
+            {/* Mobile: 3 square cards */}
+            {isMobile ? (
+              <div className="grid grid-cols-3 gap-2">
+                <StoicSquareCard />
+                <DiarySquareCard />
+                <AgendaSquareCard isLocked={isInitiationMode} />
+              </div>
+            ) : (
+              /* Desktop: original full cards */
+              <div className="grid grid-cols-2 lg:grid-cols-3 gap-3">
+                <StoicQuickCard />
+                <DiaryQuickCard />
+                {isInitiationMode && <AgendaLockedCard />}
+              </div>
+            )}
           </HubSection>
 
           {/* ============================================================ */}

@@ -75,12 +75,12 @@ export const HubCard = ({
         )}
         onClick={handleClick}
       >
-        {/* Lock overlay */}
+        {/* Lock overlay - only icon on mobile, with text on larger screens */}
         {isLocked && (
           <div className="absolute inset-0 bg-background/60 backdrop-blur-[1px] z-10 flex items-center justify-center">
             <div className="text-center p-3">
-              <Lock className="w-5 h-5 text-muted-foreground/40 mx-auto mb-1.5" />
-              <p className="text-[10px] text-muted-foreground/60 leading-tight max-w-[120px]">{lockMessage}</p>
+              <Lock className="w-5 h-5 text-muted-foreground/40 mx-auto" />
+              <p className="text-[10px] text-muted-foreground/60 leading-tight max-w-[120px] hidden sm:block mt-1.5">{lockMessage}</p>
             </div>
           </div>
         )}
@@ -150,9 +150,9 @@ export const HubCard = ({
           {/* Custom children content */}
           {children}
 
-          {/* CTA for highlighted cards */}
+          {/* CTA for highlighted cards - hidden on mobile */}
           {isHighlighted && !isLocked && (
-            <div className="mt-4 pt-3 border-t border-[#D4AF37]/20">
+            <div className="mt-4 pt-3 border-t border-[#D4AF37]/20 hidden sm:block">
               <div className="flex items-center text-[#D4AF37] text-sm font-medium group-hover:translate-x-1 transition-transform">
                 Iniciar Mapeamento
                 <ChevronRight className="w-4 h-4 ml-1" />
