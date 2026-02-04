@@ -9,7 +9,7 @@ import ringtoneAudio from "@/assets/ringtone.m4a";
 import audioRespira from "@/assets/audio-respira.mp4";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { HelpCircle, ArrowRight, Play } from "lucide-react";
+import { ArrowRight, Play } from "lucide-react";
 
 export type ExperienciaStep = 0 | 1 | 2 | 3 | 4 | 5;
 
@@ -24,7 +24,6 @@ const ExperienciaNarrativa = () => {
   const [showIntro, setShowIntro] = useState(true);
   const [isVideoPlaying, setIsVideoPlaying] = useState(false);
   const preloadedAudiosRef = useRef<PreloadedAudios>({ ringtone: null, respira: null });
-  const iframeRef = useRef<HTMLIFrameElement>(null);
 
   // Preload ALL audios immediately on page load
   useEffect(() => {
@@ -83,42 +82,15 @@ const ExperienciaNarrativa = () => {
     };
   }, []);
 
-  // YouTube API listener for video end
+  // Auto-advance after 9 seconds when video starts playing
   useEffect(() => {
     if (!showIntro || !isVideoPlaying) return;
 
-    const handleMessage = (event: MessageEvent) => {
-      // Only accept messages from YouTube
-      if (event.origin !== "https://www.youtube-nocookie.com" && event.origin !== "https://www.youtube.com") return;
-      
-      try {
-        const data = typeof event.data === "string" ? JSON.parse(event.data) : event.data;
-        // YouTube sends playerState: 0 when video ends
-        if (data.event === "onStateChange" && data.info === 0) {
-          setShowIntro(false);
-        }
-      } catch {
-        // Ignore non-JSON messages
-      }
-    };
-
-    window.addEventListener("message", handleMessage);
-
-    // Send "listening" command to YouTube iframe to enable postMessage events
-    const sendListeningCommand = () => {
-      if (iframeRef.current?.contentWindow) {
-        iframeRef.current.contentWindow.postMessage(
-          JSON.stringify({ event: "listening" }),
-          "*"
-        );
-      }
-    };
-
-    // Send the listening command after a short delay to ensure iframe is ready
-    const timerId = setTimeout(sendListeningCommand, 500);
+    const timerId = setTimeout(() => {
+      setShowIntro(false);
+    }, 9000);
 
     return () => {
-      window.removeEventListener("message", handleMessage);
       clearTimeout(timerId);
     };
   }, [showIntro, isVideoPlaying]);
@@ -155,8 +127,7 @@ const ExperienciaNarrativa = () => {
             ) : (
               // Playing state with JS API enabled
               <iframe
-                ref={iframeRef}
-                src="https://www.youtube-nocookie.com/embed/dZybFglDt80?autoplay=1&modestbranding=1&rel=0&showinfo=0&controls=1&enablejsapi=1&origin=https://pdicarreiraevida.lovable.app"
+                src="https://www.youtube-nocookie.com/embed/dZybFglDt80?autoplay=1&modestbranding=1&rel=0&showinfo=0&controls=1"
                 className="w-full h-full"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                 allowFullScreen
@@ -175,21 +146,13 @@ const ExperienciaNarrativa = () => {
 
           {/* Buttons */}
           <div className="w-full flex flex-col gap-3">
-            {!isVideoPlaying ? (
+            {!isVideoPlaying && (
               <Button
                 onClick={handleWatchVideo}
                 className="w-full h-12 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-xl"
               >
                 <Play className="w-5 h-5 mr-2" />
                 Assistir o vídeo
-              </Button>
-            ) : (
-              <Button
-                onClick={handleSkipToExperience}
-                className="w-full h-12 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-xl"
-              >
-                <ArrowRight className="w-5 h-5 mr-2" />
-                Continuar
               </Button>
             )}
             
