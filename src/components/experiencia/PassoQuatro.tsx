@@ -287,12 +287,19 @@ export const PassoQuatro = ({ onAdvance }: PassoQuatroProps) => {
                   {carouselSlides.map((slide, index) => (
                     <div 
                       key={index} 
-                      className="flex-[0_0_100%] min-w-0 aspect-square bg-white flex items-center justify-center p-8"
+                      className="flex-[0_0_100%] min-w-0 aspect-square bg-white flex flex-col items-center justify-center p-8 relative"
                     >
                       <p 
                         className="text-black text-xl sm:text-2xl font-bold text-center leading-relaxed"
                         dangerouslySetInnerHTML={{ __html: slide }}
                       />
+                      {/* Swipe hint - show on all slides except last */}
+                      {index < carouselSlides.length - 1 && (
+                        <div className="absolute bottom-4 left-0 right-0 flex items-center justify-center gap-1 text-gray-400 text-xs">
+                          <span>arraste para o lado</span>
+                          <span>→</span>
+                        </div>
+                      )}
                     </div>
                   ))}
                 </div>
