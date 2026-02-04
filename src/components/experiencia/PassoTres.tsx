@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Heart, MessageCircle, X } from "lucide-react";
 import pdiLogo from "@/assets/logo_pdi.png";
@@ -68,19 +68,71 @@ const getAvatarUrl = (name: string) => {
   return `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=${color}&color=fff&size=80&bold=true`;
 };
 
+// Declare global YouTube IFrame API types
+declare global {
+  interface Window {
+    YT: {
+      Player: new (elementId: string, options: {
+        events?: {
+          onReady?: (event: { target: { playVideo: () => void } }) => void;
+          onStateChange?: (event: { data: number }) => void;
+        };
+      }) => void;
+      PlayerState: {
+        ENDED: number;
+      };
+    };
+    onYouTubeIframeAPIReady: () => void;
+  }
+}
+
 export const PassoTres = ({ onAdvance, autoPlay = false }: PassoTresProps) => {
   const [showButton, setShowButton] = useState(false);
   const [likes, setLikes] = useState(324);
   const [liked, setLiked] = useState(false);
   const [showComments, setShowComments] = useState(false);
+  const playerRef = useRef<any>(null);
+  const apiLoadedRef = useRef(false);
+
+  const onPlayerStateChange = useCallback((event: { data: number }) => {
+    // YouTube PlayerState.ENDED = 0
+    if (event.data === 0) {
+      setShowButton(true);
+    }
+  }, []);
+
+  const initializePlayer = useCallback(() => {
+    if (!window.YT || !window.YT.Player) return;
+    
+    playerRef.current = new window.YT.Player('youtube-player', {
+      events: {
+        onStateChange: onPlayerStateChange,
+      },
+    });
+  }, [onPlayerStateChange]);
 
   useEffect(() => {
-    // Show button after video plays for a bit
-    const timer = setTimeout(() => {
-      setShowButton(true);
-    }, 9000);
-    return () => clearTimeout(timer);
-  }, []);
+    if (!autoPlay) return;
+
+    // Load YouTube IFrame API
+    if (!apiLoadedRef.current) {
+      const tag = document.createElement('script');
+      tag.src = 'https://www.youtube.com/iframe_api';
+      const firstScriptTag = document.getElementsByTagName('script')[0];
+      firstScriptTag.parentNode?.insertBefore(tag, firstScriptTag);
+      apiLoadedRef.current = true;
+
+      window.onYouTubeIframeAPIReady = () => {
+        initializePlayer();
+      };
+    } else if (window.YT && window.YT.Player) {
+      initializePlayer();
+    }
+
+    return () => {
+      playerRef.current = null;
+    };
+  }, [autoPlay, initializePlayer]);
 
   const handleLike = () => {
     if (!liked) {
@@ -98,7 +150,8 @@ export const PassoTres = ({ onAdvance, autoPlay = false }: PassoTresProps) => {
       <div className="absolute inset-0">
         {autoPlay && (
           <iframe
-            src="https://www.youtube-nocookie.com/embed/8c7GdfmuXCQ?autoplay=1&mute=1&loop=1&playlist=8c7GdfmuXCQ&controls=0&showinfo=0&rel=0&modestbranding=1&playsinline=1"
+            id="youtube-player"
+            src="https://www.youtube.com/embed/8c7GdfmuXCQ?autoplay=1&controls=0&showinfo=0&rel=0&modestbranding=1&playsinline=1&enablejsapi=1"
             title="TikTok Video"
             className="w-full h-full object-cover"
             style={{ 
