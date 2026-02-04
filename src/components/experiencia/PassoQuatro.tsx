@@ -212,16 +212,15 @@ export const PassoQuatro = ({ onAdvance }: PassoQuatroProps) => {
                     key={post.id}
                     onClick={() => handleInstagramPostClick(post)}
                     whileTap={{ scale: 0.95 }}
-                    className={`aspect-square relative ${post.type === "color" ? post.color : "bg-white/10"} flex items-center justify-center`}
+                    className="aspect-square relative overflow-hidden flex items-center justify-center bg-black"
                   >
-                    {post.type === "pdi" && (
-                      <img 
-                        src={logoPdi} 
-                        alt="PDI" 
-                        className="w-full h-full object-cover"
-                      />
-                    )}
-                    {post.type === "color" && (
+                    <img 
+                      src={post.image} 
+                      alt={post.type === "pdi" ? "PDI" : "Explore post"}
+                      className="w-full h-full object-cover"
+                      style={{ objectPosition: post.objectPosition }}
+                    />
+                    {post.type === "image" && (
                       <div className="absolute inset-0 flex items-end p-2">
                         <div className="flex gap-2 text-white/80">
                           <Heart className="w-3 h-3" />
