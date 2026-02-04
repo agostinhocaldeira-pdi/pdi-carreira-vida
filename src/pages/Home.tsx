@@ -46,6 +46,7 @@ import { useGamification } from "@/hooks/useGamification";
 import { SatisfactionSurveyModal } from "@/components/SatisfactionSurveyModal";
 import { useSatisfactionSurvey } from "@/hooks/useSatisfactionSurvey";
 import { useDailyQuote } from "@/hooks/useDailyQuote";
+import { useSubscription } from "@/hooks/useSubscription";
 import { HubCard } from "@/components/home/HubCard";
 import { HubSection } from "@/components/home/HubSection";
 import { DiaryQuickCard } from "@/components/home/DiaryQuickCard";
@@ -66,6 +67,10 @@ const Home = () => {
   const { newAchievement, dismissNewAchievement, checkAndUnlockAchievements } = useGamification();
   const { showSurvey, setShowSurvey, completedSection } = useSatisfactionSurvey();
   const { quote: dailyQuote } = useDailyQuote();
+  const { status: subscriptionStatus } = useSubscription();
+  
+  // Subscription check for Desafio card
+  const hasActiveSubscription = subscriptionStatus === 'active';
 
   // Determine mode
   const isInitiationMode = !hasCompletedBase;
@@ -170,15 +175,15 @@ const Home = () => {
               </motion.p>
             )}
 
-            <div className="grid grid-cols-2 lg:grid-cols-5 gap-3">
+            <div className="grid grid-cols-3 lg:grid-cols-5 gap-2 sm:gap-3">
               {/* Base Pessoal - Highlighted in initiation mode */}
-              <div className="col-span-1 row-span-1">
+              <div className="col-span-1">
                 <HubCard
                   title="Base Pessoal"
-                  description="Identidade, Valores e Roda da Vida"
+                  description={window.innerWidth >= 640 ? "Identidade, Valores e Roda da Vida" : undefined}
                   icon={<User className="w-full h-full" />}
                   to="/plano-vida/quem-sou"
-                  variant={isInitiationMode ? "highlighted" : "default"}
+                  variant={isInitiationMode ? "highlighted" : "compact"}
                   badge={isInitiationMode ? `${baseProgress}%` : step1Done ? "✓" : undefined}
                   tooltipContent="Defina quem você é: sua essência (VVD), seus valores fundamentais e as áreas da sua vida que precisam de atenção."
                 />
@@ -211,24 +216,24 @@ const Home = () => {
                 />
               </div>
 
-              {/* Desafio */}
-              <div className="col-span-1">
+              {/* Desafio - Now with subscription check */}
+              <div className="col-span-1 sm:col-span-1">
                 <HubCard
                   title="Desafio"
                   icon={<Zap className="w-full h-full" />}
                   to="/desafio-codigo"
                   variant="compact"
-                  isLocked={isInitiationMode}
-                  lockMessage="Requer Base Pessoal"
+                  isLocked={isInitiationMode || !hasActiveSubscription}
+                  lockMessage={isInitiationMode ? "Requer Base Pessoal" : "Exclusivo para assinantes"}
                   tooltipContent="Participe do Desafio do Código Essencial - 21 dias de transformação."
                 />
               </div>
 
               {/* Painel de Controle */}
-              <div className="col-span-2 lg:col-span-1">
+              <div className="col-span-2 sm:col-span-1">
                 <HubCard
                   title="Painel de Controle"
-                  description="Acompanhe seus objetivos, agenda e realize suas ações diárias."
+                  description={window.innerWidth >= 640 ? "Acompanhe seus objetivos, agenda e realize suas ações diárias." : undefined}
                   icon={<LayoutDashboard className="w-full h-full" />}
                   to="/control-panel"
                   variant="primary"
@@ -266,46 +271,48 @@ const Home = () => {
             icon={<GraduationCap className="w-3.5 h-3.5 text-primary" />} 
             title="Base de Conhecimento"
           >
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3">
               {/* Trilha PDI - Featured */}
-              <div className="sm:col-span-1">
-                <HubCard
-                  title="Trilha de Desenvolvimento PDI"
-                  description="Siga esta jornada estruturada para construir seu Plano de Desenvolvimento Individual completo."
-                  icon={<GraduationCap className="w-full h-full" />}
-                  to="/construcao-guiada"
-                  variant="feature"
-                  tooltipContent="Aprenda os fundamentos do PDI com vídeos educativos e exercícios práticos."
-                />
-              </div>
+              <HubCard
+                title="Trilha PDI"
+                description={window.innerWidth >= 640 ? "Construa seu Plano de Desenvolvimento Individual completo." : undefined}
+                icon={<GraduationCap className="w-full h-full" />}
+                to="/construcao-guiada"
+                variant="compact"
+                className="aspect-square sm:aspect-auto"
+                tooltipContent="Aprenda os fundamentos do PDI com vídeos educativos e exercícios práticos."
+              />
 
               {/* Ferramentas */}
               <HubCard
                 title="Ferramentas"
-                description="O autodesenvolvimento é uma jornada contínua que requer clareza, estrutura e método."
+                description={window.innerWidth >= 640 ? "Ferramentas de autoconhecimento: SWOT, SMART, Eisenhower." : undefined}
                 icon={<Wrench className="w-full h-full" />}
                 to="/ferramentas"
-                variant="feature"
+                variant="compact"
+                className="aspect-square sm:aspect-auto"
                 tooltipContent="Acesse todas as ferramentas de autoconhecimento: SWOT, SMART, Eisenhower e mais."
               />
 
               {/* Suporte */}
               <HubCard
                 title="Suporte"
-                description="Tire suas dúvidas sobre o sistema, peça ajuda para utilizar ferramentas."
+                description={window.innerWidth >= 640 ? "Tire suas dúvidas sobre o sistema." : undefined}
                 icon={<MessageCircle className="w-full h-full" />}
                 to="/suporte"
-                variant="feature"
+                variant="compact"
+                className="aspect-square sm:aspect-auto"
                 tooltipContent="Entre em contato com nossa equipe para tirar dúvidas."
               />
 
               {/* Tutoriais */}
               <HubCard
                 title="Tutoriais"
-                description="Guia detalhado de todas as funcionalidades do PDI. Como usar, quando e porquê usar."
+                description={window.innerWidth >= 640 ? "Guia de todas as funcionalidades do PDI." : undefined}
                 icon={<PlayCircle className="w-full h-full" />}
                 to="/tutorial"
-                variant="feature"
+                variant="compact"
+                className="aspect-square sm:aspect-auto"
                 tooltipContent="Vídeos e guias passo a passo para dominar o sistema."
               />
             </div>
@@ -318,39 +325,25 @@ const Home = () => {
             icon={<Zap className="w-3.5 h-3.5 text-primary" />} 
             title="Recursos Adicionais"
           >
-            <div className="flex flex-wrap gap-2">
-              {/* Quick Links */}
+            <div className="grid grid-cols-2 sm:flex sm:flex-wrap gap-2">
+              {/* Quick Links as square cards on mobile */}
               {[
-                { icon: <TrendingUp className="w-4 h-4" />, label: "Progresso", to: "/progresso" },
-                { icon: <Link2 className="w-4 h-4" />, label: "Integrações", to: "/integracoes" },
-                { icon: <HelpCircle className="w-4 h-4" />, label: "FAQ", to: "/faq" },
-                { icon: <FileText className="w-4 h-4" />, label: "Relatórios", to: "/relatorios" },
+                { icon: <TrendingUp className="w-5 h-5" />, label: "Progresso", to: "/progresso" },
+                { icon: <Link2 className="w-5 h-5" />, label: "Integrações", to: "/integracoes" },
+                { icon: <HelpCircle className="w-5 h-5" />, label: "FAQ", to: "/faq" },
+                { icon: <FileText className="w-5 h-5" />, label: "Relatórios", to: "/relatorios" },
+                { icon: <User className="w-5 h-5" />, label: "Minha Conta", to: "/perfil" },
               ].map((item) => (
                 <Button
                   key={item.to}
                   variant="outline"
-                  size="sm"
-                  className="gap-2 text-sm font-normal"
+                  className="flex flex-col items-center justify-center gap-2 h-auto py-4 sm:flex-row sm:h-9 sm:py-1.5 sm:px-3 sm:gap-2 aspect-square sm:aspect-auto text-sm font-normal"
                   onClick={() => navigate(item.to)}
                 >
                   {item.icon}
-                  {item.label}
+                  <span className="text-xs sm:text-sm">{item.label}</span>
                 </Button>
               ))}
-
-              {/* Foto de Perfil - Slightly different */}
-              <div className="flex items-center gap-2 px-3 py-1.5 border border-border rounded-md bg-card">
-                <Camera className="w-4 h-4 text-muted-foreground" />
-                <div className="text-sm">
-                  <span 
-                    className="text-foreground hover:text-primary cursor-pointer transition-colors"
-                    onClick={() => navigate("/perfil")}
-                  >
-                    Foto de Perfil
-                  </span>
-                  <span className="text-muted-foreground hidden sm:inline"> - Personalize sua conta com foto</span>
-                </div>
-              </div>
             </div>
           </HubSection>
 
