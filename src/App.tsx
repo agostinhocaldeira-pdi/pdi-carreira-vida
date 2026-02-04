@@ -16,6 +16,7 @@ import Signup from "./pages/Signup";
 import Login from "./pages/Login";
 import Onboarding from "./pages/Onboarding";
 import Home from "./pages/Home";
+import ControlPanel from "./pages/ControlPanel";
 import Diario from "./pages/Diario";
 import ConstrucaoGuiada from "./pages/ConstrucaoGuiada";
 import Ferramentas from "./pages/Ferramentas";
@@ -91,6 +92,7 @@ const App = () => (
                 <Route path="/signup" element={<Signup />} />
                 <Route path="/onboarding" element={<Onboarding />} />
                 <Route path="/home" element={<Home />} />
+                <Route path="/control-panel" element={<ControlPanel />} />
                 <Route path="/diario" element={<Diario />} />
                 <Route path="/construcao-guiada" element={<ConstrucaoGuiada />} />
                 <Route path="/ferramentas" element={<Ferramentas />} />

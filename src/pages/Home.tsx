@@ -1,338 +1,249 @@
-import { useState, useEffect } from "react";
+/**
+ * Home Hub - Ponto Principal de Entrada
+ * 
+ * Página premium com Bento Grid que serve como hub de navegação
+ * Aplica lógica de Iniciação vs Operacional:
+ * - Iniciação: Base Pessoal destacada, outros cards bloqueados
+ * - Operacional: Todos cards liberados
+ */
+
+import { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { 
+  LayoutDashboard, 
+  User, 
+  Target, 
+  Rocket, 
+  BookOpen, 
+  Feather, 
+  GraduationCap, 
+  MessageCircle, 
+  PlayCircle,
+  Wrench,
+  TrendingUp,
+  Link2,
+  HelpCircle,
+  FileText,
+  Camera,
+  Lock,
+  Star,
+  LogOut,
+  ChevronRight,
+  Sparkles,
+  Zap
+} from "lucide-react";
+import { motion } from "framer-motion";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Progress } from "@/components/ui/progress";
-import { Badge } from "@/components/ui/badge";
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { Link, useNavigate, useLocation } from "react-router-dom";
-import { Target, TrendingUp, BookOpen, MessagesSquare, Book, Sparkles, User, Zap, Star, Shield, Lock, ChevronDown, AlertCircle, Link2, Users, Bell, HelpCircle, FileText, ClipboardCheck, Focus, Loader2, Crosshair, Play, Footprints, PartyPopper } from "lucide-react";
-import { Agenda } from "@/components/agenda";
-import { AgendaTaskModal } from "@/components/agenda/AgendaTaskModal";
-import { useAgenda } from "@/hooks/useAgenda";
-
-
-import { usePDIData } from "@/hooks/usePDIQueries";
-import { useAIUsage } from "@/hooks/useAIUsage";
-import { AIUsageLimitModal } from "@/components/AIUsageLimitModal";
-import { usePDIStorage } from "@/hooks/usePDIStorage";
-import { InsightAudioButton } from "@/components/home/InsightAudioButton";
+import { Badge } from "@/components/ui/badge";
+import Logo from "@/components/Logo";
+import LogoutButton from "@/components/LogoutButton";
 import { ProfilePictureAvatar } from "@/components/profile/ProfilePictureAvatar";
 import { useProfilePicture } from "@/hooks/useProfilePicture";
-
-import LanguageSelector from "@/components/LanguageSelector";
-import LogoutButton from "@/components/LogoutButton";
-import { SatisfactionSurveyModal } from "@/components/SatisfactionSurveyModal";
-import { useSatisfactionSurvey } from "@/hooks/useSatisfactionSurvey";
-import { AchievementNotification } from "@/components/gamification/AchievementNotification";
-import { useGamification } from "@/hooks/useGamification";
+import { useSystemState } from "@/hooks/useSystemState";
 import { useRoleProtection } from "@/hooks/useRoleProtection";
 import { supabase } from "@/integrations/supabase/client";
+import { cn } from "@/lib/utils";
 import { TrialStatusBanner } from "@/components/subscription/TrialStatusBanner";
-import Logo from "@/components/Logo";
 import { FirstStepsModal } from "@/components/FirstStepsModal";
+import { AchievementNotification } from "@/components/gamification/AchievementNotification";
+import { useGamification } from "@/hooks/useGamification";
+import { SatisfactionSurveyModal } from "@/components/SatisfactionSurveyModal";
+import { useSatisfactionSurvey } from "@/hooks/useSatisfactionSurvey";
 
-import { getTodayReflection } from "@/data/stoicReflections";
-import { useStoicAudioPreload } from "@/hooks/useStoicAudioPreload";
-import { useDailyQuote } from "@/hooks/useDailyQuote";
-import { QuickAccessNav } from "@/components/home/QuickAccessNav";
-import { ProductivityTipsSection } from "@/components/home/ProductivityTipsSection";
-import { HomeInitiation } from "@/components/home/HomeInitiation";
-import { HomeOperational } from "@/components/home/HomeOperational";
-import { AIMentorFAB } from "@/components/home/AIMentorFAB";
-import { useSystemState } from "@/hooks/useSystemState";
+// ============================================================
+// TYPES
+// ============================================================
+interface HubCardProps {
+  title: string;
+  description: string;
+  icon: React.ReactNode;
+  to: string;
+  isLocked?: boolean;
+  lockMessage?: string;
+  isPrimary?: boolean;
+  isHighlighted?: boolean;
+  size?: 'large' | 'medium' | 'small';
+  tooltipContent?: string;
+  badge?: string;
+}
 
+// ============================================================
+// HUB CARD COMPONENT
+// ============================================================
+const HubCard = ({ 
+  title, 
+  description, 
+  icon, 
+  to, 
+  isLocked = false,
+  lockMessage,
+  isPrimary = false,
+  isHighlighted = false,
+  size = 'medium',
+  tooltipContent,
+  badge
+}: HubCardProps) => {
+  const navigate = useNavigate();
 
+  const handleClick = () => {
+    if (isLocked) return;
+    navigate(to);
+  };
+
+  const cardContent = (
+    <motion.div
+      whileHover={!isLocked ? { scale: 1.02, y: -2 } : {}}
+      whileTap={!isLocked ? { scale: 0.98 } : {}}
+      transition={{ type: "spring", stiffness: 400, damping: 17 }}
+    >
+      <Card 
+        className={cn(
+          "relative overflow-hidden transition-all duration-300 cursor-pointer group h-full",
+          // Premium dark style for primary cards
+          isPrimary && "bg-[#1A1A1A] border-2 border-[#D4AF37] shadow-lg hover:shadow-xl",
+          // Highlighted card with pulse effect
+          isHighlighted && !isLocked && "bg-[#1A1A1A] border-2 border-[#D4AF37] shadow-lg animate-pulse",
+          // Locked state
+          isLocked && "bg-muted/50 border-border/30 opacity-60 cursor-not-allowed",
+          // Default state
+          !isPrimary && !isHighlighted && !isLocked && "bg-card border-border/50 hover:border-primary/30 hover:shadow-md",
+          // Size variations
+          size === 'large' && "md:col-span-2 md:row-span-2",
+          size === 'small' && ""
+        )}
+        onClick={handleClick}
+      >
+        {/* Lock overlay */}
+        {isLocked && (
+          <div className="absolute inset-0 bg-background/50 z-10 flex items-center justify-center">
+            <div className="text-center p-4">
+              <Lock className="w-6 h-6 text-muted-foreground/50 mx-auto mb-2" />
+              <p className="text-xs text-muted-foreground/70">{lockMessage}</p>
+            </div>
+          </div>
+        )}
+
+        {/* Badge */}
+        {badge && !isLocked && (
+          <Badge className="absolute top-3 right-3 bg-[#D4AF37] text-[#1A1A1A] text-[10px]">
+            {badge}
+          </Badge>
+        )}
+
+        <CardHeader className={cn(
+          "pb-2",
+          size === 'large' ? "p-6 sm:p-8" : size === 'small' ? "p-3 sm:p-4" : "p-4 sm:p-5"
+        )}>
+          <div className={cn(
+            "rounded-full flex items-center justify-center mb-3",
+            isPrimary || isHighlighted 
+              ? "w-12 h-12 sm:w-14 sm:h-14 bg-[#D4AF37]/20" 
+              : "w-10 h-10 sm:w-12 sm:h-12 bg-primary/10",
+            isLocked && "bg-muted"
+          )}>
+            <div className={cn(
+              isPrimary || isHighlighted ? "text-[#D4AF37]" : "text-primary",
+              isLocked && "text-muted-foreground/50",
+              size === 'large' ? "w-6 h-6 sm:w-7 sm:h-7" : "w-5 h-5 sm:w-6 sm:h-6"
+            )}>
+              {icon}
+            </div>
+          </div>
+          <CardTitle className={cn(
+            "font-bold",
+            isPrimary || isHighlighted ? "text-white" : "text-foreground",
+            isLocked && "text-muted-foreground/70",
+            size === 'large' ? "text-xl sm:text-2xl" : size === 'small' ? "text-sm sm:text-base" : "text-base sm:text-lg"
+          )}>
+            {title}
+          </CardTitle>
+          <CardDescription className={cn(
+            isPrimary || isHighlighted ? "text-gray-400" : "text-muted-foreground",
+            isLocked && "text-muted-foreground/50",
+            size === 'small' ? "text-xs" : "text-sm"
+          )}>
+            {description}
+          </CardDescription>
+        </CardHeader>
+
+        {/* Arrow indicator for primary/highlighted */}
+        {(isPrimary || isHighlighted) && !isLocked && (
+          <CardContent className="pt-0">
+            <div className="flex items-center text-[#D4AF37] text-sm font-medium group-hover:translate-x-1 transition-transform">
+              Acessar
+              <ChevronRight className="w-4 h-4 ml-1" />
+            </div>
+          </CardContent>
+        )}
+      </Card>
+    </motion.div>
+  );
+
+  if (tooltipContent) {
+    return (
+      <Tooltip>
+        <TooltipTrigger asChild>
+          {cardContent}
+        </TooltipTrigger>
+        <TooltipContent side="bottom" className="max-w-xs">
+          <p className="text-sm">{tooltipContent}</p>
+        </TooltipContent>
+      </Tooltip>
+    );
+  }
+
+  return cardContent;
+};
+
+// ============================================================
+// SECTION HEADER COMPONENT
+// ============================================================
+const SectionHeader = ({ icon, title }: { icon: React.ReactNode; title: string }) => (
+  <div className="flex items-center gap-2 mb-4">
+    <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
+      {icon}
+    </div>
+    <h2 className="text-lg sm:text-xl font-semibold text-foreground">{title}</h2>
+  </div>
+);
+
+// ============================================================
+// MAIN HOME HUB COMPONENT
+// ============================================================
 const Home = () => {
   const navigate = useNavigate();
-  const location = useLocation();
-
-  // DEBUG: helps confirm which build is running on device/browser
-  useEffect(() => {
-    console.warn("[Home] build=2026-01-09 planovida=v2");
-  }, []);
+  const [userName, setUserName] = useState("");
   
-  // Optimized role protection - uses cached role data (no blocking RPC)
-  const { isLoading: roleLoading, userRole, isAdmin, isGestor, isEmployee } = useRoleProtection({
+  // Hooks
+  const { profilePictureUrl } = useProfilePicture();
+  const { hasCompletedBase, step1Done, step2Done, isLoading: systemStateLoading, baseProgress } = useSystemState();
+  const { isLoading: roleLoading } = useRoleProtection({
     allowedRoles: ["user", "gestor", "admin"],
     redirectTo: "/dashboard-empresa"
   });
-  
-  // Estado central do sistema: Iniciação vs Operacional
-  const { hasCompletedBase, isLoading: systemStateLoading } = useSystemState();
-  
-  const [userName, setUserName] = useState("");
-  
-  // Daily quote from database (365 phrases)
-  const { quote: dailyQuote, isLoading: isDailyQuoteLoading } = useDailyQuote();
-  
-  const [showDiaryWarningModal, setShowDiaryWarningModal] = useState(false);
-  const [showPlanoVidaCompleteModal, setShowPlanoVidaCompleteModal] = useState(false);
-  const [agendaOpen, setAgendaOpen] = useState(true);
-  
-  // Estados para o modal de tarefa pré-preenchida (acionado pelo FirstStepsModal)
-  const [showPrefilledTaskModal, setShowPrefilledTaskModal] = useState(false);
-  const [prefilledTaskTitle, setPrefilledTaskTitle] = useState("");
-  const [prefilledTaskDescription, setPrefilledTaskDescription] = useState("");
-  
-  // Flag para habilitar agenda no modo iniciação (após "Fazer depois" + salvar tarefa)
-  const [agendaEnabledInInitiation, setAgendaEnabledInInitiation] = useState(false);
-  
-  // Hook da agenda para criar tarefas
-  const { createEvent } = useAgenda();
-  
-  // Listener para o evento do FirstStepsModal "Fazer depois"
-  useEffect(() => {
-    const handleOpenWithData = (event: CustomEvent<{ title: string; description: string }>) => {
-      setPrefilledTaskTitle(event.detail.title);
-      setPrefilledTaskDescription(event.detail.description);
-      setShowPrefilledTaskModal(true);
-    };
-
-    window.addEventListener('openTaskModalWithData', handleOpenWithData as EventListener);
-    return () => {
-      window.removeEventListener('openTaskModalWithData', handleOpenWithData as EventListener);
-    };
-  }, []);
-  
-  
-  // Estados para notificações
-  const [unreadSupportMessages, setUnreadSupportMessages] = useState(0);
-  const [unreadManagerMessages, setUnreadManagerMessages] = useState(0);
-  const [unreadEmployeeMessages, setUnreadEmployeeMessages] = useState(0);
-  
-  const { showSurvey, setShowSurvey, completedSection, markSectionCompleted } = useSatisfactionSurvey();
   const { newAchievement, dismissNewAchievement, checkAndUnlockAchievements } = useGamification();
-  
-  // Carregar objetivos do usuário
-  const { data: pdiData } = usePDIData();
-  const objetivos = pdiData?.objetivos || [];
-  const metas = pdiData?.metas || [];
-  const vvd = pdiData?.vvd || "";
-  const valores = pdiData?.valores || [];
-  const areasVida = pdiData?.areasVida || [];
-  // AI Usage e Insight
-  const storage = usePDIStorage();
-  const aiUsage = useAIUsage('insight');
-  const [showAILimitModal, setShowAILimitModal] = useState(false);
-  const [insight, setInsight] = useState<string | null>(null);
-  const [isGeneratingInsight, setIsGeneratingInsight] = useState(false);
-  const [insightOpen, setInsightOpen] = useState(() => window.innerWidth >= 640); // Start collapsed on mobile
+  const { showSurvey, setShowSurvey, completedSection } = useSatisfactionSurvey();
 
-  // Plano de Vida (passo 3 depende de habilidades)
-  const [habilidadesCount, setHabilidadesCount] = useState(0);
-  
-  // Profile picture
-  const { profilePictureUrl } = useProfilePicture();
-  
-  // Carregar insight salvo
-  useEffect(() => {
-    const loadInsight = async () => {
-      try {
-        const { data: session } = await supabase.auth.getSession();
-        if (!session.session) return;
-        
-        const { data } = await supabase
-          .from('user_insights')
-          .select('insight_text')
-          .eq('user_id', session.session.user.id)
-          .maybeSingle();
-        
-        if (data?.insight_text) {
-          setInsight(data.insight_text);
-        }
-      } catch (error) {
-        console.error("Erro ao carregar insight:", error);
-      }
-    };
-    loadInsight();
-  }, []);
-
-  // Carregar habilidades (usado para completar o Passo 3)
-  useEffect(() => {
-    const loadHabilidades = async () => {
-      try {
-        const habs = await storage.getHabilidades();
-        setHabilidadesCount(habs?.length || 0);
-      } catch (error) {
-        // Não bloquear a Home por isso
-        console.error("Erro ao carregar habilidades:", error);
-      }
-    };
-
-    loadHabilidades();
-  }, [storage]);
-  
-  // Verificar se pode gerar insight
-  const canGenerateInsight = isAdmin || aiUsage.hasAvailablePurchase;
-  
-  // Função para gerar insight
-  const handleGenerateInsight = async () => {
-    if (!canGenerateInsight && !isAdmin) {
-      setShowAILimitModal(true);
-      return;
-    }
-    
-    setIsGeneratingInsight(true);
-    try {
-      // Collect all user data for comprehensive insight
-      const { collectInsightData } = await import('@/services/insightDataCollector');
-      const insightData = await collectInsightData(storage);
-
-      const response = await supabase.functions.invoke('generate-insight', {
-        body: insightData
-      });
-      
-      if (response.error) throw response.error;
-      
-      const newInsight = response.data?.insight;
-      if (newInsight) {
-        setInsight(newInsight);
-        
-        // Consumir uso se não for admin
-        if (!isAdmin && aiUsage.hasAvailablePurchase) {
-          await aiUsage.consumePurchase();
-        }
-      }
-    } catch (error) {
-      console.error("Erro ao gerar insight:", error);
-    } finally {
-      setIsGeneratingInsight(false);
-    }
-  };
-
-  // Preload stoic audio in background with low priority
-  useStoicAudioPreload();
-
-  // Check achievements on mount
-  useEffect(() => {
-    checkAndUnlockAchievements();
-  }, []);
-
-  // Check if coming from Plano de Vida completion
-  useEffect(() => {
-    if (location.state?.showPlanoVidaCompleteModal) {
-      setShowPlanoVidaCompleteModal(true);
-      // Clear the state to prevent modal from showing again on refresh
-      window.history.replaceState({}, document.title);
-    }
-  }, [location.state]);
-
-  // Expor função globalmente para ser chamada pelas seções
-  useEffect(() => {
-    (window as any).markSectionCompleted = markSectionCompleted;
-  }, [markSectionCompleted]);
-
-  const quotes = [
-    "Acredite em si mesmo e todo o resto se encaixará. 💪",
-    "O sucesso é a soma de pequenos esforços repetidos. 🌟",
-    "Sua única limitação é você mesmo. 🚀",
-    "Grandes conquistas exigem tempo. Continue avançando! ⭐",
-    "Cada passo conta na sua jornada de crescimento. 🎯",
-    "O melhor momento para começar é agora. ✨",
-    "Transforme seus sonhos em objetivos e seus objetivos em realidade. 🌈",
-  ];
-
-  // Carregar dados do usuário autenticado
+  // Load user data
   useEffect(() => {
     const loadUserData = async () => {
       const { data: { session } } = await supabase.auth.getSession();
       if (session?.user) {
         const metadata = session.user.user_metadata;
         setUserName(metadata?.name || session.user.email?.split("@")[0] || "");
-        
-        // Atualizar localStorage para compatibilidade
-        localStorage.setItem("user", JSON.stringify({
-          id: session.user.id,
-          email: session.user.email,
-          name: metadata?.name || "",
-          role: userRole
-        }));
-        
-        // Carregar notificações (use isEmployee from hook instead of fetching)
-        loadUnreadMessages({ email: session.user.email }, isEmployee);
       }
     };
-    
-    if (!roleLoading && userRole) {
-      loadUserData();
-    }
-  }, [roleLoading, userRole, isEmployee]);
+    loadUserData();
+  }, []);
 
-  // Fallback to stoic reflection title if daily quote is not available
-  const motivationalQuote = dailyQuote || (() => {
-    const { reflection } = getTodayReflection();
-    return reflection.title;
-  })();
-  
-  const loadUnreadMessages = (userData: any, employeeStatus: boolean) => {
-    // 1. Mensagens do suporte (admin para usuário)
-    const supportTickets = JSON.parse(localStorage.getItem("supportTickets") || "[]");
-    const supportMessages = JSON.parse(localStorage.getItem("supportMessages") || "[]");
-    
-    let supportUnread = 0;
-    const userTickets = supportTickets.filter((t: any) => 
-      t.user_email?.toLowerCase() === userData.email?.toLowerCase()
-    );
-    userTickets.forEach((ticket: any) => {
-      supportMessages.forEach((msg: any) => {
-        if (msg.ticket_id === ticket.id && msg.is_admin_response && !msg.read_by_user) {
-          supportUnread++;
-        }
-      });
-    });
-    setUnreadSupportMessages(supportUnread);
-    
-    // 2. Mensagens do gestor (para funcionários) - use cached isEmployee
-    if (employeeStatus) {
-      const managerConversations = JSON.parse(localStorage.getItem("managerConversations") || "[]");
-      const managerMessages = JSON.parse(localStorage.getItem("managerMessages") || "[]");
-      
-      let managerUnread = 0;
-      const employeeConversations = managerConversations.filter((c: any) => 
-        c.employee_email?.toLowerCase() === userData.email?.toLowerCase()
-      );
-      employeeConversations.forEach((conv: any) => {
-        managerMessages.forEach((msg: any) => {
-          if (msg.conversation_id === conv.id && msg.is_manager_response && !msg.read_by_employee) {
-            managerUnread++;
-          }
-        });
-      });
-      setUnreadManagerMessages(managerUnread);
-    }
-    
-    // 3. Mensagens dos funcionários (para gestores) - use isGestor from hook
-    if (isGestor) {
-      const mockManagers = JSON.parse(localStorage.getItem("mockManagers") || "[]");
-      const currentManager = mockManagers.find((m: any) => 
-        m.email?.toLowerCase() === userData.email?.toLowerCase()
-      );
-      
-      if (currentManager) {
-        const managerConversations = JSON.parse(localStorage.getItem("managerConversations") || "[]");
-        const managerMessages = JSON.parse(localStorage.getItem("managerMessages") || "[]");
-        
-        let employeeUnread = 0;
-        const gestorConversations = managerConversations.filter((c: any) => 
-          c.manager_id === currentManager.id
-        );
-        gestorConversations.forEach((conv: any) => {
-          managerMessages.forEach((msg: any) => {
-            if (msg.conversation_id === conv.id && !msg.is_manager_response && !msg.read_by_manager) {
-              employeeUnread++;
-            }
-          });
-        });
-        setUnreadEmployeeMessages(employeeUnread);
-      }
-    }
-  };
-  
-  const totalUnread = unreadSupportMessages + unreadManagerMessages + unreadEmployeeMessages;
+  // Check achievements on mount
+  useEffect(() => {
+    checkAndUnlockAchievements();
+  }, []);
 
-  // Mostrar loading enquanto verifica role OU estado do sistema
+  // Loading state
   if (roleLoading || systemStateLoading) {
     return (
       <div className="min-h-screen bg-gradient-subtle flex items-center justify-center">
@@ -344,246 +255,287 @@ const Home = () => {
     );
   }
 
-  // ============================================================
-  // RENDERIZAÇÃO CONDICIONAL: Iniciação vs Operacional
-  // ============================================================
-  // 
-  // hasCompletedBase = true  → Modo Operacional (usuário completou Base Pessoal)
-  // hasCompletedBase = false → Modo Iniciação (foco em completar Base Pessoal)
-  //
-  // TODO (Fase 2/3): Mover o conteúdo atual para dentro de HomeOperational
-  // ============================================================
-
+  // Determine card states based on user progress
+  const isInitiationMode = !hasCompletedBase;
+  
   return (
-    <div className="min-h-screen bg-gradient-subtle">
-      {/* Modal de Primeiros Passos */}
-      <FirstStepsModal />
+    <TooltipProvider>
+      <div className="min-h-screen bg-gradient-subtle">
+        {/* First Steps Modal */}
+        <FirstStepsModal />
 
-      {/* Achievement Notification */}
-      {newAchievement && (
-        <AchievementNotification achievement={newAchievement} onDismiss={dismissNewAchievement} />
-      )}
-
-      {/* Modal de Pesquisa de Satisfação */}
-      <SatisfactionSurveyModal
-        open={showSurvey}
-        onOpenChange={setShowSurvey}
-        sectionCompleted={completedSection}
-      />
-
-      {/* Modal de Limite de AI */}
-      <AIUsageLimitModal
-        isOpen={showAILimitModal}
-        onClose={() => setShowAILimitModal(false)}
-        onPurchase={async () => {
-          const url = await aiUsage.createPurchase('/home');
-          if (url) window.open(url, '_blank');
-          setShowAILimitModal(false);
-        }}
-        isLoading={aiUsage.isLoading}
-        featureType="insight"
-        featureName="Insight Personalizado"
-      />
-
-      {/* Modal de Aviso do Diário */}
-      <Dialog open={showDiaryWarningModal} onOpenChange={setShowDiaryWarningModal}>
-        <DialogContent className="sm:max-w-[500px]">
-          <DialogHeader>
-            <div className="flex items-center gap-3 mb-2">
-              <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center">
-                <AlertCircle className="w-6 h-6 text-primary" />
-              </div>
-              <DialogTitle className="text-xl">Momento de Reflexão 📝</DialogTitle>
-            </div>
-            <DialogDescription className="text-base leading-relaxed pt-4 space-y-4">
-              <p>
-                <strong>Olá! Notamos que você não preenche seu diário há alguns dias.</strong>
-              </p>
-              <p>
-                O diário é uma ferramenta poderosa de autoconhecimento e desenvolvimento pessoal. 
-                Reservar alguns minutos por dia para refletir sobre suas experiências, conquistas 
-                e aprendizados ajuda você a:
-              </p>
-              <ul className="list-disc list-inside space-y-2 text-sm ml-4">
-                <li>Manter clareza sobre seus objetivos e progresso</li>
-                <li>Identificar padrões de comportamento e emoções</li>
-                <li>Cultivar gratidão e pensamento positivo</li>
-                <li>Fortalecer o compromisso com seu PDI</li>
-              </ul>
-              <p className="font-semibold text-primary">
-                Que tal dedicar alguns minutos agora para registrar seu dia?
-              </p>
-            </DialogDescription>
-          </DialogHeader>
-          <div className="flex gap-2 justify-end mt-4">
-            <Button variant="outline" onClick={() => setShowDiaryWarningModal(false)}>
-              Mais tarde
-            </Button>
-            <Button onClick={() => setShowDiaryWarningModal(false)}>
-              Vou registrar agora
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
-
-      {/* Modal de Plano de Vida Concluído */}
-      <Dialog open={showPlanoVidaCompleteModal} onOpenChange={setShowPlanoVidaCompleteModal}>
-        <DialogContent className="sm:max-w-[500px]">
-          <DialogHeader>
-            <div className="flex items-center gap-3 mb-2">
-              <div className="w-12 h-12 bg-success/20 rounded-full flex items-center justify-center">
-                <PartyPopper className="w-6 h-6 text-success" />
-              </div>
-              <DialogTitle className="text-xl">Excelente, você concluiu seu plano de vida! 🎉</DialogTitle>
-            </div>
-            <DialogDescription className="text-base leading-relaxed pt-4 space-y-4">
-              <p>
-                Essa foi a etapa mais "teórica" do sistema.
-              </p>
-              <p>
-                <strong>Agora vem a parte prática. Agir.</strong>
-              </p>
-              <p>
-                A seguir, veja as <strong>"Dicas de Eficiência, Produtividade e Clareza"</strong> para tirar o melhor proveito desta jornada.
-              </p>
-              <p className="text-primary font-medium">
-                Estou muito feliz por você! 😊
-              </p>
-            </DialogDescription>
-          </DialogHeader>
-          <div className="flex justify-end mt-4">
-            <Button onClick={() => setShowPlanoVidaCompleteModal(false)}>
-              Entendi
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
-
-      {/* Header - Fundo branco */}
-      <header className="bg-white border-b border-border shadow-sm">
-        <div className="container mx-auto px-3 sm:px-4 py-4 sm:py-6">
-          {/* Top row - Logo, Quote and Actions */}
-          <div className="flex items-start justify-between gap-2 sm:gap-4 mb-3 sm:mb-4">
-            <div className="flex-1 min-w-0">
-              <div className="flex items-center gap-2 sm:gap-3 mb-2">
-                <Logo size="md" showText={false} />
-                <div className="min-w-0">
-                  <h1 className="text-lg sm:text-2xl font-bold text-primary truncate">
-                    PDI - Carreira & Vida
-                  </h1>
-                  <p className="text-xs sm:text-sm text-muted-foreground flex items-center gap-1">
-                    <Star className="w-3 h-3 fill-warning text-warning flex-shrink-0" />
-                    <span className="truncate">Olá, {userName || "Usuário"}!</span>
-                  </p>
-                </div>
-              </div>
-            </div>
-            
-            <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0">
-              <LanguageSelector />
-              {/* Ícone de notificação no header */}
-              {totalUnread > 0 && (
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  className="relative px-2 sm:px-3"
-                  onClick={() => {
-                    if (unreadEmployeeMessages > 0) {
-                      navigate("/gestao-pdis");
-                    } else {
-                      navigate("/suporte");
-                    }
-                  }}
-                >
-                  <Bell className="w-4 h-4" />
-                  <Badge 
-                    variant="destructive" 
-                    className="absolute -top-1 -right-1 h-4 min-w-[16px] p-0 flex items-center justify-center text-[10px]"
-                  >
-                    {totalUnread}
-                  </Badge>
-                </Button>
-              )}
-              <Button 
-                variant="outline" 
-                size="sm" 
-                className="gap-1 sm:gap-2 px-2 sm:px-3" 
-                onClick={() => navigate("/perfil")}
-              >
-                <ProfilePictureAvatar 
-                  profilePictureUrl={profilePictureUrl}
-                  userName={userName}
-                  size="sm"
-                  className="h-6 w-6"
-                />
-                <span className="hidden sm:inline">Perfil</span>
-              </Button>
-              <LogoutButton />
-            </div>
-          </div>
-
-          {/* Bottom row - Motivational quote and progress */}
-          <div className="flex items-center gap-2 sm:gap-3 p-3 sm:p-4 bg-muted/50 rounded-lg border border-border">
-            <div className="w-7 h-7 sm:w-8 sm:h-8 bg-primary/20 rounded-full flex items-center justify-center flex-shrink-0">
-              <Zap className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-primary" />
-            </div>
-            <p className="text-xs sm:text-sm font-bold text-primary line-clamp-2">
-              {isDailyQuoteLoading ? '...' : motivationalQuote}
-            </p>
-          </div>
-        </div>
-      </header>
-
-      {/* Quick Access Navigation - Horizontal Scroll */}
-      <QuickAccessNav isGestor={isGestor} />
-
-      {/* Main Content - Renderização Condicional */}
-      <main className="container mx-auto px-3 sm:px-4 py-4 sm:py-8 space-y-4 sm:space-y-8">
-        {/* Trial Status Banner */}
-        <TrialStatusBanner />
-
-        {/* ============================================================ */}
-        {/* SWITCH: Modo Iniciação vs Modo Operacional                   */}
-        {/* ============================================================ */}
-        {hasCompletedBase ? (
-          <HomeOperational />
-        ) : (
-          <HomeInitiation showAgenda={agendaEnabledInInitiation} />
+        {/* Achievement Notification */}
+        {newAchievement && (
+          <AchievementNotification achievement={newAchievement} onDismiss={dismissNewAchievement} />
         )}
 
-      </main>
-
-      {/* AI Mentor FAB - Apenas no modo operacional */}
-      {hasCompletedBase && (
-        <AIMentorFAB
-          insight={insight}
-          isGenerating={isGeneratingInsight}
-          onGenerate={handleGenerateInsight}
-          canGenerate={canGenerateInsight}
+        {/* Satisfaction Survey Modal */}
+        <SatisfactionSurveyModal
+          open={showSurvey}
+          onOpenChange={setShowSurvey}
+          sectionCompleted={completedSection}
         />
-      )}
 
-      {/* Modal de Tarefa Pré-preenchida (acionado pelo FirstStepsModal "Fazer depois") */}
-      <AgendaTaskModal
-        open={showPrefilledTaskModal}
-        onOpenChange={(open) => {
-          setShowPrefilledTaskModal(open);
-          if (!open) {
-            setPrefilledTaskTitle("");
-            setPrefilledTaskDescription("");
-          }
-        }}
-        onSave={async (task) => {
-          await createEvent(task);
-          // Habilita a agenda no modo iniciação após salvar a tarefa do "Fazer depois"
-          setAgendaEnabledInInitiation(true);
-        }}
-        task={null}
-        selectedDate={new Date()}
-        initialTitle={prefilledTaskTitle}
-        initialDescription={prefilledTaskDescription}
-      />
-    </div>
+        {/* Header */}
+        <header className="bg-white border-b border-border shadow-sm sticky top-0 z-50">
+          <div className="container mx-auto px-4 py-4">
+            <div className="flex items-center justify-between">
+              {/* Left: Logo */}
+              <Logo size="md" />
+              
+              {/* Right: User & Actions */}
+              <div className="flex items-center gap-2 sm:gap-3">
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  className="gap-2" 
+                  onClick={() => navigate("/perfil")}
+                >
+                  <ProfilePictureAvatar 
+                    profilePictureUrl={profilePictureUrl}
+                    userName={userName}
+                    size="sm"
+                    className="h-7 w-7"
+                  />
+                  <span className="hidden sm:inline text-sm font-medium">{userName || "Perfil"}</span>
+                </Button>
+                <LogoutButton showText={false} />
+              </div>
+            </div>
+          </div>
+        </header>
+
+        {/* Main Content */}
+        <main className="container mx-auto px-4 py-6 sm:py-8 space-y-8 sm:space-y-10">
+          {/* Trial Status Banner */}
+          <TrialStatusBanner />
+
+          {/* Welcome Message */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="text-center mb-2"
+          >
+            <h1 className="text-2xl sm:text-3xl font-bold text-foreground mb-2">
+              Olá, {userName || "Usuário"}! 👋
+            </h1>
+            <p className="text-muted-foreground text-sm sm:text-base">
+              {isInitiationMode 
+                ? "Complete sua Base Pessoal para desbloquear o sistema completo."
+                : "Seu hub de desenvolvimento pessoal está pronto."}
+            </p>
+          </motion.div>
+
+          {/* ============================================================ */}
+          {/* SECTION 1: Estrutura do Sistema (Navegação Principal) */}
+          {/* ============================================================ */}
+          <section>
+            <SectionHeader 
+              icon={<Rocket className="w-4 h-4 text-primary" />} 
+              title="Estrutura do Sistema" 
+            />
+            
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              {/* Card 1: Painel de Controle - Destaque Principal */}
+              <div className="sm:col-span-2 lg:col-span-2">
+                <HubCard
+                  title="Painel de Controle"
+                  description="Acompanhe seus objetivos, agenda e realize suas ações diárias."
+                  icon={<LayoutDashboard className="w-full h-full" />}
+                  to="/control-panel"
+                  isPrimary={!isInitiationMode}
+                  isLocked={isInitiationMode}
+                  lockMessage="Complete a Base Pessoal primeiro"
+                  size="large"
+                  tooltipContent="Acesse o painel completo com agenda, objetivos, metas e ações do dia. Este é o centro operacional do seu PDI."
+                />
+              </div>
+
+              {/* Card 2: Base Pessoal */}
+              <HubCard
+                title="Base Pessoal"
+                description="Identidade, Valores e Roda da Vida"
+                icon={<User className="w-full h-full" />}
+                to="/plano-vida/quem-sou"
+                isHighlighted={isInitiationMode}
+                badge={isInitiationMode ? `${baseProgress}%` : step1Done ? "✓" : undefined}
+                tooltipContent="Defina quem você é: sua essência (VVD), seus valores fundamentais e as áreas da sua vida que precisam de atenção."
+              />
+
+              {/* Card 3: Direção & Objetivos */}
+              <HubCard
+                title="Direção & Objetivos"
+                description="VVD, Objetivos e Metas"
+                icon={<Target className="w-full h-full" />}
+                to="/plano-vida/para-onde"
+                isLocked={isInitiationMode}
+                lockMessage="Requer Base Pessoal"
+                badge={step2Done ? "✓" : undefined}
+                tooltipContent="Defina para onde você quer ir: crie objetivos claros conectados à sua essência e estabeleça metas mensuráveis."
+              />
+
+              {/* Card 4: Plano de Execução */}
+              <HubCard
+                title="Plano de Execução"
+                description="Ações, Rotinas e Passos"
+                icon={<Rocket className="w-full h-full" />}
+                to="/plano-vida/como-chegar"
+                isLocked={isInitiationMode || !step2Done}
+                lockMessage={isInitiationMode ? "Requer Base Pessoal" : "Requer Direção definida"}
+                tooltipContent="Transforme seus objetivos em ação: defina passos concretos, rotinas diárias e o caminho para suas conquistas."
+              />
+            </div>
+          </section>
+
+          {/* ============================================================ */}
+          {/* SECTION 2: Dedique 5 minutos por dia (Hábitos Diários) */}
+          {/* ============================================================ */}
+          <section>
+            <SectionHeader 
+              icon={<Sparkles className="w-4 h-4 text-primary" />} 
+              title="Dedique 5 minutos por dia" 
+            />
+            
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {/* Reflexão Estóica */}
+              <HubCard
+                title="Reflexão Estóica"
+                description="Momento diário de sabedoria e clareza mental"
+                icon={<Feather className="w-full h-full" />}
+                to="/reflexao"
+                tooltipContent="Reflexões filosóficas diárias para fortalecer sua mentalidade e manter o foco no que importa."
+              />
+
+              {/* Diário */}
+              <HubCard
+                title="Diário"
+                description="Registre humor, gratidão e aprendizados"
+                icon={<BookOpen className="w-full h-full" />}
+                to="/diario"
+                tooltipContent="Cultive o hábito de reflexão diária: registre seu humor, gratidão, conquistas e aprendizados do dia."
+              />
+            </div>
+          </section>
+
+          {/* ============================================================ */}
+          {/* SECTION 3: Base de Conhecimento */}
+          {/* ============================================================ */}
+          <section>
+            <SectionHeader 
+              icon={<GraduationCap className="w-4 h-4 text-primary" />} 
+              title="Base de Conhecimento" 
+            />
+            
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              {/* Trilha de Desenvolvimento */}
+              <HubCard
+                title="Trilha PDI"
+                description="Curso completo de desenvolvimento"
+                icon={<GraduationCap className="w-full h-full" />}
+                to="/construcao-guiada"
+                size="small"
+                tooltipContent="Aprenda os fundamentos do PDI com vídeos educativos e exercícios práticos organizados em módulos."
+              />
+
+              {/* Suporte */}
+              <HubCard
+                title="Suporte"
+                description="Tire suas dúvidas"
+                icon={<MessageCircle className="w-full h-full" />}
+                to="/suporte"
+                size="small"
+                tooltipContent="Entre em contato com nossa equipe para tirar dúvidas ou relatar problemas."
+              />
+
+              {/* Tutoriais */}
+              <HubCard
+                title="Tutoriais"
+                description="Guias de uso do sistema"
+                icon={<PlayCircle className="w-full h-full" />}
+                to="/tutorial"
+                size="small"
+                tooltipContent="Vídeos e guias passo a passo para dominar todas as funcionalidades do PDI."
+              />
+            </div>
+          </section>
+
+          {/* ============================================================ */}
+          {/* SECTION 4: Recursos Adicionais */}
+          {/* ============================================================ */}
+          <section>
+            <SectionHeader 
+              icon={<Zap className="w-4 h-4 text-primary" />} 
+              title="Recursos Adicionais" 
+            />
+            
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+              {/* Ferramentas */}
+              <HubCard
+                title="Ferramentas"
+                description="SWOT, SMART, Eisenhower..."
+                icon={<Wrench className="w-full h-full" />}
+                to="/ferramentas"
+                size="small"
+                tooltipContent="Acesse todas as ferramentas de autoconhecimento e produtividade do sistema."
+              />
+
+              {/* Progresso */}
+              <HubCard
+                title="Progresso"
+                description="Estatísticas e evolução"
+                icon={<TrendingUp className="w-full h-full" />}
+                to="/progresso"
+                size="small"
+                tooltipContent="Visualize seu progresso ao longo do tempo com gráficos e estatísticas detalhadas."
+              />
+
+              {/* Integrações */}
+              <HubCard
+                title="Integrações"
+                description="Google Calendar, Notion..."
+                icon={<Link2 className="w-full h-full" />}
+                to="/integracoes"
+                size="small"
+                tooltipContent="Conecte o PDI com suas ferramentas favoritas para sincronizar dados automaticamente."
+              />
+
+              {/* FAQ */}
+              <HubCard
+                title="FAQ"
+                description="Perguntas frequentes"
+                icon={<HelpCircle className="w-full h-full" />}
+                to="/faq"
+                size="small"
+                tooltipContent="Encontre respostas para as dúvidas mais comuns sobre o sistema PDI."
+              />
+
+              {/* Relatórios */}
+              <HubCard
+                title="Relatórios"
+                description="PDFs e exportações"
+                icon={<FileText className="w-full h-full" />}
+                to="/relatorios"
+                size="small"
+                tooltipContent="Gere relatórios em PDF do seu PDI para compartilhar ou imprimir."
+              />
+
+              {/* Foto de Perfil */}
+              <HubCard
+                title="Foto de Perfil"
+                description="Personalize sua conta"
+                icon={<Camera className="w-full h-full" />}
+                to="/perfil"
+                size="small"
+                tooltipContent="Atualize sua foto de perfil e informações pessoais."
+              />
+            </div>
+          </section>
+
+          {/* Footer spacing */}
+          <div className="h-8" />
+        </main>
+      </div>
+    </TooltipProvider>
   );
 };
 
