@@ -375,9 +375,9 @@ const PlanoVidaQuemSou = () => {
                   Nesta primeira etapa, conclua as 3 atividades:
                 </p>
                 <ol className="text-sm sm:text-base text-muted-foreground leading-relaxed list-decimal list-inside space-y-1 mt-2">
-                  <li>Criação do seu <strong className="text-foreground">VVD</strong> (Visão de Vida Desejada)</li>
                   <li>Seus <strong className="text-foreground">Valores</strong></li>
                   <li><strong className="text-foreground">Roda da Vida</strong></li>
+                  <li>Criação do seu <strong className="text-foreground">VVD</strong> (Visão de Vida Desejada)</li>
                 </ol>
                 <p className="text-sm sm:text-base text-primary font-semibold mt-3">
                   Mãos à obra!
@@ -420,61 +420,6 @@ const PlanoVidaQuemSou = () => {
               </div>
             ) : (
               <>
-                {/* VVD */}
-                <div className="space-y-3">
-                  <Label htmlFor="vvd">Visão de Vida Desejada (VVD)</Label>
-                  <Textarea
-                    id="vvd"
-                    placeholder="Escreva sua visão de vida ideal em uma frase..."
-                    value={vvd}
-                    onChange={(e) => setVvd(e.target.value)}
-                    disabled={!isEditingVvd}
-                    rows={isMobile ? 8 : 4}
-                    spellCheck="true"
-                    className="text-sm min-h-[120px] sm:min-h-[100px]"
-                  />
-                  <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                    {/* Show "Criar meu VVD" only when VVD is empty */}
-                    {!vvd.trim() && (
-                      <Button 
-                        variant="outline" 
-                        size="sm" 
-                        onClick={() => navigate("/ferramentas/metodo-vvd")}
-                        className="gap-2 text-xs sm:text-sm"
-                      >
-                        <Target className="w-4 h-4" />
-                        Criar meu VVD
-                      </Button>
-                    )}
-                    <div className={`flex gap-2 w-full sm:w-auto ${vvd.trim() ? 'justify-between sm:justify-end' : 'justify-end'}`}>
-                      {!isEditingVvd && vvd.trim() && (
-                        <Button onClick={handleEditVvd} size="sm" variant="outline" className="text-xs sm:text-sm px-2 sm:px-3">
-                          <Edit className="w-3 h-3 sm:w-4 sm:h-4 sm:mr-2" />
-                          <span className="hidden sm:inline">Editar</span>
-                        </Button>
-                      )}
-                      <Button 
-                        onClick={handleSaveVvd} 
-                        size="sm" 
-                        variant="outline"
-                        disabled={!vvd || !isEditingVvd}
-                        className="text-xs sm:text-sm px-2 sm:px-3"
-                      >
-                        Salvar
-                      </Button>
-                      <Button 
-                        onClick={() => setShowVvdModal(true)} 
-                        size="sm" 
-                        variant="ghost"
-                        className="text-xs sm:text-sm px-2 sm:px-3 gap-1.5 text-wine hover:text-wine/80"
-                      >
-                        <MousePointerClick className="w-5 h-5 sm:w-4 sm:h-4 flex-shrink-0" />
-                        <span>Clique aqui</span>
-                      </Button>
-                    </div>
-                  </div>
-                </div>
-
                 {/* Valores */}
                 <div className="space-y-3">
                   <Label>Meus Valores (6 principais)</Label>
@@ -525,7 +470,7 @@ const PlanoVidaQuemSou = () => {
                         className="text-xs sm:text-sm px-2 sm:px-3 gap-1.5 text-wine hover:text-wine/80"
                       >
                         <MousePointerClick className="w-5 h-5 sm:w-4 sm:h-4 flex-shrink-0" />
-                        <span>Clique aqui</span>
+                        <span className="whitespace-nowrap">Entenda Valores</span>
                       </Button>
                     </div>
                   </div>
@@ -594,10 +539,65 @@ const PlanoVidaQuemSou = () => {
                         onClick={() => setShowRodaVidaModal(true)} 
                         size="sm" 
                         variant="ghost"
+                        className="text-[10px] sm:text-sm px-1.5 sm:px-3 gap-1 sm:gap-1.5 text-wine hover:text-wine/80"
+                      >
+                        <MousePointerClick className="w-4 h-4 sm:w-4 sm:h-4 flex-shrink-0" />
+                        <span className="whitespace-nowrap">Entenda a Roda da Vida</span>
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+
+                {/* VVD */}
+                <div className="space-y-3">
+                  <Label htmlFor="vvd">Visão de Vida Desejada (VVD)</Label>
+                  <Textarea
+                    id="vvd"
+                    placeholder="Escreva sua visão de vida ideal em uma frase..."
+                    value={vvd}
+                    onChange={(e) => setVvd(e.target.value)}
+                    disabled={!isEditingVvd}
+                    rows={isMobile ? 8 : 4}
+                    spellCheck="true"
+                    className="text-sm min-h-[120px] sm:min-h-[100px]"
+                  />
+                  <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                    {/* Show "Criar meu VVD" only when VVD is empty */}
+                    {!vvd.trim() && (
+                      <Button 
+                        variant="outline" 
+                        size="sm" 
+                        onClick={() => navigate("/ferramentas/metodo-vvd")}
+                        className="gap-2 text-xs sm:text-sm"
+                      >
+                        <Target className="w-4 h-4" />
+                        Criar meu VVD
+                      </Button>
+                    )}
+                    <div className={`flex gap-2 w-full sm:w-auto ${vvd.trim() ? 'justify-between sm:justify-end' : 'justify-end'}`}>
+                      {!isEditingVvd && vvd.trim() && (
+                        <Button onClick={handleEditVvd} size="sm" variant="outline" className="text-xs sm:text-sm px-2 sm:px-3">
+                          <Edit className="w-3 h-3 sm:w-4 sm:h-4 sm:mr-2" />
+                          <span className="hidden sm:inline">Editar</span>
+                        </Button>
+                      )}
+                      <Button 
+                        onClick={handleSaveVvd} 
+                        size="sm" 
+                        variant="outline"
+                        disabled={!vvd || !isEditingVvd}
+                        className="text-xs sm:text-sm px-2 sm:px-3"
+                      >
+                        Salvar
+                      </Button>
+                      <Button 
+                        onClick={() => setShowVvdModal(true)} 
+                        size="sm" 
+                        variant="ghost"
                         className="text-xs sm:text-sm px-2 sm:px-3 gap-1.5 text-wine hover:text-wine/80"
                       >
                         <MousePointerClick className="w-5 h-5 sm:w-4 sm:h-4 flex-shrink-0" />
-                        <span>Clique aqui</span>
+                        <span className="whitespace-nowrap">Entenda o PDI</span>
                       </Button>
                     </div>
                   </div>
@@ -618,7 +618,7 @@ const PlanoVidaQuemSou = () => {
                       <Lightbulb className="w-5 h-5 text-accent-foreground" />
                     </div>
                     <div>
-                      <CardTitle className="text-lg sm:text-xl">Seu Insight Inicial</CardTitle>
+                      <CardTitle className="text-lg sm:text-xl">Gere o Insight Inicial</CardTitle>
                       <CardDescription className="text-xs sm:text-sm">
                         Uma análise sobre quem você é, baseada no seu VVD, valores e áreas da vida
                       </CardDescription>
