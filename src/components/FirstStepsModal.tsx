@@ -63,18 +63,7 @@ export const FirstStepsModal = () => {
         return;
       }
 
-      const userCreatedAt = new Date(user.created_at);
-      const now = new Date();
-      const daysSinceCreation = Math.floor((now.getTime() - userCreatedAt.getTime()) / (1000 * 60 * 60 * 24));
-      
-      if (daysSinceCreation >= 20 && !hasSeenReactivation) {
-        console.log(`User inactive for ${daysSinceCreation} days with no data, showing reactivation modal`);
-        const timer = setTimeout(() => {
-          setOpen(true);
-        }, 500);
-        return () => clearTimeout(timer);
-      }
-      
+      // Verificar no Supabase se já marcou o modal inicial como visto
       const { data: onboarding } = await supabase
         .from('user_onboarding')
         .select('current_phase')
@@ -86,11 +75,16 @@ export const FirstStepsModal = () => {
         return;
       }
       
-      const hasSeenFirstStepsLocal = localStorage.getItem(FIRST_STEPS_KEY);
-      if (hasSeenFirstStepsLocal) {
+      // Usuário não tem dados e não completou onboarding = mostrar modal
+      // Limpar localStorage para garantir que o modal apareça para este usuário específico
+      const userSpecificKey = `${FIRST_STEPS_KEY}_${user.id}`;
+      const hasSeenForThisUser = localStorage.getItem(userSpecificKey);
+      
+      if (hasSeenForThisUser) {
         return;
       }
       
+      console.log('New user without data, showing welcome modal');
       const timer = setTimeout(() => {
         setOpen(true);
       }, 500);
@@ -101,10 +95,11 @@ export const FirstStepsModal = () => {
   }, []);
 
   const handleClose = async () => {
-    localStorage.setItem(FIRST_STEPS_KEY, "true");
-    localStorage.setItem(REACTIVATION_MODAL_KEY, "true");
-    
+    // Marcar como visto para este usuário específico
     if (userId) {
+      const userSpecificKey = `${FIRST_STEPS_KEY}_${userId}`;
+      localStorage.setItem(userSpecificKey, "true");
+      
       try {
         await supabase
           .from('user_onboarding')
@@ -117,6 +112,9 @@ export const FirstStepsModal = () => {
         console.error('Error saving onboarding status:', error);
       }
     }
+    
+    // Fallback para localStorage genérico (usuários não autenticados)
+    localStorage.setItem(FIRST_STEPS_KEY, "true");
     
     setOpen(false);
     setIsPlaying(false);
