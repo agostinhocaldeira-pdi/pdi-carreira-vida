@@ -184,14 +184,9 @@ export default function RodaDaVida() {
         <Card>
           <CardHeader>
             <CardTitle className="text-3xl font-bold">Roda da Vida</CardTitle>
-            <CardDescription className="text-base mt-2 space-y-1">
-              <p className="font-semibold">Como fazer o exercício</p>
-              <p>Avalie cada área com uma nota de 0 a 10</p>
-              <p className="text-muted-foreground">Zero representa total insatisfação e 10 representa plena realização.</p>
-            </CardDescription>
             <button
               onClick={() => setIsLifeWheelModalOpen(true)}
-              className="mt-4 inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/30 text-primary font-medium text-sm hover:bg-primary/20 hover:border-primary/50 transition-all duration-200 shadow-sm hover:shadow-md"
+              className="mt-3 inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/30 text-primary font-medium text-sm hover:bg-primary/20 hover:border-primary/50 transition-all duration-200 shadow-sm hover:shadow-md"
             >
               <Sparkles className="h-4 w-4" />
               <span className="sm:hidden">Entenda melhor</span>
@@ -208,10 +203,10 @@ export default function RodaDaVida() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Mandala/Radar Chart */}
           <Card>
-            <CardHeader>
+            <CardHeader className="pb-2">
               <CardTitle>Visualização da Roda</CardTitle>
             </CardHeader>
-            <CardContent>
+            <CardContent className="pt-0">
               <ResponsiveContainer width="100%" height={400}>
                 <RadarChart data={chartData}>
                   <PolarGrid stroke="hsl(var(--border))" />
