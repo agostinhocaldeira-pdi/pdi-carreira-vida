@@ -501,12 +501,17 @@ const Valores = () => {
               Exercício de Valores
             </DialogTitle>
             <DialogDescription className="text-center text-base pt-2">
-              A <strong>2ª atividade</strong> do Passo 1 "Quem sou eu" é o exercício sobre <strong>Valores</strong>.
-              <br /><br />
-              Você quer continuar e fazer agora, ou voltar para o Dashboard?
+              A <strong>1ª atividade</strong> do Passo 1 "Quem sou eu" é o exercício sobre <strong>Valores</strong>.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter className="flex-col sm:flex-row gap-2 pt-4">
+            <Button
+              onClick={() => setShowWelcomeModal(false)}
+              className="w-full sm:w-auto gap-2"
+            >
+              <Heart className="w-4 h-4" />
+              Começar
+            </Button>
             <Button
               variant="outline"
               onClick={() => {
@@ -516,14 +521,7 @@ const Valores = () => {
               className="w-full sm:w-auto gap-2"
             >
               <Home className="w-4 h-4" />
-              Voltar ao Dashboard
-            </Button>
-            <Button
-              onClick={() => setShowWelcomeModal(false)}
-              className="w-full sm:w-auto gap-2"
-            >
-              <Heart className="w-4 h-4" />
-              Fazer agora
+              Sair
             </Button>
           </DialogFooter>
         </DialogContent>
