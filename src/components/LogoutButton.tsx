@@ -2,7 +2,6 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { LogOut } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { toast } from "sonner";
 
 interface LogoutButtonProps {
   variant?: "default" | "ghost" | "outline" | "destructive" | "secondary" | "link";
@@ -16,7 +15,6 @@ const LogoutButton = ({ variant = "ghost", size = "sm", showText = true, classNa
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
-    toast.success("Você saiu da sua conta");
     navigate("/news");
   };
 
