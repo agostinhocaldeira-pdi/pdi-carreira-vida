@@ -54,16 +54,8 @@ const LandingNova = () => {
     <div className="min-h-screen bg-[#1a1a1a]">
       {/* Header */}
       <header className="fixed top-0 left-0 right-0 z-50 bg-[#1a1a1a]/95 backdrop-blur-sm border-b border-gray-800">
-        <div className="container mx-auto px-3 sm:px-4 py-3 sm:py-4 flex items-center justify-between">
+        <div className="container mx-auto px-3 sm:px-4 py-3 sm:py-4 flex items-center justify-center">
           <img src={logoPdi} alt="PDI" className="h-10 w-10 object-contain" />
-          <Button 
-            variant="outline" 
-            size="sm"
-            onClick={() => navigate('/login')}
-            className="border-gray-600 text-gray-300 hover:bg-gray-800 hover:text-white"
-          >
-            Entrar
-          </Button>
         </div>
       </header>
 
