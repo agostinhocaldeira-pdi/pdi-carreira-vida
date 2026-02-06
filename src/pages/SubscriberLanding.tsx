@@ -179,23 +179,26 @@ const SubscriberLanding = () => {
       </header>
 
       {/* Hero Section */}
-      <section className="pt-20 sm:pt-36 pb-6 sm:pb-16 px-4 relative overflow-hidden min-h-[100dvh] sm:min-h-0 flex flex-col justify-center">
+      <section className="pt-20 sm:pt-28 pb-6 sm:pb-16 px-4 relative overflow-hidden min-h-[100dvh] sm:min-h-0 flex flex-col justify-center">
         <div className="absolute inset-0 bg-gradient-to-br from-[#D4AF37]/5 via-transparent to-[#D4AF37]/3" />
         <div className="absolute top-20 right-0 w-96 h-96 bg-[#D4AF37]/10 rounded-full blur-3xl animate-pulse" />
         <div className="absolute bottom-0 left-0 w-80 h-80 bg-[#D4AF37]/5 rounded-full blur-3xl" />
         
-        <div className="container relative mx-auto max-w-3xl text-center">
-          <h1 className="text-xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-3 sm:mb-6 text-white leading-tight">
-            Você já percebeu onde sua vida está{" "}
-            <span className="text-[#D4AF37]">desalinhada</span>.
-          </h1>
-          
-          <h2 className="text-base sm:text-xl md:text-2xl text-white/80 mb-4 sm:mb-8 font-light leading-relaxed">
-            Agora é hora de viver com mais clareza, intenção e direção.
-          </h2>
-          
-          {/* Video YouTube */}
-          <div className="w-full max-w-3xl mx-auto mb-6 sm:mb-10">
+        <div className="container relative mx-auto max-w-6xl">
+          {/* Headlines - centered on all screens */}
+          <div className="text-center mb-6 sm:mb-10">
+            <h1 className="text-xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-3 sm:mb-6 text-white leading-tight">
+              Você já percebeu onde sua vida está{" "}
+              <span className="text-[#D4AF37]">desalinhada</span>.
+            </h1>
+            
+            <h2 className="text-base sm:text-xl md:text-2xl text-white/80 font-light leading-relaxed">
+              Agora é hora de viver com mais clareza, intenção e direção.
+            </h2>
+          </div>
+
+          {/* Mobile: Video only, full width */}
+          <div className="lg:hidden w-full mb-6">
             <div className="relative w-full aspect-video rounded-xl overflow-hidden shadow-2xl">
               <iframe
                 src="https://www.youtube-nocookie.com/embed/DM2O6USHJQg?autoplay=1&mute=1&loop=1&playlist=DM2O6USHJQg&controls=0&modestbranding=1&rel=0&showinfo=0"
@@ -206,13 +209,57 @@ const SubscriberLanding = () => {
               />
             </div>
           </div>
+
+          {/* Desktop: Two columns - Video 9:16 left, Content right */}
+          <div className="hidden lg:grid lg:grid-cols-2 gap-10 items-center">
+            {/* Video 9:16 - Left */}
+            <div className="flex justify-center">
+              <div className="relative w-full max-w-[320px] aspect-[9/16] rounded-xl overflow-hidden shadow-2xl">
+                <iframe
+                  src="https://www.youtube-nocookie.com/embed/DM2O6USHJQg?autoplay=1&mute=1&loop=1&playlist=DM2O6USHJQg&controls=0&modestbranding=1&rel=0&showinfo=0"
+                  title="PDI - Sistema de Clareza"
+                  className="absolute inset-0 w-full h-full"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                />
+              </div>
+            </div>
+
+            {/* O que acontece agora - Right */}
+            <div className="text-left">
+              <h2 className="text-2xl md:text-3xl font-bold text-white mb-6">
+                O que acontece agora
+              </h2>
+              
+              <div className="text-white/70 text-base md:text-lg leading-relaxed space-y-5">
+                <p>
+                  A partir daqui, você não vai aprender a fazer mais.<br />
+                  Vai aprender a <span className="text-[#D4AF37] font-medium">decidir melhor</span>.
+                </p>
+                
+                <p>
+                  O sistema que você está prestes a acessar<br />
+                  organiza a vida na única ordem que realmente sustenta:
+                </p>
+                
+                <p className="text-[#D4AF37] font-medium text-lg md:text-xl">
+                  vida → objetivo → metas → ações → passos → presença
+                </p>
+                
+                <p>
+                  Não para acelerar você.<br />
+                  <span className="text-white font-medium">Para tirar peso.</span>
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
-      {/* O que acontece agora */}
-      <section className="py-12 sm:py-16 px-4">
+      {/* O que acontece agora - Mobile only */}
+      <section className="lg:hidden py-12 px-4">
         <div className="container mx-auto max-w-3xl">
-          <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-white mb-6 text-center">
+          <h2 className="text-xl sm:text-2xl font-bold text-white mb-6 text-center">
             O que acontece agora
           </h2>
           
