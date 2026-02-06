@@ -5,6 +5,8 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Volume2, VolumeX, Loader2 } from "lucide-react";
+import { useSmartExplanationAudio } from "@/hooks/useSmartExplanationAudio";
 
 interface SmartScientificModalProps {
   open: boolean;
@@ -12,12 +14,33 @@ interface SmartScientificModalProps {
 }
 
 const SmartScientificModal = ({ open, onOpenChange }: SmartScientificModalProps) => {
+  const { isPlaying: audioPlaying, isLoading: audioLoading, toggleAudio } = useSmartExplanationAudio();
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-2xl max-h-[90vh]">
         <DialogHeader>
-          <DialogTitle className="text-xl font-bold text-primary">
-            A importância de utilizar o método SMART para criar suas metas
+          <DialogTitle className="flex items-center justify-between text-xl font-bold text-primary">
+            <span>A importância de utilizar o método SMART para criar suas metas</span>
+            {/* Audio button */}
+            <button
+              onClick={toggleAudio}
+              disabled={audioLoading}
+              className="flex flex-col items-center gap-1 text-primary hover:text-primary/80 transition-colors disabled:opacity-50 ml-2 flex-shrink-0"
+            >
+              <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+                {audioLoading ? (
+                  <Loader2 className="w-5 h-5 animate-spin" />
+                ) : audioPlaying ? (
+                  <VolumeX className="w-5 h-5" />
+                ) : (
+                  <Volume2 className="w-5 h-5" />
+                )}
+              </div>
+              <span className="text-[10px]">
+                {audioLoading ? "..." : audioPlaying ? "Parar" : "Ouvir"}
+              </span>
+            </button>
           </DialogTitle>
         </DialogHeader>
         <ScrollArea className="max-h-[70vh] pr-4">

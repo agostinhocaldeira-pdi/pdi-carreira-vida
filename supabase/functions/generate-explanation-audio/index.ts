@@ -135,6 +135,30 @@ Lembre-se: não é sobre ter todas as habilidades do mundo. É sobre identificar
 
 Foque nas habilidades que vão te ajudar a dar o próximo passo na direção da vida que você quer construir.`,
   },
+  smart: {
+    filename: "smart-explanation-audio.mp3",
+    text: `A importância de utilizar o método SMART para criar suas metas.
+
+Ter objetivos é comum. Alcançá-los de forma consistente não é.
+
+O principal motivo disso é simples: a maioria das metas é mal definida. São vagas, genéricas, irreais ou desconectadas da rotina e da vida real.
+
+A ferramenta de Metas SMART existe para corrigir exatamente isso.
+
+Uma meta SMART é estruturada para ser: Específica, deixando claro o que deve ser feito. Mensurável, permitindo acompanhar progresso e resultado. Atingível, respeitando sua realidade atual. Relevante, fazendo sentido para sua vida e seus objetivos maiores. E Temporal, tendo prazo definido.
+
+Na prática, isso transforma um desejo genérico em um compromisso claro com direção, critério e prazo.
+
+Metas mal definidas geram procrastinação, frustração constante, sensação de estar sempre recomeçando, e muito esforço com pouco resultado.
+
+Metas SMART fazem o oposto. Elas tiram a meta do campo da intenção e colocam no campo da execução consciente.
+
+No PDI, as Metas SMART traduzem a Visão de Vida Desejada em objetivos concretos, servem como ponte entre intenção e ação, facilitam o acompanhamento contínuo da evolução, e permitem ajustes conscientes, sem sensação de fracasso.
+
+Usar Metas SMART não é sobre rigidez ou cobrança excessiva. É sobre clareza, direção e respeito à sua própria realidade.
+
+Quando suas metas são claras, o caminho fica mais leve. E o progresso deixa de ser uma promessa distante para se tornar algo visível e constante.`,
+  },
 };
 
 serve(async (req) => {
