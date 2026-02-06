@@ -117,6 +117,24 @@ Lembre-se: cada objetivo que você define deve estar alinhado com a visão de vi
 
 Pense no objetivo como um passo estratégico. Não é qualquer conquista. É a conquista certa, no momento certo, para te aproximar da vida que você realmente quer viver.`,
   },
+  habilidades: {
+    filename: "habilidades-explanation-audio.mp3",
+    text: `Como descobrir habilidades que precisam ser desenvolvidas.
+
+Uma habilidade a desenvolver é uma competência que você ainda não domina, mas que é essencial para alcançar seus objetivos e viver a vida que você projetou na sua VVD.
+
+Identificar essas habilidades é um passo fundamental no seu PDI porque mostra exatamente onde você precisa crescer para chegar onde quer.
+
+Existem duas formas principais de descobrir quais habilidades você precisa desenvolver:
+
+Primeiro, a Autoavaliação combinada com feedback 360 graus. Neste exercício, você avalia suas próprias competências e pede para pessoas de confiança avaliarem você também. A diferença entre como você se vê e como os outros te veem revela pontos cegos importantes.
+
+Segundo, você pode explorar as outras ferramentas disponíveis no sistema, como a análise SWOT pessoal, que ajuda a identificar suas fraquezas e ameaças que podem exigir novas habilidades.
+
+Lembre-se: não é sobre ter todas as habilidades do mundo. É sobre identificar aquelas que são estratégicas para os seus objetivos específicos.
+
+Foque nas habilidades que vão te ajudar a dar o próximo passo na direção da vida que você quer construir.`,
+  },
 };
 
 serve(async (req) => {
