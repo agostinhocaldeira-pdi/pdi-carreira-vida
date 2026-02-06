@@ -63,7 +63,6 @@ export default function RodaDaVida() {
   const [isSaving, setIsSaving] = useState(false);
   const [isLifeWheelModalOpen, setIsLifeWheelModalOpen] = useState(false);
   const [hoveredSlider, setHoveredSlider] = useState<{ index: number; type: 'atual' | 'desejada' } | null>(null);
-  const [showWelcomeModal, setShowWelcomeModal] = useState(false);
   const [showSuccessDialog, setShowSuccessDialog] = useState(false);
 
   // Carregar áreas do Supabase
@@ -81,13 +80,8 @@ export default function RodaDaVida() {
             notaDesejada: a.nota_desejada
           })));
           
-          // Se não tem notas preenchidas, mostrar modal de boas-vindas
-          if (!hasFilledAreas) {
-            setShowWelcomeModal(true);
-          }
         } else {
-          // Nenhuma área salva, mostrar modal de boas-vindas
-          setShowWelcomeModal(true);
+          // Nenhuma área salva, usar defaults
         }
       } catch (error) {
         console.error('Erro ao carregar áreas:', error);
@@ -438,40 +432,6 @@ export default function RodaDaVida() {
           </AlertDialogContent>
         </AlertDialog>
 
-        {/* Modal de boas-vindas para usuários que não preencheram */}
-        <Dialog open={showWelcomeModal} onOpenChange={setShowWelcomeModal}>
-          <DialogContent className="sm:max-w-md">
-            <DialogHeader>
-              <DialogTitle className="text-xl text-center">
-                <CircleDot className="w-8 h-8 text-primary mx-auto mb-2" />
-                Roda da Vida
-              </DialogTitle>
-              <DialogDescription className="text-center text-base pt-2">
-                A <strong>2ª atividade</strong> do Passo 1 "Quem sou eu" é o exercício sobre <strong>Áreas da Vida</strong>.
-              </DialogDescription>
-            </DialogHeader>
-            <DialogFooter className="flex-col sm:flex-row gap-2 pt-4">
-              <Button
-                onClick={() => setShowWelcomeModal(false)}
-                className="w-full sm:w-auto gap-2"
-              >
-                <CircleDot className="w-4 h-4" />
-                Começar
-              </Button>
-              <Button
-                variant="outline"
-                onClick={() => {
-                  setShowWelcomeModal(false);
-                  navigate("/home");
-                }}
-                className="w-full sm:w-auto gap-2"
-              >
-                <Home className="w-4 h-4" />
-                Sair
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
       </div>
     </div>
   );
