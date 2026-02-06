@@ -649,7 +649,7 @@ const MaoNaMassa = ({ embedded = false, fullscreenMode = false, onOpenFullscreen
                     <Rocket className="w-5 h-5 text-primary" />
                     {editandoMetaId ? "Editar Meta" : "Nova Meta"}
                   </h3>
-            <div className="space-y-2">
+            <div className="space-y-2 min-w-0">
               <Label htmlFor="objetivo">Objetivo</Label>
               <Select
                 value={objetivoSelecionado}
@@ -658,7 +658,7 @@ const MaoNaMassa = ({ embedded = false, fullscreenMode = false, onOpenFullscreen
                   setMeta({ ...meta, objetivoId: value });
                 }}
               >
-                <SelectTrigger id="objetivo">
+                <SelectTrigger id="objetivo" className="w-full min-w-0">
                   <SelectValue placeholder="Selecione um objetivo" />
                 </SelectTrigger>
                 <SelectContent>
@@ -675,7 +675,7 @@ const MaoNaMassa = ({ embedded = false, fullscreenMode = false, onOpenFullscreen
               </Select>
             </div>
 
-            <div className="space-y-2">
+            <div className="space-y-2 min-w-0">
               <Label htmlFor="meta">Meta</Label>
               <Input
                 id="meta"
@@ -684,6 +684,7 @@ const MaoNaMassa = ({ embedded = false, fullscreenMode = false, onOpenFullscreen
                 onChange={(e) => setMeta({ ...meta, texto: e.target.value })}
                 disabled={!objetivoSelecionado}
                 spellCheck="true"
+                className="w-full min-w-0"
               />
               <Link 
                 to="/ferramentas/smart" 
