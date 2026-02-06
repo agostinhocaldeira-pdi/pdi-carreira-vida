@@ -50,6 +50,7 @@ const MetodoVvd = () => {
   const [showAILimitModal, setShowAILimitModal] = useState(false);
   const [pendingAIStep, setPendingAIStep] = useState<"step1" | "step2" | null>(null);
   const [showCompletionModal, setShowCompletionModal] = useState(false);
+  const [isEditingVvd, setIsEditingVvd] = useState(false);
   
   // AI Usage hook for purchasing additional usage
   const aiUsage = useAIUsage('vvd');
@@ -455,15 +456,32 @@ const MetodoVvd = () => {
             <CardContent className="space-y-6">
               {step === 1 && (
                 <>
+                  {!isEditingVvd && !freeText.trim() && (
+                    <div className="flex flex-col items-center justify-center py-8 space-y-4">
+                      <p className="text-muted-foreground text-center">
+                        Clique no botão abaixo para começar a escrever sua VVD
+                      </p>
+                      <Button
+                        onClick={() => setIsEditingVvd(true)}
+                        size="lg"
+                        className="gap-2 bg-gradient-to-r from-primary to-accent hover:opacity-90"
+                      >
+                        <Edit className="w-5 h-5" />
+                        Criar meu VVD
+                      </Button>
+                    </div>
+                  )}
+                  
                   <Textarea
                     value={freeText}
                     onChange={(e) => setFreeText(e.target.value)}
                     placeholder="Comece a escrever sua visão de vida desejada aqui..."
-                    className="min-h-[300px] text-base resize-none focus:ring-2 focus:ring-primary"
+                    className={`min-h-[300px] text-base resize-none focus:ring-2 focus:ring-primary ${!isEditingVvd && !freeText.trim() ? 'hidden' : ''}`}
                     spellCheck
+                    disabled={!isEditingVvd && !freeText.trim()}
                   />
 
-                  {hasUsedAI && (
+                  {(isEditingVvd || freeText.trim()) && hasUsedAI && (
                     <div className="bg-accent/10 border border-accent/20 rounded-lg p-4">
                       <p className="text-sm text-muted-foreground text-center">
                         ℹ️ Você já utilizou a IA para criar seu VVD. Para fazer alterações, prossiga manualmente ou use o botão Editar nas próximas etapas.
@@ -471,6 +489,7 @@ const MetodoVvd = () => {
                     </div>
                   )}
 
+                  {(isEditingVvd || freeText.trim()) && (
                   <div className="flex flex-col sm:flex-row justify-end gap-3">
                     <Button
                       onClick={handleStep1ManualSave}
@@ -505,7 +524,9 @@ const MetodoVvd = () => {
                       )}
                     </Button>
                   </div>
+                  )}
 
+                  {(isEditingVvd || freeText.trim()) && (
                   <div className="pt-4 border-t border-muted">
                     <Button
                       variant="ghost"
@@ -516,6 +537,7 @@ const MetodoVvd = () => {
                       Voltar Dashboard
                     </Button>
                   </div>
+                  )}
                 </>
               )}
               
