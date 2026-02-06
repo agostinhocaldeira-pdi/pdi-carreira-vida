@@ -379,9 +379,9 @@ const MetodoVvd = () => {
             </p>
             <button 
               onClick={() => setIsVvdModalOpen(true)}
-              className="mt-3 inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/30 text-primary font-medium text-sm hover:bg-primary/20 hover:border-primary/50 transition-all duration-200 shadow-sm hover:shadow-md"
+              className="mt-3 inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/30 text-primary font-medium text-sm hover:bg-primary/20 hover:border-primary/50 transition-all duration-200 shadow-sm hover:shadow-md whitespace-nowrap"
             >
-              <Sparkles className="h-4 w-4" />
+              <Sparkles className="h-4 w-4 shrink-0" />
               <span className="sm:hidden">Entenda melhor</span>
               <span className="hidden sm:inline">Entenda a importância de saber claramente o que você quer para sua vida</span>
             </button>
