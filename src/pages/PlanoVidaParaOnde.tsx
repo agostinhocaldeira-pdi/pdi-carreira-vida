@@ -11,7 +11,8 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Target, ArrowRight, ArrowLeft, Home, Plus, Trash2, Pencil, Check, X, ChevronDown, Lightbulb, Star, MousePointerClick, Volume2, VolumeX, Loader2 } from "lucide-react";
+import { Target, ArrowRight, ArrowLeft, Home, Plus, Trash2, Pencil, Check, X, ChevronDown, Lightbulb, Star, MousePointerClick, Volume2, VolumeX, Loader2, Eye } from "lucide-react";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { PDILoader } from "@/components/ui/pdi-loader";
 import { toast } from "sonner";
@@ -75,6 +76,9 @@ const PlanoVidaParaOnde = () => {
 
   // Estado para insight inicial
   const [insightInicial, setInsightInicial] = useState("");
+  
+  // Estado para VVD do usuário
+  const [userVvd, setUserVvd] = useState("");
 
   // Estado para modal explicativo de objetivos
   const [showObjetivoExplicativoModal, setShowObjetivoExplicativoModal] = useState(false);
@@ -107,6 +111,12 @@ const PlanoVidaParaOnde = () => {
         if (savedInsightInicial) {
           const parsed = JSON.parse(savedInsightInicial);
           setInsightInicial(parsed.insight || "");
+        }
+        
+        // Load VVD
+        const savedVvd = await storage.getVvd();
+        if (savedVvd) {
+          setUserVvd(savedVvd);
         }
       } catch (error) {
         console.error("Error loading data:", error);
@@ -847,7 +857,30 @@ const PlanoVidaParaOnde = () => {
                         </div>
 
                         <div className="space-y-2">
-                          <Label htmlFor="conexaoVvd">Conexão com o VVD</Label>
+                          <div className="flex items-center gap-2">
+                            <Label htmlFor="conexaoVvd">Conexão com o VVD</Label>
+                            {userVvd && (
+                              <Popover>
+                                <PopoverTrigger asChild>
+                                  <button
+                                    type="button"
+                                    className="p-1 rounded-full hover:bg-primary/10 transition-colors"
+                                    title="Ver meu VVD"
+                                  >
+                                    <Eye className="w-4 h-4 text-primary" />
+                                  </button>
+                                </PopoverTrigger>
+                                <PopoverContent className="w-80" align="start">
+                                  <div className="space-y-2">
+                                    <h4 className="font-semibold text-sm">Minha Visão de Vida Desejada</h4>
+                                    <p className="text-sm text-muted-foreground italic">
+                                      "{userVvd}"
+                                    </p>
+                                  </div>
+                                </PopoverContent>
+                              </Popover>
+                            )}
+                          </div>
                           <Textarea
                             id="conexaoVvd"
                             placeholder="Como este objetivo se conecta com sua visão de vida?"
