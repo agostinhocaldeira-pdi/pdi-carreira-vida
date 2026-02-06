@@ -20,28 +20,29 @@ const SmartScientificModal = ({ open, onOpenChange }: SmartScientificModalProps)
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-2xl max-h-[90vh]">
         <DialogHeader>
-          <DialogTitle className="flex items-center justify-between text-xl font-bold text-primary">
-            <span>A importância de utilizar o método SMART para criar suas metas</span>
-            {/* Audio button */}
-            <button
-              onClick={toggleAudio}
-              disabled={audioLoading}
-              className="flex flex-col items-center gap-1 text-primary hover:text-primary/80 transition-colors disabled:opacity-50 ml-2 flex-shrink-0"
-            >
-              <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
-                {audioLoading ? (
-                  <Loader2 className="w-5 h-5 animate-spin" />
-                ) : audioPlaying ? (
-                  <VolumeX className="w-5 h-5" />
-                ) : (
-                  <Volume2 className="w-5 h-5" />
-                )}
-              </div>
-              <span className="text-[10px]">
-                {audioLoading ? "..." : audioPlaying ? "Parar" : "Ouvir"}
-              </span>
-            </button>
+          <DialogTitle className="text-xl font-bold text-primary">
+            A importância de utilizar o método SMART para criar suas metas
           </DialogTitle>
+          
+          {/* Audio button below title */}
+          <button
+            onClick={toggleAudio}
+            disabled={audioLoading}
+            className="flex flex-col items-center gap-1 text-primary hover:text-primary/80 transition-colors disabled:opacity-50 mt-4 mx-auto"
+          >
+            <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
+              {audioLoading ? (
+                <Loader2 className="w-6 h-6 animate-spin" />
+              ) : audioPlaying ? (
+                <VolumeX className="w-6 h-6" />
+              ) : (
+                <Volume2 className="w-6 h-6" />
+              )}
+            </div>
+            <span className="text-xs">
+              {audioLoading ? "Carregando..." : audioPlaying ? "Clique para parar" : "Clique para ouvir"}
+            </span>
+          </button>
         </DialogHeader>
         <ScrollArea className="max-h-[70vh] pr-4">
           <div className="space-y-6 text-sm text-muted-foreground">
