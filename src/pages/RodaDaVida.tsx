@@ -449,12 +449,17 @@ export default function RodaDaVida() {
                 Roda da Vida
               </DialogTitle>
               <DialogDescription className="text-center text-base pt-2">
-                A <strong>3ª atividade</strong> do Passo 1 "Quem sou eu" é o exercício sobre <strong>Áreas da Vida</strong>.
-                <br /><br />
-                Você quer continuar e fazer agora, ou voltar para o Dashboard?
+                A <strong>2ª atividade</strong> do Passo 1 "Quem sou eu" é o exercício sobre <strong>Áreas da Vida</strong>.
               </DialogDescription>
             </DialogHeader>
             <DialogFooter className="flex-col sm:flex-row gap-2 pt-4">
+              <Button
+                onClick={() => setShowWelcomeModal(false)}
+                className="w-full sm:w-auto gap-2"
+              >
+                <CircleDot className="w-4 h-4" />
+                Começar
+              </Button>
               <Button
                 variant="outline"
                 onClick={() => {
@@ -464,14 +469,7 @@ export default function RodaDaVida() {
                 className="w-full sm:w-auto gap-2"
               >
                 <Home className="w-4 h-4" />
-                Voltar ao Dashboard
-              </Button>
-              <Button
-                onClick={() => setShowWelcomeModal(false)}
-                className="w-full sm:w-auto gap-2"
-              >
-                <CircleDot className="w-4 h-4" />
-                Fazer agora
+                Sair
               </Button>
             </DialogFooter>
           </DialogContent>
