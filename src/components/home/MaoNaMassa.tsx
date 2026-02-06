@@ -12,9 +12,10 @@ import { Rocket, Plus, Trash2, Pencil, Check, X, ChevronDown, Lightbulb, Loader2
 import { PDILoader } from "@/components/ui/pdi-loader";
 import { toast } from "sonner";
 import { useNavigate, Link } from "react-router-dom";
+import { useQueryClient } from "@tanstack/react-query";
 import ConfirmDeleteDialog from "@/components/ConfirmDeleteDialog";
 import { usePDIStorage } from "@/hooks/usePDIStorage";
-import { usePDIData, useDeleteMeta, useSaveMeta } from "@/hooks/usePDIQueries";
+import { usePDIData, useDeleteMeta, useSaveMeta, PDI_QUERY_KEYS } from "@/hooks/usePDIQueries";
 import { useActionCelebration } from "@/contexts/ActionCelebrationContext";
 
 interface MaoNaMassaProps {
@@ -28,6 +29,7 @@ const MaoNaMassa = ({ embedded = false, fullscreenMode = false, onOpenFullscreen
   const storage = usePDIStorage();
   const formRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const { celebrateAction } = useActionCelebration();
   
   // React Query hooks for optimized data fetching
@@ -1227,7 +1229,7 @@ const MaoNaMassa = ({ embedded = false, fullscreenMode = false, onOpenFullscreen
   const modals = (
     <>
       <Dialog open={showSuggestionModal} onOpenChange={setShowSuggestionModal}>
-        <DialogContent className="max-w-lg">
+        <DialogContent className="max-w-md">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2 text-xl">
               <Target className="w-6 h-6 text-success" />
@@ -1237,46 +1239,49 @@ const MaoNaMassa = ({ embedded = false, fullscreenMode = false, onOpenFullscreen
               Parabéns! Você acabou de dar um passo importante para alcançar seus objetivos.
             </DialogDescription>
           </DialogHeader>
-          <div className="space-y-4 py-4">
-            <div className="bg-accent/10 border border-accent/20 rounded-lg p-4">
-              <div className="flex items-start gap-3">
-                <LayoutGrid className="w-6 h-6 text-accent mt-0.5 flex-shrink-0" />
-                <div className="space-y-2">
-                  <p className="font-medium text-foreground">
-                    Organize suas tarefas na Matriz de Eisenhower
-                  </p>
-                  <p className="text-sm text-muted-foreground">
-                    Esta ferramenta te ajuda a separar o que é urgente, importante e dizer NÃO para o restante.
-                  </p>
-                  <p className="text-sm text-muted-foreground">
-                    É um exercício muito importante para saber eliminar o que não contribui para alcançar sua meta.
-                  </p>
-                </div>
-              </div>
-            </div>
+          <div className="py-4">
+            <p className="text-center text-foreground font-medium">
+              Você deseja cadastrar nova meta?
+            </p>
           </div>
           <DialogFooter className="flex-col sm:flex-row gap-2">
             <Button 
               variant="outline"
               onClick={() => {
                 setShowSuggestionModal(false);
-                navigate('/home', { state: { showPlanoVidaCompleteModal: true } });
+                // Close fullscreen if active
+                if (onCloseFullscreen) {
+                  onCloseFullscreen();
+                }
+                // Navigate to home and trigger cache refresh
+                queryClient.invalidateQueries({ queryKey: PDI_QUERY_KEYS.pdiData() });
+                navigate('/home', { state: { refreshCache: true } });
               }}
               className="w-full sm:w-auto"
             >
-              Fazer depois
+              Não, ir para o painel
             </Button>
             <Button 
               onClick={() => {
                 setShowSuggestionModal(false);
-                navigate('/ferramentas/eisenhower');
+                // Reset form for new meta
+                setObjetivoSelecionado("");
+                setMeta({
+                  objetivoId: "",
+                  texto: "",
+                  dataAlvo: "",
+                  medicao: "",
+                  inicio: "",
+                  passos: "",
+                });
+                setAcoes([]);
+                setPassos([]);
+                setIsFormOpen(true);
               }}
-              className="w-full sm:w-auto gap-2 text-xs sm:text-sm"
+              className="w-full sm:w-auto gap-2"
             >
-              <LayoutGrid className="w-4 h-4" />
-              <span className="sm:hidden">Ir para Matriz</span>
-              <span className="hidden sm:inline">Ir para Matriz de Eisenhower</span>
-              <ArrowRight className="w-4 h-4" />
+              <Plus className="w-4 h-4" />
+              Sim, cadastrar nova
             </Button>
           </DialogFooter>
         </DialogContent>

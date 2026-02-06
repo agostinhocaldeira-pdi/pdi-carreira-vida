@@ -5,7 +5,8 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Volume2, VolumeX, Loader2 } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Volume2, VolumeX, Loader2, Target, CheckCircle2, Sparkles, Bot } from "lucide-react";
 import { useSmartExplanationAudio } from "@/hooks/useSmartExplanationAudio";
 
 interface SmartScientificModalProps {
@@ -21,7 +22,7 @@ const SmartScientificModal = ({ open, onOpenChange }: SmartScientificModalProps)
       <DialogContent className="max-w-2xl max-h-[90vh]">
         <DialogHeader>
           <DialogTitle className="text-xl font-bold text-primary">
-            A importância de utilizar o método SMART para criar suas metas
+            Entenda melhor a SMART
           </DialogTitle>
           
           {/* Audio button below title */}
@@ -46,37 +47,89 @@ const SmartScientificModal = ({ open, onOpenChange }: SmartScientificModalProps)
         </DialogHeader>
         <ScrollArea className="max-h-[70vh] pr-4">
           <div className="space-y-6 text-sm text-muted-foreground">
-            <section>
-              <p className="mb-3">
-                Ter objetivos é comum.<br />
-                Alcançá-los de forma consistente não é.
-              </p>
-              <p className="mb-3">
-                O principal motivo disso é simples: a maioria das metas é mal definida. São vagas, genéricas, irreais ou desconectadas da rotina e da vida real.
-              </p>
-              <p className="font-medium text-foreground">
-                A ferramenta de Metas SMART existe para corrigir exatamente isso.
-              </p>
+            
+            {/* Section: Objetivo vs Meta */}
+            <section className="space-y-4">
+              <h3 className="font-semibold text-foreground text-lg flex items-center gap-2">
+                Objetivo vs Meta
+              </h3>
+              <div className="grid md:grid-cols-2 gap-4">
+                <div className="p-4 bg-blue-50 dark:bg-blue-950/30 rounded-lg border-2 border-blue-200 dark:border-blue-800">
+                  <h4 className="font-bold text-base mb-2 flex items-center gap-2">
+                    <Target className="w-5 h-5 text-blue-600" />
+                    Objetivo
+                  </h4>
+                  <p className="text-sm text-muted-foreground mb-3">
+                    É o seu sonho, sua direção geral. Mais amplo e genérico.
+                  </p>
+                  <div className="space-y-2">
+                    <Badge variant="secondary" className="text-xs">Exemplo:</Badge>
+                    <p className="text-sm italic">"Ser fluente em inglês"</p>
+                    <p className="text-sm italic">"Ter uma carreira de sucesso"</p>
+                    <p className="text-sm italic">"Ser mais saudável"</p>
+                  </div>
+                </div>
+
+                <div className="p-4 bg-emerald-50 dark:bg-emerald-950/30 rounded-lg border-2 border-emerald-200 dark:border-emerald-800">
+                  <h4 className="font-bold text-base mb-2 flex items-center gap-2">
+                    <CheckCircle2 className="w-5 h-5 text-emerald-600" />
+                    Meta SMART
+                  </h4>
+                  <p className="text-sm text-muted-foreground mb-3">
+                    É o passo concreto e mensurável para alcançar seu objetivo.
+                  </p>
+                  <div className="space-y-2">
+                    <Badge variant="secondary" className="text-xs">Exemplo:</Badge>
+                    <p className="text-sm italic">"Obter certificado TOEFL com 100 pontos até dezembro"</p>
+                    <p className="text-sm italic">"Ser promovido a gerente até junho de 2026"</p>
+                    <p className="text-sm italic">"Perder 10kg em 6 meses praticando 4x/semana"</p>
+                  </div>
+                </div>
+              </div>
             </section>
 
-            <section>
-              <h3 className="font-semibold text-foreground mb-2">O que são Metas SMART (na prática)</h3>
-              <p className="mb-2">Uma meta SMART é estruturada para ser:</p>
-              <ul className="list-none space-y-1 ml-2">
+            {/* Section: O que é SMART */}
+            <section className="p-4 bg-gradient-to-r from-primary/10 via-primary/5 to-primary/10 rounded-lg border border-primary/20">
+              <h3 className="font-semibold mb-2 flex items-center gap-2">
+                <Sparkles className="w-4 h-4 text-primary" />
+                O que é SMART?
+              </h3>
+              <p className="text-sm text-muted-foreground mb-3">
+                SMART é um método para criar metas eficazes através de 5 critérios:
+              </p>
+              <div className="grid sm:grid-cols-5 gap-2 mb-4">
+                {["Específico", "Mensurável", "Atingível", "Relevante", "Temporal"].map((item, i) => (
+                  <Badge key={i} className="justify-center">{item}</Badge>
+                ))}
+              </div>
+              <ul className="list-none space-y-1 ml-2 text-sm">
                 <li><strong>S – Específica:</strong> deixa claro o que deve ser feito</li>
                 <li><strong>M – Mensurável:</strong> permite acompanhar progresso e resultado</li>
                 <li><strong>A – Atingível:</strong> respeita sua realidade atual</li>
                 <li><strong>R – Relevante:</strong> faz sentido para sua vida e seus objetivos maiores</li>
                 <li><strong>T – Temporal:</strong> tem prazo definido</li>
               </ul>
-              <p className="mt-3">
-                Na prática, isso transforma um desejo genérico em um compromisso claro com direção, critério e prazo.
+            </section>
+
+            {/* Section: Mentoria IA */}
+            <section className="p-4 bg-gradient-to-r from-violet-50 via-purple-50 to-violet-50 dark:from-violet-950/30 dark:via-purple-950/30 dark:to-violet-950/30 rounded-lg border border-violet-200 dark:border-violet-800">
+              <h4 className="font-semibold mb-2 flex items-center gap-2">
+                <Bot className="w-4 h-4 text-violet-600" />
+                Mentoria IA Integrada
+              </h4>
+              <p className="text-sm text-muted-foreground mb-2">
+                Em cada passo do método SMART, você pode solicitar <strong>1 feedback gratuito</strong> do mentor IA 
+                que avalia a consistência, profundidade e alinhamento do seu texto com o objetivo e sua Visão de Vida Desejada.
+              </p>
+              <p className="text-xs text-muted-foreground">
+                <strong>1 uso por passo</strong> • Aproveite para refinar cada etapa da sua meta
               </p>
             </section>
 
+            {/* Section: Por que usar */}
             <section>
-              <h3 className="font-semibold text-foreground mb-2">Por que uma pessoa deve usar Metas SMART</h3>
-              <p className="mb-2">Porque metas mal definidas geram:</p>
+              <h3 className="font-semibold text-foreground mb-2">Por que usar Metas SMART</h3>
+              <p className="mb-2">Metas mal definidas geram:</p>
               <ul className="list-disc list-inside space-y-1 ml-2">
                 <li>Procrastinação</li>
                 <li>Frustração constante</li>
@@ -89,9 +142,9 @@ const SmartScientificModal = ({ open, onOpenChange }: SmartScientificModalProps)
               </p>
             </section>
 
+            {/* Section: Benefícios vida pessoal */}
             <section>
               <h3 className="font-semibold text-foreground mb-2">Benefícios na vida pessoal</h3>
-              <p className="mb-2">Ao usar Metas SMART na vida pessoal, você passa a:</p>
               <ul className="list-disc list-inside space-y-1 ml-2">
                 <li>Ter clareza sobre o que realmente quer mudar ou conquistar</li>
                 <li>Dividir grandes objetivos em metas possíveis de executar</li>
@@ -99,14 +152,11 @@ const SmartScientificModal = ({ open, onOpenChange }: SmartScientificModalProps)
                 <li>Reduzir culpa e autocrítica por "não conseguir manter o foco"</li>
                 <li>Criar constância sem depender de motivação</li>
               </ul>
-              <p className="mt-3 font-medium text-foreground">
-                Você deixa de "tentar melhorar" e passa a construir progresso mensurável.
-              </p>
             </section>
 
+            {/* Section: Benefícios vida profissional */}
             <section>
               <h3 className="font-semibold text-foreground mb-2">Benefícios na vida profissional</h3>
-              <p className="mb-2">No campo profissional, Metas SMART ajudam você a:</p>
               <ul className="list-disc list-inside space-y-1 ml-2">
                 <li>Priorizar o que realmente gera resultado</li>
                 <li>Alinhar esforço diário com crescimento de carreira ou negócio</li>
@@ -114,11 +164,9 @@ const SmartScientificModal = ({ open, onOpenChange }: SmartScientificModalProps)
                 <li>Comunicar objetivos com clareza (com equipes, líderes ou parceiros)</li>
                 <li>Avaliar desempenho de forma justa e objetiva</li>
               </ul>
-              <p className="mt-3">
-                Isso aumenta sua credibilidade, foco e capacidade de execução.
-              </p>
             </section>
 
+            {/* Section: Conexão com PDI */}
             <section>
               <h3 className="font-semibold text-foreground mb-2">Conexão com o PDI – Carreira e Vida</h3>
               <p className="mb-3">No PDI, metas não existem de forma isolada.</p>
@@ -130,8 +178,7 @@ const SmartScientificModal = ({ open, onOpenChange }: SmartScientificModalProps)
                 <li>Permitem ajustes conscientes, sem sensação de fracasso</li>
               </ul>
               <p className="mt-3 italic">
-                Elas não são um fim.<br />
-                São um meio estruturado para transformar visão em realidade.
+                Elas não são um fim. São um meio estruturado para transformar visão em realidade.
               </p>
             </section>
 
@@ -141,7 +188,7 @@ const SmartScientificModal = ({ open, onOpenChange }: SmartScientificModalProps)
                 Usar Metas SMART não é sobre rigidez ou cobrança excessiva. É sobre clareza, direção e respeito à sua própria realidade.
               </p>
               <p className="font-medium text-foreground">
-                Quando suas metas são claras, o caminho fica mais leve. E o progresso deixa de ser uma promessa distante para se tornar algo visível e constante — na vida pessoal e na profissional.
+                Quando suas metas são claras, o caminho fica mais leve. E o progresso deixa de ser uma promessa distante para se tornar algo visível e constante.
               </p>
             </section>
           </div>

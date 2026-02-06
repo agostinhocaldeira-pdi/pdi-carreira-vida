@@ -52,7 +52,7 @@ const MetodoSmart = () => {
   const [searchParams] = useSearchParams();
   const storage = usePDIStorage();
   const queryClient = useQueryClient();
-  const [etapa, setEtapa] = useState(0);
+  const [etapa, setEtapa] = useState(1); // Start directly at objective selection
   const [objetivos, setObjetivos] = useState<Objetivo[]>([]);
   const [objetivoSelecionado, setObjetivoSelecionado] = useState<Objetivo | null>(null);
   const [vvd, setVvd] = useState<string>("");
@@ -349,8 +349,7 @@ const MetodoSmart = () => {
   };
 
   const getProgress = () => {
-    if (etapa === 0) return 0;
-    if (etapa === 1) return 10;
+    if (etapa === 1) return 0;
     return ((etapa - 1) / 6) * 100;
   };
 
@@ -525,110 +524,17 @@ const MetodoSmart = () => {
         </div>
 
         {/* Progress Bar */}
-        {etapa > 0 && (
-          <div className="mb-6">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-sm font-medium text-muted-foreground">
-                Progresso
-              </span>
-              <span className="text-sm font-bold text-primary">
-                {Math.round(getProgress())}%
-              </span>
-            </div>
-            <Progress value={getProgress()} className="h-2" />
+        <div className="mb-6">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-sm font-medium text-muted-foreground">
+              Progresso
+            </span>
+            <span className="text-sm font-bold text-primary">
+              {Math.round(getProgress())}%
+            </span>
           </div>
-        )}
-
-        {/* Etapa 0: Introdução */}
-        {etapa === 0 && (
-          <div className="space-y-6 animate-fade-in">
-            <Card className="border-2 border-primary/20 shadow-lg">
-              <CardHeader>
-                <div className="flex items-center gap-3 mb-2">
-                  <div className="w-12 h-12 bg-primary/20 rounded-full flex items-center justify-center">
-                    <Lightbulb className="w-6 h-6 text-primary" />
-                  </div>
-                  <div>
-                    <CardTitle className="text-2xl">Objetivo vs Meta</CardTitle>
-                    <CardDescription>Entenda a diferença</CardDescription>
-                  </div>
-                </div>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="grid md:grid-cols-2 gap-4">
-                  <div className="p-4 bg-blue-50 dark:bg-blue-950/30 rounded-lg border-2 border-blue-200 dark:border-blue-800">
-                    <h3 className="font-bold text-lg mb-2 flex items-center gap-2">
-                      <Target className="w-5 h-5 text-blue-600" />
-                      Objetivo
-                    </h3>
-                    <p className="text-sm text-muted-foreground mb-3">
-                      É o seu sonho, sua direção geral. Mais amplo e genérico.
-                    </p>
-                    <div className="space-y-2">
-                      <Badge variant="secondary" className="text-xs">Exemplo:</Badge>
-                      <p className="text-sm italic">"Ser fluente em inglês"</p>
-                      <p className="text-sm italic">"Ter uma carreira de sucesso"</p>
-                      <p className="text-sm italic">"Ser mais saudável"</p>
-                    </div>
-                  </div>
-
-                  <div className="p-4 bg-emerald-50 dark:bg-emerald-950/30 rounded-lg border-2 border-emerald-200 dark:border-emerald-800">
-                    <h3 className="font-bold text-lg mb-2 flex items-center gap-2">
-                      <CheckCircle2 className="w-5 h-5 text-emerald-600" />
-                      Meta SMART
-                    </h3>
-                    <p className="text-sm text-muted-foreground mb-3">
-                      É o passo concreto e mensurável para alcançar seu objetivo.
-                    </p>
-                    <div className="space-y-2">
-                      <Badge variant="secondary" className="text-xs">Exemplo:</Badge>
-                      <p className="text-sm italic">"Obter certificado TOEFL com 100 pontos até dezembro"</p>
-                      <p className="text-sm italic">"Ser promovido a gerente até junho de 2026"</p>
-                      <p className="text-sm italic">"Perder 10kg em 6 meses praticando 4x/semana"</p>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="mt-6 p-4 bg-gradient-to-r from-primary/10 via-primary/5 to-primary/10 rounded-lg border border-primary/20">
-                  <h4 className="font-semibold mb-2 flex items-center gap-2">
-                    <Sparkles className="w-4 h-4 text-primary" />
-                    O que é SMART?
-                  </h4>
-                  <p className="text-sm text-muted-foreground mb-3">
-                    SMART é um método para criar metas eficazes através de 5 critérios:
-                  </p>
-                  <div className="grid sm:grid-cols-5 gap-2">
-                    {["Específico", "Mensurável", "Atingível", "Relevante", "Temporal"].map((item, i) => (
-                      <Badge key={i} className="justify-center">{item}</Badge>
-                    ))}
-                  </div>
-                </div>
-
-                {/* AI Mentor Info */}
-                <div className="mt-4 p-4 bg-gradient-to-r from-violet-50 via-purple-50 to-violet-50 dark:from-violet-950/30 dark:via-purple-950/30 dark:to-violet-950/30 rounded-lg border border-violet-200 dark:border-violet-800">
-                  <h4 className="font-semibold mb-2 flex items-center gap-2">
-                    <Bot className="w-4 h-4 text-violet-600" />
-                    Mentoria IA Integrada
-                  </h4>
-                  <p className="text-sm text-muted-foreground mb-2">
-                    Em cada passo do método SMART, você pode solicitar <strong>1 feedback gratuito</strong> do mentor IA 
-                    que avalia a consistência, profundidade e alinhamento do seu texto com o objetivo e sua Visão de Vida Desejada.
-                  </p>
-                  <p className="text-xs text-muted-foreground">
-                    <strong>1 uso por passo</strong> • Aproveite para refinar cada etapa da sua meta
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
-
-            <div className="flex justify-center">
-              <Button onClick={handleProximo} size="lg" className="gap-2 shadow-lg">
-                Começar
-                <ArrowRight className="w-4 h-4" />
-              </Button>
-            </div>
-          </div>
-        )}
+          <Progress value={getProgress()} className="h-2" />
+        </div>
 
         {/* Etapa 1: Seleção de Objetivo */}
         {etapa === 1 && (
