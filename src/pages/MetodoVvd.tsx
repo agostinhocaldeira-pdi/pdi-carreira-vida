@@ -360,58 +360,65 @@ const MetodoVvd = () => {
       />
     <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-accent/5">
       <div className="container mx-auto px-4 py-8 max-w-4xl">
-        {/* Header */}
-        <div className="flex items-center gap-4 mb-8">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => navigate("/ferramentas")}
-            className="hover:bg-primary/10"
-          >
-            <ArrowLeft className="h-5 w-5" />
-          </Button>
-          <div className="flex-1">
-            <h1 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+        {/* Header - Mobile Optimized */}
+        <div className="mb-8">
+          {/* Top row: Back button and step indicators */}
+          <div className="flex items-center justify-between mb-4">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => navigate("/ferramentas")}
+              className="hover:bg-primary/10"
+            >
+              <ArrowLeft className="h-5 w-5" />
+            </Button>
+            
+            {/* Step indicators */}
+            <div className="flex gap-2">
+              <button
+                onClick={() => setStep(1)}
+                className={`w-8 h-8 rounded-full flex items-center justify-center transition-all hover:scale-110 ${
+                  step >= 1 ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'
+                } ${step === 1 ? 'ring-2 ring-primary ring-offset-2' : ''} cursor-pointer`}
+              >
+                1
+              </button>
+              <button
+                onClick={() => paragraphText && setStep(2)}
+                disabled={!paragraphText}
+                className={`w-8 h-8 rounded-full flex items-center justify-center transition-all hover:scale-110 disabled:cursor-not-allowed disabled:opacity-50 ${
+                  step >= 2 ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'
+                } ${step === 2 ? 'ring-2 ring-primary ring-offset-2' : ''} ${paragraphText ? 'cursor-pointer' : ''}`}
+              >
+                2
+              </button>
+              <button
+                onClick={() => sentenceText && setStep(3)}
+                disabled={!sentenceText}
+                className={`w-8 h-8 rounded-full flex items-center justify-center transition-all hover:scale-110 disabled:cursor-not-allowed disabled:opacity-50 ${
+                  step >= 3 ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'
+                } ${step === 3 ? 'ring-2 ring-primary ring-offset-2' : ''} ${sentenceText ? 'cursor-pointer' : ''}`}
+              >
+                3
+              </button>
+            </div>
+          </div>
+          
+          {/* Title and description */}
+          <div className="space-y-2">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
               Método VVD
             </h1>
-            <p className="text-muted-foreground mt-1">
+            <p className="text-sm sm:text-base text-muted-foreground">
               Visão de Vida Desejada - Descubra sua essência
             </p>
             <button 
               onClick={() => setIsVvdModalOpen(true)}
-              className="mt-3 inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/30 text-primary font-medium text-sm hover:bg-primary/20 hover:border-primary/50 transition-all duration-200 shadow-sm hover:shadow-md whitespace-nowrap"
+              className="mt-2 inline-flex items-center gap-2 px-3 sm:px-4 py-2 rounded-full bg-primary/10 border border-primary/30 text-primary font-medium text-xs sm:text-sm hover:bg-primary/20 hover:border-primary/50 transition-all duration-200 shadow-sm hover:shadow-md whitespace-nowrap"
             >
               <Sparkles className="h-4 w-4 shrink-0" />
               <span className="sm:hidden">Entenda melhor</span>
               <span className="hidden sm:inline">Entenda a importância de saber claramente o que você quer para sua vida</span>
-            </button>
-          </div>
-          <div className="flex gap-2">
-            <button
-              onClick={() => setStep(1)}
-              className={`w-8 h-8 rounded-full flex items-center justify-center transition-all hover:scale-110 ${
-                step >= 1 ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'
-              } ${step === 1 ? 'ring-2 ring-primary ring-offset-2' : ''} cursor-pointer`}
-            >
-              1
-            </button>
-            <button
-              onClick={() => paragraphText && setStep(2)}
-              disabled={!paragraphText}
-              className={`w-8 h-8 rounded-full flex items-center justify-center transition-all hover:scale-110 disabled:cursor-not-allowed disabled:opacity-50 ${
-                step >= 2 ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'
-              } ${step === 2 ? 'ring-2 ring-primary ring-offset-2' : ''} ${paragraphText ? 'cursor-pointer' : ''}`}
-            >
-              2
-            </button>
-            <button
-              onClick={() => sentenceText && setStep(3)}
-              disabled={!sentenceText}
-              className={`w-8 h-8 rounded-full flex items-center justify-center transition-all hover:scale-110 disabled:cursor-not-allowed disabled:opacity-50 ${
-                step >= 3 ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'
-              } ${step === 3 ? 'ring-2 ring-primary ring-offset-2' : ''} ${sentenceText ? 'cursor-pointer' : ''}`}
-            >
-              3
             </button>
           </div>
         </div>
