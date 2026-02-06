@@ -22,6 +22,12 @@ export function LifeWheelScientificModal({ open, onOpenChange }: LifeWheelScient
         </DialogHeader>
         <ScrollArea className="h-[70vh] pr-4">
           <div className="space-y-6 text-sm sm:text-base text-muted-foreground leading-relaxed">
+            <div className="p-4 bg-primary/5 rounded-lg border border-primary/20">
+              <h3 className="text-lg font-semibold text-foreground mb-2">Como fazer o exercício</h3>
+              <p className="mb-1">Avalie cada área com uma nota de 0 a 10</p>
+              <p className="text-sm">Zero representa total insatisfação e 10 representa plena realização.</p>
+            </div>
+
             <p>
               A ferramenta da Roda da Vida permite visualizar, de forma simples e concreta, como estão as diferentes áreas da vida e o quanto elas estão alinhadas com os próprios valores. É uma ferramenta poderosa de consciência, priorização e tomada de decisão.
             </p>
