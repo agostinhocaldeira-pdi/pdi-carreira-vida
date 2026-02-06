@@ -198,8 +198,8 @@ const SubscriberLanding = () => {
           </div>
 
           {/* Mobile: Video only, full width */}
-          <div className="lg:hidden w-full mb-6">
-            <div className="relative w-full aspect-video rounded-xl overflow-hidden shadow-2xl">
+          <div className="lg:hidden w-full mb-6 flex justify-center">
+            <div className="relative w-full max-w-[280px] aspect-[9/16] rounded-xl overflow-hidden shadow-2xl">
               <iframe
                 src="https://www.youtube-nocookie.com/embed/nmU11AHP70E?autoplay=1&mute=0&loop=1&playlist=nmU11AHP70E&controls=1&modestbranding=1&rel=0&showinfo=0"
                 title="PDI - Sistema de Clareza"
