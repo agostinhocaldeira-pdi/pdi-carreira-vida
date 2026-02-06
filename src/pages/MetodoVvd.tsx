@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
@@ -53,6 +53,9 @@ const MetodoVvd = () => {
   
   // AI Usage hook for purchasing additional usage
   const aiUsage = useAIUsage('vvd');
+  
+  // Ref for scrolling to survey section
+  const surveyRef = useRef<HTMLDivElement>(null);
 
   const [surveyData, setSurveyData] = useState<SurveyData>({
     currentPhase: "",
@@ -212,8 +215,13 @@ const MetodoVvd = () => {
     if (result) {
       setSentenceText(result);
       setStep(3);
+      setShowSurveySection(true);
+      // Scroll to survey section after a small delay
+      setTimeout(() => {
+        surveyRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 300);
       toast.success("Sua essência foi capturada!", {
-        description: "Revise sua frase final e salve quando estiver pronto."
+        description: "Complete as informações complementares abaixo."
       });
     }
   };
@@ -615,7 +623,8 @@ const MetodoVvd = () => {
 
             {/* Survey Questions Section - appears in all VVD steps */}
             {showSurveySection && step >= 1 && (
-              <Card className="border-2 border-accent/30 shadow-xl animate-fade-in mb-6">
+              <div ref={surveyRef}>
+                <Card className="border-2 border-accent/30 shadow-xl animate-fade-in mb-6">
                 <CardHeader className="space-y-4">
                   <div className="flex items-center gap-3">
                     <div className="w-12 h-12 rounded-full bg-gradient-to-br from-accent to-primary flex items-center justify-center">
@@ -825,6 +834,7 @@ const MetodoVvd = () => {
                   </div>
                 </CardContent>
               </Card>
+              </div>
             )}
           </>
         )}
@@ -886,7 +896,7 @@ const MetodoVvd = () => {
                 </div>
               </div>
 
-              <div className="flex flex-col sm:flex-row justify-between gap-3 sm:gap-4">
+              <div className="flex justify-start">
                 <Button
                   variant="outline"
                   onClick={() => setStep(2)}
@@ -895,24 +905,32 @@ const MetodoVvd = () => {
                   <ArrowLeft className="h-4 w-4 mr-2" />
                   Voltar página
                 </Button>
-                <Button
-                  onClick={handleFinalSave}
-                  disabled={!sentenceText.trim()}
-                  size="lg"
-                  className="w-full sm:w-auto bg-gradient-to-r from-primary to-accent hover:opacity-90 transition-opacity"
-                >
-                  <Check className="h-5 w-5 mr-2" />
-                  Salvar no Plano de Vida
-                </Button>
               </div>
+            </CardContent>
+          </Card>
+        )}
 
+        {/* Final Save Button - Always at the bottom when Step 3 is reached */}
+        {step >= 3 && sentenceText.trim() && (
+          <Card className="border-2 border-primary/30 shadow-xl bg-gradient-to-br from-primary/5 to-accent/5">
+            <CardContent className="p-6 space-y-4">
               <div className="bg-accent/10 border border-accent/20 rounded-lg p-4">
                 <p className="text-sm text-center text-muted-foreground">
                   ✨ Esta frase será automaticamente adicionada à seção "Minha Visão de Vida Desejada" no seu Plano de Vida
                 </p>
               </div>
 
-              <div className="pt-4 border-t border-muted">
+              <div className="flex flex-col gap-3">
+                <Button
+                  onClick={handleFinalSave}
+                  disabled={!sentenceText.trim()}
+                  size="lg"
+                  className="w-full bg-gradient-to-r from-primary to-accent hover:opacity-90 transition-opacity"
+                >
+                  <Check className="h-5 w-5 mr-2" />
+                  Salvar no Plano de Vida
+                </Button>
+
                 <Button
                   variant="ghost"
                   className="w-full justify-center gap-2 text-muted-foreground hover:text-primary"
