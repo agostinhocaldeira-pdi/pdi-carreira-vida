@@ -647,7 +647,7 @@ const MaoNaMassa = ({ embedded = false, fullscreenMode = false, onOpenFullscreen
               )}
 
               <CollapsibleContent className={fullscreenMode ? "" : "mt-6"}>
-                <div className={`space-y-4 ${fullscreenMode ? "" : "p-4 bg-muted/30 rounded-lg border-2 border-dashed"}`}>
+                <div className={`space-y-4 w-full max-w-full overflow-hidden ${fullscreenMode ? "" : "p-3 sm:p-4 bg-muted/30 rounded-lg border-2 border-dashed"}`}>
                   <h3 className="text-lg font-semibold flex items-center gap-2">
                     <Rocket className="w-5 h-5 text-primary" />
                     {editandoMetaId ? "Editar Meta" : "Nova Meta"}
@@ -737,7 +737,7 @@ const MaoNaMassa = ({ embedded = false, fullscreenMode = false, onOpenFullscreen
             <div className="space-y-3">
               <Label>Ações de execução da meta</Label>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 p-3 sm:p-4 bg-muted/30 rounded-lg">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-3 p-2 sm:p-4 bg-muted/30 rounded-lg w-full max-w-full overflow-hidden">
                 <div className="space-y-2">
                   <Label htmlFor="nova-acao" className="text-xs">Nova Ação</Label>
                   <Input
@@ -1111,7 +1111,7 @@ const MaoNaMassa = ({ embedded = false, fullscreenMode = false, onOpenFullscreen
             <div className="space-y-3">
               <Label>Passos das ações</Label>
 
-              <div className="flex gap-2 p-3 sm:p-4 bg-muted/30 rounded-lg">
+              <div className="flex gap-2 p-2 sm:p-4 bg-muted/30 rounded-lg w-full max-w-full overflow-hidden">
                 <Input
                   placeholder="Descreva o passo"
                   value={novoPasso}
