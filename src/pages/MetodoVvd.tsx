@@ -440,9 +440,9 @@ const MetodoVvd = () => {
                   <Heart className="h-6 w-6 text-white" />
                 </div>
                 <div>
-                  <CardTitle className="text-2xl">Como você deseja que sua vida seja?</CardTitle>
+                  <CardTitle className="text-2xl">Escreva sua Visão de Vida Desejada</CardTitle>
                   <CardDescription className="text-base mt-1">
-                    Escreva livremente sobre a vida que você sonha viver, baseado em seus valores e nas áreas que mais importam para você.
+                    Use o botão "Entenda melhor" acima para ver instruções e exemplos.
                   </CardDescription>
                 </div>
               </div>
@@ -450,17 +450,6 @@ const MetodoVvd = () => {
             <CardContent className="space-y-6">
               {step === 1 && (
                 <>
-                  <div className="bg-accent/10 border border-accent/20 rounded-lg p-4 space-y-2">
-                    <p className="text-sm font-medium flex items-center gap-2">
-                      <Star className="h-4 w-4 text-accent" />
-                      Exemplo de VVD:
-                    </p>
-                    <p className="text-sm text-muted-foreground italic">
-                      "Quero viver com integridade, ser uma pessoa honesta, responsável e compassiva, buscando sempre o crescimento pessoal e profissional.
-                      Eu valorizo a importância da família e dos amigos, e me esforço para cultivar relacionamentos saudáveis e significativos..."
-                    </p>
-                  </div>
-
                   <Textarea
                     value={freeText}
                     onChange={(e) => setFreeText(e.target.value)}
