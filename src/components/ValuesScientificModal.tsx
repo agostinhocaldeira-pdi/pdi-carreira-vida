@@ -5,6 +5,9 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Button } from "@/components/ui/button";
+import { Volume2, VolumeX, Loader2 } from "lucide-react";
+import { useValuesExplanationAudio } from "@/hooks/useValuesExplanationAudio";
 
 interface ValuesScientificModalProps {
   open: boolean;
@@ -12,13 +15,49 @@ interface ValuesScientificModalProps {
 }
 
 const ValuesScientificModal = ({ open, onOpenChange }: ValuesScientificModalProps) => {
+  const { isLoading, isPlaying, toggleAudio, stopAudio } = useValuesExplanationAudio();
+
+  // Stop audio when modal closes
+  const handleOpenChange = (newOpen: boolean) => {
+    if (!newOpen) {
+      stopAudio();
+    }
+    onOpenChange(newOpen);
+  };
+
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent className="max-w-2xl max-h-[90vh] p-0">
         <DialogHeader className="p-6 pb-0">
-          <DialogTitle className="text-xl font-bold text-primary">
-            A importância de conhecer seus valores
-          </DialogTitle>
+          <div className="flex items-center justify-between gap-4">
+            <DialogTitle className="text-xl font-bold text-primary">
+              A importância de conhecer seus valores
+            </DialogTitle>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={toggleAudio}
+              disabled={isLoading}
+              className="flex items-center gap-2 shrink-0"
+            >
+              {isLoading ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  <span className="hidden sm:inline">Carregando...</span>
+                </>
+              ) : isPlaying ? (
+                <>
+                  <VolumeX className="w-4 h-4" />
+                  <span className="hidden sm:inline">Parar</span>
+                </>
+              ) : (
+                <>
+                  <Volume2 className="w-4 h-4" />
+                  <span className="hidden sm:inline">Ouvir</span>
+                </>
+              )}
+            </Button>
+          </div>
         </DialogHeader>
         
         <ScrollArea className="h-[70vh] px-6 pb-6">
