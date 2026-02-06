@@ -5,6 +5,8 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Volume2, Loader2, VolumeX } from "lucide-react";
+import { useRodaVidaExplanationAudio } from "@/hooks/useRodaVidaExplanationAudio";
 
 interface LifeWheelScientificModalProps {
   open: boolean;
@@ -12,6 +14,8 @@ interface LifeWheelScientificModalProps {
 }
 
 export function LifeWheelScientificModal({ open, onOpenChange }: LifeWheelScientificModalProps) {
+  const { isLoading, isPlaying, toggleAudio } = useRodaVidaExplanationAudio();
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-2xl max-h-[90vh]">
@@ -20,6 +24,29 @@ export function LifeWheelScientificModal({ open, onOpenChange }: LifeWheelScient
             A importância de conhecer suas áreas da vida
           </DialogTitle>
         </DialogHeader>
+        
+        {/* Audio Player Button */}
+        <div className="flex justify-center py-2">
+          <button
+            onClick={toggleAudio}
+            disabled={isLoading}
+            className="flex flex-col items-center gap-1.5 text-muted-foreground hover:text-primary transition-colors disabled:opacity-50"
+          >
+            <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center hover:bg-primary/20 transition-colors">
+              {isLoading ? (
+                <Loader2 className="w-6 h-6 text-primary animate-spin" />
+              ) : isPlaying ? (
+                <VolumeX className="w-6 h-6 text-primary" />
+              ) : (
+                <Volume2 className="w-6 h-6 text-primary" />
+              )}
+            </div>
+            <span className="text-xs font-medium">
+              {isLoading ? "Carregando..." : isPlaying ? "Clique para parar" : "Clique para ouvir"}
+            </span>
+          </button>
+        </div>
+
         <ScrollArea className="h-[70vh] pr-4">
           <div className="space-y-6 text-sm sm:text-base text-muted-foreground leading-relaxed">
             <div className="p-4 bg-primary/5 rounded-lg border border-primary/20">

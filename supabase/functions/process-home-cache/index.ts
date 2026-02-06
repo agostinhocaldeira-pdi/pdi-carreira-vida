@@ -65,6 +65,26 @@ serve(async (req) => {
     const today = new Date().toISOString().split('T')[0];
     const dayOfYear = Math.ceil((new Date().getTime() - new Date(new Date().getFullYear(), 0, 0).getTime()) / 86400000);
 
+    // Pre-generate explanation audios (VVD, Valores, Roda da Vida) - once per run, not per user
+    // This is done at the start of overnight processing to ensure audios are cached
+    if (!user_id) {
+      try {
+        console.log('Pre-generating explanation audios...');
+        const audioResponse = await fetch(`${supabaseUrl}/functions/v1/generate-explanation-audio`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${supabaseServiceKey}`,
+          },
+          body: JSON.stringify({ type: 'all' }),
+        });
+        const audioResult = await audioResponse.json();
+        console.log('Explanation audios generation result:', audioResult);
+      } catch (audioErr) {
+        console.error('Error generating explanation audios (non-fatal):', audioErr);
+      }
+    }
+
     // Process each user
     for (const userId of usersToProcess) {
       try {
