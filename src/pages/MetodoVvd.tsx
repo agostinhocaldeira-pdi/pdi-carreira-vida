@@ -167,6 +167,8 @@ const MetodoVvd = () => {
       setParagraphText(result);
       setStep(2);
       setShowSurveySection(true);
+      // Scroll to top of page
+      window.scrollTo({ top: 0, behavior: 'smooth' });
       // Marcar que a IA foi usada (apenas primeira vez gratuita)
       if (!hasUsedAI) {
         localStorage.setItem("vvd_ai_used", "true");
