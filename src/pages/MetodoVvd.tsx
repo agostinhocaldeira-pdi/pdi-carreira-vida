@@ -105,9 +105,12 @@ const MetodoVvd = () => {
           .single();
         
         if (onboardingData) {
+          // Don't load internal status values like "first_steps_completed"
+          const phase = onboardingData.current_phase;
+          const isInternalStatus = phase === "first_steps_completed" || phase === "completed";
           setSurveyData(prev => ({
             ...prev,
-            currentPhase: onboardingData.current_phase || "",
+            currentPhase: isInternalStatus ? "" : (phase || ""),
             expectations: onboardingData.expectations || "",
           }));
         }
