@@ -22,6 +22,7 @@ import { useHomeCache } from "@/hooks/useHomeCache";
 import VvdScientificModal from "@/components/VvdScientificModal";
 import ValuesScientificModal from "@/components/ValuesScientificModal";
 import { LifeWheelScientificModal } from "@/components/LifeWheelScientificModal";
+import { BasePessoalWelcomeModal } from "@/components/BasePessoalWelcomeModal";
 
 const PlanoVidaQuemSou = () => {
   const { isLoading: roleLoading, userRole } = useRoleProtection({ allowedRoles: ["user", "gestor"] });
@@ -56,8 +57,22 @@ const PlanoVidaQuemSou = () => {
   const [showValoresModal, setShowValoresModal] = useState(false);
   const [showRodaVidaModal, setShowRodaVidaModal] = useState(false);
   
+  // User ID for welcome modal
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
+  
   // AI Usage hook
   const aiUsage = useAIUsage('insight');
+  
+  // Get current user ID for welcome modal
+  useEffect(() => {
+    const getUserId = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        setCurrentUserId(user.id);
+      }
+    };
+    getUserId();
+  }, []);
 
   // Sincronizar valores com a página de exercício
   useEffect(() => {
@@ -356,42 +371,7 @@ const PlanoVidaQuemSou = () => {
           <LogoutButton />
         </div>
 
-        {/* Inspirational Message */}
-        <div className={`${isMobile ? 'px-0' : ''}`}>
-          <div className={`${isMobile ? '' : 'border border-primary/20 rounded-lg bg-gradient-to-br from-primary/5 via-background to-accent/5 shadow-lg p-5 sm:p-6'}`}>
-            <div className="flex flex-col sm:flex-row items-start gap-4">
-              {!isMobile && (
-                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center flex-shrink-0">
-                  <Compass className="w-6 h-6 text-primary-foreground" />
-                </div>
-              )}
-              <div className="space-y-3">
-                <h2 className="text-lg sm:text-xl font-semibold text-foreground">
-                  Sua jornada começa por você.
-                </h2>
-                <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">
-                  Antes de metas ou planos, organize sua base pessoal.
-                </p>
-                <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">
-                  Em poucos minutos, você vai ganhar clareza sobre o que importa, onde sua vida pede atenção e para onde quer seguir.
-                </p>
-                <p className="text-sm sm:text-base text-muted-foreground leading-relaxed mt-2">
-                  Conclua estas 3 etapas:
-                </p>
-                <ol className="text-sm sm:text-base text-muted-foreground leading-relaxed list-decimal list-inside space-y-1 mt-2">
-                  <li><strong className="text-foreground">Valores</strong></li>
-                  <li><strong className="text-foreground">Roda da Vida</strong></li>
-                  <li><strong className="text-foreground">VVD</strong> — Visão de Vida Desejada</li>
-                </ol>
-                <p className="text-sm sm:text-base text-primary font-semibold mt-3">
-                  Comece pelo primeiro exercício.
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <Card className="shadow-medium overflow-hidden">
+        <Card className={`shadow-medium overflow-hidden ${isMobile ? 'border-0 rounded-none -mx-4 shadow-none' : ''}`}>
           <CardHeader className="pb-4">
             <div className="flex items-center gap-3">
               <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center shadow-lg">
@@ -425,7 +405,7 @@ const PlanoVidaQuemSou = () => {
             ) : (
               <>
                 {/* Valores Card */}
-                <Card className="border-primary/30 shadow-sm">
+                <Card className={`border-primary/30 shadow-sm ${isMobile ? 'rounded-none border-x-0' : ''}`}>
                   <CardHeader className="pb-3">
                     <div className="flex items-center gap-2">
                       <Heart className="w-5 h-5 text-primary" />
@@ -488,7 +468,7 @@ const PlanoVidaQuemSou = () => {
                 </Card>
 
                 {/* Roda da Vida Card */}
-                <Card className="border-primary/30 shadow-sm">
+                <Card className={`border-primary/30 shadow-sm ${isMobile ? 'rounded-none border-x-0' : ''}`}>
                   <CardHeader className="pb-3">
                     <div className="flex items-center gap-2">
                       <Sparkles className="w-5 h-5 text-primary" />
@@ -566,7 +546,7 @@ const PlanoVidaQuemSou = () => {
                 </Card>
 
                 {/* VVD Card */}
-                <Card className="border-primary/30 shadow-sm">
+                <Card className={`border-primary/30 shadow-sm ${isMobile ? 'rounded-none border-x-0' : ''}`}>
                   <CardHeader className="pb-3">
                     <div className="flex items-center gap-2">
                       <Target className="w-5 h-5 text-primary" />
@@ -764,6 +744,9 @@ const PlanoVidaQuemSou = () => {
         open={showRodaVidaModal} 
         onOpenChange={setShowRodaVidaModal} 
       />
+      
+      {/* Welcome Modal - shows on first visit */}
+      <BasePessoalWelcomeModal userId={currentUserId} />
     </div>
   );
 };
