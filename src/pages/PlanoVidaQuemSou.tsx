@@ -603,7 +603,7 @@ const PlanoVidaQuemSou = () => {
                           className="text-xs sm:text-sm px-2 sm:px-3 gap-1.5 text-wine hover:text-wine/80"
                         >
                           <MousePointerClick className="w-5 h-5 sm:w-4 sm:h-4 flex-shrink-0" />
-                          <span className="whitespace-nowrap">Entenda o PDI</span>
+                          <span className="whitespace-nowrap">Entenda o VVD</span>
                         </Button>
                       </div>
                     </div>
