@@ -19,6 +19,7 @@ import { useAIUsage } from "@/hooks/useAIUsage";
 import { AIUsageLimitModal } from "@/components/AIUsageLimitModal";
 import { useUserRole } from "@/hooks/useUserRole";
 import { useHomeCache } from "@/hooks/useHomeCache";
+import { useSystemState } from "@/hooks/useSystemState";
 import VvdScientificModal from "@/components/VvdScientificModal";
 import ValuesScientificModal from "@/components/ValuesScientificModal";
 import { LifeWheelScientificModal } from "@/components/LifeWheelScientificModal";
@@ -33,6 +34,9 @@ const PlanoVidaQuemSou = () => {
   
   // Use pre-computed cache from overnight processing
   const { data: homeCache } = useHomeCache();
+  
+  // Check if user has completed base pessoal
+  const { hasCompletedBase } = useSystemState();
   
   const [vvd, setVvd] = useState("");
   const [isEditingVvd, setIsEditingVvd] = useState(true);
@@ -749,7 +753,7 @@ const PlanoVidaQuemSou = () => {
       />
       
       {/* Welcome Modal - shows on first visit */}
-      <BasePessoalWelcomeModal userId={currentUserId} />
+      <BasePessoalWelcomeModal userId={currentUserId} hasCompletedBase={hasCompletedBase} />
     </div>
   );
 };
