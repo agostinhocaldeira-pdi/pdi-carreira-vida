@@ -49,6 +49,20 @@ const VvdScientificModal = ({ open, onOpenChange }: VvdScientificModalProps) => 
 
         <ScrollArea className="max-h-[60vh] pr-4">
           <div className="space-y-6 text-sm text-muted-foreground">
+            {/* Intro Section - How to write your VVD */}
+            <section className="bg-primary/5 border border-primary/20 rounded-lg p-4">
+              <h3 className="font-semibold text-foreground mb-2 text-base">Como você deseja que sua vida seja?</h3>
+              <p className="mb-4">
+                Escreva livremente sobre a vida que você sonha viver, baseado em seus valores e nas áreas que mais importam para você.
+              </p>
+              <div className="bg-accent/10 border border-accent/20 rounded-lg p-3">
+                <p className="text-xs font-medium text-foreground mb-1">Exemplo de VVD:</p>
+                <p className="italic text-xs leading-relaxed">
+                  "Quero viver com integridade, ser uma pessoa honesta, responsável e compassiva, buscando sempre o crescimento pessoal e profissional. Eu valorizo a importância da família e dos amigos, e me esforço para cultivar relacionamentos saudáveis e significativos..."
+                </p>
+              </div>
+            </section>
+
             <section>
               <h3 className="font-semibold text-foreground mb-2">Por que este exercício é essencial</h3>
               <p className="mb-3">
