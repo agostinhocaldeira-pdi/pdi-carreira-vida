@@ -111,8 +111,6 @@ const Signup = () => {
         }).catch((emailError) => {
           console.error('Error sending welcome email:', emailError);
         });
-
-        toast.success("Cadastro realizado! Você tem 30 dias de acesso gratuito.");
         
         // Direcionar para onboarding (sem Stripe checkout)
         navigate("/onboarding?signup=success");
