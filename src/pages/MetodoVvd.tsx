@@ -930,13 +930,21 @@ const MetodoVvd = () => {
       <Dialog open={showCompletionModal} onOpenChange={setShowCompletionModal}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
+            <div className="flex items-center justify-center mb-4">
+              <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center">
+                <Sparkles className="w-10 h-10 text-primary" />
+              </div>
+            </div>
             <DialogTitle className="text-center text-2xl">
-              🎉 Parabéns!
+              VVD Salva! 🎉
             </DialogTitle>
-            <DialogDescription className="text-center text-base pt-2">
-              Você concluiu todas as atividades do <strong>Passo 1: Quem Sou Eu</strong>!
-              <br /><br />
-              O que deseja fazer agora?
+            <DialogDescription className="text-center space-y-4 pt-2">
+              <p>
+                Sua Visão de Vida Desejada foi salva com sucesso no <strong>Plano de Vida</strong>.
+              </p>
+              <p className="text-sm">
+                Você concluiu o <strong>Passo 1: Quem sou eu</strong>! Agora vamos para o próximo passo.
+              </p>
             </DialogDescription>
           </DialogHeader>
           <div className="flex flex-col gap-3 pt-4">
@@ -945,10 +953,10 @@ const MetodoVvd = () => {
                 setShowCompletionModal(false);
                 navigate("/plano-vida/para-onde");
               }}
-              className="w-full bg-gradient-to-r from-primary to-accent hover:opacity-90"
+              className="w-full gap-2"
             >
-              <ArrowRight className="h-4 w-4 mr-2" />
-              Iniciar Passo 2: Para Onde Vou
+              <ArrowRight className="h-4 w-4" />
+              Continuar
             </Button>
             <Button
               variant="outline"
@@ -956,9 +964,9 @@ const MetodoVvd = () => {
                 setShowCompletionModal(false);
                 navigate("/home");
               }}
-              className="w-full"
+              className="w-full gap-2"
             >
-              <Home className="h-4 w-4 mr-2" />
+              <Home className="h-4 w-4" />
               Voltar para Home
             </Button>
           </div>

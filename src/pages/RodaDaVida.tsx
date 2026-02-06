@@ -420,13 +420,16 @@ export default function RodaDaVida() {
                   Suas áreas da vida foram salvas com sucesso no <strong>Plano de Vida</strong>.
                 </p>
                 <p className="text-sm">
-                  Você concluiu o <strong>Passo 1: Quem sou eu</strong>! Agora vamos para o próximo passo.
+                  Agora vamos para a próxima atividade: criar o seu <strong>VVD</strong>.
                 </p>
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter className="justify-center">
               <AlertDialogAction asChild>
-                <Button onClick={handleContinuar} className="w-full sm:w-auto gap-2">
+                <Button onClick={() => {
+                  setShowSuccessDialog(false);
+                  navigate("/ferramentas/metodo-vvd");
+                }} className="w-full sm:w-auto gap-2">
                   <ArrowRight className="w-4 h-4" />
                   Continuar
                 </Button>
