@@ -617,12 +617,11 @@ const MaoNaMassa = ({ embedded = false, fullscreenMode = false, onOpenFullscreen
             {onOpenFullscreen && !fullscreenMode && (
               <div className="flex justify-center md:hidden">
                 <Button 
-                  variant="outline" 
-                  className="gap-2 hover:bg-primary/10 hover:border-primary transition-all shadow-sm text-xs"
+                  className="gap-2 bg-orange-500 hover:bg-orange-600 text-white transition-all shadow-sm text-xs"
                   onClick={onOpenFullscreen}
                 >
                   <Plus className="w-3 h-3" />
-                  Nova Meta
+                  Cadastrar Meta
                 </Button>
               </div>
             )}
@@ -634,12 +633,10 @@ const MaoNaMassa = ({ embedded = false, fullscreenMode = false, onOpenFullscreen
                 <div className="flex justify-center">
                   <CollapsibleTrigger asChild>
                     <Button 
-                      variant="outline" 
-                      className="gap-2 hover:bg-primary/10 hover:border-primary transition-all shadow-sm text-xs sm:text-sm"
+                      className="gap-2 bg-orange-500 hover:bg-orange-600 text-white transition-all shadow-sm text-xs sm:text-sm"
                     >
                       <Plus className="w-3 h-3 sm:w-4 sm:h-4" />
-                      <span className="sm:hidden">{isFormOpen ? "Ocultar" : "Nova Meta"}</span>
-                      <span className="hidden sm:inline">{isFormOpen ? "Ocultar Formulário" : "Cadastrar Nova Meta"}</span>
+                      <span>{isFormOpen ? "Ocultar" : "Cadastrar Meta"}</span>
                       <ChevronDown className={`w-3 h-3 sm:w-4 sm:h-4 transition-transform duration-300 ${isFormOpen ? "rotate-180" : ""}`} />
                     </Button>
                   </CollapsibleTrigger>

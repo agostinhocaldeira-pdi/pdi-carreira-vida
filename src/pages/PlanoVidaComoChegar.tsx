@@ -404,7 +404,7 @@ const PlanoVidaComoChegar = () => {
                 <div className="pt-4 flex flex-col items-center gap-2">
                   <Button variant="outline" onClick={() => navigate("/plano-vida/para-onde")} className="gap-2">
                     <ArrowLeft className="w-4 h-4" />
-                    Anterior: Para onde vou
+                    Anterior
                   </Button>
                   <p className="text-sm text-muted-foreground text-center">
                     Retorne, caso precise fazer algum ajuste em seus objetivos
@@ -520,22 +520,26 @@ const PlanoVidaComoChegar = () => {
                 />
               </div>
 
-              {/* Link para voltar */}
-              <div className="pt-4 flex flex-col items-center gap-2">
-                <Button variant="outline" onClick={() => navigate("/plano-vida/para-onde")} className="gap-2">
+              {/* Botões de navegação mobile */}
+              <div className="pt-4 flex items-center justify-center gap-2">
+                <Button variant="outline" size="sm" onClick={() => navigate("/home")} className="gap-2">
+                  <Home className="w-4 h-4" />
+                  Home
+                </Button>
+                <Button variant="outline" size="sm" onClick={() => navigate("/plano-vida/para-onde")} className="gap-2">
                   <ArrowLeft className="w-4 h-4" />
-                  Anterior: Para onde vou
+                  Anterior
                 </Button>
               </div>
             </>
           )}
         </div>
 
-        {/* Navigation */}
-        <div className="flex justify-center">
+        {/* Navigation Desktop */}
+        <div className="hidden sm:flex justify-center">
           <Button variant="outline" onClick={() => navigate("/home")} className="gap-2">
             <Home className="w-4 h-4" />
-            Voltar à Home
+            Home
           </Button>
         </div>
       </div>
