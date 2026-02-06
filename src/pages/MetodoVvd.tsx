@@ -614,222 +614,6 @@ const MetodoVvd = () => {
 
               </CardContent>
             </Card>
-
-            {/* Survey Questions Section - appears in all VVD steps */}
-            {showSurveySection && step >= 1 && (
-              <div ref={surveyRef}>
-                <Card className="border-2 border-accent/30 shadow-xl animate-fade-in mb-6">
-                <CardHeader className="space-y-4">
-                  <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 rounded-full bg-gradient-to-br from-accent to-primary flex items-center justify-center">
-                      <Lightbulb className="h-6 w-6 text-white" />
-                    </div>
-                    <div>
-                      <CardTitle className="text-xl">Complemente seu VVD</CardTitle>
-                      <CardDescription className="text-base mt-1">
-                        Complete estas informações para extrair um insight mais profundo da IA
-                      </CardDescription>
-                    </div>
-                  </div>
-                  <div className="p-4 bg-accent/5 border border-accent/20 rounded-lg">
-                    <p className="text-sm text-muted-foreground">
-                      ✨ <strong>Estas informações nos ajudarão a criar uma experiência personalizada para você.</strong> 
-                      Conhecer seus hábitos e preferências nos permite oferecer insights mais relevantes e 
-                      sugestões alinhadas com seu estilo de vida.
-                    </p>
-                  </div>
-                </CardHeader>
-                <CardContent className="space-y-6">
-                  {/* Fase Atual */}
-                  <div className="space-y-2">
-                    <Label htmlFor="currentPhase" className="font-semibold">Como você descreveria o momento que está vivendo agora?</Label>
-                    <Input
-                      id="currentPhase"
-                      placeholder="Ex: Em transição de carreira, buscando propósito..."
-                      value={surveyData.currentPhase}
-                      onChange={(e) => setSurveyData(prev => ({ ...prev, currentPhase: e.target.value }))}
-                      spellCheck
-                    />
-                  </div>
-
-                  {/* Expectativas */}
-                  <div className="space-y-2">
-                    <Label htmlFor="expectations" className="font-semibold">O que você espera alcançar com o PDI?</Label>
-                    <Textarea
-                      id="expectations"
-                      placeholder="Compartilhe seus sentimentos, sonhos e o que deseja conquistar..."
-                      value={surveyData.expectations}
-                      onChange={(e) => setSurveyData(prev => ({ ...prev, expectations: e.target.value }))}
-                      rows={3}
-                      spellCheck
-                    />
-                  </div>
-
-                  {/* Horário de acordar */}
-                  <div className="space-y-3">
-                    <Label className="font-semibold">Que horas você costuma acordar?</Label>
-                    <RadioGroup
-                      value={surveyData.wakeUpTime}
-                      onValueChange={(value) => setSurveyData(prev => ({ ...prev, wakeUpTime: value }))}
-                      className="grid grid-cols-2 gap-2"
-                    >
-                      <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="antes-6h" id="vvd-antes-6h" />
-                        <Label htmlFor="vvd-antes-6h" className="font-normal cursor-pointer">Antes das 6h</Label>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="6h-8h" id="vvd-6h-8h" />
-                        <Label htmlFor="vvd-6h-8h" className="font-normal cursor-pointer">Entre 6h e 8h</Label>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="8h-10h" id="vvd-8h-10h" />
-                        <Label htmlFor="vvd-8h-10h" className="font-normal cursor-pointer">Entre 8h e 10h</Label>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="depois-10h" id="vvd-depois-10h" />
-                        <Label htmlFor="vvd-depois-10h" className="font-normal cursor-pointer">Depois das 10h</Label>
-                      </div>
-                    </RadioGroup>
-                  </div>
-
-                  {/* Frequência de exercícios */}
-                  <div className="space-y-3">
-                    <Label className="font-semibold">Com que frequência você pratica exercícios físicos?</Label>
-                    <RadioGroup
-                      value={surveyData.exerciseFrequency}
-                      onValueChange={(value) => setSurveyData(prev => ({ ...prev, exerciseFrequency: value }))}
-                      className="grid grid-cols-2 gap-2"
-                    >
-                      <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="raramente" id="vvd-raramente" />
-                        <Label htmlFor="vvd-raramente" className="font-normal cursor-pointer">Raramente</Label>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="1-2x" id="vvd-1-2x" />
-                        <Label htmlFor="vvd-1-2x" className="font-normal cursor-pointer">1-2x por semana</Label>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="3-4x" id="vvd-3-4x" />
-                        <Label htmlFor="vvd-3-4x" className="font-normal cursor-pointer">3-4x por semana</Label>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="5+x" id="vvd-5+x" />
-                        <Label htmlFor="vvd-5+x" className="font-normal cursor-pointer">5x ou mais</Label>
-                      </div>
-                    </RadioGroup>
-                  </div>
-
-                  {/* Principal objetivo */}
-                  <div className="space-y-3">
-                    <Label className="font-semibold">Qual seu principal objetivo agora?</Label>
-                    <RadioGroup
-                      value={surveyData.mainGoal}
-                      onValueChange={(value) => setSurveyData(prev => ({ ...prev, mainGoal: value }))}
-                      className="grid grid-cols-1 sm:grid-cols-2 gap-2"
-                    >
-                      <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="carreira" id="vvd-carreira" />
-                        <Label htmlFor="vvd-carreira" className="font-normal cursor-pointer">Crescer na carreira</Label>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="saude" id="vvd-saude" />
-                        <Label htmlFor="vvd-saude" className="font-normal cursor-pointer">Melhorar a saúde</Label>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="financeiro" id="vvd-financeiro" />
-                        <Label htmlFor="vvd-financeiro" className="font-normal cursor-pointer">Estabilidade financeira</Label>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="relacionamentos" id="vvd-relacionamentos" />
-                        <Label htmlFor="vvd-relacionamentos" className="font-normal cursor-pointer">Melhorar relacionamentos</Label>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="equilibrio" id="vvd-equilibrio" />
-                        <Label htmlFor="vvd-equilibrio" className="font-normal cursor-pointer">Equilíbrio vida/trabalho</Label>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="autoconhecimento" id="vvd-autoconhecimento" />
-                        <Label htmlFor="vvd-autoconhecimento" className="font-normal cursor-pointer">Autoconhecimento</Label>
-                      </div>
-                    </RadioGroup>
-                  </div>
-
-                  {/* Estilo de aprendizado */}
-                  <div className="space-y-3">
-                    <Label className="font-semibold">Como você prefere aprender coisas novas?</Label>
-                    <RadioGroup
-                      value={surveyData.learningStyle}
-                      onValueChange={(value) => setSurveyData(prev => ({ ...prev, learningStyle: value }))}
-                      className="grid grid-cols-1 sm:grid-cols-2 gap-2"
-                    >
-                      <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="lendo" id="vvd-lendo" />
-                        <Label htmlFor="vvd-lendo" className="font-normal cursor-pointer">Lendo livros/artigos</Label>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="videos" id="vvd-videos" />
-                        <Label htmlFor="vvd-videos" className="font-normal cursor-pointer">Assistindo vídeos</Label>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="praticando" id="vvd-praticando" />
-                        <Label htmlFor="vvd-praticando" className="font-normal cursor-pointer">Praticando/Fazendo</Label>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="conversando" id="vvd-conversando" />
-                        <Label htmlFor="vvd-conversando" className="font-normal cursor-pointer">Conversando com pessoas</Label>
-                      </div>
-                    </RadioGroup>
-                  </div>
-
-                  {/* Maior desafio */}
-                  <div className="space-y-2">
-                    <Label htmlFor="biggestChallenge" className="font-semibold">Qual seu maior desafio no momento?</Label>
-                    <Textarea
-                      id="biggestChallenge"
-                      placeholder="Descreva brevemente seu maior desafio atual..."
-                      value={surveyData.biggestChallenge}
-                      onChange={(e) => setSurveyData(prev => ({ ...prev, biggestChallenge: e.target.value }))}
-                      rows={3}
-                      spellCheck
-                    />
-                  </div>
-
-                  {/* Fonte de motivação */}
-                  <div className="space-y-2">
-                    <Label htmlFor="motivationSource" className="font-semibold">O que mais te motiva?</Label>
-                    <Textarea
-                      id="motivationSource"
-                      placeholder="O que te faz levantar da cama todos os dias?"
-                      value={surveyData.motivationSource}
-                      onChange={(e) => setSurveyData(prev => ({ ...prev, motivationSource: e.target.value }))}
-                      rows={3}
-                      spellCheck
-                    />
-                  </div>
-
-                  {/* Botão Salvar Informações Complementares */}
-                  <div className="pt-4 border-t border-muted">
-                    <Button
-                      onClick={async () => {
-                        await saveSurveyData();
-                        toast.success("Informações complementares salvas!", {
-                          description: "Esses dados serão utilizados para gerar insights mais profundos."
-                        });
-                      }}
-                      disabled={!surveyData.currentPhase && !surveyData.expectations && !surveyData.biggestChallenge && !surveyData.motivationSource}
-                      className="w-full bg-gradient-to-r from-accent to-primary hover:opacity-90"
-                    >
-                      <Check className="h-4 w-4 mr-2" />
-                      Salvar Informações Complementares
-                    </Button>
-                    <p className="text-xs text-muted-foreground text-center mt-2">
-                      💡 Essas informações serão utilizadas para gerar insights personalizados mais profundos
-                    </p>
-                  </div>
-                </CardContent>
-              </Card>
-              </div>
-            )}
           </>
         )}
 
@@ -902,6 +686,222 @@ const MetodoVvd = () => {
               </div>
             </CardContent>
           </Card>
+        )}
+
+        {/* Survey Questions Section - appears after sentence is generated */}
+        {step >= 3 && showSurveySection && (
+          <div ref={surveyRef}>
+            <Card className="border-2 border-accent/30 shadow-xl animate-fade-in mb-6">
+              <CardHeader className="space-y-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-accent to-primary flex items-center justify-center">
+                    <Lightbulb className="h-6 w-6 text-white" />
+                  </div>
+                  <div>
+                    <CardTitle className="text-xl">Complemente seu VVD</CardTitle>
+                    <CardDescription className="text-base mt-1">
+                      Complete estas informações para extrair um insight mais profundo da IA
+                    </CardDescription>
+                  </div>
+                </div>
+                <div className="p-4 bg-accent/5 border border-accent/20 rounded-lg">
+                  <p className="text-sm text-muted-foreground">
+                    ✨ <strong>Estas informações nos ajudarão a criar uma experiência personalizada para você.</strong> 
+                    Conhecer seus hábitos e preferências nos permite oferecer insights mais relevantes e 
+                    sugestões alinhadas com seu estilo de vida.
+                  </p>
+                </div>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                {/* Fase Atual */}
+                <div className="space-y-2">
+                  <Label htmlFor="currentPhase" className="font-semibold">Como você descreveria o momento que está vivendo agora?</Label>
+                  <Input
+                    id="currentPhase"
+                    placeholder="Ex: Em transição de carreira, buscando propósito..."
+                    value={surveyData.currentPhase}
+                    onChange={(e) => setSurveyData(prev => ({ ...prev, currentPhase: e.target.value }))}
+                    spellCheck
+                  />
+                </div>
+
+                {/* Expectativas */}
+                <div className="space-y-2">
+                  <Label htmlFor="expectations" className="font-semibold">O que você espera alcançar com o PDI?</Label>
+                  <Textarea
+                    id="expectations"
+                    placeholder="Compartilhe seus sentimentos, sonhos e o que deseja conquistar..."
+                    value={surveyData.expectations}
+                    onChange={(e) => setSurveyData(prev => ({ ...prev, expectations: e.target.value }))}
+                    rows={3}
+                    spellCheck
+                  />
+                </div>
+
+                {/* Horário de acordar */}
+                <div className="space-y-3">
+                  <Label className="font-semibold">Que horas você costuma acordar?</Label>
+                  <RadioGroup
+                    value={surveyData.wakeUpTime}
+                    onValueChange={(value) => setSurveyData(prev => ({ ...prev, wakeUpTime: value }))}
+                    className="grid grid-cols-2 gap-2"
+                  >
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="antes-6h" id="vvd-antes-6h" />
+                      <Label htmlFor="vvd-antes-6h" className="font-normal cursor-pointer">Antes das 6h</Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="6h-8h" id="vvd-6h-8h" />
+                      <Label htmlFor="vvd-6h-8h" className="font-normal cursor-pointer">Entre 6h e 8h</Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="8h-10h" id="vvd-8h-10h" />
+                      <Label htmlFor="vvd-8h-10h" className="font-normal cursor-pointer">Entre 8h e 10h</Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="depois-10h" id="vvd-depois-10h" />
+                      <Label htmlFor="vvd-depois-10h" className="font-normal cursor-pointer">Depois das 10h</Label>
+                    </div>
+                  </RadioGroup>
+                </div>
+
+                {/* Frequência de exercícios */}
+                <div className="space-y-3">
+                  <Label className="font-semibold">Com que frequência você pratica exercícios físicos?</Label>
+                  <RadioGroup
+                    value={surveyData.exerciseFrequency}
+                    onValueChange={(value) => setSurveyData(prev => ({ ...prev, exerciseFrequency: value }))}
+                    className="grid grid-cols-2 gap-2"
+                  >
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="raramente" id="vvd-raramente" />
+                      <Label htmlFor="vvd-raramente" className="font-normal cursor-pointer">Raramente</Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="1-2x" id="vvd-1-2x" />
+                      <Label htmlFor="vvd-1-2x" className="font-normal cursor-pointer">1-2x por semana</Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="3-4x" id="vvd-3-4x" />
+                      <Label htmlFor="vvd-3-4x" className="font-normal cursor-pointer">3-4x por semana</Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="5+x" id="vvd-5+x" />
+                      <Label htmlFor="vvd-5+x" className="font-normal cursor-pointer">5x ou mais</Label>
+                    </div>
+                  </RadioGroup>
+                </div>
+
+                {/* Principal objetivo */}
+                <div className="space-y-3">
+                  <Label className="font-semibold">Qual seu principal objetivo agora?</Label>
+                  <RadioGroup
+                    value={surveyData.mainGoal}
+                    onValueChange={(value) => setSurveyData(prev => ({ ...prev, mainGoal: value }))}
+                    className="grid grid-cols-1 sm:grid-cols-2 gap-2"
+                  >
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="carreira" id="vvd-carreira" />
+                      <Label htmlFor="vvd-carreira" className="font-normal cursor-pointer">Crescer na carreira</Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="saude" id="vvd-saude" />
+                      <Label htmlFor="vvd-saude" className="font-normal cursor-pointer">Melhorar a saúde</Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="financeiro" id="vvd-financeiro" />
+                      <Label htmlFor="vvd-financeiro" className="font-normal cursor-pointer">Estabilidade financeira</Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="relacionamentos" id="vvd-relacionamentos" />
+                      <Label htmlFor="vvd-relacionamentos" className="font-normal cursor-pointer">Melhorar relacionamentos</Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="equilibrio" id="vvd-equilibrio" />
+                      <Label htmlFor="vvd-equilibrio" className="font-normal cursor-pointer">Equilíbrio vida/trabalho</Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="autoconhecimento" id="vvd-autoconhecimento" />
+                      <Label htmlFor="vvd-autoconhecimento" className="font-normal cursor-pointer">Autoconhecimento</Label>
+                    </div>
+                  </RadioGroup>
+                </div>
+
+                {/* Estilo de aprendizado */}
+                <div className="space-y-3">
+                  <Label className="font-semibold">Como você prefere aprender coisas novas?</Label>
+                  <RadioGroup
+                    value={surveyData.learningStyle}
+                    onValueChange={(value) => setSurveyData(prev => ({ ...prev, learningStyle: value }))}
+                    className="grid grid-cols-1 sm:grid-cols-2 gap-2"
+                  >
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="lendo" id="vvd-lendo" />
+                      <Label htmlFor="vvd-lendo" className="font-normal cursor-pointer">Lendo livros/artigos</Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="videos" id="vvd-videos" />
+                      <Label htmlFor="vvd-videos" className="font-normal cursor-pointer">Assistindo vídeos</Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="praticando" id="vvd-praticando" />
+                      <Label htmlFor="vvd-praticando" className="font-normal cursor-pointer">Praticando/Fazendo</Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="conversando" id="vvd-conversando" />
+                      <Label htmlFor="vvd-conversando" className="font-normal cursor-pointer">Conversando com pessoas</Label>
+                    </div>
+                  </RadioGroup>
+                </div>
+
+                {/* Maior desafio */}
+                <div className="space-y-2">
+                  <Label htmlFor="biggestChallenge" className="font-semibold">Qual seu maior desafio no momento?</Label>
+                  <Textarea
+                    id="biggestChallenge"
+                    placeholder="Descreva brevemente seu maior desafio atual..."
+                    value={surveyData.biggestChallenge}
+                    onChange={(e) => setSurveyData(prev => ({ ...prev, biggestChallenge: e.target.value }))}
+                    rows={3}
+                    spellCheck
+                  />
+                </div>
+
+                {/* Fonte de motivação */}
+                <div className="space-y-2">
+                  <Label htmlFor="motivationSource" className="font-semibold">O que mais te motiva?</Label>
+                  <Textarea
+                    id="motivationSource"
+                    placeholder="O que te faz levantar da cama todos os dias?"
+                    value={surveyData.motivationSource}
+                    onChange={(e) => setSurveyData(prev => ({ ...prev, motivationSource: e.target.value }))}
+                    rows={3}
+                    spellCheck
+                  />
+                </div>
+
+                {/* Botão Salvar Informações Complementares */}
+                <div className="pt-4 border-t border-muted">
+                  <Button
+                    onClick={async () => {
+                      await saveSurveyData();
+                      toast.success("Informações complementares salvas!", {
+                        description: "Esses dados serão utilizados para gerar insights mais profundos."
+                      });
+                    }}
+                    disabled={!surveyData.currentPhase && !surveyData.expectations && !surveyData.biggestChallenge && !surveyData.motivationSource}
+                    className="w-full bg-gradient-to-r from-accent to-primary hover:opacity-90"
+                  >
+                    <Check className="h-4 w-4 mr-2" />
+                    Salvar Informações Complementares
+                  </Button>
+                  <p className="text-xs text-muted-foreground text-center mt-2">
+                    💡 Essas informações serão utilizadas para gerar insights personalizados mais profundos
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
         )}
 
         {/* Final Save Button - Always at the bottom when Step 3 is reached */}
