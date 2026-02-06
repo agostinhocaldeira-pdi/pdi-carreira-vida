@@ -477,54 +477,131 @@ const PlanoVidaParaOnde = () => {
                       <h4 className="font-medium text-sm">Objetivos Cadastrados</h4>
                       {/* Mobile - Cards */}
                       <div className="md:hidden space-y-3">
-                        {objetivos.map((obj) => (
-                          <div key={obj.id} className={`rounded-lg border p-3 bg-card space-y-2 ${obj.isPrincipal ? 'ring-2 ring-warning border-warning/50' : ''}`}>
-                            <div className="flex items-start justify-between gap-2">
-                              <div className="flex items-center gap-2 flex-1">
-                                {obj.isPrincipal && (
-                                  <Star className="w-4 h-4 text-warning fill-warning flex-shrink-0" />
-                                )}
-                                <p className="text-sm font-medium line-clamp-2">{obj.texto}</p>
-                              </div>
-                              <div className="flex gap-1 flex-shrink-0">
-                                <Button 
-                                  variant="ghost" 
-                                  size="sm" 
-                                  className="h-8 w-8 p-0" 
-                                  onClick={() => handleTogglePrincipal(obj.id, obj.isPrincipal)}
-                                  title={obj.isPrincipal ? "Desmarcar como principal" : "Marcar como principal"}
-                                >
-                                  <Star className={`w-4 h-4 ${obj.isPrincipal ? 'text-warning fill-warning' : 'text-muted-foreground'}`} />
-                                </Button>
-                                <Button variant="ghost" size="sm" className="h-8 w-8 p-0" onClick={() => handleStartEditObjetivo(obj)}>
-                                  <Pencil className="w-4 h-4" />
-                                </Button>
-                                <Button variant="ghost" size="sm" className="h-8 w-8 p-0" onClick={() => handleRemoveObjetivo(obj.id)}>
-                                  <Trash2 className="w-4 h-4 text-red-600" />
-                                </Button>
-                              </div>
+                        {objetivos.map((obj) => {
+                          const isEditing = editandoObjetivoId === obj.id;
+                          
+                          return (
+                            <div key={obj.id} className={`rounded-lg border p-3 bg-card space-y-2 ${obj.isPrincipal ? 'ring-2 ring-warning border-warning/50' : ''}`}>
+                              {isEditing ? (
+                                // Modo de edição mobile
+                                <div className="space-y-3">
+                                  <div className="flex items-center justify-between">
+                                    <div className="flex items-center gap-2">
+                                      <Checkbox
+                                        id={`principal-mobile-${obj.id}`}
+                                        checked={objetivoEditado?.isPrincipal || false}
+                                        onCheckedChange={(checked) => handleEditPrincipalChange(checked as boolean)}
+                                      />
+                                      <Label htmlFor={`principal-mobile-${obj.id}`} className="text-xs">Objetivo Principal</Label>
+                                    </div>
+                                    <div className="flex gap-1">
+                                      <Button variant="ghost" size="sm" className="h-8 w-8 p-0" onClick={() => handleSaveEditObjetivo(obj.id)}>
+                                        <Check className="w-4 h-4 text-green-600" />
+                                      </Button>
+                                      <Button variant="ghost" size="sm" className="h-8 w-8 p-0" onClick={handleCancelEditObjetivo}>
+                                        <X className="w-4 h-4 text-red-600" />
+                                      </Button>
+                                    </div>
+                                  </div>
+                                  <div className="space-y-2">
+                                    <Label className="text-xs">Objetivo</Label>
+                                    <Input
+                                      value={objetivoEditado?.texto || ""}
+                                      onChange={(e) => setObjetivoEditado({ ...objetivoEditado!, texto: e.target.value })}
+                                      className="text-sm"
+                                    />
+                                  </div>
+                                  <div className="grid grid-cols-2 gap-2">
+                                    <div className="space-y-1">
+                                      <Label className="text-xs">Data Alvo</Label>
+                                      <Input
+                                        type="date"
+                                        value={objetivoEditado?.dataAlvo || ""}
+                                        onChange={(e) => setObjetivoEditado({ ...objetivoEditado!, dataAlvo: e.target.value })}
+                                        className="text-xs"
+                                      />
+                                    </div>
+                                    <div className="space-y-1">
+                                      <Label className="text-xs">Status</Label>
+                                      <Select
+                                        value={objetivoEditado?.status || "em-andamento"}
+                                        onValueChange={(value) => setObjetivoEditado({ ...objetivoEditado!, status: value })}
+                                      >
+                                        <SelectTrigger className="text-xs h-10">
+                                          <SelectValue />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                          <SelectItem value="a-iniciar">A iniciar</SelectItem>
+                                          <SelectItem value="em-andamento">Em andamento</SelectItem>
+                                          <SelectItem value="concluido">Concluído</SelectItem>
+                                          <SelectItem value="pendente">Pendente</SelectItem>
+                                          <SelectItem value="pausado">Pausado</SelectItem>
+                                        </SelectContent>
+                                      </Select>
+                                    </div>
+                                  </div>
+                                  <div className="space-y-1">
+                                    <Label className="text-xs">Conexão com VVD</Label>
+                                    <Textarea
+                                      value={objetivoEditado?.conexaoVvd || ""}
+                                      onChange={(e) => setObjetivoEditado({ ...objetivoEditado!, conexaoVvd: e.target.value })}
+                                      rows={2}
+                                      className="text-xs"
+                                    />
+                                  </div>
+                                </div>
+                              ) : (
+                                // Modo de visualização mobile
+                                <>
+                                  <div className="flex items-start justify-between gap-2">
+                                    <div className="flex items-center gap-2 flex-1">
+                                      {obj.isPrincipal && (
+                                        <Star className="w-4 h-4 text-warning fill-warning flex-shrink-0" />
+                                      )}
+                                      <p className="text-sm font-medium line-clamp-2">{obj.texto}</p>
+                                    </div>
+                                    <div className="flex gap-1 flex-shrink-0">
+                                      <Button 
+                                        variant="ghost" 
+                                        size="sm" 
+                                        className="h-8 w-8 p-0" 
+                                        onClick={() => handleTogglePrincipal(obj.id, obj.isPrincipal)}
+                                        title={obj.isPrincipal ? "Desmarcar como principal" : "Marcar como principal"}
+                                      >
+                                        <Star className={`w-4 h-4 ${obj.isPrincipal ? 'text-warning fill-warning' : 'text-muted-foreground'}`} />
+                                      </Button>
+                                      <Button variant="ghost" size="sm" className="h-8 w-8 p-0" onClick={() => handleStartEditObjetivo(obj)}>
+                                        <Pencil className="w-4 h-4" />
+                                      </Button>
+                                      <Button variant="ghost" size="sm" className="h-8 w-8 p-0" onClick={() => handleRemoveObjetivo(obj.id)}>
+                                        <Trash2 className="w-4 h-4 text-red-600" />
+                                      </Button>
+                                    </div>
+                                  </div>
+                                  <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
+                                    <span>{new Date(obj.dataAlvo).toLocaleDateString("pt-BR")}</span>
+                                    <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${
+                                      obj.status === "concluido" ? "bg-success/15 text-success" :
+                                      obj.status === "em-andamento" ? "bg-primary/15 text-primary" :
+                                      obj.status === "pausado" ? "bg-warning/15 text-warning" :
+                                      obj.status === "a-iniciar" ? "bg-secondary/20 text-secondary" :
+                                      "bg-muted text-muted-foreground"
+                                    }`}>
+                                      {obj.status === "em-andamento" ? "Em andamento" :
+                                       obj.status === "concluido" ? "Concluído" :
+                                       obj.status === "pausado" ? "Pausado" :
+                                       obj.status === "a-iniciar" ? "A iniciar" : "Pendente"}
+                                    </span>
+                                  </div>
+                                  {obj.conexaoVvd && (
+                                    <p className="text-xs text-muted-foreground line-clamp-2">{obj.conexaoVvd}</p>
+                                  )}
+                                  <OKRLinkSection objetivoId={obj.id.toString()} objetivoTexto={obj.texto} />
+                                </>
+                              )}
                             </div>
-                            <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
-                              <span>{new Date(obj.dataAlvo).toLocaleDateString("pt-BR")}</span>
-                              <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${
-                                obj.status === "concluido" ? "bg-success/15 text-success" :
-                                obj.status === "em-andamento" ? "bg-primary/15 text-primary" :
-                                obj.status === "pausado" ? "bg-warning/15 text-warning" :
-                                obj.status === "a-iniciar" ? "bg-secondary/20 text-secondary" :
-                                "bg-muted text-muted-foreground"
-                              }`}>
-                                {obj.status === "em-andamento" ? "Em andamento" :
-                                 obj.status === "concluido" ? "Concluído" :
-                                 obj.status === "pausado" ? "Pausado" :
-                                 obj.status === "a-iniciar" ? "A iniciar" : "Pendente"}
-                              </span>
-                            </div>
-                            {obj.conexaoVvd && (
-                              <p className="text-xs text-muted-foreground line-clamp-2">{obj.conexaoVvd}</p>
-                            )}
-                            <OKRLinkSection objetivoId={obj.id.toString()} objetivoTexto={obj.texto} />
-                          </div>
-                        ))}
+                          );
+                        })}
                       </div>
                       <div className="hidden md:block rounded-lg border overflow-x-auto max-w-full">
                         <Table>
