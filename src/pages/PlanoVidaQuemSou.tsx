@@ -356,36 +356,40 @@ const PlanoVidaQuemSou = () => {
           <LogoutButton />
         </div>
 
-        {/* Inspirational Message Card */}
-        <Card className="border-primary/20 bg-gradient-to-br from-primary/5 via-background to-accent/5 shadow-lg">
-          <CardContent className="p-5 sm:p-6">
+        {/* Inspirational Message */}
+        <div className={`${isMobile ? 'px-0' : ''}`}>
+          <div className={`${isMobile ? '' : 'border border-primary/20 rounded-lg bg-gradient-to-br from-primary/5 via-background to-accent/5 shadow-lg p-5 sm:p-6'}`}>
             <div className="flex flex-col sm:flex-row items-start gap-4">
-              <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center flex-shrink-0">
-                <Compass className="w-6 h-6 text-primary-foreground" />
-              </div>
+              {!isMobile && (
+                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center flex-shrink-0">
+                  <Compass className="w-6 h-6 text-primary-foreground" />
+                </div>
+              )}
               <div className="space-y-3">
                 <h2 className="text-lg sm:text-xl font-semibold text-foreground">
-                  A jornada começa por dentro
+                  Sua jornada começa por você.
                 </h2>
                 <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">
-                  Antes de traçar seu caminho, é preciso <strong className="text-foreground">saber quem você é</strong>. 
-                  O autoconhecimento é a fundação que sustenta seus sonhos.
+                  Antes de metas ou planos, organize sua base pessoal.
+                </p>
+                <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">
+                  Em poucos minutos, você vai ganhar clareza sobre o que importa, onde sua vida pede atenção e para onde quer seguir.
                 </p>
                 <p className="text-sm sm:text-base text-muted-foreground leading-relaxed mt-2">
-                  Nesta primeira etapa, conclua as 3 atividades:
+                  Conclua estas 3 etapas:
                 </p>
                 <ol className="text-sm sm:text-base text-muted-foreground leading-relaxed list-decimal list-inside space-y-1 mt-2">
-                  <li>Seus <strong className="text-foreground">Valores</strong></li>
+                  <li><strong className="text-foreground">Valores</strong></li>
                   <li><strong className="text-foreground">Roda da Vida</strong></li>
-                  <li>Criação do seu <strong className="text-foreground">VVD</strong> (Visão de Vida Desejada)</li>
+                  <li><strong className="text-foreground">VVD</strong> — Visão de Vida Desejada</li>
                 </ol>
                 <p className="text-sm sm:text-base text-primary font-semibold mt-3">
-                  Mãos à obra!
+                  Comece pelo primeiro exercício.
                 </p>
               </div>
             </div>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
 
         <Card className="shadow-medium overflow-hidden">
           <CardHeader className="pb-4">
@@ -420,188 +424,208 @@ const PlanoVidaQuemSou = () => {
               </div>
             ) : (
               <>
-                {/* Valores */}
-                <div className="space-y-3">
-                  <Label>Meus Valores (6 principais)</Label>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    {valores.slice(0, 6).map((valor, index) => (
-                      <Input
-                        key={index}
-                        placeholder={`Valor ${index + 1}`}
-                        value={valor}
-                        onChange={(e) => updateValor(index, e.target.value)}
-                        disabled={!isEditingValores}
-                        className="text-sm"
-                        spellCheck="true"
-                      />
-                    ))}
-                  </div>
-                  <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                    <Button 
-                      variant="outline" 
-                      size="sm" 
-                      onClick={() => navigate("/ferramentas/valores")}
-                      className="gap-2 text-xs sm:text-sm"
-                    >
-                      <Heart className="w-4 h-4" />
-                      Descobrir valores
-                    </Button>
-                    
-                    <div className="flex gap-2 w-full sm:w-auto justify-end">
-                      {!isEditingValores && (
-                        <Button onClick={handleEditValores} size="sm" variant="outline" className="text-xs sm:text-sm px-2 sm:px-3">
-                          <Edit className="w-3 h-3 sm:w-4 sm:h-4 sm:mr-2" />
-                          <span className="hidden sm:inline">Editar</span>
-                        </Button>
-                      )}
-                      <Button 
-                        onClick={handleSaveValores} 
-                        size="sm" 
-                        variant="outline"
-                        disabled={!isValoresComplete || !isEditingValores}
-                        className="text-xs sm:text-sm px-2 sm:px-3"
-                      >
-                        Salvar
-                      </Button>
-                      <Button 
-                        onClick={() => setShowValoresModal(true)} 
-                        size="sm" 
-                        variant="ghost"
-                        className="text-xs sm:text-sm px-2 sm:px-3 gap-1.5 text-wine hover:text-wine/80"
-                      >
-                        <MousePointerClick className="w-5 h-5 sm:w-4 sm:h-4 flex-shrink-0" />
-                        <span className="whitespace-nowrap">Entenda Valores</span>
-                      </Button>
+                {/* Valores Card */}
+                <Card className="border-primary/30 shadow-sm">
+                  <CardHeader className="pb-3">
+                    <div className="flex items-center gap-2">
+                      <Heart className="w-5 h-5 text-primary" />
+                      <CardTitle className="text-base sm:text-lg">1. Valores</CardTitle>
                     </div>
-                  </div>
-                </div>
-
-                {/* Áreas da Vida */}
-                <div className="space-y-3">
-                  <Label>Áreas da Vida</Label>
-                  
-                  {areasVida.length > 0 ? (
-                    <div className="rounded-lg border p-4 bg-card max-w-full overflow-hidden">
-                      <ResponsiveContainer width="100%" height={300}>
-                        <RadarChart data={areasVida.map(area => ({
-                          area: area.area,
-                          atual: Number(area.notaAtual) || 0,
-                          desejada: Number(area.notaDesejada) || 0
-                        }))}>
-                          <PolarGrid stroke="hsl(var(--border))" />
-                          <PolarAngleAxis
-                            dataKey="area"
-                            tick={{ fill: "hsl(var(--foreground))", fontSize: 10 }}
-                          />
-                          <PolarRadiusAxis
-                            angle={90}
-                            domain={[0, 10]}
-                            tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 10 }}
-                          />
-                          <Radar
-                            name="Nota Atual"
-                            dataKey="atual"
-                            stroke="hsl(var(--primary))"
-                            fill="hsl(var(--primary))"
-                            fillOpacity={0.3}
-                          />
-                          <Radar
-                            name="Nota Desejada"
-                            dataKey="desejada"
-                            stroke="hsl(var(--accent))"
-                            fill="hsl(var(--accent))"
-                            fillOpacity={0.3}
-                          />
-                          <Legend />
-                        </RadarChart>
-                      </ResponsiveContainer>
+                  </CardHeader>
+                  <CardContent className="space-y-3">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      {valores.slice(0, 6).map((valor, index) => (
+                        <Input
+                          key={index}
+                          placeholder={`Valor ${index + 1}`}
+                          value={valor}
+                          onChange={(e) => updateValor(index, e.target.value)}
+                          disabled={!isEditingValores}
+                          className="text-sm"
+                          spellCheck="true"
+                        />
+                      ))}
                     </div>
-                  ) : (
-                    <div className="rounded-lg border p-6 bg-muted/20 text-center">
-                      <p className="text-sm text-muted-foreground">
-                        Nenhuma área da vida cadastrada. Acesse a Roda da Vida para configurar.
-                      </p>
-                    </div>
-                  )}
-
-                  <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                    <Button 
-                      variant="outline" 
-                      size="sm" 
-                      onClick={() => navigate("/roda-da-vida")}
-                      className="gap-2 text-xs sm:text-sm"
-                    >
-                      <Sparkles className="w-4 h-4" />
-                      Roda da Vida
-                    </Button>
-                    <div className="flex gap-2 w-full sm:w-auto justify-end">
-                      <Button 
-                        onClick={() => setShowRodaVidaModal(true)} 
-                        size="sm" 
-                        variant="ghost"
-                        className="text-[10px] sm:text-sm px-1.5 sm:px-3 gap-1 sm:gap-1.5 text-wine hover:text-wine/80"
-                      >
-                        <MousePointerClick className="w-4 h-4 sm:w-4 sm:h-4 flex-shrink-0" />
-                        <span className="whitespace-nowrap">Entenda a Roda da Vida</span>
-                      </Button>
-                    </div>
-                  </div>
-                </div>
-
-                {/* VVD */}
-                <div className="space-y-3">
-                  <Label htmlFor="vvd">Visão de Vida Desejada (VVD)</Label>
-                  <Textarea
-                    id="vvd"
-                    placeholder="Escreva sua visão de vida ideal em uma frase..."
-                    value={vvd}
-                    onChange={(e) => setVvd(e.target.value)}
-                    disabled={!isEditingVvd}
-                    rows={isMobile ? 8 : 4}
-                    spellCheck="true"
-                    className="text-sm min-h-[120px] sm:min-h-[100px]"
-                  />
-                  <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                    {/* Show "Criar meu VVD" only when VVD is empty */}
-                    {!vvd.trim() && (
+                    <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                       <Button 
                         variant="outline" 
                         size="sm" 
-                        onClick={() => navigate("/ferramentas/metodo-vvd")}
+                        onClick={() => navigate("/ferramentas/valores")}
                         className="gap-2 text-xs sm:text-sm"
                       >
-                        <Target className="w-4 h-4" />
-                        Criar meu VVD
+                        <Heart className="w-4 h-4" />
+                        Descobrir valores
                       </Button>
+                      
+                      <div className="flex gap-2 w-full sm:w-auto justify-end">
+                        {!isEditingValores && (
+                          <Button onClick={handleEditValores} size="sm" variant="outline" className="text-xs sm:text-sm px-2 sm:px-3">
+                            <Edit className="w-3 h-3 sm:w-4 sm:h-4 sm:mr-2" />
+                            <span className="hidden sm:inline">Editar</span>
+                          </Button>
+                        )}
+                        <Button 
+                          onClick={handleSaveValores} 
+                          size="sm" 
+                          variant="outline"
+                          disabled={!isValoresComplete || !isEditingValores}
+                          className="text-xs sm:text-sm px-2 sm:px-3"
+                        >
+                          Salvar
+                        </Button>
+                        <Button 
+                          onClick={() => setShowValoresModal(true)} 
+                          size="sm" 
+                          variant="ghost"
+                          className="text-xs sm:text-sm px-2 sm:px-3 gap-1.5 text-wine hover:text-wine/80"
+                        >
+                          <MousePointerClick className="w-5 h-5 sm:w-4 sm:h-4 flex-shrink-0" />
+                          <span className="whitespace-nowrap">Entenda Valores</span>
+                        </Button>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Roda da Vida Card */}
+                <Card className="border-primary/30 shadow-sm">
+                  <CardHeader className="pb-3">
+                    <div className="flex items-center gap-2">
+                      <Sparkles className="w-5 h-5 text-primary" />
+                      <CardTitle className="text-base sm:text-lg">2. Roda da Vida</CardTitle>
+                    </div>
+                  </CardHeader>
+                  <CardContent className="space-y-3">
+                    {areasVida.length > 0 ? (
+                      <div className="rounded-lg border p-4 bg-card max-w-full overflow-hidden">
+                        <ResponsiveContainer width="100%" height={300}>
+                          <RadarChart data={areasVida.map(area => ({
+                            area: area.area,
+                            atual: Number(area.notaAtual) || 0,
+                            desejada: Number(area.notaDesejada) || 0
+                          }))}>
+                            <PolarGrid stroke="hsl(var(--border))" />
+                            <PolarAngleAxis
+                              dataKey="area"
+                              tick={{ fill: "hsl(var(--foreground))", fontSize: 10 }}
+                            />
+                            <PolarRadiusAxis
+                              angle={90}
+                              domain={[0, 10]}
+                              tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 10 }}
+                            />
+                            <Radar
+                              name="Nota Atual"
+                              dataKey="atual"
+                              stroke="hsl(var(--primary))"
+                              fill="hsl(var(--primary))"
+                              fillOpacity={0.3}
+                            />
+                            <Radar
+                              name="Nota Desejada"
+                              dataKey="desejada"
+                              stroke="hsl(var(--accent))"
+                              fill="hsl(var(--accent))"
+                              fillOpacity={0.3}
+                            />
+                            <Legend />
+                          </RadarChart>
+                        </ResponsiveContainer>
+                      </div>
+                    ) : (
+                      <div className="rounded-lg border p-6 bg-muted/20 text-center">
+                        <p className="text-sm text-muted-foreground">
+                          Nenhuma área da vida cadastrada. Acesse a Roda da Vida para configurar.
+                        </p>
+                      </div>
                     )}
-                    <div className={`flex gap-2 w-full sm:w-auto ${vvd.trim() ? 'justify-between sm:justify-end' : 'justify-end'}`}>
-                      {!isEditingVvd && vvd.trim() && (
-                        <Button onClick={handleEditVvd} size="sm" variant="outline" className="text-xs sm:text-sm px-2 sm:px-3">
-                          <Edit className="w-3 h-3 sm:w-4 sm:h-4 sm:mr-2" />
-                          <span className="hidden sm:inline">Editar</span>
+
+                    <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                      <Button 
+                        variant="outline" 
+                        size="sm" 
+                        onClick={() => navigate("/roda-da-vida")}
+                        className="gap-2 text-xs sm:text-sm"
+                      >
+                        <Sparkles className="w-4 h-4" />
+                        Roda da Vida
+                      </Button>
+                      <div className="flex gap-2 w-full sm:w-auto justify-end">
+                        <Button 
+                          onClick={() => setShowRodaVidaModal(true)} 
+                          size="sm" 
+                          variant="ghost"
+                          className="text-[10px] sm:text-sm px-1.5 sm:px-3 gap-1 sm:gap-1.5 text-wine hover:text-wine/80"
+                        >
+                          <MousePointerClick className="w-4 h-4 sm:w-4 sm:h-4 flex-shrink-0" />
+                          <span className="whitespace-nowrap">Entenda a Roda da Vida</span>
+                        </Button>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* VVD Card */}
+                <Card className="border-primary/30 shadow-sm">
+                  <CardHeader className="pb-3">
+                    <div className="flex items-center gap-2">
+                      <Target className="w-5 h-5 text-primary" />
+                      <CardTitle className="text-base sm:text-lg">3. VVD — Visão de Vida Desejada</CardTitle>
+                    </div>
+                  </CardHeader>
+                  <CardContent className="space-y-3">
+                    <Textarea
+                      id="vvd"
+                      placeholder="Escreva sua visão de vida ideal em uma frase..."
+                      value={vvd}
+                      onChange={(e) => setVvd(e.target.value)}
+                      disabled={!isEditingVvd}
+                      rows={isMobile ? 8 : 4}
+                      spellCheck="true"
+                      className="text-sm min-h-[120px] sm:min-h-[100px]"
+                    />
+                    <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                      {/* Show "Criar meu VVD" only when VVD is empty */}
+                      {!vvd.trim() && (
+                        <Button 
+                          variant="outline" 
+                          size="sm" 
+                          onClick={() => navigate("/ferramentas/metodo-vvd")}
+                          className="gap-2 text-xs sm:text-sm"
+                        >
+                          <Target className="w-4 h-4" />
+                          Criar meu VVD
                         </Button>
                       )}
-                      <Button 
-                        onClick={handleSaveVvd} 
-                        size="sm" 
-                        variant="outline"
-                        disabled={!vvd || !isEditingVvd}
-                        className="text-xs sm:text-sm px-2 sm:px-3"
-                      >
-                        Salvar
-                      </Button>
-                      <Button 
-                        onClick={() => setShowVvdModal(true)} 
-                        size="sm" 
-                        variant="ghost"
-                        className="text-xs sm:text-sm px-2 sm:px-3 gap-1.5 text-wine hover:text-wine/80"
-                      >
-                        <MousePointerClick className="w-5 h-5 sm:w-4 sm:h-4 flex-shrink-0" />
-                        <span className="whitespace-nowrap">Entenda o PDI</span>
-                      </Button>
+                      <div className={`flex gap-2 w-full sm:w-auto ${vvd.trim() ? 'justify-between sm:justify-end' : 'justify-end'}`}>
+                        {!isEditingVvd && vvd.trim() && (
+                          <Button onClick={handleEditVvd} size="sm" variant="outline" className="text-xs sm:text-sm px-2 sm:px-3">
+                            <Edit className="w-3 h-3 sm:w-4 sm:h-4 sm:mr-2" />
+                            <span className="hidden sm:inline">Editar</span>
+                          </Button>
+                        )}
+                        <Button 
+                          onClick={handleSaveVvd} 
+                          size="sm" 
+                          variant="outline"
+                          disabled={!vvd || !isEditingVvd}
+                          className="text-xs sm:text-sm px-2 sm:px-3"
+                        >
+                          Salvar
+                        </Button>
+                        <Button 
+                          onClick={() => setShowVvdModal(true)} 
+                          size="sm" 
+                          variant="ghost"
+                          className="text-xs sm:text-sm px-2 sm:px-3 gap-1.5 text-wine hover:text-wine/80"
+                        >
+                          <MousePointerClick className="w-5 h-5 sm:w-4 sm:h-4 flex-shrink-0" />
+                          <span className="whitespace-nowrap">Entenda o PDI</span>
+                        </Button>
+                      </div>
                     </div>
-                  </div>
-                </div>
+                  </CardContent>
+                </Card>
               </>
             )}
           </CardContent>
