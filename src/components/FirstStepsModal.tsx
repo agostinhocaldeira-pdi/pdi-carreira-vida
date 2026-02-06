@@ -211,7 +211,7 @@ export const FirstStepsModal = () => {
             {/* Choice Step */}
             <div className="pt-8 pb-4 px-4 sm:px-6 text-center">
               <h2 className="text-xl sm:text-2xl font-bold text-white mb-2">
-                Por onde começar?
+                Vamos organizar sua vida
               </h2>
               <p className="text-white/60 text-sm sm:text-base">
                 Escolha como deseja iniciar sua jornada no PDI
@@ -226,12 +226,12 @@ export const FirstStepsModal = () => {
               >
                 <div className="flex items-center gap-3">
                   <ArrowRight className="w-5 h-5" />
-                  <span>Começar Base Pessoal</span>
+                  <span>Iniciar Base Pessoal</span>
                 </div>
               </Button>
               
               <p className="text-center text-white/40 text-xs">
-                Recomendado: construa sua base de autoconhecimento (30 min)
+                Você não precisa saber tudo agora. O sistema te guia
               </p>
 
               {/* Option 2: Home */}
