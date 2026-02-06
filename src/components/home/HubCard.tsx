@@ -2,12 +2,20 @@
  * HubCard - Componente reutilizável para cards do Hub
  */
 
-import { ReactNode } from "react";
+import { ReactNode, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Lock, ChevronRight } from "lucide-react";
+import { ChevronRight, Info } from "lucide-react";
 import { motion } from "framer-motion";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 export interface HubCardProps {
@@ -38,9 +46,13 @@ export const HubCard = ({
   className
 }: HubCardProps) => {
   const navigate = useNavigate();
+  const [showLockedDialog, setShowLockedDialog] = useState(false);
 
   const handleClick = () => {
-    if (isLocked) return;
+    if (isLocked) {
+      setShowLockedDialog(true);
+      return;
+    }
     navigate(to);
   };
 
@@ -52,8 +64,8 @@ export const HubCard = ({
 
   const cardContent = (
     <motion.div
-      whileHover={!isLocked ? { scale: 1.01, y: -2 } : {}}
-      whileTap={!isLocked ? { scale: 0.99 } : {}}
+      whileHover={{ scale: 1.01, y: -2 }}
+      whileTap={{ scale: 0.99 }}
       transition={{ type: "spring", stiffness: 400, damping: 20 }}
       className="h-full"
     >
@@ -63,34 +75,21 @@ export const HubCard = ({
           // Primary variant - dark premium style
           isPrimary && "bg-card border-border shadow-sm hover:shadow-md hover:border-primary/20",
           // Highlighted variant - dark with gold accent (for Base Pessoal)
-          isHighlighted && !isLocked && "bg-[#1A1F2C] border-[#D4AF37]/50 shadow-lg hover:shadow-xl hover:border-[#D4AF37]",
+          isHighlighted && "bg-[#1A1F2C] border-[#D4AF37]/50 shadow-lg hover:shadow-xl hover:border-[#D4AF37]",
           // Premium Black variant - exclusive black premium style
-          isPremiumBlack && !isLocked && "bg-[#0D0D0D] border-[#333] shadow-lg hover:shadow-xl hover:border-[#D4AF37]/50",
-          isPremiumBlack && isLocked && "bg-[#1A1A1A] border-[#333]/50",
+          isPremiumBlack && "bg-[#0D0D0D] border-[#333] shadow-lg hover:shadow-xl hover:border-[#D4AF37]/50",
           // Compact variant - smaller cards
           isCompact && "bg-card border-border/50 hover:border-primary/30 hover:shadow-sm",
           // Feature variant - medium sized feature cards
           isFeature && "bg-card border-border/50 hover:border-primary/30 hover:shadow-md",
-          // Locked state (for non premium-black variants)
-          isLocked && !isPremiumBlack && "bg-muted/30 border-border/20 opacity-60 cursor-not-allowed",
           // Default state
-          !isPrimary && !isHighlighted && !isCompact && !isFeature && !isPremiumBlack && !isLocked && "bg-card border-border/50 hover:border-primary/30 hover:shadow-md",
+          !isPrimary && !isHighlighted && !isCompact && !isFeature && !isPremiumBlack && "bg-card border-border/50 hover:border-primary/30 hover:shadow-md",
           className
         )}
         onClick={handleClick}
       >
-        {/* Lock overlay - only icon on mobile, with text on larger screens */}
-        {isLocked && (
-          <div className="absolute inset-0 bg-background/60 backdrop-blur-[1px] z-10 flex items-center justify-center">
-            <div className="text-center p-3">
-              <Lock className="w-5 h-5 text-muted-foreground/40 mx-auto" />
-              <p className="text-[10px] text-muted-foreground/60 leading-tight max-w-[120px] hidden sm:block mt-1.5">{lockMessage}</p>
-            </div>
-          </div>
-        )}
-
         {/* Badge */}
-        {badge && !isLocked && (
+        {badge && (
           <div className="absolute top-2 right-2 z-5">
             <span className={cn(
               "text-[10px] font-medium px-2 py-0.5 rounded-full",
@@ -117,13 +116,10 @@ export const HubCard = ({
                 ? "w-7 h-7 sm:w-8 sm:h-8 bg-[#D4AF37]/20"
                 : isCompact 
                   ? "w-7 h-7 sm:w-8 sm:h-8 bg-primary/10" 
-                  : "w-10 h-10 bg-primary/10",
-            isLocked && !isPremiumBlack && "bg-muted/50"
+                  : "w-10 h-10 bg-primary/10"
           )}>
             <div className={cn(
               isHighlighted ? "text-[#D4AF37]" : isPremiumBlack ? "text-[#D4AF37]" : "text-primary",
-              isLocked && !isPremiumBlack && "text-muted-foreground/40",
-              isLocked && isPremiumBlack && "text-[#D4AF37]/50",
               isCompact || isPremiumBlack || isHighlighted ? "w-3.5 h-3.5 sm:w-4 sm:h-4" : "w-5 h-5"
             )}>
               {icon}
@@ -135,8 +131,6 @@ export const HubCard = ({
             <h3 className={cn(
               "font-semibold leading-tight",
               isHighlighted ? "text-white text-[11px] sm:text-base" : isPremiumBlack ? "text-white" : "text-foreground",
-              isLocked && !isPremiumBlack && "text-muted-foreground/60",
-              isLocked && isPremiumBlack && "text-white/50",
               (isCompact || isPremiumBlack) && !isHighlighted ? "text-[11px] sm:text-sm" : !isHighlighted && "text-base"
             )}>
               {title}
@@ -146,7 +140,6 @@ export const HubCard = ({
               <p className={cn(
                 "mt-1 leading-relaxed",
                 isHighlighted ? "text-gray-400" : "text-muted-foreground",
-                isLocked && "text-muted-foreground/40",
                 isCompact ? "text-xs hidden" : "text-sm",
                 isFeature && "hidden sm:block"
               )}>
@@ -172,20 +165,49 @@ export const HubCard = ({
     </motion.div>
   );
 
+  const dialogContent = (
+    <Dialog open={showLockedDialog} onOpenChange={setShowLockedDialog}>
+      <DialogContent className="sm:max-w-md">
+        <DialogHeader>
+          <DialogTitle className="flex items-center gap-2">
+            <Info className="w-5 h-5 text-primary" />
+            Acesso Restrito
+          </DialogTitle>
+          <DialogDescription className="pt-2 text-base">
+            {lockMessage || "Esta funcionalidade ainda não está disponível para você."}
+          </DialogDescription>
+        </DialogHeader>
+        <div className="flex justify-end pt-4">
+          <Button variant="outline" onClick={() => setShowLockedDialog(false)}>
+            Entendi
+          </Button>
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+
   if (tooltipContent) {
     return (
-      <Tooltip>
-        <TooltipTrigger asChild>
-          {cardContent}
-        </TooltipTrigger>
-        <TooltipContent side="bottom" className="max-w-xs">
-          <p className="text-sm">{tooltipContent}</p>
-        </TooltipContent>
-      </Tooltip>
+      <>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            {cardContent}
+          </TooltipTrigger>
+          <TooltipContent side="bottom" className="max-w-xs">
+            <p className="text-sm">{tooltipContent}</p>
+          </TooltipContent>
+        </Tooltip>
+        {dialogContent}
+      </>
     );
   }
 
-  return cardContent;
+  return (
+    <>
+      {cardContent}
+      {dialogContent}
+    </>
+  );
 };
 
 export default HubCard;
