@@ -337,8 +337,8 @@ const PlanoVidaComoChegar = () => {
                   </div>
                 </div>
 
-                {/* Seção: Mão na Massa */}
-                <div className="p-4 sm:p-6 rounded-xl border-2 border-accent/30 bg-gradient-to-br from-accent/5 to-transparent max-w-full overflow-hidden w-full box-border">
+                {/* Seção: Mão na Massa - Separada e sem bordas no mobile */}
+                <div className="-mx-4 sm:mx-0 px-4 sm:px-6 py-4 sm:py-6 sm:rounded-xl sm:border-2 sm:border-accent/30 bg-gradient-to-br from-accent/5 to-transparent max-w-full overflow-hidden w-auto sm:w-full box-border">
                   <MaoNaMassa embedded />
                 </div>
 
