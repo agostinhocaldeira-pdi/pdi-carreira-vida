@@ -5,7 +5,6 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Button } from "@/components/ui/button";
 import { Volume2, VolumeX, Loader2 } from "lucide-react";
 import { useValuesExplanationAudio } from "@/hooks/useValuesExplanationAudio";
 
@@ -28,36 +27,30 @@ const ValuesScientificModal = ({ open, onOpenChange }: ValuesScientificModalProp
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent className="max-w-2xl max-h-[90vh] p-0">
-        <DialogHeader className="p-6 pb-0">
-          <div className="flex items-center justify-between gap-4">
-            <DialogTitle className="text-xl font-bold text-primary">
-              A importância de conhecer seus valores
-            </DialogTitle>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={toggleAudio}
-              disabled={isLoading}
-              className="flex items-center gap-2 shrink-0"
-            >
+        <DialogHeader className="p-6 pb-4">
+          <DialogTitle className="text-xl font-bold text-primary">
+            A importância de conhecer seus valores
+          </DialogTitle>
+          
+          {/* Audio button below title */}
+          <button
+            onClick={toggleAudio}
+            disabled={isLoading}
+            className="flex flex-col items-center gap-1 text-primary hover:text-primary/80 transition-colors disabled:opacity-50 mt-4 mx-auto"
+          >
+            <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
               {isLoading ? (
-                <>
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                  <span className="hidden sm:inline">Carregando...</span>
-                </>
+                <Loader2 className="w-6 h-6 animate-spin" />
               ) : isPlaying ? (
-                <>
-                  <VolumeX className="w-4 h-4" />
-                  <span className="hidden sm:inline">Parar</span>
-                </>
+                <VolumeX className="w-6 h-6" />
               ) : (
-                <>
-                  <Volume2 className="w-4 h-4" />
-                  <span className="hidden sm:inline">Ouvir</span>
-                </>
+                <Volume2 className="w-6 h-6" />
               )}
-            </Button>
-          </div>
+            </div>
+            <span className="text-xs">
+              {isLoading ? "Carregando..." : isPlaying ? "Clique para parar" : "Clique para ouvir"}
+            </span>
+          </button>
         </DialogHeader>
         
         <div className="relative">
