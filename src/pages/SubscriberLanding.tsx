@@ -179,32 +179,32 @@ const SubscriberLanding = () => {
       </header>
 
       {/* Hero Section */}
-      <section className="pt-28 sm:pt-36 pb-12 sm:pb-16 px-4 relative overflow-hidden">
+      <section className="pt-20 sm:pt-36 pb-6 sm:pb-16 px-4 relative overflow-hidden min-h-[100dvh] sm:min-h-0 flex flex-col justify-center">
         <div className="absolute inset-0 bg-gradient-to-br from-[#D4AF37]/5 via-transparent to-[#D4AF37]/3" />
         <div className="absolute top-20 right-0 w-96 h-96 bg-[#D4AF37]/10 rounded-full blur-3xl animate-pulse" />
         <div className="absolute bottom-0 left-0 w-80 h-80 bg-[#D4AF37]/5 rounded-full blur-3xl" />
         
         <div className="container relative mx-auto max-w-3xl text-center">
-          <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-4 sm:mb-6 text-white leading-tight">
+          <h1 className="text-xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-3 sm:mb-6 text-white leading-tight">
             Você já percebeu onde sua vida está{" "}
             <span className="text-[#D4AF37]">desalinhada</span>.
           </h1>
           
-          <h2 className="text-lg sm:text-xl md:text-2xl text-white/80 mb-8 sm:mb-10 font-light leading-relaxed">
+          <h2 className="text-base sm:text-xl md:text-2xl text-white/80 mb-4 sm:mb-8 font-light leading-relaxed">
             Agora é hora de viver com mais clareza, intenção e direção.
           </h2>
           
-          <div className="text-white/60 text-base sm:text-lg leading-relaxed max-w-2xl mx-auto space-y-4">
-            <p>
-              O que você acabou de experimentar<br />
-              não foi reflexão solta<br />
-              nem conteúdo motivacional.
-            </p>
-            <p>
-              Foi o início de um <span className="text-white font-medium">sistema de clareza</span><br />
-              pensado para adultos funcionais<br />
-              que não querem mais viver no automático.
-            </p>
+          {/* Video YouTube */}
+          <div className="w-full max-w-3xl mx-auto mb-6 sm:mb-10">
+            <div className="relative w-full aspect-video rounded-xl overflow-hidden shadow-2xl">
+              <iframe
+                src="https://www.youtube-nocookie.com/embed/BkXG8snq6Pw?autoplay=1&mute=1&loop=1&playlist=BkXG8snq6Pw&controls=0&modestbranding=1&rel=0&showinfo=0"
+                title="PDI - Sistema de Clareza"
+                className="absolute inset-0 w-full h-full"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+              />
+            </div>
           </div>
         </div>
       </section>
