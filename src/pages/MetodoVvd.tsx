@@ -955,14 +955,14 @@ const MetodoVvd = () => {
               </div>
             </div>
             <DialogTitle className="text-center text-2xl">
-              VVD Salva! 🎉
+              Muito bom! 🎉
             </DialogTitle>
             <DialogDescription className="text-center space-y-4 pt-2">
               <p>
-                Sua Visão de Vida Desejada foi salva com sucesso no <strong>Plano de Vida</strong>.
+                Você completou sua <strong>"Base Pessoal"</strong>
               </p>
               <p className="text-sm">
-                Você concluiu o <strong>Passo 1: Quem sou eu</strong>! Agora vamos para o próximo passo.
+                Agora, é hora de criar seu <strong>próximo objetivo</strong>, que conecta com a sua vida desejada.
               </p>
             </DialogDescription>
           </DialogHeader>
@@ -975,7 +975,7 @@ const MetodoVvd = () => {
               className="w-full gap-2"
             >
               <ArrowRight className="h-4 w-4" />
-              Continuar
+              Iniciar Direção & Objetivos
             </Button>
             <Button
               variant="outline"
