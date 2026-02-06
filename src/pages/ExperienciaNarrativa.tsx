@@ -23,6 +23,7 @@ const ExperienciaNarrativa = () => {
   const [isAudioReady, setIsAudioReady] = useState(false);
   const [showIntro, setShowIntro] = useState(true);
   const [isVideoPlaying, setIsVideoPlaying] = useState(false);
+  const [showYouTubeControls, setShowYouTubeControls] = useState(false);
   const [isTiktokVideoReady, setIsTiktokVideoReady] = useState(false);
   const preloadedAudiosRef = useRef<PreloadedAudios>({ ringtone: null, respira: null });
 
@@ -106,6 +107,10 @@ const ExperienciaNarrativa = () => {
 
   const handleWatchVideo = () => {
     setIsVideoPlaying(true);
+    // Fallback: se autoplay não funcionar, mostrar controles do YouTube após 1.5s
+    setTimeout(() => {
+      setShowYouTubeControls(true);
+    }, 1500);
   };
 
   const handleSkipToExperience = () => {
@@ -131,13 +136,28 @@ const ExperienciaNarrativa = () => {
               </div>
             ) : (
               // Playing state with JS API enabled
-              <iframe
-                src="https://www.youtube-nocookie.com/embed/dZybFglDt80?autoplay=1&modestbranding=1&rel=0&showinfo=0&controls=1"
-                className="w-full h-full"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-                title="PDI - Introdução"
-              />
+              <div className="relative w-full h-full">
+                <iframe
+                  src={`https://www.youtube-nocookie.com/embed/dZybFglDt80?autoplay=1&modestbranding=1&rel=0&showinfo=0&controls=${showYouTubeControls ? 1 : 0}&playsinline=1`}
+                  className="w-full h-full"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                  title="PDI - Introdução"
+                />
+                
+                {/* Overlay com botão de play caso autoplay falhe */}
+                {!showYouTubeControls && (
+                  <div 
+                    className="absolute inset-0 flex items-center justify-center cursor-pointer"
+                    onClick={() => setShowYouTubeControls(true)}
+                  >
+                    <div className="w-16 h-16 rounded-full bg-red-600/90 flex items-center justify-center shadow-lg hover:bg-red-500 transition-colors">
+                      <Play className="w-8 h-8 text-white fill-white ml-1" />
+                    </div>
+                    <p className="absolute bottom-4 text-white/70 text-xs">Toque para iniciar</p>
+                  </div>
+                )}
+              </div>
             )}
             
             {/* Shorts-style branding */}
