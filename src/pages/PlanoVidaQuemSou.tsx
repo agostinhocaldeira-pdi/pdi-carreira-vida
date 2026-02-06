@@ -532,7 +532,7 @@ const PlanoVidaQuemSou = () => {
                         className="gap-2 text-xs sm:text-sm"
                       >
                         <Sparkles className="w-4 h-4" />
-                        Roda da Vida
+                        Criar Roda da Vida
                       </Button>
                       <div className="flex gap-2 w-full sm:w-auto justify-end">
                         <Button 
