@@ -556,10 +556,10 @@ const PlanoVidaQuemSou = () => {
                   <CardContent className="space-y-3">
                     <Textarea
                       id="vvd"
-                      placeholder="Escreva sua visão de vida ideal em uma frase..."
+                      placeholder={vvd.trim() ? "Escreva sua visão de vida ideal..." : "Clique em 'Criar meu VVD' para escrever sua visão de vida."}
                       value={vvd}
                       onChange={(e) => setVvd(e.target.value)}
-                      disabled={!isEditingVvd}
+                      disabled={!vvd.trim() || !isEditingVvd}
                       rows={isMobile ? 8 : 4}
                       spellCheck="true"
                       className="text-sm min-h-[120px] sm:min-h-[100px]"
@@ -578,21 +578,24 @@ const PlanoVidaQuemSou = () => {
                         </Button>
                       )}
                       <div className={`flex gap-2 w-full sm:w-auto ${vvd.trim() ? 'justify-between sm:justify-end' : 'justify-end'}`}>
+                        {/* Show Edit button when VVD exists and not editing */}
                         {!isEditingVvd && vvd.trim() && (
                           <Button onClick={handleEditVvd} size="sm" variant="outline" className="text-xs sm:text-sm px-2 sm:px-3">
                             <Edit className="w-3 h-3 sm:w-4 sm:h-4 sm:mr-2" />
                             <span className="hidden sm:inline">Editar</span>
                           </Button>
                         )}
-                        <Button 
-                          onClick={handleSaveVvd} 
-                          size="sm" 
-                          variant="outline"
-                          disabled={!vvd || !isEditingVvd}
-                          className="text-xs sm:text-sm px-2 sm:px-3"
-                        >
-                          Salvar
-                        </Button>
+                        {/* Show Save button only when VVD exists and is being edited */}
+                        {vvd.trim() && isEditingVvd && (
+                          <Button 
+                            onClick={handleSaveVvd} 
+                            size="sm" 
+                            variant="outline"
+                            className="text-xs sm:text-sm px-2 sm:px-3"
+                          >
+                            Salvar
+                          </Button>
+                        )}
                         <Button 
                           onClick={() => setShowVvdModal(true)} 
                           size="sm" 
