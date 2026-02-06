@@ -9,13 +9,14 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
-import { Compass, Heart, Target, Lightbulb, ChevronDown, ArrowRight, Edit, Sparkles, Loader2, MousePointerClick, Plus, Trash2, Pencil, Check, X, Building2, Monitor, Smartphone, Lock } from "lucide-react";
+import { Compass, Heart, Target, Lightbulb, ChevronDown, ArrowRight, Edit, Sparkles, Loader2, MousePointerClick, Plus, Trash2, Pencil, Check, X, Building2, Monitor, Smartphone, Lock, Eye } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { PDILoader } from "@/components/ui/pdi-loader";
 import { toast } from "sonner";
 import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import ConfirmDeleteDialog from "@/components/ConfirmDeleteDialog";
 import { OKRLinkSection, CompanyOKRsOverview } from "@/components/home/OKRLinkSection";
 import MaoNaMassa from "@/components/home/MaoNaMassa";
@@ -1245,7 +1246,30 @@ const PlanoDeVida = ({ onTabChange, onOpenChange, forcedTab, forcedOpen }: Plano
                         </div>
 
                         <div className="space-y-2">
-                          <Label htmlFor="conexaoVvd">Conexão com o VVD</Label>
+                          <div className="flex items-center gap-2">
+                            <Label htmlFor="conexaoVvd">Conexão com o VVD</Label>
+                            {vvd && vvd.trim() && (
+                              <Popover>
+                                <PopoverTrigger asChild>
+                                  <button
+                                    type="button"
+                                    className="p-1 rounded-full hover:bg-primary/10 transition-colors"
+                                    title="Ver meu VVD"
+                                  >
+                                    <Eye className="w-4 h-4 text-primary" />
+                                  </button>
+                                </PopoverTrigger>
+                                <PopoverContent className="w-80" align="start">
+                                  <div className="space-y-2">
+                                    <h4 className="font-semibold text-sm">Minha Visão de Vida Desejada</h4>
+                                    <p className="text-sm text-muted-foreground italic">
+                                      "{vvd}"
+                                    </p>
+                                  </div>
+                                </PopoverContent>
+                              </Popover>
+                            )}
+                          </div>
                           <Textarea
                             id="conexaoVvd"
                             placeholder="Como este objetivo se conecta com sua visão de vida?"
