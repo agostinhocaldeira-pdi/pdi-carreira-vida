@@ -201,7 +201,7 @@ const SubscriberLanding = () => {
           <div className="lg:hidden w-full mb-6">
             <div className="relative w-full aspect-video rounded-xl overflow-hidden shadow-2xl">
               <iframe
-                src="https://www.youtube-nocookie.com/embed/DM2O6USHJQg?autoplay=1&mute=1&loop=1&playlist=DM2O6USHJQg&controls=0&modestbranding=1&rel=0&showinfo=0"
+                src="https://www.youtube-nocookie.com/embed/BkXG8snq6Pw?autoplay=1&mute=0&loop=1&playlist=BkXG8snq6Pw&controls=1&modestbranding=1&rel=0&showinfo=0"
                 title="PDI - Sistema de Clareza"
                 className="absolute inset-0 w-full h-full"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
@@ -216,7 +216,7 @@ const SubscriberLanding = () => {
             <div className="flex justify-center">
               <div className="relative w-full max-w-[320px] aspect-[9/16] rounded-xl overflow-hidden shadow-2xl">
                 <iframe
-                  src="https://www.youtube-nocookie.com/embed/DM2O6USHJQg?autoplay=1&mute=1&loop=1&playlist=DM2O6USHJQg&controls=0&modestbranding=1&rel=0&showinfo=0"
+                  src="https://www.youtube-nocookie.com/embed/BkXG8snq6Pw?autoplay=1&mute=0&loop=1&playlist=BkXG8snq6Pw&controls=1&modestbranding=1&rel=0&showinfo=0"
                   title="PDI - Sistema de Clareza"
                   className="absolute inset-0 w-full h-full"
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
