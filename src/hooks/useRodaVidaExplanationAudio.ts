@@ -3,9 +3,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
 const STORAGE_BUCKET = "stoic-audio";
-const AUDIO_FILE_NAME = "vvd-explanation-audio.mp3";
+const AUDIO_FILE_NAME = "roda-vida-explanation-audio.mp3";
 
-export const useVvdExplanationAudio = () => {
+export const useRodaVidaExplanationAudio = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
@@ -52,10 +52,10 @@ export const useVvdExplanationAudio = () => {
 
   const generateAudio = async (): Promise<string | null> => {
     try {
-      console.log("Triggering VVD explanation audio generation...");
+      console.log("Triggering Roda da Vida explanation audio generation...");
       
       const { data, error } = await supabase.functions.invoke('generate-explanation-audio', {
-        body: { type: 'vvd' }
+        body: { type: 'roda_vida' }
       });
 
       if (error) {
@@ -63,18 +63,18 @@ export const useVvdExplanationAudio = () => {
         throw error;
       }
 
-      if (data?.results?.vvd?.audioUrl) {
-        return data.results.vvd.audioUrl;
+      if (data?.results?.roda_vida?.audioUrl) {
+        return data.results.roda_vida.audioUrl;
       }
 
-      if (data?.results?.vvd?.unavailable) {
+      if (data?.results?.roda_vida?.unavailable) {
         toast.info("Áudio temporariamente indisponível");
         return null;
       }
 
       return null;
     } catch (error) {
-      console.error("Error generating VVD audio:", error);
+      console.error("Error generating Roda da Vida audio:", error);
       toast.error("Erro ao gerar áudio. Tente novamente mais tarde.");
       return null;
     }

@@ -107,3 +107,12 @@ verify_jwt = false
 
 [functions.send-2day-reminder-email]
 verify_jwt = false
+
+[functions.generate-explanation-audio]
+verify_jwt = false
+
+[functions.send-2day-reminder-all-users]
+verify_jwt = false
+
+[functions.send-2day-reminder-email-test]
+verify_jwt = false
