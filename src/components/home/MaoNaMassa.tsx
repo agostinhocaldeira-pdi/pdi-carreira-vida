@@ -17,6 +17,7 @@ import ConfirmDeleteDialog from "@/components/ConfirmDeleteDialog";
 import { usePDIStorage } from "@/hooks/usePDIStorage";
 import { usePDIData, useDeleteMeta, useSaveMeta, PDI_QUERY_KEYS } from "@/hooks/usePDIQueries";
 import { useActionCelebration } from "@/contexts/ActionCelebrationContext";
+import { supabase } from "@/integrations/supabase/client";
 
 interface MaoNaMassaProps {
   embedded?: boolean;
@@ -1247,15 +1248,32 @@ const MaoNaMassa = ({ embedded = false, fullscreenMode = false, onOpenFullscreen
           <DialogFooter className="flex-col sm:flex-row gap-2">
             <Button 
               variant="outline"
-              onClick={() => {
+              onClick={async () => {
                 setShowSuggestionModal(false);
                 // Close fullscreen if active
                 if (onCloseFullscreen) {
                   onCloseFullscreen();
                 }
-                // Navigate to home and trigger cache refresh
+                // Force refresh all caches to enable next phase
                 queryClient.invalidateQueries({ queryKey: PDI_QUERY_KEYS.pdiData() });
-                navigate('/home', { state: { refreshCache: true } });
+                queryClient.invalidateQueries({ queryKey: ['home-cache'] });
+                
+                // Trigger server-side cache rebuild for accurate state
+                try {
+                  const { data: { user } } = await supabase.auth.getUser();
+                  if (user) {
+                    await supabase.functions.invoke('process-home-cache', {
+                      body: { user_id: user.id, trigger: 'goal_created' },
+                    });
+                    // Refetch after server update
+                    queryClient.invalidateQueries({ queryKey: ['home-cache'] });
+                  }
+                } catch (err) {
+                  console.error('Error refreshing cache:', err);
+                }
+                
+                // Navigate to Control Panel
+                navigate('/control-panel');
               }}
               className="w-full sm:w-auto"
             >
