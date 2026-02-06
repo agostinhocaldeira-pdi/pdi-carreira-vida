@@ -60,9 +60,10 @@ const ValuesScientificModal = ({ open, onOpenChange }: ValuesScientificModalProp
           </div>
         </DialogHeader>
         
-        <ScrollArea className="h-[70vh] px-6 pb-6">
-          <div className="space-y-6 text-sm leading-relaxed text-muted-foreground pr-4">
-            <p>
+        <div className="relative">
+          <ScrollArea className="h-[70vh] px-6 pb-6 [&_[data-radix-scroll-area-scrollbar]]:!opacity-100 [&_[data-radix-scroll-area-thumb]]:!bg-primary/40">
+            <div className="space-y-6 text-sm leading-relaxed text-muted-foreground pr-4">
+              <p>
               Muitos dos nossos comportamentos, escolhas e conflitos vêm de valores que atuam no "piloto automático", sem que a gente tenha consciência deles. Tornar esses valores claros traz benefícios profundos tanto na vida pessoal quanto na profissional.
             </p>
 
@@ -169,9 +170,12 @@ const ValuesScientificModal = ({ open, onOpenChange }: ValuesScientificModalProp
               <p className="mt-3 font-medium text-foreground">
                 Elas aceleram um processo que, sozinho, pode levar anos.
               </p>
+              </div>
             </div>
-          </div>
-        </ScrollArea>
+          </ScrollArea>
+          {/* Gradient indicator for scroll */}
+          <div className="absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-background to-transparent pointer-events-none" />
+        </div>
       </DialogContent>
     </Dialog>
   );
