@@ -12,12 +12,18 @@ const BASE_PESSOAL_WELCOME_KEY = "pdi_base_pessoal_welcome_shown";
 
 interface BasePessoalWelcomeModalProps {
   userId?: string | null;
+  hasCompletedBase?: boolean;
 }
 
-export const BasePessoalWelcomeModal = ({ userId }: BasePessoalWelcomeModalProps) => {
+export const BasePessoalWelcomeModal = ({ userId, hasCompletedBase = false }: BasePessoalWelcomeModalProps) => {
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
+    // Don't show modal if user already completed base pessoal (100%)
+    if (hasCompletedBase) {
+      return;
+    }
+    
     // Check if user has seen this modal before
     const storageKey = userId 
       ? `${BASE_PESSOAL_WELCOME_KEY}_${userId}` 
@@ -32,7 +38,7 @@ export const BasePessoalWelcomeModal = ({ userId }: BasePessoalWelcomeModalProps
       }, 300);
       return () => clearTimeout(timer);
     }
-  }, [userId]);
+  }, [userId, hasCompletedBase]);
 
   const handleClose = () => {
     const storageKey = userId 
