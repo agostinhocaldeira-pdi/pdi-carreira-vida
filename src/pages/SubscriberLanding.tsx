@@ -300,10 +300,10 @@ const SubscriberLanding = () => {
       </section>
 
       {/* Formulário de Cadastro */}
-      <section className="py-12 sm:py-16 px-4">
+      <section className="py-12 sm:py-16 px-2 sm:px-4">
         <div className="container mx-auto max-w-md">
           <Card className="bg-[#222222] border-[#D4AF37]/30">
-            <CardContent className="p-6 sm:p-8">
+            <CardContent className="p-4 sm:p-8">
               <h3 className="text-xl sm:text-2xl font-bold text-white text-center mb-2">
                 Criar acesso ao seu sistema de clareza
               </h3>
