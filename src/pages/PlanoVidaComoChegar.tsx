@@ -258,13 +258,16 @@ const PlanoVidaComoChegar = () => {
                     </Button>
 
                     {/* Link explicativo sobre habilidades */}
-                    <button
+                    <Button 
+                      type="button" 
+                      variant="outline" 
+                      size="sm"
                       onClick={() => setShowHabilidadesModal(true)}
-                      className="flex items-center gap-2 text-xs sm:text-sm text-wine hover:text-wine/80 hover:underline transition-colors group"
+                      className="text-xs sm:text-sm"
                     >
-                      <MousePointerClick className="w-5 h-5 sm:w-4 sm:h-4 flex-shrink-0 group-hover:scale-110 transition-transform" />
-                      <span>Clique aqui: Entenda como descobrir habilidades que precisam ser desenvolvidas</span>
-                    </button>
+                      <Lightbulb className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
+                      Entenda melhor
+                    </Button>
 
                     {habilidades.length > 0 && (
                       <div className="rounded-lg border overflow-x-auto max-w-full mt-4">
