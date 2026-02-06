@@ -101,6 +101,22 @@ Em resumo:
 A Roda da Vida mostra como a vida está. Os valores explicam por que isso importa.
 Juntas, essas duas coisas ajudam a pessoa a sair do automático e construir uma vida mais consciente, equilibrada e alinhada.`,
   },
+  objetivo: {
+    filename: "objetivo-explanation-audio.mp3",
+    text: `Como definir seu objetivo.
+
+Um Objetivo é simplesmente aquilo que você deseja alcançar ou conquistar de forma ampla, como aprender uma nova língua ou ser mais saudável, mas ele não deve ser escolhido ao acaso.
+
+Ele precisa funcionar como um degrau que te leva para a sua Visão de Vida Desejada, ou VVD. Aquele roteiro onde você descreveu o estilo de vida dos seus sonhos.
+
+Portanto, definir um objetivo é escolher uma conquista que sirva de ponte direta para a realidade do seu VVD.
+
+Isso garante que você gaste sua energia construindo exatamente a vida que desenhou, e não caminhando para o lado oposto.
+
+Lembre-se: cada objetivo que você define deve estar alinhado com a visão de vida que você criou. Se não estiver conectado ao seu VVD, talvez não seja o objetivo certo para este momento.
+
+Pense no objetivo como um passo estratégico. Não é qualquer conquista. É a conquista certa, no momento certo, para te aproximar da vida que você realmente quer viver.`,
+  },
 };
 
 serve(async (req) => {

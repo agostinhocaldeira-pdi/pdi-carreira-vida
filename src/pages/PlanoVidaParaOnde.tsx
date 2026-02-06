@@ -11,7 +11,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Target, ArrowRight, ArrowLeft, Home, Plus, Trash2, Pencil, Check, X, ChevronDown, Lightbulb, Star, MousePointerClick } from "lucide-react";
+import { Target, ArrowRight, ArrowLeft, Home, Plus, Trash2, Pencil, Check, X, ChevronDown, Lightbulb, Star, MousePointerClick, Volume2, VolumeX, Loader2 } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { PDILoader } from "@/components/ui/pdi-loader";
 import { toast } from "sonner";
@@ -23,6 +23,7 @@ import { usePDIStorage } from "@/hooks/usePDIStorage";
 import { PDI_QUERY_KEYS, usePDIData } from "@/hooks/usePDIQueries";
 import { useRoleProtection } from "@/hooks/useRoleProtection";
 import LogoutButton from "@/components/LogoutButton";
+import { useObjetivoExplanationAudio } from "@/hooks/useObjetivoExplanationAudio";
 
 const PlanoVidaParaOnde = () => {
   const { isLoading: roleLoading, userRole } = useRoleProtection({ allowedRoles: ["user", "gestor"] });
@@ -30,6 +31,7 @@ const PlanoVidaParaOnde = () => {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const isMobile = useIsMobile();
+  const { isLoading: audioLoading, isPlaying: audioPlaying, toggleAudio } = useObjetivoExplanationAudio();
   
   const { data: pdiData, isLoading: isQueryLoading } = usePDIData();
   
@@ -891,6 +893,29 @@ const PlanoVidaParaOnde = () => {
               Como definir seu objetivo
             </DialogTitle>
           </DialogHeader>
+          
+          {/* Audio Player Button */}
+          <div className="flex justify-center py-2">
+            <button
+              onClick={toggleAudio}
+              disabled={audioLoading}
+              className="flex flex-col items-center gap-1.5 text-muted-foreground hover:text-primary transition-colors disabled:opacity-50"
+            >
+              <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center hover:bg-primary/20 transition-colors">
+                {audioLoading ? (
+                  <Loader2 className="w-6 h-6 text-primary animate-spin" />
+                ) : audioPlaying ? (
+                  <VolumeX className="w-6 h-6 text-primary" />
+                ) : (
+                  <Volume2 className="w-6 h-6 text-primary" />
+                )}
+              </div>
+              <span className="text-xs font-medium">
+                {audioLoading ? "Carregando..." : audioPlaying ? "Clique para parar" : "Clique para ouvir"}
+              </span>
+            </button>
+          </div>
+
           <div className="space-y-4 py-2">
             <p className="text-sm sm:text-base text-foreground/90 leading-relaxed">
               Um <strong>Objetivo</strong> é simplesmente aquilo que você deseja alcançar ou conquistar de forma ampla, como "aprender uma nova língua" ou "ser mais saudável", mas ele não deve ser escolhido ao acaso.
