@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
-import { Lightbulb, ArrowLeft, Home, Plus, Trash2, Pencil, Check, X, ExternalLink, MousePointerClick } from "lucide-react";
+import { Lightbulb, ArrowLeft, Home, Plus, Trash2, Pencil, Check, X, ExternalLink, MousePointerClick, Volume2, VolumeX, Loader2 } from "lucide-react";
 import { PDILoader } from "@/components/ui/pdi-loader";
 import { toast } from "sonner";
 
@@ -15,12 +15,16 @@ import MaoNaMassa from "@/components/home/MaoNaMassa";
 import { usePDIStorage } from "@/hooks/usePDIStorage";
 import { useRoleProtection } from "@/hooks/useRoleProtection";
 import LogoutButton from "@/components/LogoutButton";
+import { useHabilidadesExplanationAudio } from "@/hooks/useHabilidadesExplanationAudio";
 
 const PlanoVidaComoChegar = () => {
   const { isLoading: roleLoading, userRole } = useRoleProtection({ allowedRoles: ["user", "gestor"] });
   const storage = usePDIStorage();
   const navigate = useNavigate();
   const location = useLocation();
+  
+  // Audio hook for habilidades explanation
+  const { isPlaying: audioPlaying, isLoading: audioLoading, toggleAudio } = useHabilidadesExplanationAudio();
   
   const [isLoading, setIsLoading] = useState(true);
   
@@ -379,9 +383,30 @@ const PlanoVidaComoChegar = () => {
       <Dialog open={showHabilidadesModal} onOpenChange={setShowHabilidadesModal}>
         <DialogContent className="max-w-md sm:max-w-lg">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2 text-lg sm:text-xl">
-              <Lightbulb className="w-5 h-5 text-primary" />
-              Como descobrir habilidades a desenvolver
+            <DialogTitle className="flex items-center justify-between text-lg sm:text-xl">
+              <div className="flex items-center gap-2">
+                <Lightbulb className="w-5 h-5 text-primary" />
+                Como descobrir habilidades a desenvolver
+              </div>
+              {/* Audio button */}
+              <button
+                onClick={toggleAudio}
+                disabled={audioLoading}
+                className="flex flex-col items-center gap-1 text-primary hover:text-primary/80 transition-colors disabled:opacity-50"
+              >
+                <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+                  {audioLoading ? (
+                    <Loader2 className="w-5 h-5 animate-spin" />
+                  ) : audioPlaying ? (
+                    <VolumeX className="w-5 h-5" />
+                  ) : (
+                    <Volume2 className="w-5 h-5" />
+                  )}
+                </div>
+                <span className="text-[10px]">
+                  {audioLoading ? "..." : audioPlaying ? "Parar" : "Ouvir"}
+                </span>
+              </button>
             </DialogTitle>
           </DialogHeader>
           <div className="space-y-4 py-2">
