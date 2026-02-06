@@ -805,6 +805,19 @@ const MaoNaMassa = ({ embedded = false, fullscreenMode = false, onOpenFullscreen
                 </div>
               </div>
 
+              {/* Botão Adicionar - Acima da lista de ações */}
+              <Button 
+                type="button" 
+                size="sm"
+                onClick={handleAddAcao}
+                disabled={!objetivoSelecionado}
+                className="mt-2 text-xs sm:text-sm bg-orange-500 hover:bg-orange-600 text-white"
+              >
+                <Plus className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
+                <span className="sm:hidden">Adicionar</span>
+                <span className="hidden sm:inline">Adicionar Ação</span>
+              </Button>
+
               {acoes.length > 0 && (
                 <>
                   {/* Versão Desktop - Tabela */}
@@ -1091,19 +1104,6 @@ const MaoNaMassa = ({ embedded = false, fullscreenMode = false, onOpenFullscreen
                   </div>
                 </>
               )}
-
-              <Button 
-                type="button" 
-                variant="outline" 
-                size="sm"
-                onClick={handleAddAcao}
-                disabled={!objetivoSelecionado}
-                className="mt-2 text-xs sm:text-sm"
-              >
-                <Plus className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
-                <span className="sm:hidden">Adicionar</span>
-                <span className="hidden sm:inline">Adicionar Ação</span>
-              </Button>
             </div>
 
             <div className="space-y-3">
