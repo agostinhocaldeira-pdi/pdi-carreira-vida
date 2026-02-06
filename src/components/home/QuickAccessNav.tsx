@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { BookOpen, Target, MessagesSquare, Link2, HelpCircle, FileText, Users, ChevronRight, Sparkles, TrendingUp, User, Footprints, Trophy, Lock } from "lucide-react";
+import { BookOpen, Target, MessagesSquare, Link2, HelpCircle, FileText, Users, ChevronRight, Sparkles, TrendingUp, User, Footprints, Trophy, Lock, Home } from "lucide-react";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { useSubscriptionContext } from "@/contexts/SubscriptionContext";
@@ -40,6 +40,12 @@ const strategicItems = [
 
 // GRUPO MANUTENÇÃO - Secundário (estilo ghost/menor)
 const maintenanceItems = [
+  { 
+    label: "Home", 
+    icon: Home, 
+    path: "/home",
+    group: 'maintenance'
+  },
   { 
     label: "Progresso", 
     icon: TrendingUp, 
