@@ -19,9 +19,12 @@ import { useActionCelebration } from "@/contexts/ActionCelebrationContext";
 
 interface MaoNaMassaProps {
   embedded?: boolean;
+  fullscreenMode?: boolean;
+  onOpenFullscreen?: () => void;
+  onCloseFullscreen?: () => void;
 }
 
-const MaoNaMassa = ({ embedded = false }: MaoNaMassaProps) => {
+const MaoNaMassa = ({ embedded = false, fullscreenMode = false, onOpenFullscreen, onCloseFullscreen }: MaoNaMassaProps) => {
   const storage = usePDIStorage();
   const formRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
@@ -607,27 +610,45 @@ const MaoNaMassa = ({ embedded = false }: MaoNaMassaProps) => {
 
           {/* Botão Cadastrar Nova Meta */}
           <div ref={formRef}>
-            <Collapsible open={isFormOpen} onOpenChange={setIsFormOpen}>
-            <div className="flex justify-center">
-              <CollapsibleTrigger asChild>
+            {/* Mobile: Button that triggers fullscreen mode */}
+            {onOpenFullscreen && !fullscreenMode && (
+              <div className="flex justify-center md:hidden">
                 <Button 
                   variant="outline" 
-                  className="gap-2 hover:bg-primary/10 hover:border-primary transition-all shadow-sm text-xs sm:text-sm"
+                  className="gap-2 hover:bg-primary/10 hover:border-primary transition-all shadow-sm text-xs"
+                  onClick={onOpenFullscreen}
                 >
-                  <Plus className="w-3 h-3 sm:w-4 sm:h-4" />
-                  <span className="sm:hidden">{isFormOpen ? "Ocultar" : "Nova Meta"}</span>
-                  <span className="hidden sm:inline">{isFormOpen ? "Ocultar Formulário" : "Cadastrar Nova Meta"}</span>
-                  <ChevronDown className={`w-3 h-3 sm:w-4 sm:h-4 transition-transform duration-300 ${isFormOpen ? "rotate-180" : ""}`} />
+                  <Plus className="w-3 h-3" />
+                  Nova Meta
                 </Button>
-              </CollapsibleTrigger>
-            </div>
+              </div>
+            )}
 
-            <CollapsibleContent className="mt-6">
-              <div className="space-y-4 p-4 bg-muted/30 rounded-lg border-2 border-dashed">
-                <h3 className="text-lg font-semibold flex items-center gap-2">
-                  <Rocket className="w-5 h-5 text-primary" />
-                  {editandoMetaId ? "Editar Meta" : "Nova Meta"}
-                </h3>
+            {/* Desktop or fullscreen mode: Collapsible form */}
+            <div className={onOpenFullscreen && !fullscreenMode ? "hidden md:block" : ""}>
+              <Collapsible open={fullscreenMode || isFormOpen} onOpenChange={fullscreenMode ? undefined : setIsFormOpen}>
+              {!fullscreenMode && (
+                <div className="flex justify-center">
+                  <CollapsibleTrigger asChild>
+                    <Button 
+                      variant="outline" 
+                      className="gap-2 hover:bg-primary/10 hover:border-primary transition-all shadow-sm text-xs sm:text-sm"
+                    >
+                      <Plus className="w-3 h-3 sm:w-4 sm:h-4" />
+                      <span className="sm:hidden">{isFormOpen ? "Ocultar" : "Nova Meta"}</span>
+                      <span className="hidden sm:inline">{isFormOpen ? "Ocultar Formulário" : "Cadastrar Nova Meta"}</span>
+                      <ChevronDown className={`w-3 h-3 sm:w-4 sm:h-4 transition-transform duration-300 ${isFormOpen ? "rotate-180" : ""}`} />
+                    </Button>
+                  </CollapsibleTrigger>
+                </div>
+              )}
+
+              <CollapsibleContent className={fullscreenMode ? "" : "mt-6"}>
+                <div className={`space-y-4 ${fullscreenMode ? "" : "p-4 bg-muted/30 rounded-lg border-2 border-dashed"}`}>
+                  <h3 className="text-lg font-semibold flex items-center gap-2">
+                    <Rocket className="w-5 h-5 text-primary" />
+                    {editandoMetaId ? "Editar Meta" : "Nova Meta"}
+                  </h3>
             <div className="space-y-2">
               <Label htmlFor="objetivo">Objetivo</Label>
               <Select
@@ -1198,6 +1219,7 @@ const MaoNaMassa = ({ embedded = false }: MaoNaMassaProps) => {
               </div>
             </CollapsibleContent>
           </Collapsible>
+          </div>
         </div>
       </div>
   );

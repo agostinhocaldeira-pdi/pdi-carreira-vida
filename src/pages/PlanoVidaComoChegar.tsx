@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
-import { Lightbulb, ArrowLeft, Home, Plus, Trash2, Pencil, Check, X, ExternalLink, MousePointerClick, Volume2, VolumeX, Loader2 } from "lucide-react";
+import { Lightbulb, ArrowLeft, Home, Plus, Trash2, Pencil, Check, X, ExternalLink, Volume2, VolumeX, Loader2, Rocket } from "lucide-react";
 import { PDILoader } from "@/components/ui/pdi-loader";
 import { toast } from "sonner";
 
@@ -16,17 +16,20 @@ import { usePDIStorage } from "@/hooks/usePDIStorage";
 import { useRoleProtection } from "@/hooks/useRoleProtection";
 import LogoutButton from "@/components/LogoutButton";
 import { useHabilidadesExplanationAudio } from "@/hooks/useHabilidadesExplanationAudio";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const PlanoVidaComoChegar = () => {
   const { isLoading: roleLoading, userRole } = useRoleProtection({ allowedRoles: ["user", "gestor"] });
   const storage = usePDIStorage();
   const navigate = useNavigate();
   const location = useLocation();
+  const isMobile = useIsMobile();
   
   // Audio hook for habilidades explanation
   const { isPlaying: audioPlaying, isLoading: audioLoading, toggleAudio } = useHabilidadesExplanationAudio();
   
   const [isLoading, setIsLoading] = useState(true);
+  const [maoNaMassaFullscreen, setMaoNaMassaFullscreen] = useState(false);
   
   // Estados para Habilidades
   const [novaHabilidade, setNovaHabilidade] = useState("");
@@ -170,6 +173,31 @@ const PlanoVidaComoChegar = () => {
     );
   }
 
+  // Mobile fullscreen for Mão na Massa
+  if (isMobile && maoNaMassaFullscreen) {
+    return (
+      <div className="min-h-screen bg-background">
+        {/* Fullscreen header */}
+        <div className="sticky top-0 z-50 bg-background border-b px-4 py-3 flex items-center gap-3">
+          <Button 
+            variant="ghost" 
+            size="sm"
+            onClick={() => setMaoNaMassaFullscreen(false)}
+            className="gap-2"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            Voltar
+          </Button>
+          <span className="font-semibold text-sm">Nova Meta</span>
+        </div>
+        {/* Fullscreen content */}
+        <div className="p-4">
+          <MaoNaMassa embedded fullscreenMode onCloseFullscreen={() => setMaoNaMassaFullscreen(false)} />
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-muted/30 to-background p-4 sm:p-6">
       <div className="max-w-4xl mx-auto space-y-6">
@@ -182,22 +210,13 @@ const PlanoVidaComoChegar = () => {
           <LogoutButton />
         </div>
 
-        <Card className="shadow-medium overflow-hidden">
-          <CardHeader className="pb-4">
+        {/* Mobile: Simplified title with progress */}
+        {isMobile ? (
+          <div className="space-y-3">
+            <h1 className="text-lg font-bold text-foreground">
+              Passo 3 - Como chegar lá - Habilidades e desenvolvimento
+            </h1>
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center shadow-lg">
-                <Lightbulb className="w-6 h-6 text-primary-foreground" />
-              </div>
-              <div>
-                <div className="flex items-center gap-2 mb-0.5">
-                  <span className="text-xs font-bold uppercase tracking-wider text-primary">Passo 3</span>
-                </div>
-                <CardTitle className="text-xl sm:text-2xl">Como chegar lá</CardTitle>
-                <CardDescription>Habilidades e desenvolvimento</CardDescription>
-              </div>
-            </div>
-            {/* Progress bar */}
-            <div className="mt-4 flex items-center gap-3">
               <div className="flex-1 h-2 bg-muted rounded-full overflow-hidden">
                 <div 
                   className="h-full bg-primary rounded-full transition-all duration-500" 
@@ -206,9 +225,41 @@ const PlanoVidaComoChegar = () => {
               </div>
               <span className="text-sm font-medium text-muted-foreground">{calculateProgress()}%</span>
             </div>
-          </CardHeader>
+          </div>
+        ) : (
+          <Card className="shadow-medium overflow-hidden">
+            <CardHeader className="pb-4">
+              <div className="flex items-center gap-3">
+                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center shadow-lg">
+                  <Lightbulb className="w-6 h-6 text-primary-foreground" />
+                </div>
+                <div>
+                  <div className="flex items-center gap-2 mb-0.5">
+                    <span className="text-xs font-bold uppercase tracking-wider text-primary">Passo 3</span>
+                  </div>
+                  <CardTitle className="text-xl sm:text-2xl">Como chegar lá</CardTitle>
+                  <CardDescription>Habilidades e desenvolvimento</CardDescription>
+                </div>
+              </div>
+              {/* Progress bar */}
+              <div className="mt-4 flex items-center gap-3">
+                <div className="flex-1 h-2 bg-muted rounded-full overflow-hidden">
+                  <div 
+                    className="h-full bg-primary rounded-full transition-all duration-500" 
+                    style={{ width: `${calculateProgress()}%` }}
+                  />
+                </div>
+                <span className="text-sm font-medium text-muted-foreground">{calculateProgress()}%</span>
+              </div>
+            </CardHeader>
+          </Card>
+        )}
 
-          <CardContent className="space-y-6">
+        {/* Content */}
+        <div className={isMobile ? "space-y-6" : ""}>
+          {!isMobile && (
+            <Card className="shadow-medium overflow-hidden">
+              <CardContent className="space-y-6 pt-6">
             {isLoading ? (
               <div className="py-8">
                 <PDILoader text="Carregando dados..." size="md" variant="rocket" />
@@ -344,8 +395,8 @@ const PlanoVidaComoChegar = () => {
                   </div>
                 </div>
 
-                {/* Seção: Mão na Massa - Separada e sem bordas no mobile */}
-                <div className="-mx-4 sm:mx-0 px-4 sm:px-6 py-4 sm:py-6 sm:rounded-xl sm:border-2 sm:border-accent/30 bg-gradient-to-br from-accent/5 to-transparent max-w-full overflow-hidden w-auto sm:w-full box-border">
+                {/* Desktop: Seção Mão na Massa */}
+                <div className="p-4 sm:p-6 rounded-xl border-2 border-accent/30 bg-gradient-to-br from-accent/5 to-transparent">
                   <MaoNaMassa embedded />
                 </div>
 
@@ -361,8 +412,124 @@ const PlanoVidaComoChegar = () => {
                 </div>
               </>
             )}
-          </CardContent>
-        </Card>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Mobile Sections */}
+          {isMobile && !isLoading && (
+            <>
+              {/* Seção 1: Habilidades a desenvolver */}
+              <div className="space-y-4">
+                <div className="flex items-center gap-2 pb-2 border-b">
+                  <Lightbulb className="w-5 h-5 text-primary" />
+                  <h2 className="font-semibold">Habilidades a Desenvolver</h2>
+                  {habilidades.length > 0 && (
+                    <span className="text-xs bg-primary/20 text-primary px-2 py-0.5 rounded-full">
+                      {habilidades.length}
+                    </span>
+                  )}
+                </div>
+
+                <div className="space-y-3">
+                  <div className="flex gap-2">
+                    <Input
+                      placeholder="Digite uma habilidade"
+                      value={novaHabilidade}
+                      onChange={(e) => setNovaHabilidade(e.target.value)}
+                      spellCheck="true"
+                      className="flex-1"
+                      onKeyPress={(e) => {
+                        if (e.key === 'Enter') {
+                          handleAddHabilidade();
+                        }
+                      }}
+                    />
+                    <Button 
+                      type="button" 
+                      variant="outline" 
+                      size="icon"
+                      onClick={handleAddHabilidade}
+                    >
+                      <Plus className="w-4 h-4" />
+                    </Button>
+                  </div>
+
+                  <Button 
+                    type="button" 
+                    variant="outline" 
+                    size="sm"
+                    onClick={() => setShowHabilidadesModal(true)}
+                    className="text-xs"
+                  >
+                    <Lightbulb className="w-3 h-3 mr-1" />
+                    Entenda melhor
+                  </Button>
+
+                  {habilidades.length > 0 && (
+                    <div className="space-y-2">
+                      {habilidades.map((habilidade) => {
+                        const isEditing = editandoHabilidadeId === habilidade.id;
+                        
+                        return (
+                          <div key={habilidade.id} className="flex items-center gap-2 p-3 bg-muted/50 rounded-lg">
+                            {isEditing ? (
+                              <>
+                                <Input
+                                  value={habilidadeEditada}
+                                  onChange={(e) => setHabilidadeEditada(e.target.value)}
+                                  className="flex-1 text-sm"
+                                  spellCheck="true"
+                                />
+                                <Button variant="ghost" size="sm" onClick={() => handleSaveEditHabilidade(habilidade.id)}>
+                                  <Check className="w-4 h-4 text-green-600" />
+                                </Button>
+                                <Button variant="ghost" size="sm" onClick={handleCancelEditHabilidade}>
+                                  <X className="w-4 h-4 text-destructive" />
+                                </Button>
+                              </>
+                            ) : (
+                              <>
+                                <span className="flex-1 text-sm break-words">{habilidade.texto}</span>
+                                <Button variant="ghost" size="sm" onClick={() => handleStartEditHabilidade(habilidade)}>
+                                  <Pencil className="w-4 h-4" />
+                                </Button>
+                                <Button variant="ghost" size="sm" onClick={() => handleRemoveHabilidade(habilidade.id)}>
+                                  <Trash2 className="w-4 h-4 text-destructive" />
+                                </Button>
+                              </>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Seção 2: Mão na Massa */}
+              <div className="space-y-4">
+                <div className="flex items-center gap-2 pb-2 border-b">
+                  <Rocket className="w-5 h-5 text-accent" />
+                  <h2 className="font-semibold">Mão na Massa</h2>
+                </div>
+
+                <MaoNaMassa 
+                  embedded 
+                  onOpenFullscreen={() => setMaoNaMassaFullscreen(true)}
+                />
+              </div>
+
+              {/* Link para voltar */}
+              <div className="pt-4 flex flex-col items-center gap-2">
+                <Button variant="outline" onClick={() => navigate("/plano-vida/para-onde")} className="gap-2">
+                  <ArrowLeft className="w-4 h-4" />
+                  Anterior: Para onde vou
+                </Button>
+              </div>
+            </>
+          )}
+        </div>
 
         {/* Navigation */}
         <div className="flex justify-center">
