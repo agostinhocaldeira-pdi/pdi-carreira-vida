@@ -287,7 +287,7 @@ const SubscriberLanding = () => {
       </section>
 
       {/* Formulário de Cadastro */}
-      <section className="py-12 sm:py-16 px-0 sm:px-4">
+      <section id="criar-acesso" className="py-12 sm:py-16 px-0 sm:px-4">
         <div className="container mx-auto max-w-none sm:max-w-md">
           <Card className="bg-[#222222] border-0 sm:border sm:border-[#D4AF37]/30 rounded-none sm:rounded-xl">
             <CardContent className="p-4 sm:p-8">
@@ -510,7 +510,7 @@ const SubscriberLanding = () => {
           <Button 
             size="lg" 
             onClick={() => {
-              window.scrollTo({ top: 0, behavior: 'smooth' });
+              document.getElementById('criar-acesso')?.scrollIntoView({ behavior: 'smooth' });
             }}
             className="text-lg px-10 py-7 bg-[#D4AF37] hover:bg-[#C9A431] text-[#1A1A1A] font-semibold shadow-xl hover:shadow-2xl transition-all duration-300"
           >
