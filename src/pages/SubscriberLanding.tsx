@@ -197,24 +197,11 @@ const SubscriberLanding = () => {
             </h2>
           </div>
 
-          {/* Mobile: Video only, full width */}
-          <div className="lg:hidden w-full mb-6 flex justify-center">
-            <div className="relative w-full max-w-[280px] aspect-[9/16] rounded-xl overflow-hidden shadow-2xl">
-              <iframe
-                src="https://www.youtube-nocookie.com/embed/nmU11AHP70E?autoplay=1&mute=0&loop=1&playlist=nmU11AHP70E&controls=1&modestbranding=1&rel=0&showinfo=0"
-                title="PDI - Sistema de Clareza"
-                className="absolute inset-0 w-full h-full"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-              />
-            </div>
-          </div>
-
-          {/* Desktop: Two columns - Video 9:16 left, Content right */}
-          <div className="hidden lg:grid lg:grid-cols-2 gap-10 items-center">
-            {/* Video 9:16 - Left */}
+          {/* Layout responsivo: Mobile = vídeo centralizado, Desktop = duas colunas */}
+          <div className="grid lg:grid-cols-2 gap-6 lg:gap-10 items-center">
+            {/* Video 9:16 - Único iframe compartilhado */}
             <div className="flex justify-center">
-              <div className="relative w-full max-w-[320px] aspect-[9/16] rounded-xl overflow-hidden shadow-2xl">
+              <div className="relative w-full max-w-[280px] lg:max-w-[320px] aspect-[9/16] rounded-xl overflow-hidden shadow-2xl">
                 <iframe
                   src="https://www.youtube-nocookie.com/embed/nmU11AHP70E?autoplay=1&mute=0&loop=1&playlist=nmU11AHP70E&controls=1&modestbranding=1&rel=0&showinfo=0"
                   title="PDI - Sistema de Clareza"
@@ -225,8 +212,8 @@ const SubscriberLanding = () => {
               </div>
             </div>
 
-            {/* O que acontece agora - Right */}
-            <div className="text-left">
+            {/* O que acontece agora - Visível apenas no desktop */}
+            <div className="hidden lg:block text-left">
               <h2 className="text-2xl md:text-3xl font-bold text-white mb-6">
                 O que acontece agora
               </h2>
