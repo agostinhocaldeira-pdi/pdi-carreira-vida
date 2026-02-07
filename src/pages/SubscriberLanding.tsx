@@ -276,8 +276,8 @@ const SubscriberLanding = () => {
       {/* Nome do sistema */}
       <section className="py-8 sm:py-12 px-4">
         <div className="container mx-auto max-w-3xl text-center">
-          <p className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#D4AF37] mb-4">
-            PDI — Planejamento e Decisão Intencional
+          <p className="text-3xl sm:text-4xl md:text-5xl font-bold text-[#D4AF37] mb-4">
+            PDI
           </p>
           <p className="text-white/70 text-lg sm:text-xl">
             Um sistema para voltar a confiar<br />
