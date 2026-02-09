@@ -16,6 +16,40 @@ const PaymentSuccess = () => {
   const sessionId = searchParams.get("session_id");
   const featureType = searchParams.get("feature");
 
+  // Track Meta Purchase event with Advanced Matching
+  const trackMetaPurchase = async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user && typeof window !== 'undefined' && (window as any).fbq) {
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('full_name')
+          .eq('id', user.id)
+          .maybeSingle();
+
+        // Re-init pixel with Advanced Matching data
+        const firstName = profile?.full_name?.split(' ')[0]?.toLowerCase() || '';
+        const lastName = profile?.full_name?.split(' ').slice(1).join(' ')?.toLowerCase() || '';
+        
+        (window as any).fbq('init', '896077476134553', {
+          em: user.email?.toLowerCase(),
+          fn: firstName,
+          ln: lastName,
+        });
+
+        // Fire Purchase event
+        (window as any).fbq('track', 'Purchase', {
+          value: 67.00,
+          currency: 'BRL',
+        });
+
+        console.log('[Meta Pixel] Purchase event fired with Advanced Matching');
+      }
+    } catch (err) {
+      console.error('[Meta Pixel] Error tracking purchase:', err);
+    }
+  };
+
   useEffect(() => {
     const verifyPayment = async () => {
       if (!sessionId || !featureType) {
@@ -46,16 +80,13 @@ const PaymentSuccess = () => {
 
         if (data?.verified) {
           setStatus("success");
-          // Redirect after a short delay
+          await trackMetaPurchase();
           setTimeout(() => {
             navigateToFeature();
           }, 2000);
         } else {
-          // Payment might still be processing via webhook
-          // Wait a bit and check again
           await new Promise(resolve => setTimeout(resolve, 3000));
           
-          // Check if purchase exists in database
           const { data: purchase } = await supabase
             .from("user_ai_purchases")
             .select("status")
@@ -64,12 +95,13 @@ const PaymentSuccess = () => {
 
           if (purchase?.status === "paid") {
             setStatus("success");
+            await trackMetaPurchase();
             setTimeout(() => {
               navigateToFeature();
             }, 2000);
           } else {
-            // Still processing, show success anyway and let user proceed
             setStatus("success");
+            await trackMetaPurchase();
             setTimeout(() => {
               navigateToFeature();
             }, 2000);
