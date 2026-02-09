@@ -267,7 +267,7 @@ const PlanoVidaComoChegar = () => {
             ) : (
               <>
                 {/* Seção: Habilidades a Desenvolver */}
-                <div className="p-4 sm:p-6 rounded-xl border-2 border-primary/20 bg-gradient-to-br from-primary/5 to-transparent space-y-4 w-full overflow-hidden">
+                <div className="p-4 sm:p-6 rounded-xl border-2 border-[#D4AF37]/30 bg-[#0D0D0D] space-y-4 w-full overflow-hidden">
                   <div className="flex items-center gap-2">
                     <Lightbulb className="w-5 h-5 text-primary" />
                     <h3 className="text-lg font-semibold">Habilidades a Desenvolver</h3>
@@ -311,10 +311,9 @@ const PlanoVidaComoChegar = () => {
                     {/* Link explicativo sobre habilidades */}
                     <Button 
                       type="button" 
-                      variant="outline" 
                       size="sm"
                       onClick={() => setShowHabilidadesModal(true)}
-                      className="text-xs sm:text-sm"
+                      className="text-xs sm:text-sm bg-[#D4AF37] hover:bg-[#C9A431] text-[#0D0D0D] font-semibold"
                     >
                       <Lightbulb className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
                       Entenda melhor
@@ -420,12 +419,12 @@ const PlanoVidaComoChegar = () => {
           {isMobile && !isLoading && (
             <>
               {/* Seção 1: Habilidades a desenvolver */}
-              <div className="space-y-4">
-                <div className="flex items-center gap-2 pb-2 border-b">
-                  <Lightbulb className="w-5 h-5 text-primary" />
-                  <h2 className="font-semibold">Habilidades a Desenvolver</h2>
+              <div className="space-y-4 p-4 rounded-xl bg-[#0D0D0D] border border-[#D4AF37]/30">
+                <div className="flex items-center gap-2 pb-2 border-b border-white/10">
+                  <Lightbulb className="w-5 h-5 text-[#D4AF37]" />
+                  <h2 className="font-semibold text-white">Habilidades a Desenvolver</h2>
                   {habilidades.length > 0 && (
-                    <span className="text-xs bg-primary/20 text-primary px-2 py-0.5 rounded-full">
+                    <span className="text-xs bg-[#D4AF37]/20 text-[#D4AF37] px-2 py-0.5 rounded-full">
                       {habilidades.length}
                     </span>
                   )}
@@ -457,10 +456,9 @@ const PlanoVidaComoChegar = () => {
 
                   <Button 
                     type="button" 
-                    variant="outline" 
                     size="sm"
                     onClick={() => setShowHabilidadesModal(true)}
-                    className="text-xs"
+                    className="text-xs bg-[#D4AF37] hover:bg-[#C9A431] text-[#0D0D0D] font-semibold"
                   >
                     <Lightbulb className="w-3 h-3 mr-1" />
                     Entenda melhor
