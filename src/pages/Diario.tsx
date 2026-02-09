@@ -4,7 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Book, Smile, Frown, Meh, Loader2, MousePointerClick, ArrowRight } from "lucide-react";
+import { Book, Smile, Frown, Meh, Loader2, MousePointerClick, ArrowRight, ArrowLeft } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import LogoutButton from "@/components/LogoutButton";
 import { useRoleProtection } from "@/hooks/useRoleProtection";
@@ -14,6 +15,7 @@ import { useActionCelebration } from "@/contexts/ActionCelebrationContext";
 
 const Diario = () => {
   useRoleProtection({ allowedRoles: ["user", "gestor"] });
+  const navigate = useNavigate();
   const { saveDiarioEntry, getDiarioByDate } = usePDIStorage();
   const { celebrateAction } = useActionCelebration();
   const [isLoading, setIsLoading] = useState(true);
@@ -121,6 +123,9 @@ const Diario = () => {
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between gap-2">
             <div className="flex items-center gap-2">
+              <Button variant="ghost" size="icon" onClick={() => navigate('/home')} className="text-primary-foreground hover:bg-primary-foreground/10">
+                <ArrowLeft className="w-5 h-5" />
+              </Button>
               <Book className="w-6 h-6 text-primary-foreground" />
               <h1 className="text-2xl font-bold text-primary-foreground">Meu Diário</h1>
             </div>
