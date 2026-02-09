@@ -327,20 +327,22 @@ const MetodoSmart = () => {
       localStorage.setItem("metaImportadaSmart", JSON.stringify(novaMeta));
 
       toast.success("🎯 Meta SMART importada com sucesso!", {
-        description: "Agora vá até 'Metas Cadastradas' no Plano de Vida e complete o cadastro.",
-        duration: 5000,
+        description: "Redirecionando para o Plano de Vida...",
+        duration: 3000,
       });
 
-      setTimeout(() => {
-        navigate("/home");
-      }, 2000);
-      
-      // Save to Supabase in background (non-blocking)
+      // Save to Supabase in background, then navigate
       storage.saveMetas(metasAtualizadas).then(() => {
         queryClient.invalidateQueries({ queryKey: PDI_QUERY_KEYS.pdiData() });
       }).catch(error => {
         console.error('Background sync error:', error);
       });
+
+      // Navigate to como-chegar with force refresh
+      setTimeout(() => {
+        queryClient.invalidateQueries({ queryKey: PDI_QUERY_KEYS.pdiData() });
+        navigate("/plano-vida/como-chegar", { state: { fromSmart: true } });
+      }, 1500);
     } catch (error) {
       console.error('Erro ao salvar meta SMART:', error);
       toast.error("Erro ao salvar a meta. Tente novamente.");
