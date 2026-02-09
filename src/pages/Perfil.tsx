@@ -436,21 +436,17 @@ const Perfil = () => {
                       )}
                     </div>
                     <div className="text-2xl font-bold">R$ 0<span className="text-sm font-normal text-muted-foreground"> por 30 dias</span></div>
-                    <p className="text-xs text-muted-foreground">Experimente tudo sem compromisso</p>
+                    <p className="text-xs text-muted-foreground">Experimente sem compromisso</p>
                   </CardHeader>
                   <CardContent className="space-y-2 text-sm">
                     <div className="space-y-1.5 text-muted-foreground">
                       <div className="flex items-start gap-2">
                         <Check className="h-4 w-4 mt-0.5 flex-shrink-0" />
-                        <span>Acesso completo por 30 dias</span>
+                        <span>Acesso por 30 dias</span>
                       </div>
                       <div className="flex items-start gap-2">
                         <Check className="h-4 w-4 mt-0.5 flex-shrink-0" />
                         <span>Todas as ferramentas liberadas</span>
-                      </div>
-                      <div className="flex items-start gap-2">
-                        <Check className="h-4 w-4 mt-0.5 flex-shrink-0" />
-                        <span>PDI ilimitado</span>
                       </div>
                       <div className="flex items-start gap-2">
                         <Check className="h-4 w-4 mt-0.5 flex-shrink-0" />
@@ -515,6 +511,10 @@ const Perfil = () => {
                       <div className="flex items-start gap-2">
                         <Check className="h-4 w-4 text-accent mt-0.5 flex-shrink-0" />
                         <span>Suporte prioritário</span>
+                      </div>
+                      <div className="flex items-start gap-2">
+                        <Check className="h-4 w-4 text-accent mt-0.5 flex-shrink-0" />
+                        <span>Desafio Gestão de tempo, Foco e produtividade</span>
                       </div>
                     </div>
                     {(subscription.plan === 'basico' || subscription.status === 'active') ? (
