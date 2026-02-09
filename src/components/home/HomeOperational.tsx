@@ -285,7 +285,7 @@ const AgendaEstrategica = () => {
 
           {/* Footer Links */}
           <div className="pt-2 border-t border-border/50 flex flex-wrap items-center justify-between gap-2">
-            <AgendaLegend variant={isMobile ? 'compact' : 'inline'} />
+            <AgendaLegend variant={isMobile ? 'compact' : 'inline'} onAddTask={handleAddClick} />
             <button
               onClick={handleAddClick}
               className="text-xs text-[#D4AF37] hover:text-[#D4AF37]/80 hover:underline transition-colors"
