@@ -173,6 +173,26 @@ O segredo está na consistência, não na intensidade. Um passo pequeno feito to
 
 Defina passos que sejam realistas para a sua rotina atual. O importante é que eles sejam sustentáveis e que você consiga mantê-los ao longo do tempo.`,
   },
+  diario: {
+    filename: "diario-explanation-audio.mp3",
+    text: `O que é um Diário Digital Inteligente no PDI.
+
+No PDI, o Diário não é apenas um espaço livre de anotações. Ele convida o usuário a registrar, de forma simples e objetiva: seu humor no dia, pensamentos relevantes, conquistas ou avanços, mesmo que pequenos, e uma gratidão diária. Essa estrutura orientada transforma o ato de escrever em um processo consciente de organização interna.
+
+Registrar o humor aumenta a consciência emocional. A prática de identificar e registrar o humor diário é amplamente utilizada em abordagens terapêuticas baseadas em evidências. Ao nomear emoções, a pessoa desenvolve maior consciência sobre seus estados internos, identifica padrões emocionais ao longo do tempo e reduz a sensação de confusão ou sobrecarga difusa. Esse processo favorece a autorregulação emocional, permitindo decisões mais alinhadas com objetivos pessoais e profissionais.
+
+Escrever pensamentos organiza a mente e reduz carga emocional. A escrita reflexiva, também conhecida como expressive writing, é um recurso estudado há décadas. Registrar pensamentos ajuda a externalizar preocupações, organiza experiências internas e reduz ruminação mental. Ao colocar ideias no papel ou na tela, o cérebro deixa de gastar energia apenas segurando informações e passa a processá-las de forma mais clara e estruturada.
+
+Registrar conquistas fortalece a autoconfiança e a motivação. Um dos maiores bloqueios no desenvolvimento de carreira e vida é a sensação de estagnação, muitas vezes causada por não perceber o próprio progresso. Ao registrar conquistas diárias, mesmo pequenas, a percepção de avanço se torna mais concreta, a autoconfiança é reforçada e a motivação tende a se sustentar no longo prazo. Esse princípio está diretamente relacionado ao conceito de autoeficácia, que descreve a crença na própria capacidade de agir e evoluir.
+
+Praticar gratidão melhora bem-estar e perspectiva. A gratidão não elimina desafios, mas altera a forma como eles são percebidos. Estudos mostram que o registro regular de gratidão está associado a maior bem-estar subjetivo, mais emoções positivas no cotidiano e melhor equilíbrio emocional diante de dificuldades. No contexto do PDI, a gratidão ajuda o usuário a manter uma visão mais ampla da própria trajetória, sem negar problemas, mas sem ser dominado por eles.
+
+O diferencial está na combinação estruturada. O verdadeiro valor do Diário Digital Inteligente não está em um único elemento isolado, mas na integração consciente de todos eles: Humor gera consciência emocional. Pensamentos geram clareza cognitiva. Conquistas geram reforço de progresso. Gratidão gera equilíbrio emocional. Essa combinação cria um ciclo diário de organização interna, alinhado ao propósito maior do PDI: ajudar a pessoa a sair do modo reativo e assumir uma postura mais estratégica sobre a própria vida e carreira.
+
+O Diário do PDI não promete soluções instantâneas nem resultados mágicos. Seu valor está na prática contínua. Com o uso regular, o usuário tende a desenvolver mais clareza sobre si mesmo, maior senso de direção, melhor relação com suas metas e decisões e mais consciência do próprio processo de evolução.
+
+Registrar o dia não é apenas escrever sobre o que aconteceu. É construir, aos poucos, uma visão mais clara de quem você é, onde está e para onde quer ir.`,
+  },
 };
 
 serve(async (req) => {

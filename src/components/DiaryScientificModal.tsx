@@ -1,9 +1,11 @@
+import { Volume2, Square, Loader2 } from "lucide-react";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { useExplanationAudio } from "@/hooks/useExplanationAudio";
 
 interface DiaryScientificModalProps {
   open: boolean;
@@ -11,6 +13,8 @@ interface DiaryScientificModalProps {
 }
 
 const DiaryScientificModal = ({ open, onOpenChange }: DiaryScientificModalProps) => {
+  const { isPlaying, isLoading, toggleAudio } = useExplanationAudio("diario");
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-2xl max-h-[85vh] overflow-hidden flex flex-col">
@@ -19,6 +23,24 @@ const DiaryScientificModal = ({ open, onOpenChange }: DiaryScientificModalProps)
             O que é um Diário Digital Inteligente no PDI
           </DialogTitle>
         </DialogHeader>
+
+        <div className="flex justify-center py-2 flex-shrink-0">
+          <button
+            onClick={toggleAudio}
+            disabled={isLoading}
+            className="flex items-center gap-2 px-4 py-2 rounded-full bg-[#D4AF37] hover:bg-[#D4AF37]/90 text-white text-sm font-medium transition-all disabled:opacity-50"
+          >
+            {isLoading ? (
+              <Loader2 className="w-4 h-4 animate-spin" />
+            ) : isPlaying ? (
+              <Square className="w-4 h-4" />
+            ) : (
+              <Volume2 className="w-4 h-4" />
+            )}
+            {isLoading ? "Carregando..." : isPlaying ? "Clique para parar" : "Clique para ouvir"}
+          </button>
+        </div>
+
         <div className="overflow-y-auto flex-1 pr-2 -mr-2 text-sm sm:text-base text-muted-foreground leading-relaxed space-y-6">
           <div>
             <p className="mb-3">
