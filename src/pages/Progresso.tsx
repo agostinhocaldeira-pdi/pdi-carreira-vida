@@ -18,7 +18,7 @@ import { usePDIStorage } from "@/hooks/usePDIStorage";
 import { useAIUsage } from "@/hooks/useAIUsage";
 import { AIUsageLimitModal } from "@/components/AIUsageLimitModal";
 
-const Progresso = () => {
+const ProgressoInner = () => {
   const storage = usePDIStorage();
   const { 
     streak, 
@@ -521,5 +521,13 @@ const Progresso = () => {
     </div>
   );
 };
+
+import SubscriptionGate from "@/components/subscription/SubscriptionGate";
+
+const Progresso = () => (
+  <SubscriptionGate featureName="Progresso">
+    <ProgressoInner />
+  </SubscriptionGate>
+);
 
 export default Progresso;

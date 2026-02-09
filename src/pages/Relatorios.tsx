@@ -8,7 +8,7 @@ import { exportPDIToPDF, exportProgressReportToPDF } from "@/utils/pdfExport";
 import { toast } from "sonner";
 import Logo from "@/components/Logo";
 
-const Relatorios = () => {
+const RelatoriosInner = () => {
   const [isExportingPDI, setIsExportingPDI] = useState(false);
   const [isExportingProgress, setIsExportingProgress] = useState(false);
 
@@ -438,5 +438,13 @@ const Relatorios = () => {
     </div>
   );
 };
+
+import SubscriptionGate from "@/components/subscription/SubscriptionGate";
+
+const Relatorios = () => (
+  <SubscriptionGate featureName="Relatórios">
+    <RelatoriosInner />
+  </SubscriptionGate>
+);
 
 export default Relatorios;

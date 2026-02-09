@@ -11,7 +11,7 @@ import { useRoleProtection } from "@/hooks/useRoleProtection";
 import { supabase } from "@/integrations/supabase/client";
 import { GoogleCalendarService } from "@/services/integrations/GoogleCalendarService";
 
-const Integracoes = () => {
+const IntegracoesInner = () => {
   useRoleProtection({ allowedRoles: ["user", "gestor"] });
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -363,5 +363,13 @@ const Integracoes = () => {
     </div>
   );
 };
+
+import SubscriptionGate from "@/components/subscription/SubscriptionGate";
+
+const Integracoes = () => (
+  <SubscriptionGate featureName="Integrações">
+    <IntegracoesInner />
+  </SubscriptionGate>
+);
 
 export default Integracoes;

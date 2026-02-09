@@ -1,10 +1,19 @@
+import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
-import { BookOpen, Home, GraduationCap } from "lucide-react";
-import { Link } from "react-router-dom";
+import { BookOpen, Home, GraduationCap, Crown } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
 import LogoutButton from "@/components/LogoutButton";
 import { useRoleProtection } from "@/hooks/useRoleProtection";
+import { useSubscriptionContext } from "@/contexts/SubscriptionContext";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import VvdLessonContent from "@/components/construcao-guiada/VvdLessonContent";
 import ValoresLessonContent from "@/components/construcao-guiada/ValoresLessonContent";
 import RodaDaVidaLessonContent from "@/components/construcao-guiada/RodaDaVidaLessonContent";
@@ -16,6 +25,10 @@ import EisenhowerLessonContent from "@/components/construcao-guiada/EisenhowerLe
 
 const ConstrucaoGuiada = () => {
   useRoleProtection({ allowedRoles: ["user", "gestor"] });
+  const { status } = useSubscriptionContext();
+  const navigate = useNavigate();
+  const [showGateDialog, setShowGateDialog] = useState(false);
+  const hasAccess = status === 'active';
   
   const modulos = [
     {
@@ -39,6 +52,7 @@ const ConstrucaoGuiada = () => {
       id: "modulo-3",
       titulo: "Para onde vou",
       descricao: "Defina seus objetivos e visualize o futuro que você deseja construir",
+      requiresSubscription: true,
       aulas: [
         { id: "aula-3-1", titulo: "Autoavaliação + 360º", component: AutoavaliacaoLessonContent },
         { id: "aula-3-2", titulo: "Análise SWOT", component: SwotLessonContent },
@@ -48,6 +62,7 @@ const ConstrucaoGuiada = () => {
       id: "modulo-4",
       titulo: "Como vou chegar lá",
       descricao: "Planeje suas metas, ações e estratégias para alcançar seus objetivos",
+      requiresSubscription: true,
       aulas: [
         { id: "aula-4-1", titulo: "Metas SMART", component: SmartLessonContent },
         { id: "aula-4-2", titulo: "Matriz de Eisenhower", component: EisenhowerLessonContent },
@@ -57,9 +72,18 @@ const ConstrucaoGuiada = () => {
       id: "modulo-5",
       titulo: "Refine o Instrumento",
       descricao: "Ajuste e otimize seu PDI com base em sua experiência e aprendizados",
+      requiresSubscription: true,
       aulas: []
     }
   ];
+
+  const handleModuleClick = (modulo: typeof modulos[0]) => {
+    if (modulo.requiresSubscription && !hasAccess) {
+      setShowGateDialog(true);
+      return false;
+    }
+    return true;
+  };
 
   return (
     <div className="min-h-screen bg-gradient-subtle">
@@ -108,10 +132,33 @@ const ConstrucaoGuiada = () => {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <Accordion type="single" collapsible className="w-full">
-              {modulos.map((modulo, index) => (
-                <AccordionItem key={modulo.id} value={modulo.id}>
-                  <AccordionTrigger className="hover:no-underline">
+            <Accordion 
+              type="single" 
+              collapsible 
+              className="w-full"
+              value={undefined}
+              onValueChange={(value) => {
+                if (value) {
+                  const modulo = modulos.find(m => m.id === value);
+                  if (modulo?.requiresSubscription && !hasAccess) {
+                    setShowGateDialog(true);
+                  }
+                }
+              }}
+            >
+              {modulos.map((modulo, index) => {
+                const isRestricted = modulo.requiresSubscription && !hasAccess;
+                return (
+                <AccordionItem key={modulo.id} value={isRestricted ? `blocked-${modulo.id}` : modulo.id}>
+                  <AccordionTrigger 
+                    className="hover:no-underline"
+                    onClick={(e) => {
+                      if (isRestricted) {
+                        e.preventDefault();
+                        setShowGateDialog(true);
+                      }
+                    }}
+                  >
                     <div className="flex items-center gap-3 text-left">
                       <div className="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0">
                         <span className="text-primary font-semibold text-sm">{index + 1}</span>
@@ -122,6 +169,7 @@ const ConstrucaoGuiada = () => {
                       </div>
                     </div>
                   </AccordionTrigger>
+                  {!isRestricted && (
                   <AccordionContent>
                     <div className="pl-11 pt-4 space-y-4">
                       {modulo.aulas.length === 0 ? (
@@ -154,9 +202,40 @@ const ConstrucaoGuiada = () => {
                       )}
                     </div>
                   </AccordionContent>
+                  )}
                 </AccordionItem>
-              ))}
+                );
+              })}
             </Accordion>
+
+            {/* Subscription Gate Dialog */}
+            <Dialog open={showGateDialog} onOpenChange={setShowGateDialog}>
+              <DialogContent className="sm:max-w-md">
+                <DialogHeader>
+                  <DialogTitle className="flex items-center gap-2">
+                    <Crown className="w-5 h-5 text-[#D4AF37]" />
+                    Conteúdo exclusivo do Plano Black
+                  </DialogTitle>
+                  <DialogDescription className="pt-2 text-base space-y-3">
+                    <p>
+                      Este módulo é exclusivo para assinantes do <strong>Plano Black</strong>.
+                    </p>
+                    <p className="text-sm text-muted-foreground">
+                      Assine para desbloquear 100% do sistema, incluindo todos os módulos da Construção Guiada.
+                    </p>
+                  </DialogDescription>
+                </DialogHeader>
+                <div className="flex gap-3 justify-end pt-4">
+                  <Button variant="outline" onClick={() => setShowGateDialog(false)}>
+                    Fechar
+                  </Button>
+                  <Button onClick={() => navigate("/perfil")} className="gap-2">
+                    <Crown className="w-4 h-4" />
+                    Ver Planos
+                  </Button>
+                </div>
+              </DialogContent>
+            </Dialog>
           </CardContent>
         </Card>
 
