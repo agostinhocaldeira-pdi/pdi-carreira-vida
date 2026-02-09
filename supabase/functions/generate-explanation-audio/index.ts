@@ -135,29 +135,43 @@ Lembre-se: não é sobre ter todas as habilidades do mundo. É sobre identificar
 
 Foque nas habilidades que vão te ajudar a dar o próximo passo na direção da vida que você quer construir.`,
   },
-  smart: {
-    filename: "smart-explanation-audio.mp3",
-    text: `A importância de utilizar o método SMART para criar suas metas.
+  meta: {
+    filename: "meta-explanation-audio.mp3",
+    text: `Uma Meta deve estar conectada ao objetivo e ao VVD. Se a meta não tiver nada a ver com o objetivo e o VVD, não é uma meta forte.
 
-Ter objetivos é comum. Alcançá-los de forma consistente não é.
+A meta é o desdobramento prático do seu objetivo. Ela transforma algo amplo em algo específico e mensurável.
 
-O principal motivo disso é simples: a maioria das metas é mal definida. São vagas, genéricas, irreais ou desconectadas da rotina e da vida real.
+Pense assim: o objetivo é o destino, a meta é o caminho concreto que você vai percorrer para chegar lá.
 
-A ferramenta de Metas SMART existe para corrigir exatamente isso.
+Uma meta forte tem três características essenciais: ela está diretamente ligada a um objetivo do seu Plano de Vida, ela faz sentido dentro da sua Visão de Vida Desejada, e ela é clara o suficiente para que você saiba exatamente quando a alcançou.
 
-Uma meta SMART é estruturada para ser: Específica, deixando claro o que deve ser feito. Mensurável, permitindo acompanhar progresso e resultado. Atingível, respeitando sua realidade atual. Relevante, fazendo sentido para sua vida e seus objetivos maiores. E Temporal, tendo prazo definido.
+Se a sua meta não se conecta ao objetivo nem ao VVD, ela pode ser uma boa ideia, mas não é prioridade agora. Foque no que realmente te aproxima da vida que você quer construir.`,
+  },
+  acao: {
+    filename: "acao-explanation-audio.mp3",
+    text: `Uma ação é um degrau para alcançar a meta.
 
-Na prática, isso transforma um desejo genérico em um compromisso claro com direção, critério e prazo.
+Se a meta é o destino intermediário, a ação é o movimento que você faz para chegar até ela.
 
-Metas mal definidas geram procrastinação, frustração constante, sensação de estar sempre recomeçando, e muito esforço com pouco resultado.
+Cada ação deve ser algo que você consegue executar na prática. Não adianta criar ações vagas ou genéricas. Uma boa ação é concreta, tem periodicidade definida e está diretamente conectada à meta que você quer alcançar.
 
-Metas SMART fazem o oposto. Elas tiram a meta do campo da intenção e colocam no campo da execução consciente.
+Pense na ação como um compromisso com você mesmo. É aquilo que você vai fazer de forma consistente para transformar a meta em realidade.
 
-No PDI, as Metas SMART traduzem a Visão de Vida Desejada em objetivos concretos, servem como ponte entre intenção e ação, facilitam o acompanhamento contínuo da evolução, e permitem ajustes conscientes, sem sensação de fracasso.
+Quanto mais claras e específicas forem suas ações, mais fácil será manter a disciplina e medir o progresso.
 
-Usar Metas SMART não é sobre rigidez ou cobrança excessiva. É sobre clareza, direção e respeito à sua própria realidade.
+Lembre-se: grandes conquistas são resultado de pequenas ações executadas com consistência.`,
+  },
+  passo: {
+    filename: "passo-explanation-audio.mp3",
+    text: `O passo é uma pequena atividade diária que, se executada de forma consistente, gera a ação e, por consequência, a conquista da meta.
 
-Quando suas metas são claras, o caminho fica mais leve. E o progresso deixa de ser uma promessa distante para se tornar algo visível e constante.`,
+Pense no passo como o menor movimento possível na direção certa. É aquela atividade simples que você pode fazer todos os dias, sem desculpas, sem precisar de condições perfeitas.
+
+A lógica é simples: passos consistentes geram ações completas. Ações completas conquistam metas. Metas alcançadas realizam objetivos. E objetivos realizados constroem a vida que você desenhou no seu VVD.
+
+O segredo está na consistência, não na intensidade. Um passo pequeno feito todos os dias vale mais do que um grande esforço feito de vez em quando.
+
+Defina passos que sejam realistas para a sua rotina atual. O importante é que eles sejam sustentáveis e que você consiga mantê-los ao longo do tempo.`,
   },
 };
 
