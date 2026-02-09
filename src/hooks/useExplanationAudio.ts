@@ -7,6 +7,7 @@ const AUDIO_FILENAMES: Record<string, string> = {
   meta: "meta-explanation-audio.mp3",
   acao: "acao-explanation-audio.mp3",
   passo: "passo-explanation-audio.mp3",
+  diario: "diario-explanation-audio.mp3",
 };
 
 export const useExplanationAudio = (type: string) => {
