@@ -70,7 +70,7 @@ const LandingNova = () => {
               <span className="text-[#d4a853]">progresso real de vida e carreira.</span>
             </h1>
             <p className="text-base sm:text-lg text-gray-400 mb-8 sm:mb-10 max-w-3xl mx-auto leading-relaxed">
-              O sistema PDI organiza decisões e prioridades para levar sua vida ao que realmente gera resultados — não apenas à execução de tarefas.
+              Elimine excessos e distrações e comece a executar o que realmente gera resultados pra você.
             </p>
             {/* Video Section */}
             <div className="w-full max-w-none sm:max-w-3xl mx-auto mb-10 -mx-4 sm:mx-auto px-0 sm:px-0">
