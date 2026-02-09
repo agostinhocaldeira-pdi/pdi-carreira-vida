@@ -1,10 +1,11 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { motion, AnimatePresence } from "framer-motion";
-import { Brain, Target, Calendar, Flame, Heart, ArrowRight, Sparkles } from "lucide-react";
+import { Brain, Target, Calendar, Flame, Heart, ArrowRight, Sparkles, Volume2, VolumeX, Loader2 } from "lucide-react";
 import logoPdi from "@/assets/logo_pdi.png";
+import { useQuizResultAudio } from "@/hooks/useQuizResultAudio";
 
 // New quiz structure - will receive more questions
 type Trava = "EXAUSTAO" | "INERCIA" | "DISPERSAO" | "LENTIDAO";
@@ -264,8 +265,17 @@ const Diagnostico = () => {
   };
 
   const handleCTA = () => {
-    navigate("/");
+    navigate("/signup");
   };
+
+  // Build narration text for current result
+  const narrationText = useMemo(() => {
+    if (!resultTrava) return "";
+    const r = resultados[resultTrava];
+    return `Seu Padrão Operacional: ${r.padraoOperacional}. ${r.subtitulo}. O Que Isso Significa: ${r.oQueSignifica} A Trava Invisível: ${r.travaInvisivel} O Custo a Longo Prazo: ${r.custoLongoPrazo} A Correção Necessária: ${r.correcaoNecessaria}`;
+  }, [resultTrava]);
+
+  const { isPlaying: isAudioPlaying, isGenerating: isAudioGenerating, toggleAudio, audioUrl: cachedAudioUrl } = useQuizResultAudio(resultTrava);
 
   const progress = ((currentQuestion + 1) / questions.length) * 100;
 
@@ -401,6 +411,20 @@ const Diagnostico = () => {
                   <p className="text-[#1a1a1a]/70 text-sm mt-1">
                     {resultados[resultTrava].subtitulo}
                   </p>
+                  {/* Audio narration button */}
+                  <button
+                    onClick={() => toggleAudio(narrationText)}
+                    disabled={isAudioGenerating}
+                    className="mt-3 inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#1a1a1a]/20 hover:bg-[#1a1a1a]/30 text-[#1a1a1a] text-sm font-medium transition-all"
+                  >
+                    {isAudioGenerating ? (
+                      <><Loader2 className="w-4 h-4 animate-spin" /> Gerando áudio...</>
+                    ) : isAudioPlaying ? (
+                      <><VolumeX className="w-4 h-4" /> Parar áudio</>
+                    ) : (
+                      <><Volume2 className="w-4 h-4" /> {cachedAudioUrl ? 'Ouvir resultado' : 'Clique para ouvir'}</>
+                    )}
+                  </button>
                 </div>
 
                 {/* Result Content */}
