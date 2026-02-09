@@ -930,11 +930,6 @@ const MetodoVvd = () => {
         {step >= 3 && sentenceText.trim() && (
           <Card className="border-2 border-primary/30 shadow-xl bg-gradient-to-br from-primary/5 to-accent/5">
             <CardContent className="p-6 space-y-4">
-              <div className="bg-accent/10 border border-accent/20 rounded-lg p-4">
-                <p className="text-sm text-center text-muted-foreground">
-                  ✨ Esta frase será automaticamente adicionada à seção "Minha Visão de Vida Desejada" no seu Plano de Vida
-                </p>
-              </div>
 
               <div className="flex flex-col gap-3">
                 <Button
