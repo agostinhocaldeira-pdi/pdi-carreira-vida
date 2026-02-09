@@ -81,6 +81,8 @@ const EntendaMelhorButton = ({ type, text }: { type: string; text: string }) => 
 const MaoNaMassa = ({ embedded = false, fullscreenMode = false, onOpenFullscreen, onCloseFullscreen }: MaoNaMassaProps) => {
   const storage = usePDIStorage();
   const formRef = useRef<HTMLDivElement>(null);
+  const acaoFormRef = useRef<HTMLDivElement>(null);
+  const passoFormRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { celebrateAction } = useActionCelebration();
@@ -524,12 +526,12 @@ const MaoNaMassa = ({ embedded = false, fullscreenMode = false, onOpenFullscreen
         
         {!editandoMetaId && (
           <>
-            <Button className="gap-2 bg-orange-500 hover:bg-orange-600 text-white text-xs sm:text-sm" onClick={() => setActiveForm(activeForm === 'acao' ? 'none' : 'acao')} disabled={metasCadastradas.length === 0}>
+            <Button className="gap-2 bg-orange-500 hover:bg-orange-600 text-white text-xs sm:text-sm" onClick={() => { const next = activeForm === 'acao' ? 'none' : 'acao'; setActiveForm(next); if (next === 'acao') setTimeout(() => acaoFormRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100); }} disabled={metasCadastradas.length === 0}>
               <Zap className="w-3 h-3 sm:w-4 sm:h-4" /> Cadastrar Ação
               <ChevronDown className={`w-3 h-3 transition-transform ${activeForm === 'acao' ? 'rotate-180' : ''}`} />
             </Button>
             
-            <Button className="gap-2 bg-orange-500 hover:bg-orange-600 text-white text-xs sm:text-sm" onClick={() => setActiveForm(activeForm === 'passo' ? 'none' : 'passo')} disabled={metasCadastradas.filter(m => m.acoes?.length > 0).length === 0}>
+            <Button className="gap-2 bg-orange-500 hover:bg-orange-600 text-white text-xs sm:text-sm" onClick={() => { const next = activeForm === 'passo' ? 'none' : 'passo'; setActiveForm(next); if (next === 'passo') setTimeout(() => passoFormRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100); }} disabled={metasCadastradas.filter(m => m.acoes?.length > 0).length === 0}>
               <Footprints className="w-3 h-3 sm:w-4 sm:h-4" /> Cadastrar Passos
               <ChevronDown className={`w-3 h-3 transition-transform ${activeForm === 'passo' ? 'rotate-180' : ''}`} />
             </Button>
@@ -611,10 +613,10 @@ const MaoNaMassa = ({ embedded = false, fullscreenMode = false, onOpenFullscreen
           {/* Show Cadastrar Ação and Cadastrar Passos below Atualizar when editing */}
           {editandoMetaId && (
             <div className="flex flex-wrap gap-2 pt-2">
-              <Button className="gap-2 bg-orange-500 hover:bg-orange-600 text-white text-xs sm:text-sm flex-1" onClick={() => { setEditandoMetaId(null); setActiveForm('acao'); resetMetaForm(); }}>
+              <Button className="gap-2 bg-orange-500 hover:bg-orange-600 text-white text-xs sm:text-sm flex-1" onClick={() => { setEditandoMetaId(null); setActiveForm('acao'); resetMetaForm(); setTimeout(() => acaoFormRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100); }}>
                 <Zap className="w-3 h-3 sm:w-4 sm:h-4" /> Cadastrar Ação
               </Button>
-              <Button className="gap-2 bg-orange-500 hover:bg-orange-600 text-white text-xs sm:text-sm flex-1" onClick={() => { setEditandoMetaId(null); setActiveForm('passo'); resetMetaForm(); }} disabled={metasCadastradas.filter(m => m.acoes?.length > 0).length === 0}>
+              <Button className="gap-2 bg-orange-500 hover:bg-orange-600 text-white text-xs sm:text-sm flex-1" onClick={() => { setEditandoMetaId(null); setActiveForm('passo'); resetMetaForm(); setTimeout(() => passoFormRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100); }} disabled={metasCadastradas.filter(m => m.acoes?.length > 0).length === 0}>
                 <Footprints className="w-3 h-3 sm:w-4 sm:h-4" /> Cadastrar Passos
               </Button>
             </div>
@@ -624,7 +626,7 @@ const MaoNaMassa = ({ embedded = false, fullscreenMode = false, onOpenFullscreen
 
       {/* ========== AÇÃO FORM ========== */}
       {activeForm === 'acao' && (
-        <div className="space-y-4 w-full max-w-full overflow-hidden p-3 sm:p-4 bg-muted/30 rounded-lg border-2 border-dashed">
+        <div ref={acaoFormRef} className="space-y-4 w-full max-w-full overflow-hidden p-3 sm:p-4 bg-muted/30 rounded-lg border-2 border-dashed">
           <h3 className="text-lg font-semibold flex items-center gap-2">
             <Zap className="w-5 h-5 text-accent" />
             Nova Ação
@@ -701,7 +703,7 @@ const MaoNaMassa = ({ embedded = false, fullscreenMode = false, onOpenFullscreen
 
       {/* ========== PASSO FORM ========== */}
       {activeForm === 'passo' && (
-        <div className="space-y-4 w-full max-w-full overflow-hidden p-3 sm:p-4 bg-muted/30 rounded-lg border-2 border-dashed">
+        <div ref={passoFormRef} className="space-y-4 w-full max-w-full overflow-hidden p-3 sm:p-4 bg-muted/30 rounded-lg border-2 border-dashed">
           <h3 className="text-lg font-semibold flex items-center gap-2">
             <Footprints className="w-5 h-5 text-primary" />
             Novo Passo
