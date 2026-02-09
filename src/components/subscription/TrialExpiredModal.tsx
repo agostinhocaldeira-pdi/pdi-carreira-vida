@@ -98,6 +98,11 @@ export const TrialExpiredModal = ({ open, onOpenChange, forceOpen = false }: Tri
             </p>
           </div>
 
+          {/* Unlock message */}
+          <p className="text-sm text-center font-medium">
+            Desbloqueie <strong>100% do sistema</strong> e leve seu desenvolvimento a sério:
+          </p>
+
           {/* Features list */}
           <div className="space-y-2 text-sm">
             <div className="flex items-center gap-2">
@@ -106,11 +111,19 @@ export const TrialExpiredModal = ({ open, onOpenChange, forceOpen = false }: Tri
             </div>
             <div className="flex items-center gap-2">
               <Check className="h-4 w-4 text-primary flex-shrink-0" />
-              <span>Diário e Plano de Vida ilimitados</span>
+              <span><strong>Desafio</strong> de Gestão de Tempo, Foco e Produtividade</span>
             </div>
             <div className="flex items-center gap-2">
               <Check className="h-4 w-4 text-primary flex-shrink-0" />
-              <span>1 insight personalizado por mês</span>
+              <span>Relatórios e acompanhamento de progresso</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <Check className="h-4 w-4 text-primary flex-shrink-0" />
+              <span>Lembrete diário no <strong>WhatsApp</strong> com suas tarefas do dia</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <Check className="h-4 w-4 text-primary flex-shrink-0" />
+              <span>Análise Estratégica personalizada (Mentor IA)</span>
             </div>
           </div>
 
