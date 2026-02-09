@@ -505,28 +505,36 @@ const MaoNaMassa = ({ embedded = false, fullscreenMode = false, onOpenFullscreen
         </div>
       )}
 
-      {/* Action Buttons */}
+      {/* Action Buttons - hide Cadastrar Meta when editing */}
       <div className="flex flex-wrap gap-2 justify-center" ref={formRef}>
-        {/* Mobile: triggers fullscreen for meta */}
-        {onOpenFullscreen && !fullscreenMode ? (
-          <Button className="gap-2 bg-orange-500 hover:bg-orange-600 text-white text-xs md:hidden" onClick={onOpenFullscreen}>
-            <Plus className="w-3 h-3" /> Cadastrar Meta
-          </Button>
-        ) : null}
-        <Button className="gap-2 bg-orange-500 hover:bg-orange-600 text-white text-xs sm:text-sm hidden md:inline-flex" onClick={() => setActiveForm(activeForm === 'meta' ? 'none' : 'meta')}>
-          <Plus className="w-3 h-3 sm:w-4 sm:h-4" /> Cadastrar Meta
-          <ChevronDown className={`w-3 h-3 transition-transform ${activeForm === 'meta' ? 'rotate-180' : ''}`} />
-        </Button>
+        {!editandoMetaId && (
+          <>
+            {/* Mobile: triggers fullscreen for meta */}
+            {onOpenFullscreen && !fullscreenMode ? (
+              <Button className="gap-2 bg-orange-500 hover:bg-orange-600 text-white text-xs md:hidden" onClick={onOpenFullscreen}>
+                <Plus className="w-3 h-3" /> Cadastrar Meta
+              </Button>
+            ) : null}
+            <Button className="gap-2 bg-orange-500 hover:bg-orange-600 text-white text-xs sm:text-sm hidden md:inline-flex" onClick={() => setActiveForm(activeForm === 'meta' ? 'none' : 'meta')}>
+              <Plus className="w-3 h-3 sm:w-4 sm:h-4" /> Cadastrar Meta
+              <ChevronDown className={`w-3 h-3 transition-transform ${activeForm === 'meta' ? 'rotate-180' : ''}`} />
+            </Button>
+          </>
+        )}
         
-        <Button className="gap-2 bg-orange-500 hover:bg-orange-600 text-white text-xs sm:text-sm" onClick={() => setActiveForm(activeForm === 'acao' ? 'none' : 'acao')} disabled={metasCadastradas.length === 0}>
-          <Zap className="w-3 h-3 sm:w-4 sm:h-4" /> Cadastrar Ação
-          <ChevronDown className={`w-3 h-3 transition-transform ${activeForm === 'acao' ? 'rotate-180' : ''}`} />
-        </Button>
-        
-        <Button className="gap-2 bg-orange-500 hover:bg-orange-600 text-white text-xs sm:text-sm" onClick={() => setActiveForm(activeForm === 'passo' ? 'none' : 'passo')} disabled={metasCadastradas.filter(m => m.acoes?.length > 0).length === 0}>
-          <Footprints className="w-3 h-3 sm:w-4 sm:h-4" /> Cadastrar Passos
-          <ChevronDown className={`w-3 h-3 transition-transform ${activeForm === 'passo' ? 'rotate-180' : ''}`} />
-        </Button>
+        {!editandoMetaId && (
+          <>
+            <Button className="gap-2 bg-orange-500 hover:bg-orange-600 text-white text-xs sm:text-sm" onClick={() => setActiveForm(activeForm === 'acao' ? 'none' : 'acao')} disabled={metasCadastradas.length === 0}>
+              <Zap className="w-3 h-3 sm:w-4 sm:h-4" /> Cadastrar Ação
+              <ChevronDown className={`w-3 h-3 transition-transform ${activeForm === 'acao' ? 'rotate-180' : ''}`} />
+            </Button>
+            
+            <Button className="gap-2 bg-orange-500 hover:bg-orange-600 text-white text-xs sm:text-sm" onClick={() => setActiveForm(activeForm === 'passo' ? 'none' : 'passo')} disabled={metasCadastradas.filter(m => m.acoes?.length > 0).length === 0}>
+              <Footprints className="w-3 h-3 sm:w-4 sm:h-4" /> Cadastrar Passos
+              <ChevronDown className={`w-3 h-3 transition-transform ${activeForm === 'passo' ? 'rotate-180' : ''}`} />
+            </Button>
+          </>
+        )}
       </div>
 
       {/* ========== META FORM ========== */}
@@ -599,6 +607,18 @@ const MaoNaMassa = ({ embedded = false, fullscreenMode = false, onOpenFullscreen
             {isSaving && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
             {editandoMetaId ? "Atualizar Meta" : "Cadastrar Meta"}
           </Button>
+
+          {/* Show Cadastrar Ação and Cadastrar Passos below Atualizar when editing */}
+          {editandoMetaId && (
+            <div className="flex flex-wrap gap-2 pt-2">
+              <Button className="gap-2 bg-orange-500 hover:bg-orange-600 text-white text-xs sm:text-sm flex-1" onClick={() => { setEditandoMetaId(null); setActiveForm('acao'); resetMetaForm(); }}>
+                <Zap className="w-3 h-3 sm:w-4 sm:h-4" /> Cadastrar Ação
+              </Button>
+              <Button className="gap-2 bg-orange-500 hover:bg-orange-600 text-white text-xs sm:text-sm flex-1" onClick={() => { setEditandoMetaId(null); setActiveForm('passo'); resetMetaForm(); }} disabled={metasCadastradas.filter(m => m.acoes?.length > 0).length === 0}>
+                <Footprints className="w-3 h-3 sm:w-4 sm:h-4" /> Cadastrar Passos
+              </Button>
+            </div>
+          )}
         </div>
       )}
 
