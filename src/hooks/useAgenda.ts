@@ -83,13 +83,12 @@ export const useAgenda = () => {
         .neq('status', 'concluido')
         .not('data_alvo', 'is', null);
 
-      // Fetch goals with target dates
+      // Fetch goals (metas) - all non-completed
       const { data: goals } = await supabase
         .from('user_goals')
         .select('*')
         .eq('user_id', user.id)
-        .neq('status', 'concluido')
-        .not('data_alvo', 'is', null);
+        .neq('status', 'concluido');
 
       // Fetch all actions (not just daily)
       const { data: actions } = await supabase
@@ -98,10 +97,10 @@ export const useAgenda = () => {
         .eq('user_id', user.id)
         .neq('status', 'concluido');
 
-      // Fetch incomplete steps
+      // Fetch incomplete steps with action info
       const { data: steps } = await supabase
         .from('user_steps')
-        .select('*, user_actions!inner(texto)')
+        .select('*, user_actions!inner(texto, goal_id)')
         .eq('user_id', user.id)
         .eq('concluido', false);
 
@@ -144,6 +143,17 @@ export const useAgenda = () => {
         description?: string;
       }> = [];
 
+      // Build lookup sets for hierarchical filtering
+      const actionsWithSteps = new Set<string>();
+      steps?.forEach(step => {
+        if (step.action_id) actionsWithSteps.add(step.action_id);
+      });
+
+      const goalsWithActions = new Set<string>();
+      actions?.forEach(action => {
+        if (action.goal_id) goalsWithActions.add(action.goal_id);
+      });
+
       // Sync objectives with target dates
       objectives?.forEach(objective => {
         const key = `objective-${objective.id}`;
@@ -163,26 +173,31 @@ export const useAgenda = () => {
         }
       });
 
-      // Sync goals with target dates
-      goals?.forEach(goal => {
-        const key = `goal-${goal.id}`;
-        if (!existingSourceIds.has(key) && goal.data_alvo) {
+      // --- Hierarchical sync rules ---
+      // 1. Steps always appear in agenda
+      steps?.forEach(step => {
+        const key = `step-${step.id}`;
+        if (!existingSourceIds.has(key)) {
+          const actionName = (step as any).user_actions?.texto || 'Ação';
           eventsToCreate.push({
             user_id: user.id,
-            title: goal.texto,
-            scheduled_date: goal.data_alvo,
-            scheduled_time: '09:00:00',
-            source_type: 'goal',
-            source_id: goal.id,
-            label: 'Meta',
-            label_color: 'blue',
+            title: step.texto,
+            description: `Passo da ação: ${actionName}`,
+            scheduled_date: today,
+            scheduled_time: '06:00:00',
+            source_type: 'step',
+            source_id: step.id,
+            label: 'Passo',
+            label_color: 'yellow',
             is_recurring: false,
           });
         }
       });
 
-      // Sync actions based on recurrence
+      // 2. Actions appear only if they have NO steps
       actions?.forEach(action => {
+        if (actionsWithSteps.has(action.id)) return; // skip - steps represent this action
+        
         const key = `action-${action.id}`;
         if (!existingSourceIds.has(key)) {
           const periodicidade = action.periodicidade?.toLowerCase() || '';
@@ -215,22 +230,23 @@ export const useAgenda = () => {
         }
       });
 
-      // Sync steps
-      steps?.forEach(step => {
-        const key = `step-${step.id}`;
+      // 3. Goals appear only if they have NO actions, with prompt text
+      goals?.forEach(goal => {
+        if (goalsWithActions.has(goal.id)) return; // skip - actions/steps represent this goal
+        
+        const key = `goal-${goal.id}`;
         if (!existingSourceIds.has(key)) {
-          const actionName = (step as any).user_actions?.texto || 'Ação';
           eventsToCreate.push({
             user_id: user.id,
-            title: step.texto,
-            description: `Passo da ação: ${actionName}`,
-            scheduled_date: today,
-            scheduled_time: '06:00:00',
-            source_type: 'step',
-            source_id: step.id,
-            label: 'Passo',
-            label_color: 'yellow',
-            is_recurring: false,
+            title: `Criar ação da meta ${goal.texto}`,
+            scheduled_date: goal.data_alvo || today,
+            scheduled_time: '09:00:00',
+            source_type: 'goal',
+            source_id: goal.id,
+            label: 'Meta',
+            label_color: 'blue',
+            is_recurring: true,
+            recurrence_type: 'daily',
           });
         }
       });
