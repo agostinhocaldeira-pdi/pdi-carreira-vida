@@ -853,8 +853,23 @@ const MaoNaMassa = ({ embedded = false, fullscreenMode = false, onOpenFullscreen
             </DialogDescription>
           </DialogHeader>
           <DialogFooter className="flex-col sm:flex-row gap-2">
-            <Button variant="outline" onClick={() => setShowPassoSavedModal(false)} className="w-full sm:w-auto">
-              Fechar
+            <Button variant="outline" onClick={async () => {
+              setShowPassoSavedModal(false);
+              try {
+                const { data: { user } } = await supabase.auth.getUser();
+                if (user) {
+                  await supabase.functions.invoke('process-home-cache', {
+                    body: { user_id: user.id, trigger: 'step_created' },
+                  });
+                }
+                queryClient.invalidateQueries({ queryKey: ['home-cache'] });
+                queryClient.invalidateQueries({ queryKey: ['agenda'] });
+              } catch (e) {
+                console.error('Error processing cache:', e);
+              }
+              navigate('/');
+            }} className="w-full sm:w-auto">
+              Home
             </Button>
             <Button onClick={() => { setShowPassoSavedModal(false); setActiveForm('passo'); }} className="w-full sm:w-auto gap-2">
               <Plus className="w-4 h-4" />
