@@ -62,11 +62,6 @@ export const HomeInitiation = ({ showAgenda = false }: HomeInitiationProps) => {
           </div>
         </CardHeader>
         <CardContent>
-          <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">
-            Antes de organizar metas, agenda e execução, o sistema precisa de uma base clara. 
-            Este primeiro passo define quem você é e o que importa para você. 
-            A partir disso, o PDI estrutura seu <strong className="text-foreground">Modo Operacional</strong> com precisão.
-          </p>
         </CardContent>
       </Card>
 

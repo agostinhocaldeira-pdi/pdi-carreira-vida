@@ -167,7 +167,7 @@ export const QuickAccessNav = ({ isGestor = false }: QuickAccessNavProps) => {
             </TooltipTrigger>
             <TooltipContent side="bottom" className="max-w-[200px] text-center">
               <p className="text-sm">
-                🔒 Conteúdo exclusivo para assinantes. Faça sua assinatura para desbloquear o Desafio 30 Dias.
+                🔒 Conteúdo exclusivo do Plano Black. Assine o Plano Black para desbloquear o Desafio 30 Dias.
               </p>
             </TooltipContent>
           </Tooltip>
