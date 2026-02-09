@@ -579,14 +579,14 @@ const MaoNaMassa = ({ embedded = false, fullscreenMode = false, onOpenFullscreen
             <Input id="meta" placeholder="Ex: Conquistar promoção para cargo de liderança" value={meta.texto} onChange={(e) => setMeta({ ...meta, texto: e.target.value })} disabled={!objetivoSelecionado} spellCheck="true" className="w-full min-w-0" />
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="dataAlvo">Data Alvo</Label>
-              <Input id="dataAlvo" type="date" value={meta.dataAlvo} onChange={(e) => setMeta({ ...meta, dataAlvo: e.target.value })} disabled={!objetivoSelecionado} />
+          <div className="grid grid-cols-2 gap-2 sm:gap-4">
+            <div className="space-y-1 sm:space-y-2 min-w-0">
+              <Label htmlFor="dataAlvo" className="text-xs sm:text-sm">Data Alvo</Label>
+              <Input id="dataAlvo" type="date" value={meta.dataAlvo} onChange={(e) => setMeta({ ...meta, dataAlvo: e.target.value })} disabled={!objetivoSelecionado} className="text-xs sm:text-sm px-2 sm:px-3 min-w-0" />
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="inicio">Quando Começo</Label>
-              <Input id="inicio" type="date" value={meta.inicio} onChange={(e) => setMeta({ ...meta, inicio: e.target.value })} disabled={!objetivoSelecionado} />
+            <div className="space-y-1 sm:space-y-2 min-w-0">
+              <Label htmlFor="inicio" className="text-xs sm:text-sm">Quando Começo</Label>
+              <Input id="inicio" type="date" value={meta.inicio} onChange={(e) => setMeta({ ...meta, inicio: e.target.value })} disabled={!objetivoSelecionado} className="text-xs sm:text-sm px-2 sm:px-3 min-w-0" />
             </div>
           </div>
 
