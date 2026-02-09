@@ -498,8 +498,9 @@ const Diagnostico = () => {
                           </li>
                         </ul>
                       </div>
-                      <p className="text-center text-white/80 italic">
-                        Se você quer instalar esse sistema de navegação na sua vida e parar de desperdiçar esforço:
+                      <p className="text-center text-white/90 text-lg sm:text-xl font-semibold leading-relaxed">
+                        Você já entendeu o padrão que está operando sua vida hoje.<br />
+                        O próximo passo é substituir esse padrão por método.
                       </p>
                     </div>
                   </div>
@@ -511,9 +512,9 @@ const Diagnostico = () => {
                       size="lg"
                       className="w-full bg-gradient-to-r from-[#d4a853] to-[#b8912f] hover:from-[#e5b964] hover:to-[#c9a240] text-[#1a1a1a] font-bold text-sm sm:text-base py-4 sm:py-6 min-h-[72px] sm:min-h-[56px] rounded-xl shadow-lg shadow-[#d4a853]/30 whitespace-normal leading-snug"
                     >
-                      <span className="flex flex-col sm:flex-row items-center justify-center gap-0.5 sm:gap-2 text-center">
-                        <span>👉 {resultados[resultTrava].botaoTexto}</span>
-                        <span className="flex items-center gap-1">(Grátis) <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" /></span>
+                      <span className="flex items-center justify-center gap-2 text-center">
+                        <span>Começar</span>
+                        <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
                       </span>
                     </Button>
                     <p className="text-center text-xs text-gray-400 mt-3">
