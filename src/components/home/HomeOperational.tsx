@@ -28,6 +28,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { PDILoader } from "@/components/ui/pdi-loader";
 import { usePDIData } from "@/hooks/usePDIQueries";
 import { AgendaCalendar } from "@/components/agenda/AgendaCalendar";
+import { AgendaTaskCard } from "@/components/agenda/AgendaTaskCard";
 import { AgendaTaskModal } from "@/components/agenda/AgendaTaskModal";
 import { AgendaLegend } from "@/components/agenda/AgendaLegend";
 import { useAgenda } from "@/hooks/useAgenda";
@@ -168,149 +169,7 @@ const HeroPrincipal = () => {
 };
 
 // ============================================================
-// CLEAN TASK CARD - Nova UI sem fundos coloridos
-// ============================================================
-interface CleanTaskCardProps {
-  task: AgendaTask;
-  linkedGoalName?: string;
-  onToggleComplete: (taskId: string, completed: boolean) => void;
-  onClick?: (task: AgendaTask) => void;
-}
-
-const colorBorderClasses = {
-  green: 'border-l-green-500',
-  yellow: 'border-l-yellow-500',
-  orange: 'border-l-orange-500',
-  red: 'border-l-red-500',
-  blue: 'border-l-blue-500',
-  purple: 'border-l-purple-500',
-  gray: 'border-l-gray-500',
-  cyan: 'border-l-cyan-500',
-  violet: 'border-l-violet-500',
-};
-
-const sourceDefaultColors: Record<string, keyof typeof colorBorderClasses> = {
-  manual: 'purple',
-  action: 'green',
-  step: 'yellow',
-  eisenhower: 'orange',
-  goal: 'blue',
-  objective: 'purple',
-  pending: 'violet',
-};
-
-const quadrantColors: Record<string, keyof typeof colorBorderClasses> = {
-  do: 'red',
-  schedule: 'orange',
-  delegate: 'cyan',
-  eliminate: 'gray',
-};
-
-const CleanTaskCard = ({ task, linkedGoalName, onToggleComplete, onClick }: CleanTaskCardProps) => {
-  const isMobile = useIsMobile();
-  
-  // Determine border color
-  let borderColor: keyof typeof colorBorderClasses = task.label_color || sourceDefaultColors[task.source_type] || 'gray';
-  
-  if (task.source_type === 'eisenhower' && task.source_quadrant) {
-    borderColor = quadrantColors[task.source_quadrant] || borderColor;
-  }
-
-  const formatTime = (time: string) => {
-    const [hours, minutes] = time.split(':');
-    return `${hours}:${minutes}`;
-  };
-
-  return (
-    <div
-      className={cn(
-        "relative flex items-start gap-3 rounded-lg border-l-4 bg-card shadow-sm border border-border/50 transition-all cursor-pointer hover:shadow-md",
-        isMobile ? "p-3" : "p-4",
-        colorBorderClasses[borderColor],
-        task.is_completed && "opacity-60"
-      )}
-      onClick={() => onClick?.(task)}
-    >
-      {/* Checkbox */}
-      <button
-        onClick={(e) => {
-          e.stopPropagation();
-          onToggleComplete(task.id, !task.is_completed);
-        }}
-        className={cn(
-          "flex-shrink-0 rounded-full border-2 flex items-center justify-center transition-all",
-          "w-5 h-5",
-          task.is_completed
-            ? "bg-green-500 border-green-500 text-white"
-            : "border-muted-foreground/30 hover:border-primary"
-        )}
-      >
-        {task.is_completed && (
-          <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-          </svg>
-        )}
-      </button>
-
-      {/* Content */}
-      <div className="flex-1 min-w-0">
-        <div className="flex items-start justify-between gap-2">
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2 flex-wrap">
-              <h4 className={cn(
-                "font-medium text-foreground",
-                isMobile ? "text-sm" : "text-base",
-                task.is_completed && "line-through"
-              )}>
-                {task.title}
-              </h4>
-              
-              {/* Strategy Tag - Only show if linked to a goal */}
-              {linkedGoalName && (
-                <Badge 
-                  className="text-[10px] px-1.5 py-0 h-5 bg-[#1A1A1A] text-[#D4AF37] border border-[#D4AF37]/30 font-medium"
-                >
-                  🎯 {linkedGoalName}
-                </Badge>
-              )}
-            </div>
-            
-            {task.description && (
-              <p className={cn(
-                "text-muted-foreground mt-1 line-clamp-1",
-                isMobile ? "text-xs" : "text-sm"
-              )}>
-                {task.description}
-              </p>
-            )}
-          </div>
-          
-          <span className={cn(
-            "font-medium text-muted-foreground flex-shrink-0",
-            isMobile ? "text-xs" : "text-sm"
-          )}>
-            {formatTime(task.scheduled_time)}
-          </span>
-        </div>
-
-        {/* Category label and recurrence */}
-        <div className="flex items-center gap-2 mt-2">
-          <span className="text-xs text-muted-foreground">
-            {task.label || task.source_type}
-          </span>
-          {task.is_recurring && (
-            <span className="text-xs text-muted-foreground">
-              • {task.recurrence_type === 'daily' ? 'Diária' : 'Semanal'}
-            </span>
-          )}
-        </div>
-      </div>
-    </div>
-  );
-};
-
-// ============================================================
-// AGENDA ESTRATÉGICA - Clean UI
+// AGENDA ESTRATÉGICA - Same layout as modal
 // ============================================================
 const AgendaEstrategica = () => {
   const isMobile = useIsMobile();
@@ -318,8 +177,6 @@ const AgendaEstrategica = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedTask, setSelectedTask] = useState<AgendaTask | null>(null);
   
-  const { data: pdiData } = usePDIData();
-  const objetivos = pdiData?.objetivos || [];
 
   const {
     loading,
@@ -335,27 +192,7 @@ const AgendaEstrategica = () => {
   const taskDates = getTaskDates();
   const completedCount = tasks.filter(t => t.is_completed).length;
 
-  // Helper to find linked goal name based on task type and text matching
-  const getLinkedGoalName = (task: AgendaTask): string | undefined => {
-    // Only show tags for objective and goal type tasks
-    if (task.source_type === 'objective' || task.source_type === 'goal') {
-      // Try to find matching objetivo via fuzzy text matching
-      const linkedObjetivo = objetivos.find(obj => 
-        task.title.toLowerCase().includes(obj.texto.toLowerCase().slice(0, 15)) ||
-        obj.texto.toLowerCase().includes(task.title.toLowerCase().slice(0, 15))
-      );
-      if (linkedObjetivo) {
-        return linkedObjetivo.texto.length > 30 
-          ? linkedObjetivo.texto.slice(0, 30) + '...'
-          : linkedObjetivo.texto;
-      }
-      
-      // If no match found but it's an objective/goal type, show a generic label
-      return task.source_type === 'objective' ? 'Objetivo' : 'Meta';
-    }
-    
-    return undefined;
-  };
+
 
   const handleTaskClick = (task: AgendaTask) => {
     setSelectedTask(task);
@@ -427,10 +264,9 @@ const AgendaEstrategica = () => {
             <ScrollArea className="h-[280px] sm:h-[320px] -mx-4 px-4">
               <div className="space-y-2 pb-16">
                 {tasks.map((task) => (
-                  <CleanTaskCard
+                  <AgendaTaskCard
                     key={task.id}
                     task={task}
-                    linkedGoalName={getLinkedGoalName(task)}
                     onToggleComplete={(id, completed) => toggleComplete(id, completed, selectedDate)}
                     onClick={handleTaskClick}
                   />

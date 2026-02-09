@@ -1,4 +1,4 @@
-import { Check, Zap, Footprints, Target, ClipboardList, Calendar, Sparkles, ListTodo } from "lucide-react";
+import { Check, Zap, Footprints, Target, ClipboardList, Calendar, Sparkles, ListTodo, PenLine } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/use-mobile";
 
@@ -146,31 +146,39 @@ export const AgendaTaskCard = ({ task, onToggleComplete, onClick }: AgendaTaskCa
 
         {/* Label with Icon */}
         <div className={cn(
-          "flex items-center gap-1 sm:gap-1.5",
+          "flex items-center justify-between",
           isMobile ? "mt-1" : "mt-2"
         )}>
-          <div className={cn(
-            "rounded-full flex items-center justify-center",
-            isMobile ? "w-3.5 h-3.5" : "w-4 h-4",
-            dotColorClasses[displayColor]
-          )}>
-            <Icon className={cn(
-              "text-white",
-              isMobile ? "w-2 h-2" : "w-2.5 h-2.5"
-            )} />
-          </div>
-          <span className={cn(
-            "text-muted-foreground",
-            isMobile ? "text-[9px]" : "text-xs"
-          )}>{displayLabel}</span>
-          {task.is_recurring && (
-            <span className={cn(
-              "text-muted-foreground ml-0.5 sm:ml-1",
-              isMobile ? "text-[9px]" : "text-xs"
+          <div className="flex items-center gap-1 sm:gap-1.5">
+            <div className={cn(
+              "rounded-full flex items-center justify-center",
+              isMobile ? "w-3.5 h-3.5" : "w-4 h-4",
+              dotColorClasses[displayColor]
             )}>
-              • {task.recurrence_type === 'daily' ? 'Diária' : 'Semanal'}
-            </span>
-          )}
+              <Icon className={cn(
+                "text-white",
+                isMobile ? "w-2 h-2" : "w-2.5 h-2.5"
+              )} />
+            </div>
+            <span className={cn(
+              "text-muted-foreground",
+              isMobile ? "text-[9px]" : "text-xs"
+            )}>{displayLabel}</span>
+            {task.is_recurring && (
+              <span className={cn(
+                "text-muted-foreground ml-0.5 sm:ml-1",
+                isMobile ? "text-[9px]" : "text-xs"
+              )}>
+                • {task.recurrence_type === 'daily' ? 'Diária' : 'Semanal'}
+              </span>
+            )}
+          </div>
+
+          {/* Edit indicator icon */}
+          <PenLine className={cn(
+            "text-muted-foreground/40 flex-shrink-0",
+            isMobile ? "w-3 h-3" : "w-3.5 h-3.5"
+          )} />
         </div>
       </div>
     </div>
