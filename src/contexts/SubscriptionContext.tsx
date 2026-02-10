@@ -4,7 +4,7 @@ import { TrialExpiredModal } from '@/components/subscription/TrialExpiredModal';
 
 interface SubscriptionContextType {
   status: SubscriptionStatus;
-  plan: 'gratuito' | 'basico' | 'completo' | null;
+  plan: 'gratuito' | 'basico' | 'completo' | 'black' | null;
   daysRemaining: number | null;
   canEdit: boolean;
   subscriptionEnd: string | null;

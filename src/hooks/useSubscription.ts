@@ -5,7 +5,7 @@ export type SubscriptionStatus = 'loading' | 'active' | 'trial' | 'expired';
 
 interface SubscriptionState {
   status: SubscriptionStatus;
-  plan: 'gratuito' | 'basico' | 'completo' | null;
+  plan: 'gratuito' | 'basico' | 'completo' | 'black' | null;
   daysRemaining: number | null;
   canEdit: boolean;
   subscriptionEnd: string | null;
@@ -16,8 +16,9 @@ const TRIAL_DAYS_NEW_USERS = 30;
 const TRIAL_DAYS_LEGACY_USERS = 365; // 1 year for users before cutoff
 const LEGACY_CUTOFF_DATE = new Date('2026-01-27T00:00:00Z'); // Extended: all users before this date get legacy trial
 
-// Stripe product ID for Plano Básico
+// Stripe product IDs
 const PLANO_BASICO_PRODUCT_ID = "prod_TXWvEwloGWytPs";
+const PLANO_BLACK_PRODUCT_ID = "prod_TxHNNeK27J55sp";
 
 // Helper to calculate days remaining in trial
 const calculateTrialDaysRemaining = (createdAt: string): number => {
@@ -120,7 +121,9 @@ export const useSubscription = () => {
           // Don't return here - fall through to trial check
         } else if (data?.subscribed) {
           // User has active Stripe subscription
-          const plan = data.product_id === PLANO_BASICO_PRODUCT_ID ? 'basico' : 'completo';
+          const plan = data.product_id === PLANO_BLACK_PRODUCT_ID ? 'black' 
+            : data.product_id === PLANO_BASICO_PRODUCT_ID ? 'basico' 
+            : 'completo';
           console.log('[useSubscription] User has active subscription:', { plan });
           setState({
             status: 'active',

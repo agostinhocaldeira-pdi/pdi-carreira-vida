@@ -38,6 +38,14 @@ serve(async (req) => {
     let email: string | null = null;
     let userId: string | null = null;
 
+    // Parse body once (stream can only be read once)
+    let body: any = {};
+    try {
+      body = await req.json();
+    } catch {
+      body = {};
+    }
+
     if (hasBearer) {
       logStep("Authorization header found");
       const token = authHeader!.replace("Bearer ", "");
@@ -49,12 +57,6 @@ serve(async (req) => {
       logStep("User authenticated", { userId: user.id, email: user.email });
     } else {
       // Public flow: accept email in request body
-      let body: any = {};
-      try {
-        body = await req.json();
-      } catch {
-        body = {};
-      }
       email = typeof body?.email === "string" ? body.email.trim() : null;
       if (!email) throw new Error("No authorization header provided and no email in body");
       logStep("Public checkout requested", { email });
@@ -68,8 +70,9 @@ serve(async (req) => {
       logStep("Found existing customer", { customerId });
     }
 
-    // Price ID for Plano Anual (R$67/ano)
-    const priceId = "price_1Sjo293aJLvyiewRDW1gCi39";
+    // Support price_id override (for Black plan), default to Acesso Completo
+    const defaultPriceId = "price_1Sjo293aJLvyiewRDW1gCi39";
+    const priceId = typeof body?.price_id === "string" ? body.price_id : defaultPriceId;
 
     const origin = req.headers.get("origin") || "https://pdicarreiraevida.lovable.app";
 

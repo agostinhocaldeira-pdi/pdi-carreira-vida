@@ -71,11 +71,11 @@ const Home = () => {
   const { newAchievement, dismissNewAchievement, checkAndUnlockAchievements } = useGamification();
   const { showSurvey, setShowSurvey, completedSection } = useSatisfactionSurvey();
   const { quote: dailyQuote } = useDailyQuote();
-  const { status: subscriptionStatus } = useSubscription();
+  const { status: subscriptionStatus, plan: subscriptionPlan } = useSubscription();
   const isMobile = useIsMobile();
   
-  // Subscription check for Desafio card
-  const hasActiveSubscription = subscriptionStatus === 'active';
+  // Desafio requires Black plan specifically
+  const hasBlackSubscription = subscriptionStatus === 'active' && subscriptionPlan === 'black';
 
   // Determine mode
   const isInitiationMode = !hasCompletedBase;
@@ -231,8 +231,8 @@ const Home = () => {
                   icon={<Zap className="w-full h-full" />}
                   to="/desafio-30-dias"
                   variant="premium-black"
-                  isLocked={isInitiationMode || !hasActiveSubscription}
-                  lockMessage={isInitiationMode ? "Requer Base Pessoal" : "Exclusivo para assinantes"}
+                  isLocked={isInitiationMode || !hasBlackSubscription}
+                  lockMessage={isInitiationMode ? "Requer Base Pessoal" : "Exclusivo Plano Black"}
                   tooltipContent="Participe do Desafio do Código Essencial - 21 dias de transformação. Exclusivo Plano Black."
                   className="aspect-square sm:aspect-auto"
                 />
