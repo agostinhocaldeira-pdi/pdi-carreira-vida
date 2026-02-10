@@ -38,17 +38,17 @@ export const SubscriptionGate = ({ children, featureName }: SubscriptionGateProp
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Crown className="w-5 h-5 text-[#D4AF37]" />
-            Conteúdo exclusivo do Plano Black
+            Conteúdo exclusivo para assinantes
           </DialogTitle>
           <DialogDescription className="pt-2 text-base space-y-3">
             <p>
               {featureName 
-                ? <><strong>{featureName}</strong> é um recurso exclusivo para assinantes do Plano Black.</>
-                : <>Este recurso é exclusivo para assinantes do Plano Black.</>
+                ? <><strong>{featureName}</strong> é um recurso exclusivo para assinantes.</>
+                : <>Este recurso é exclusivo para assinantes.</>
               }
             </p>
             <p className="text-sm text-muted-foreground">
-              Assine o Plano Black para desbloquear 100% do sistema, incluindo o Desafio, Relatórios, Progresso, Integrações e muito mais.
+              Assine o Plano Acesso Completo ou Black para desbloquear Relatórios, Progresso, módulos avançados e muito mais.
             </p>
           </DialogDescription>
         </DialogHeader>

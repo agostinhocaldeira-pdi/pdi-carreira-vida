@@ -28,6 +28,7 @@ const ConstrucaoGuiada = () => {
   const { status } = useSubscriptionContext();
   const navigate = useNavigate();
   const [showGateDialog, setShowGateDialog] = useState(false);
+  // Modules 3+ require paid subscription (not trial)
   const hasAccess = status === 'active';
   
   const modulos = [

@@ -12,6 +12,7 @@ import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import LogoutButton from "@/components/LogoutButton";
 import { useRoleProtection } from "@/hooks/useRoleProtection";
+import { useSubscription } from "@/hooks/useSubscription";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { supabase } from "@/integrations/supabase/client";
 import { faqItems } from "@/pages/FAQ";
@@ -189,6 +190,7 @@ const FAQSection = () => {
 
 const Suporte = () => {
   const { isLoading: roleLoading, userRole, isAdmin } = useRoleProtection({ allowedRoles: ["user", "gestor", "admin"] });
+  const { status: subscriptionStatus } = useSubscription();
   const { toast } = useToast();
   const location = useLocation();
   const [category, setCategory] = useState<string>("");
@@ -408,6 +410,33 @@ const Suporte = () => {
         variant: "destructive",
       });
       return;
+    }
+
+    // Check trial user ticket limit (1 per month)
+    const isTrial = subscriptionStatus === 'trial';
+    
+    if (isTrial) {
+      const allTickets = JSON.parse(localStorage.getItem("supportTickets") || "[]");
+      const user = JSON.parse(localStorage.getItem("user") || "{}");
+      const now = new Date();
+      const thisMonth = now.getMonth();
+      const thisYear = now.getFullYear();
+      
+      const ticketsThisMonth = allTickets.filter((t: SupportTicket) => {
+        const ticketDate = new Date(t.created_at);
+        return t.user_email === user.email && 
+               ticketDate.getMonth() === thisMonth && 
+               ticketDate.getFullYear() === thisYear;
+      });
+
+      if (ticketsThisMonth.length >= 1) {
+        toast({
+          title: "Limite atingido",
+          description: "No plano gratuito, você pode enviar 1 pedido de suporte por mês. Assine para ter suporte ilimitado.",
+          variant: "destructive",
+        });
+        return;
+      }
     }
 
     setIsLoadingData(true);

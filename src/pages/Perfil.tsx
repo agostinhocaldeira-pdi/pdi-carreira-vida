@@ -639,7 +639,7 @@ const Perfil = () => {
                             Processando...
                           </>
                         ) : (
-                          'Assinar Black por R$ 297/ano'
+                          'Assinar Black'
                         )}
                       </Button>
                     )}
