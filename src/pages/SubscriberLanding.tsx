@@ -187,6 +187,11 @@ const SubscriberLanding = () => {
         <div className="container relative mx-auto max-w-6xl">
           {/* Headlines - centered on all screens */}
           <div className="text-center mb-6 sm:mb-10">
+            <div className="flex justify-center mb-4">
+              <span className="inline-block bg-[#D4AF37]/15 border border-[#D4AF37]/40 text-[#D4AF37] text-xs sm:text-sm font-semibold px-4 py-1.5 rounded-full">
+                30 dias Grátis
+              </span>
+            </div>
             <h1 className="text-xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-3 sm:mb-6 text-white leading-tight">
               Você já percebeu onde sua vida está{" "}
               <span className="text-[#D4AF37]">desalinhada</span>.
