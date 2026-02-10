@@ -58,7 +58,7 @@ const Perfil = () => {
     }
   }, [searchParams, navigate, subscription]);
 
-  const handleCheckout = async () => {
+  const handleCheckout = async (priceOverride?: string) => {
     setIsCheckoutLoading(true);
     try {
       const { data: session } = await supabase.auth.getSession();
@@ -68,10 +68,12 @@ const Perfil = () => {
         return;
       }
 
-      const { data, error } = await supabase.functions.invoke('create-checkout', {
+      const functionName = priceOverride ? 'create-checkout' : 'create-checkout';
+      const { data, error } = await supabase.functions.invoke(functionName, {
         headers: {
           Authorization: `Bearer ${session.session.access_token}`,
         },
+        body: priceOverride ? { price_id: priceOverride } : undefined,
       });
 
       if (error) {
@@ -422,20 +424,20 @@ const Perfil = () => {
               </div>
             </CardHeader>
             <CardContent>
-              <div className="grid gap-4 sm:grid-cols-2">
+              <div className="grid gap-4 sm:grid-cols-3">
                 {/* Período de Teste Gratuito */}
                 <Card className={`border-2 transition-colors ${subscription.status === 'trial' ? 'border-primary ring-2 ring-primary/20' : 'border-muted'}`}>
                   <CardHeader className="pb-3">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
                         <Star className="h-5 w-5 text-muted-foreground" />
-                        <CardTitle className="text-lg">Teste Gratuito</CardTitle>
+                        <CardTitle className="text-base">Teste Gratuito</CardTitle>
                       </div>
                       {subscription.status === 'trial' && (
                         <Badge variant="secondary" className="text-xs">Atual</Badge>
                       )}
                     </div>
-                    <div className="text-2xl font-bold">R$ 0<span className="text-sm font-normal text-muted-foreground"> por 30 dias</span></div>
+                    <div className="text-2xl font-bold">R$ 0<span className="text-sm font-normal text-muted-foreground"> / 30 dias</span></div>
                     <p className="text-xs text-muted-foreground">Experimente sem compromisso</p>
                   </CardHeader>
                   <CardContent className="space-y-2 text-sm">
@@ -466,17 +468,17 @@ const Perfil = () => {
                 </Card>
 
                 {/* Plano Acesso Completo Anual */}
-                <Card className={`border-2 transition-colors relative overflow-hidden ${subscription.plan === 'basico' || subscription.status === 'active' ? 'border-accent ring-2 ring-accent/20' : 'border-accent/50'}`}>
+                <Card className={`border-2 transition-colors relative overflow-hidden ${subscription.plan === 'basico' || (subscription.status === 'active' && subscription.plan !== 'black') ? 'border-accent ring-2 ring-accent/20' : 'border-accent/50'}`}>
                   <div className="absolute top-0 right-0 bg-accent text-accent-foreground text-xs px-3 py-1 rounded-bl-lg font-medium">
-                    Melhor valor
+                    Popular
                   </div>
                   <CardHeader className="pb-3">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
                         <Crown className="h-5 w-5 text-accent" />
-                        <CardTitle className="text-lg">Acesso Completo</CardTitle>
+                        <CardTitle className="text-base">Acesso Completo</CardTitle>
                       </div>
-                      {(subscription.plan === 'basico' || subscription.status === 'active') && (
+                      {(subscription.plan === 'basico' || (subscription.status === 'active' && subscription.plan !== 'black')) && (
                         <Badge className="bg-accent text-accent-foreground text-xs">Atual</Badge>
                       )}
                     </div>
@@ -484,17 +486,17 @@ const Perfil = () => {
                       <span className="text-2xl font-bold">R$ 67</span>
                       <span className="text-sm font-normal text-muted-foreground">/ano</span>
                     </div>
-                    <p className="text-xs text-muted-foreground">Apenas R$ 5,58/mês - Acesso ilimitado</p>
+                    <p className="text-xs text-muted-foreground">Apenas R$ 5,58/mês</p>
                   </CardHeader>
                   <CardContent className="space-y-2 text-sm">
                     <div className="space-y-1.5 text-muted-foreground">
                       <div className="flex items-start gap-2">
                         <Check className="h-4 w-4 text-accent mt-0.5 flex-shrink-0" />
-                        <span>PDI ilimitado</span>
+                        <span>PDI limitado a 1 insight de IA por mês</span>
                       </div>
                       <div className="flex items-start gap-2">
                         <Check className="h-4 w-4 text-accent mt-0.5 flex-shrink-0" />
-                        <span>Todas as ferramentas</span>
+                        <span>Todas as ferramentas com 1 aplicação por mês</span>
                       </div>
                       <div className="flex items-start gap-2">
                         <Check className="h-4 w-4 text-accent mt-0.5 flex-shrink-0" />
@@ -510,14 +512,10 @@ const Perfil = () => {
                       </div>
                       <div className="flex items-start gap-2">
                         <Check className="h-4 w-4 text-accent mt-0.5 flex-shrink-0" />
-                        <span>Suporte prioritário</span>
-                      </div>
-                      <div className="flex items-start gap-2">
-                        <Check className="h-4 w-4 text-accent mt-0.5 flex-shrink-0" />
-                        <span>Desafio Gestão de tempo, Foco e produtividade</span>
+                        <span>Suporte prioritário ilimitado</span>
                       </div>
                     </div>
-                    {(subscription.plan === 'basico' || subscription.status === 'active') ? (
+                    {(subscription.plan === 'basico' || (subscription.status === 'active' && subscription.plan !== 'black')) ? (
                       <>
                         <div className="mt-4 p-2 bg-accent/10 rounded-lg text-center">
                           <p className="text-xs text-accent font-medium">
@@ -540,7 +538,7 @@ const Perfil = () => {
                     ) : (
                       <Button 
                         className="w-full mt-4 bg-accent hover:bg-accent/90 text-accent-foreground" 
-                        onClick={handleCheckout}
+                        onClick={() => handleCheckout()}
                         disabled={isCheckoutLoading}
                       >
                         {isCheckoutLoading ? (
@@ -550,6 +548,98 @@ const Perfil = () => {
                           </>
                         ) : (
                           'Assinar por R$ 67/ano'
+                        )}
+                      </Button>
+                    )}
+                  </CardContent>
+                </Card>
+
+                {/* Plano Black */}
+                <Card className={`border-2 transition-colors relative overflow-hidden ${subscription.plan === 'black' ? 'ring-2 ring-amber-400/40' : ''}`} style={{ backgroundColor: '#1A1A1A', borderColor: '#D4AF37' }}>
+                  <div className="absolute top-0 right-0 text-xs px-3 py-1 rounded-bl-lg font-bold" style={{ background: 'linear-gradient(135deg, #D4AF37, #F5E6A3)', color: '#1A1A1A' }}>
+                    Premium
+                  </div>
+                  <CardHeader className="pb-3">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <Sparkles className="h-5 w-5" style={{ color: '#D4AF37' }} />
+                        <CardTitle className="text-base text-white">Assinatura Black</CardTitle>
+                      </div>
+                      {subscription.plan === 'black' && (
+                        <Badge className="text-xs" style={{ background: 'linear-gradient(135deg, #D4AF37, #F5E6A3)', color: '#1A1A1A' }}>Atual</Badge>
+                      )}
+                    </div>
+                    <div className="flex items-baseline gap-2">
+                      <span className="text-2xl font-bold text-white">R$ 297</span>
+                      <span className="text-sm font-normal" style={{ color: '#999' }}>/ano</span>
+                    </div>
+                    <p className="text-xs" style={{ color: '#999' }}>Apenas R$ 24,75/mês • Tudo ilimitado</p>
+                  </CardHeader>
+                  <CardContent className="space-y-2 text-sm">
+                    <div className="space-y-1.5" style={{ color: '#ccc' }}>
+                      <div className="flex items-start gap-2">
+                        <Check className="h-4 w-4 mt-0.5 flex-shrink-0" style={{ color: '#D4AF37' }} />
+                        <span>PDI ilimitado</span>
+                      </div>
+                      <div className="flex items-start gap-2">
+                        <Check className="h-4 w-4 mt-0.5 flex-shrink-0" style={{ color: '#D4AF37' }} />
+                        <span>Todas as ferramentas com <strong className="text-white">IA ilimitada</strong></span>
+                      </div>
+                      <div className="flex items-start gap-2">
+                        <Check className="h-4 w-4 mt-0.5 flex-shrink-0" style={{ color: '#D4AF37' }} />
+                        <span>Diário de reflexão</span>
+                      </div>
+                      <div className="flex items-start gap-2">
+                        <Check className="h-4 w-4 mt-0.5 flex-shrink-0" style={{ color: '#D4AF37' }} />
+                        <span>Construção guiada</span>
+                      </div>
+                      <div className="flex items-start gap-2">
+                        <Check className="h-4 w-4 mt-0.5 flex-shrink-0" style={{ color: '#D4AF37' }} />
+                        <span>Relatórios e progresso</span>
+                      </div>
+                      <div className="flex items-start gap-2">
+                        <Check className="h-4 w-4 mt-0.5 flex-shrink-0" style={{ color: '#D4AF37' }} />
+                        <span>Suporte prioritário ilimitado</span>
+                      </div>
+                      <div className="flex items-start gap-2">
+                        <Check className="h-4 w-4 mt-0.5 flex-shrink-0" style={{ color: '#D4AF37' }} />
+                        <span className="text-white font-medium">Desafio Gestão de tempo, Foco e produtividade</span>
+                      </div>
+                    </div>
+                    {subscription.plan === 'black' ? (
+                      <>
+                        <div className="mt-4 p-2 rounded-lg text-center" style={{ backgroundColor: 'rgba(212, 175, 55, 0.15)' }}>
+                          <p className="text-xs font-medium" style={{ color: '#D4AF37' }}>
+                            ✓ Assinatura Black ativa
+                            {subscription.subscriptionEnd && (
+                              <span className="block mt-1" style={{ color: '#999' }}>
+                                Válida até {new Date(subscription.subscriptionEnd).toLocaleDateString('pt-BR')}
+                              </span>
+                            )}
+                          </p>
+                        </div>
+                        <Button 
+                          variant="outline" 
+                          className="w-full text-xs mt-2 border-[#D4AF37]/30 text-[#D4AF37] hover:bg-[#D4AF37]/10"
+                          onClick={handleManageSubscription}
+                        >
+                          Gerenciar Assinatura
+                        </Button>
+                      </>
+                    ) : (
+                      <Button 
+                        className="w-full mt-4 font-bold border-0"
+                        style={{ background: 'linear-gradient(135deg, #D4AF37, #F5E6A3)', color: '#1A1A1A' }}
+                        onClick={() => handleCheckout('price_1SzMoi3aJLvyiewRtfFcNYju')}
+                        disabled={isCheckoutLoading}
+                      >
+                        {isCheckoutLoading ? (
+                          <>
+                            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                            Processando...
+                          </>
+                        ) : (
+                          'Assinar Black por R$ 297/ano'
                         )}
                       </Button>
                     )}
