@@ -136,7 +136,7 @@ const Signup = () => {
           </CardDescription>
           <div className="pt-4">
             <p className="text-lg font-bold text-[#d4a853] mb-2">
-              Acesso completo por 30 dias
+              Acesso Grátis por 30 dias
             </p>
             <p className="text-sm text-gray-400">
               Use o sistema completo por 30 dias para estruturar seus objetivos, metas e próximos passos com mais clareza.
