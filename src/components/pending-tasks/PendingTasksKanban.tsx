@@ -166,7 +166,7 @@ export const PendingTasksKanban = ({ compact = false, showLink = false }: Pendin
                       <Button
                         variant="ghost"
                         size="sm"
-                        className="h-6 w-6 p-0 text-muted-foreground opacity-0 group-hover:opacity-100 hover:text-destructive hover:bg-destructive/10 transition-all"
+                        className="h-6 w-6 p-0 text-muted-foreground md:opacity-0 md:group-hover:opacity-100 hover:text-destructive hover:bg-destructive/10 transition-all"
                         onClick={() => deleteTask(task.id)}
                       >
                         <Trash2 className="w-3.5 h-3.5" />
