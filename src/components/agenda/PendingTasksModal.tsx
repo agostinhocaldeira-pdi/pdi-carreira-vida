@@ -5,7 +5,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { PendingTasksKanban } from "@/components/pending-tasks/PendingTasksKanban";
-import { Radar } from "lucide-react";
+import { ListTodo } from "lucide-react";
 
 interface PendingTasksModalProps {
   open: boolean;
@@ -18,8 +18,8 @@ export const PendingTasksModal = ({ open, onOpenChange }: PendingTasksModalProps
       <DialogContent className="max-w-4xl max-h-[85vh] overflow-hidden bg-background border-border">
         <DialogHeader className="pb-3 border-b border-border">
           <DialogTitle className="flex items-center gap-2 text-base font-semibold">
-            <Radar className="w-4 h-4 text-[#D4AF37]" />
-            Radar de Ações
+            <ListTodo className="w-4 h-4 text-[#D4AF37]" />
+            Micro Pendências
           </DialogTitle>
         </DialogHeader>
         <div className="overflow-y-auto max-h-[calc(85vh-100px)] pt-2">
