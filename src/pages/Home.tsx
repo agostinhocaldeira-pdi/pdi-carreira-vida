@@ -69,7 +69,7 @@ const Home = () => {
     redirectTo: "/dashboard-empresa"
   });
   const { newAchievement, dismissNewAchievement, checkAndUnlockAchievements } = useGamification();
-  const { showSurvey, setShowSurvey, completedSection } = useSatisfactionSurvey();
+  const { showSurvey, setShowSurvey, completedSection, markSectionCompleted } = useSatisfactionSurvey();
   const { quote: dailyQuote } = useDailyQuote();
   const { status: subscriptionStatus, plan: subscriptionPlan } = useSubscription();
   const isMobile = useIsMobile();
@@ -91,6 +91,11 @@ const Home = () => {
     };
     loadUserData();
   }, []);
+
+  // Expose markSectionCompleted globally for child components
+  useEffect(() => {
+    (window as any).markSectionCompleted = markSectionCompleted;
+  }, [markSectionCompleted]);
 
   // Check achievements on mount
   useEffect(() => {
