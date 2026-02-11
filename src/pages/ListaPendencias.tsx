@@ -83,9 +83,9 @@ const ListaPendencias = () => {
           </CardContent>
         </Card>
 
-        {/* Kanban Board */}
+        {/* Pending Tasks Table */}
         <div>
-          <h2 className="text-lg font-semibold mb-4">Quadro Kanban</h2>
+          <h2 className="text-lg font-semibold mb-4">Suas Pendências</h2>
           <PendingTasksKanban />
         </div>
 
