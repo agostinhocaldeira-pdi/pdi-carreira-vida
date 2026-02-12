@@ -101,7 +101,7 @@ const LandingNova = () => {
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
               <p className="text-sm text-gray-500">
-                Recupere clareza e direção nos primeiros 7 dias.
+                Organize sua vida nos próximos 30 dias, de graça, sem cartão, sem compromisso. Só vem!
               </p>
             </div>
           </div>
@@ -310,6 +310,9 @@ const LandingNova = () => {
               Começar Teste Grátis
               <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
+            <p className="text-sm text-gray-500 mt-4">
+              Organize sua vida nos próximos 30 dias, de graça, sem cartão, sem compromisso. Só vem!
+            </p>
           </div>
         </div>
       </section>
@@ -470,7 +473,7 @@ const LandingNova = () => {
               <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
             <p className="text-sm text-gray-500">
-              Recupere clareza e direção nos primeiros 7 dias.
+              Organize sua vida nos próximos 30 dias, de graça, sem cartão, sem compromisso. Só vem!
             </p>
           </div>
         </div>
