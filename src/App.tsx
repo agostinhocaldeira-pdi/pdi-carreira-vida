@@ -9,6 +9,9 @@ import { SubscriptionProvider } from "@/contexts/SubscriptionContext";
 import { ActionCelebrationProvider } from "@/contexts/ActionCelebrationContext";
 import ScrollToTop from "@/components/ScrollToTop";
 import { usePageTracking } from "@/hooks/usePageTracking";
+import { identifyUser, resetPostHog } from "@/lib/posthog";
+import { supabase } from "@/integrations/supabase/client";
+import { useEffect } from "react";
 import Index from "./pages/Index";
 import SubscriberLanding from "./pages/SubscriberLanding";
 import NotFound from "./pages/NotFound";
@@ -78,6 +81,20 @@ const PageTracker = () => {
   return null;
 };
 
+const PostHogIdentifier = () => {
+  useEffect(() => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (session?.user) {
+        identifyUser(session.user.id, { email: session.user.email });
+      } else if (event === 'SIGNED_OUT') {
+        resetPostHog();
+      }
+    });
+    return () => subscription.unsubscribe();
+  }, []);
+  return null;
+};
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <LanguageProvider>
@@ -90,6 +107,7 @@ const App = () => (
               <BrowserRouter>
               <ScrollToTop />
               <PageTracker />
+              <PostHogIdentifier />
               <Routes>
                 <Route path="/" element={<LandingNova />} />
                 <Route path="/news" element={<SubscriberLanding />} />

@@ -9,6 +9,7 @@ import { useNavigate } from "react-router-dom";
 import { Shield, Home, Users, Trash2, UserPlus, Building2, UserCog, UserCheck, Mail, Zap, BookOpen } from "lucide-react";
 import FinancialDashboard from "@/components/admin/FinancialDashboard";
 import AdminMonitoringSection from "@/components/admin/AdminMonitoringSection";
+import PostHogAnalyticsPanel from "@/components/admin/PostHogAnalyticsPanel";
 import LeadsManagement from "@/components/admin/LeadsManagement";
 import AdminBroadcastPanel from "@/components/admin/AdminBroadcastPanel";
 import { SatisfactionSurveyPanel } from "@/components/admin/SatisfactionSurveyPanel";
@@ -443,6 +444,9 @@ const Admin = () => {
 
         {/* Monitoramento da Plataforma */}
         <AdminMonitoringSection />
+
+        {/* PostHog Analytics */}
+        <PostHogAnalyticsPanel />
 
         {/* Comunicados em Massa */}
         <AdminBroadcastPanel />
