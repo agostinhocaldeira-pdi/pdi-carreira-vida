@@ -116,3 +116,6 @@ verify_jwt = false
 
 [functions.send-2day-reminder-email-test]
 verify_jwt = false
+
+[functions.posthog-analytics]
+verify_jwt = false
