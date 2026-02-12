@@ -2,7 +2,7 @@ import posthog from 'posthog-js';
 
 // PostHog Project API Key is public (like Stripe publishable key)
 // It's safe to include in client-side code
-const POSTHOG_KEY = 'phc_placeholder';
+const POSTHOG_KEY = 'phc_Bp44Cu5h1uLDiOP0YQbkBmPdxDm6qqq6MjfaX4jL2kv';
 const POSTHOG_HOST = 'https://us.i.posthog.com';
 
 let initialized = false;
