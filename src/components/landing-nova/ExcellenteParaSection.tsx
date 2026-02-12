@@ -89,7 +89,7 @@ const ExcellenteParaSection = () => {
             <p className="text-gray-400 mb-4">
               O PDI não serve para te dar mais coisas para fazer. Serve para:
             </p>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               {[
                 "tirar o excesso",
                 "organizar prioridades",
