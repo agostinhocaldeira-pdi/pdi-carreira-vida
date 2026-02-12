@@ -8,6 +8,7 @@ import { UnsavedChangesProvider } from "@/contexts/UnsavedChangesContext";
 import { SubscriptionProvider } from "@/contexts/SubscriptionContext";
 import { ActionCelebrationProvider } from "@/contexts/ActionCelebrationContext";
 import ScrollToTop from "@/components/ScrollToTop";
+import { usePageTracking } from "@/hooks/usePageTracking";
 import Index from "./pages/Index";
 import SubscriberLanding from "./pages/SubscriberLanding";
 import NotFound from "./pages/NotFound";
@@ -59,19 +60,23 @@ import Quiz from "./pages/Quiz";
 import DesafioCodigo from "./pages/DesafioCodigo";
 import CheckoutDireto from "./pages/CheckoutDireto";
 import ExperienciaNarrativa from "./pages/ExperienciaNarrativa";
-
 import ExperienciaTest from "./pages/ExperienciaTest";
 
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      staleTime: 1000 * 60 * 5, // 5 minutos
-      gcTime: 1000 * 60 * 30, // 30 minutos (cacheTime)
+      staleTime: 1000 * 60 * 5,
+      gcTime: 1000 * 60 * 30,
       refetchOnWindowFocus: false,
       retry: 1,
     },
   },
 });
+
+const PageTracker = () => {
+  usePageTracking();
+  return null;
+};
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
@@ -84,6 +89,7 @@ const App = () => (
               <Sonner />
               <BrowserRouter>
               <ScrollToTop />
+              <PageTracker />
               <Routes>
                 <Route path="/" element={<LandingNova />} />
                 <Route path="/news" element={<SubscriberLanding />} />
@@ -137,7 +143,6 @@ const App = () => (
                 <Route path="/experiencia-test" element={<ExperienciaTest />} />
                 <Route path="/comecar" element={<SubscriberLanding />} />
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-                <Route path="*" element={<NotFound />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
               </BrowserRouter>

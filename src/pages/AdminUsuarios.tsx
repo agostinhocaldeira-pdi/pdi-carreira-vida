@@ -45,7 +45,7 @@ const AdminUsuarios = () => {
     try {
       // Fetch auth users via edge function
       const { data: session } = await supabase.auth.getSession();
-      let authUsersMap: Record<string, { name: string; email: string; phone: string }> = {};
+      let authUsersMap: Record<string, { name: string; email: string; phone: string; created_at: string }> = {};
       
       if (session.session) {
         const response = await supabase.functions.invoke("get-admin-users", {
@@ -57,7 +57,8 @@ const AdminUsuarios = () => {
             authUsersMap[u.id] = {
               name: u.name || "-",
               email: u.email || "-",
-              phone: u.phone || "-"
+              phone: u.phone || "-",
+              created_at: u.created_at || "",
             };
           });
         }
@@ -79,7 +80,8 @@ const AdminUsuarios = () => {
       const usersWithData: UserData[] = await Promise.all(
         validRolesData.map(async (roleEntry) => {
           const userId = roleEntry.user_id;
-          const authUser = authUsersMap[userId] || { name: "-", email: "-", phone: "-" };
+          const authUser = authUsersMap[userId] || { name: "-", email: "-", phone: "-", created_at: "" };
+          const userCreatedAt = authUser.created_at || roleEntry.created_at;
 
           // Buscar objetivos
           const { data: objetivos } = await supabase
@@ -149,8 +151,8 @@ const AdminUsuarios = () => {
             name: authUser.name,
             email: authUser.email,
             phone: authUser.phone,
-            dataCadastro: roleEntry.created_at,
-            ultimoAcesso: lastActivity || roleEntry.created_at,
+            dataCadastro: userCreatedAt,
+            ultimoAcesso: lastActivity || userCreatedAt,
             status: status as "ativo" | "inativo",
             role: roleEntry.role,
             atividades: {
@@ -198,6 +200,20 @@ const AdminUsuarios = () => {
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString("pt-BR");
+  };
+
+  const getUsageTime = (dataCadastro: string) => {
+    const start = new Date(dataCadastro);
+    const now = new Date();
+    const diffMs = now.getTime() - start.getTime();
+    const days = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+    if (days < 1) return "Hoje";
+    if (days < 30) return `${days}d`;
+    const months = Math.floor(days / 30);
+    if (months < 12) return `${months}m`;
+    const years = Math.floor(months / 12);
+    const remainingMonths = months % 12;
+    return remainingMonths > 0 ? `${years}a ${remainingMonths}m` : `${years}a`;
   };
 
   const getProgressAverage = (atividades: UserData["atividades"]) => {
@@ -323,6 +339,8 @@ const AdminUsuarios = () => {
                       <TableHead>E-mail</TableHead>
                       <TableHead className="hidden md:table-cell">Telefone</TableHead>
                       <TableHead>Role</TableHead>
+                      <TableHead className="hidden lg:table-cell">Início</TableHead>
+                      <TableHead className="hidden lg:table-cell">Tempo de Uso</TableHead>
                       <TableHead>Status</TableHead>
                       <TableHead className="text-center hidden lg:table-cell">Dias sem Acesso</TableHead>
                       <TableHead className="min-w-[150px] hidden xl:table-cell">Atividades</TableHead>
@@ -332,7 +350,7 @@ const AdminUsuarios = () => {
                   <TableBody>
                     {filteredUsers.length === 0 ? (
                       <TableRow>
-                        <TableCell colSpan={8} className="text-center text-muted-foreground py-8">
+                        <TableCell colSpan={11} className="text-center text-muted-foreground py-8">
                           Nenhum usuário encontrado
                         </TableCell>
                       </TableRow>
@@ -349,6 +367,12 @@ const AdminUsuarios = () => {
                             {user.phone}
                           </TableCell>
                           <TableCell>{getRoleBadge(user.role)}</TableCell>
+                          <TableCell className="hidden lg:table-cell text-sm text-muted-foreground">
+                            {formatDate(user.dataCadastro)}
+                          </TableCell>
+                          <TableCell className="hidden lg:table-cell text-sm text-muted-foreground">
+                            {getUsageTime(user.dataCadastro)}
+                          </TableCell>
                           <TableCell>
                             {user.status === "ativo" ? (
                               <Badge variant="default" className="gap-1 bg-green-600 hover:bg-green-700">
