@@ -4,10 +4,11 @@ import { Badge } from "@/components/ui/badge";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Skeleton } from "@/components/ui/skeleton";
 import { supabase } from "@/integrations/supabase/client";
+import { useNavigate } from "react-router-dom";
 import {
   BarChart3, Users, Target, CheckCircle2, BookOpen, Calendar,
   TrendingUp, TrendingDown, HelpCircle, Activity, Map, Layers,
-  Percent, Clock, ArrowRightLeft
+  Percent, Clock, ArrowRightLeft, Eye
 } from "lucide-react";
 
 interface MonitoringData {
@@ -67,16 +68,20 @@ const InfoTooltip = ({ text }: { text: string }) => (
   </TooltipProvider>
 );
 
-const MetricCard = ({ icon: Icon, iconColor, label, value, subtitle, tooltip }: {
-  icon: any; iconColor: string; label: string; value: string | number; subtitle?: string; tooltip: string;
+const MetricCard = ({ icon: Icon, iconColor, label, value, subtitle, tooltip, onClick }: {
+  icon: any; iconColor: string; label: string; value: string | number; subtitle?: string; tooltip: string; onClick?: () => void;
 }) => (
-  <div className="p-4 bg-card rounded-xl border border-border/50 space-y-2">
+  <div 
+    className={`p-4 bg-card rounded-xl border border-border/50 space-y-2 ${onClick ? 'cursor-pointer hover:border-primary/50 hover:shadow-md transition-all' : ''}`}
+    onClick={onClick}
+  >
     <div className="flex items-center justify-between">
       <div className="flex items-center gap-2 text-sm text-muted-foreground">
         <Icon className={`w-4 h-4 ${iconColor}`} />
         <span>{label}</span>
         <InfoTooltip text={tooltip} />
       </div>
+      {onClick && <Eye className="w-3.5 h-3.5 text-muted-foreground" />}
     </div>
     <p className="text-2xl font-bold">{value}</p>
     {subtitle && <p className="text-xs text-muted-foreground">{subtitle}</p>}
@@ -107,6 +112,7 @@ const FunnelBar = ({ label, value, total, tooltip }: { label: string; value: num
 const AdminMonitoringSection = () => {
   const [data, setData] = useState<MonitoringData | null>(null);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchMonitoring();
@@ -285,6 +291,7 @@ const AdminMonitoringSection = () => {
               icon={Users} iconColor="text-primary" label="Usuários"
               value={data.totalUsers}
               tooltip="Total de contas criadas na plataforma. Fonte: auth.users"
+              onClick={() => navigate("/admin/usuarios")}
             />
             <MetricCard
               icon={Activity} iconColor="text-green-600" label="Ativos (7d)"
