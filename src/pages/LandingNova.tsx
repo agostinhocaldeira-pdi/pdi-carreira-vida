@@ -28,6 +28,7 @@ import {
 } from "lucide-react";
 import logoPdi from "@/assets/logo_pdi.png";
 import WhatsAppButton from "@/components/WhatsAppButton";
+import ExcellenteParaSection from "@/components/landing-nova/ExcellenteParaSection";
 
 // Import testimonial photos
 import ericPereira from "@/assets/testimonials/eric-pereira.jpg";
@@ -106,6 +107,11 @@ const LandingNova = () => {
           </div>
         </div>
       </section>
+
+      {/* ============================================================ */}
+      {/* 1.5. SEÇÃO "EXCELENTE PARA" */}
+      {/* ============================================================ */}
+      <ExcellenteParaSection />
 
       {/* ============================================================ */}
       {/* 2. SEÇÃO DE PROBLEMA - A Conexão com a Persona */}
