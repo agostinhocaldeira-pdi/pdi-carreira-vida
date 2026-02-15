@@ -103,12 +103,20 @@ export default function JornadaFinal({ onBack }: Props) {
         </div>
 
         {/* Upgrade options */}
-        <div className="space-y-3">
+        <div className="space-y-6">
           <p className="text-center text-sm font-semibold text-slate-600">
             Quer ir além? 🚀
           </p>
 
-          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }}>
+          {/* Acesso Completo */}
+          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }} className="space-y-3">
+            <div className="rounded-xl overflow-hidden border-2 border-blue-200 bg-blue-950 aspect-video flex items-center justify-center">
+              <div className="text-center text-blue-300 space-y-2">
+                <ExternalLink className="w-10 h-10 mx-auto opacity-50" />
+                <p className="text-sm font-medium">Vídeo: Acesso Completo</p>
+                <p className="text-xs opacity-60">Espaço reservado para vídeo explicativo</p>
+              </div>
+            </div>
             <Card className="border-2 border-blue-300 bg-gradient-to-br from-blue-50 to-blue-100/50 cursor-pointer hover:shadow-lg transition-shadow">
               <CardContent className="p-5">
                 <div className="flex items-start gap-3">
@@ -132,7 +140,15 @@ export default function JornadaFinal({ onBack }: Props) {
             </Card>
           </motion.div>
 
-          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.6 }}>
+          {/* Premium Black */}
+          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.6 }} className="space-y-3">
+            <div className="rounded-xl overflow-hidden border-2 border-amber-300 bg-amber-950 aspect-video flex items-center justify-center">
+              <div className="text-center text-amber-300 space-y-2">
+                <ExternalLink className="w-10 h-10 mx-auto opacity-50" />
+                <p className="text-sm font-medium">Vídeo: Premium Black</p>
+                <p className="text-xs opacity-60">Espaço reservado para vídeo explicativo</p>
+              </div>
+            </div>
             <Card className="border-2 border-amber-400 bg-gradient-to-br from-amber-50 to-yellow-50 cursor-pointer hover:shadow-lg transition-shadow">
               <CardContent className="p-5">
                 <div className="flex items-start gap-3">
