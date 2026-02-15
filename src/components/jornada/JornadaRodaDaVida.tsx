@@ -71,11 +71,16 @@ export default function JornadaRodaDaVida({ onComplete, onBack }: Props) {
             Roda da Vida 🎯
           </h2>
           <p className="text-sm text-slate-500">
-            Dê uma nota de 0 a 10 para cada área. Seja sincero consigo mesmo!
+            Quanto você está feliz em cada área da sua vida?
+            <br />
+            Dê uma nota de 0 a 10 para cada área, sendo 0 = totalmente infeliz, e 10 = totalmente feliz.
+            <br />
+            Seja sincero consigo mesmo!
           </p>
           <div className="inline-flex items-center gap-1 bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm font-medium">
             Média: {avgScore.toFixed(1)} ⭐
           </div>
+          <p className="text-xs text-slate-400">O quanto você é feliz hoje</p>
         </motion.div>
 
         {/* Areas */}
