@@ -81,7 +81,7 @@ const LandingNova = () => {
               >
                 <iframe
                   className="absolute top-0 left-0 w-full h-full border-0"
-                  src="https://www.youtube-nocookie.com/embed/jatbs2MI37w?rel=0&controls=1&modestbranding=1&playsinline=1"
+                  src="https://www.youtube-nocookie.com/embed/QY6Z1Mb2IDM?rel=0&controls=1&modestbranding=1&playsinline=1"
                   title="PDI - Carreira e Vida"
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                   referrerPolicy="strict-origin-when-cross-origin"
