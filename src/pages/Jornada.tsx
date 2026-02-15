@@ -143,6 +143,14 @@ export default function Jornada() {
           <p className="text-slate-600 text-sm">
             Complete cada etapa para descobrir sua direção de vida e criar sua primeira meta real.
           </p>
+
+          {/* Video */}
+          <div className="rounded-xl overflow-hidden border border-slate-200 bg-slate-900 aspect-video flex items-center justify-center shadow-lg">
+            <div className="text-center text-slate-400 space-y-2">
+              <Play className="w-10 h-10 mx-auto opacity-50" />
+              <p className="text-sm font-medium">Vídeo explicativo</p>
+            </div>
+          </div>
         </motion.div>
 
         {/* Progress bar */}
