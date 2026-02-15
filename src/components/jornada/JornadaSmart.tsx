@@ -6,7 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import JornadaAIEvaluation from "./JornadaAIEvaluation";
 
 interface Props {
-  onComplete: (answers?: { primeiraAcao: string; diaHora: string }) => void;
+  onComplete: (answers?: { especifica: string; mensuravel: string; alcancavel: string; relevante: string; temporal: string; primeiraAcao: string; diaHora: string }) => void;
   onBack: () => void;
 }
 
@@ -208,7 +208,7 @@ export default function JornadaSmart({ onComplete, onBack }: Props) {
 
         {/* Complete */}
         {showEvaluation ? (
-          <JornadaAIEvaluation stepId="smart" onContinue={() => onComplete({ primeiraAcao: answers[5], diaHora: answers[6] })} />
+          <JornadaAIEvaluation stepId="smart" onContinue={() => onComplete({ especifica: answers[0], mensuravel: answers[1], alcancavel: answers[2], relevante: answers[3], temporal: answers[4], primeiraAcao: answers[5], diaHora: answers[6] })} />
         ) : (
           <motion.div animate={{ opacity: allAnswered ? 1 : 0.4 }} className="pt-2">
             <Button

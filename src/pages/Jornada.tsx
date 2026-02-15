@@ -64,7 +64,7 @@ export default function Jornada() {
   const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState<string | null>(null);
   const [completedSteps, setCompletedSteps] = useState<string[]>([]);
-  const [smartActionData, setSmartActionData] = useState<{ primeiraAcao: string; diaHora: string } | null>(null);
+  const [smartActionData, setSmartActionData] = useState<{ especifica: string; mensuravel: string; alcancavel: string; relevante: string; temporal: string; primeiraAcao: string; diaHora: string } | null>(null);
 
   const progress = (completedSteps.length / steps.length) * 100;
   const allComplete = completedSteps.length === steps.length;
