@@ -11,9 +11,9 @@ interface Props {
 }
 
 const prompts = [
-  { question: "Se dinheiro não fosse problema, como seria seu dia perfeito?", emoji: "🌅" },
-  { question: "O que você faria se soubesse que não pode falhar?", emoji: "🦸" },
-  { question: "Como você quer ser lembrado daqui a 20 anos?", emoji: "🏆" },
+  { question: "Se você pudesse mudar 3 coisas na sua vida hoje (trabalho, saúde, dinheiro, relacionamentos...), o que mudaria?", emoji: "🔄" },
+  { question: "Como seria o seu dia a dia ideal se essas mudanças já tivessem acontecido?", emoji: "🌅" },
+  { question: "O que te impede hoje de viver essa vida? O que falta?", emoji: "🧩" },
 ];
 
 export default function JornadaVVD({ onComplete, onBack }: Props) {
