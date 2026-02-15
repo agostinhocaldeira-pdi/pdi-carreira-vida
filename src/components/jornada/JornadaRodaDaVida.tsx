@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { ArrowLeft, Check, Play } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
+import JornadaAIEvaluation from "./JornadaAIEvaluation";
 
 interface Props {
   onComplete: () => void;
@@ -25,6 +26,7 @@ export default function JornadaRodaDaVida({ onComplete, onBack }: Props) {
     Object.fromEntries(areas.map((a) => [a.name, 5]))
   );
   const [activeArea, setActiveArea] = useState<string | null>(null);
+  const [showEvaluation, setShowEvaluation] = useState(false);
 
   const updateScore = (name: string, value: number) => {
     setScores((prev) => ({ ...prev, [name]: value }));
@@ -118,13 +120,17 @@ export default function JornadaRodaDaVida({ onComplete, onBack }: Props) {
           ))}
         </div>
 
-        <Button
-          className="w-full h-12 text-base bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 shadow-lg shadow-blue-200"
-          onClick={onComplete}
-        >
-          <Check className="w-5 h-5 mr-2" />
-          Concluir Roda da Vida
-        </Button>
+        {showEvaluation ? (
+          <JornadaAIEvaluation stepId="roda-da-vida" onContinue={onComplete} />
+        ) : (
+          <Button
+            className="w-full h-12 text-base bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 shadow-lg shadow-blue-200"
+            onClick={() => setShowEvaluation(true)}
+          >
+            <Check className="w-5 h-5 mr-2" />
+            Concluir Roda da Vida
+          </Button>
+        )}
       </div>
     </div>
   );

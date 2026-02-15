@@ -2,8 +2,8 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowLeft, Check, ChevronRight, Play, Target } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import JornadaAIEvaluation from "./JornadaAIEvaluation";
 
 interface Props {
   onComplete: () => void;
@@ -61,6 +61,7 @@ const smartSteps = [
 export default function JornadaSmart({ onComplete, onBack }: Props) {
   const [currentIdx, setCurrentIdx] = useState(0);
   const [answers, setAnswers] = useState<string[]>(smartSteps.map(() => ""));
+  const [showEvaluation, setShowEvaluation] = useState(false);
 
   const step = smartSteps[currentIdx];
   const allAnswered = answers.every((a) => a.trim().length > 5);
@@ -188,16 +189,20 @@ export default function JornadaSmart({ onComplete, onBack }: Props) {
         </AnimatePresence>
 
         {/* Complete */}
-        <motion.div animate={{ opacity: allAnswered ? 1 : 0.4 }} className="pt-2">
-          <Button
-            className="w-full h-12 text-base bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 shadow-lg shadow-orange-200"
-            disabled={!allAnswered}
-            onClick={onComplete}
-          >
-            <Target className="w-5 h-5 mr-2" />
-            Concluir Meta SMART
-          </Button>
-        </motion.div>
+        {showEvaluation ? (
+          <JornadaAIEvaluation stepId="smart" onContinue={onComplete} />
+        ) : (
+          <motion.div animate={{ opacity: allAnswered ? 1 : 0.4 }} className="pt-2">
+            <Button
+              className="w-full h-12 text-base bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 shadow-lg shadow-orange-200"
+              disabled={!allAnswered}
+              onClick={() => setShowEvaluation(true)}
+            >
+              <Target className="w-5 h-5 mr-2" />
+              Concluir Meta SMART
+            </Button>
+          </motion.div>
+        )}
       </div>
     </div>
   );
