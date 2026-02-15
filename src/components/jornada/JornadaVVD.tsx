@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { ArrowLeft, Check, Play, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import JornadaAIEvaluation from "./JornadaAIEvaluation";
 
 interface Props {
   onComplete: () => void;
@@ -25,6 +26,7 @@ export default function JornadaVVD({ onComplete, onBack }: Props) {
     setAnswers(newAnswers);
   };
 
+  const [showEvaluation, setShowEvaluation] = useState(false);
   const allAnswered = answers.every((a) => a.trim().length > 10);
   const prompt = prompts[currentPrompt];
 
@@ -127,16 +129,20 @@ export default function JornadaVVD({ onComplete, onBack }: Props) {
         </motion.div>
 
         {/* Complete */}
-        <motion.div animate={{ opacity: allAnswered ? 1 : 0.4 }}>
-          <Button
-            className="w-full h-12 text-base bg-gradient-to-r from-purple-500 to-violet-500 hover:from-purple-600 hover:to-violet-600 shadow-lg shadow-purple-200"
-            disabled={!allAnswered}
-            onClick={onComplete}
-          >
-            <Sparkles className="w-5 h-5 mr-2" />
-            Concluir Vida dos Sonhos
-          </Button>
-        </motion.div>
+        {showEvaluation ? (
+          <JornadaAIEvaluation stepId="vvd" onContinue={onComplete} />
+        ) : (
+          <motion.div animate={{ opacity: allAnswered ? 1 : 0.4 }}>
+            <Button
+              className="w-full h-12 text-base bg-gradient-to-r from-purple-500 to-violet-500 hover:from-purple-600 hover:to-violet-600 shadow-lg shadow-purple-200"
+              disabled={!allAnswered}
+              onClick={() => setShowEvaluation(true)}
+            >
+              <Sparkles className="w-5 h-5 mr-2" />
+              Concluir Vida dos Sonhos
+            </Button>
+          </motion.div>
+        )}
       </div>
     </div>
   );

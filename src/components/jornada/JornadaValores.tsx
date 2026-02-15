@@ -4,6 +4,7 @@ import { ArrowLeft, Check, Heart, Play, Plus, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
+import JornadaAIEvaluation from "./JornadaAIEvaluation";
 
 interface Props {
   onComplete: () => void;
@@ -20,6 +21,7 @@ const suggestedValues = [
 export default function JornadaValores({ onComplete, onBack }: Props) {
   const [selected, setSelected] = useState<string[]>([]);
   const [customValue, setCustomValue] = useState("");
+  const [showEvaluation, setShowEvaluation] = useState(false);
 
   const toggleValue = (value: string) => {
     if (selected.includes(value)) {
@@ -146,24 +148,28 @@ export default function JornadaValores({ onComplete, onBack }: Props) {
           </Button>
         </div>
 
-        {/* Complete button */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: selected.length >= 3 ? 1 : 0.4 }}
-          className="pt-4"
-        >
-          <Button
-            className="w-full h-12 text-base bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-600 hover:to-rose-600 shadow-lg shadow-pink-200"
-            disabled={selected.length < 3}
-            onClick={onComplete}
+        {/* Complete button or AI evaluation */}
+        {showEvaluation ? (
+          <JornadaAIEvaluation stepId="valores" onContinue={onComplete} />
+        ) : (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: selected.length >= 3 ? 1 : 0.4 }}
+            className="pt-4"
           >
-            <Check className="w-5 h-5 mr-2" />
-            Concluir Valores
-          </Button>
-          <p className="text-xs text-center text-slate-400 mt-2">
-            Mínimo 3, máximo 5 valores
-          </p>
-        </motion.div>
+            <Button
+              className="w-full h-12 text-base bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-600 hover:to-rose-600 shadow-lg shadow-pink-200"
+              disabled={selected.length < 3}
+              onClick={() => setShowEvaluation(true)}
+            >
+              <Check className="w-5 h-5 mr-2" />
+              Concluir Valores
+            </Button>
+            <p className="text-xs text-center text-slate-400 mt-2">
+              Mínimo 3, máximo 5 valores
+            </p>
+          </motion.div>
+        )}
       </div>
     </div>
   );
