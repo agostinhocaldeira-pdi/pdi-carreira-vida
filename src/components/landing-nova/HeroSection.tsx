@@ -16,14 +16,12 @@ const HeroSection = ({ onCTA }: HeroSectionProps) => {
       <div className="container relative mx-auto max-w-6xl">
         <div className="text-center mb-12">
           <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-6 text-foreground leading-tight">
-            PDI – Carreira e Vida
+            Conquiste suas metas com clareza e um plano simples
           </h1>
-          <p className="text-lg sm:text-xl md:text-2xl text-primary font-medium mb-6">
-            A plataforma digital para organizar vida e carreira em um plano claro, prático e executável.
-          </p>
           <p className="text-base sm:text-lg text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-            Pare de tentar organizar sua vida em cadernos ou planilhas soltas. Use um sistema com apoio da{" "}
-            <span className="text-primary font-medium">Inteligência Artificial</span> que integra seus objetivos à sua rotina real.
+            Promoção no trabalho, Emagrecer, Comprar um imóvel, Viajar, ou Organizar sua vida financeira.
+            <br />
+            Todo mundo tem metas. O problema é transformar isso em ação. O PDI te ajuda exatamente nisso.
           </p>
         </div>
 
