@@ -56,6 +56,24 @@ const smartSteps = [
     color: "from-blue-400 to-blue-600",
     hint: "Defina uma data concreta. Prazos criam urgência.",
   },
+  {
+    letter: "🔥",
+    title: "Primeira Ação",
+    question: "Agora que você já tem a sua meta definida, qual vai ser sua primeira ação nos próximos 7 dias?",
+    placeholder: "Ex: Comprar o primeiro livro e ler o capítulo 1 neste fim de semana",
+    emoji: "🔥",
+    color: "from-purple-400 to-purple-600",
+    hint: "Uma ação concreta e pequena que você pode fazer esta semana.",
+  },
+  {
+    letter: "📅",
+    title: "Dia e Hora",
+    question: "Você já tem o dia e hora que vai executar essa ação?",
+    placeholder: "Ex: Sábado às 9h da manhã, na livraria do centro",
+    emoji: "📅",
+    color: "from-teal-400 to-teal-600",
+    hint: "Agendar cria compromisso. Escolha um momento específico.",
+  },
 ];
 
 export default function JornadaSmart({ onComplete, onBack }: Props) {
@@ -113,7 +131,7 @@ export default function JornadaSmart({ onComplete, onBack }: Props) {
         </motion.div>
 
         {/* SMART letters nav */}
-        <div className="flex gap-2 justify-center">
+        <div className="flex gap-2 justify-center flex-wrap">
           {smartSteps.map((s, i) => (
             <button
               key={s.letter}
@@ -175,14 +193,14 @@ export default function JornadaSmart({ onComplete, onBack }: Props) {
             </div>
 
             {/* Next button */}
-            {currentIdx < 4 ? (
+            {currentIdx < smartSteps.length - 1 ? (
               <Button
                 className="w-full"
                 variant="outline"
                 onClick={() => setCurrentIdx(currentIdx + 1)}
                 disabled={answers[currentIdx].trim().length < 5}
               >
-                Próxima letra <ChevronRight className="w-4 h-4 ml-1" />
+                {currentIdx < 4 ? "Próxima letra" : "Próxima pergunta"} <ChevronRight className="w-4 h-4 ml-1" />
               </Button>
             ) : null}
           </motion.div>
