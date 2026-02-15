@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 
 interface Props {
   onBack: () => void;
-  smartActionData?: { primeiraAcao: string; diaHora: string } | null;
+  smartActionData?: { especifica: string; mensuravel: string; alcancavel: string; relevante: string; temporal: string; primeiraAcao: string; diaHora: string } | null;
 }
 
 export default function JornadaFinal({ onBack, smartActionData }: Props) {
@@ -83,9 +83,24 @@ export default function JornadaFinal({ onBack, smartActionData }: Props) {
               <CardContent className="p-5 space-y-4">
                 <h3 className="font-semibold text-slate-800 flex items-center gap-2">
                   <Zap className="w-5 h-5 text-purple-500" />
-                  Sua Primeira Ação
+                  Sua Meta SMART + Primeira Ação
                 </h3>
                 <div className="space-y-3">
+                  {[
+                    { letter: "S", label: "Específica", value: smartActionData.especifica, color: "text-red-500" },
+                    { letter: "M", label: "Mensurável", value: smartActionData.mensuravel, color: "text-orange-500" },
+                    { letter: "A", label: "Alcançável", value: smartActionData.alcancavel, color: "text-amber-500" },
+                    { letter: "R", label: "Relevante", value: smartActionData.relevante, color: "text-green-500" },
+                    { letter: "T", label: "Temporal", value: smartActionData.temporal, color: "text-blue-500" },
+                  ].map((item) => (
+                    <div key={item.letter} className="bg-white rounded-lg p-3 border border-purple-100">
+                      <p className="text-xs font-medium text-purple-600 mb-1">
+                        <span className={`font-black ${item.color}`}>{item.letter}</span> — {item.label}
+                      </p>
+                      <p className="text-sm text-slate-700">{item.value}</p>
+                    </div>
+                  ))}
+                  <div className="border-t border-purple-200 pt-3" />
                   <div className="bg-white rounded-lg p-3 border border-purple-100">
                     <p className="text-xs font-medium text-purple-600 mb-1">🔥 O que vou fazer nos próximos 7 dias:</p>
                     <p className="text-sm text-slate-700">{smartActionData.primeiraAcao}</p>
