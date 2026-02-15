@@ -64,6 +64,7 @@ export default function Jornada() {
   const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState<string | null>(null);
   const [completedSteps, setCompletedSteps] = useState<string[]>([]);
+  const [smartActionData, setSmartActionData] = useState<{ primeiraAcao: string; diaHora: string } | null>(null);
 
   const progress = (completedSteps.length / steps.length) * 100;
   const allComplete = completedSteps.length === steps.length;
@@ -74,22 +75,25 @@ export default function Jornada() {
     return completedSteps.includes(steps[idx - 1].id);
   };
 
-  const handleComplete = (stepId: string) => {
+  const handleComplete = (stepId: string, data?: any) => {
     if (!completedSteps.includes(stepId)) {
       setCompletedSteps((prev) => [...prev, stepId]);
+    }
+    if (stepId === "smart" && data) {
+      setSmartActionData(data);
     }
     setCurrentStep(null);
   };
 
   // Show final screen
   if (allComplete && !currentStep) {
-    return <JornadaFinal onBack={() => setCompletedSteps(completedSteps.slice(0, -1))} />;
+    return <JornadaFinal onBack={() => setCompletedSteps(completedSteps.slice(0, -1))} smartActionData={smartActionData} />;
   }
 
   // Show active step
   if (currentStep) {
     const stepProps = {
-      onComplete: () => handleComplete(currentStep),
+      onComplete: (data?: any) => handleComplete(currentStep, data),
       onBack: () => setCurrentStep(null),
     };
 

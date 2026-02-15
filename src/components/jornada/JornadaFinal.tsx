@@ -1,14 +1,15 @@
 import { motion } from "framer-motion";
-import { Printer, Download, Crown, Star, ArrowLeft, Trophy, Rocket, ExternalLink } from "lucide-react";
+import { Printer, Download, Crown, Star, ArrowLeft, Trophy, Rocket, ExternalLink, CalendarCheck, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useNavigate } from "react-router-dom";
 
 interface Props {
   onBack: () => void;
+  smartActionData?: { primeiraAcao: string; diaHora: string } | null;
 }
 
-export default function JornadaFinal({ onBack }: Props) {
+export default function JornadaFinal({ onBack, smartActionData }: Props) {
   const navigate = useNavigate();
 
   return (
@@ -70,6 +71,36 @@ export default function JornadaFinal({ onBack }: Props) {
             </CardContent>
           </Card>
         </motion.div>
+
+        {/* Sua Primeira Ação */}
+        {smartActionData && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.25 }}
+          >
+            <Card className="border-2 border-purple-200 bg-purple-50/50">
+              <CardContent className="p-5 space-y-4">
+                <h3 className="font-semibold text-slate-800 flex items-center gap-2">
+                  <Zap className="w-5 h-5 text-purple-500" />
+                  Sua Primeira Ação
+                </h3>
+                <div className="space-y-3">
+                  <div className="bg-white rounded-lg p-3 border border-purple-100">
+                    <p className="text-xs font-medium text-purple-600 mb-1">🔥 O que vou fazer nos próximos 7 dias:</p>
+                    <p className="text-sm text-slate-700">{smartActionData.primeiraAcao}</p>
+                  </div>
+                  <div className="bg-white rounded-lg p-3 border border-purple-100">
+                    <p className="text-xs font-medium text-purple-600 mb-1 flex items-center gap-1">
+                      <CalendarCheck className="w-3 h-3" /> Dia e hora agendados:
+                    </p>
+                    <p className="text-sm text-slate-700">{smartActionData.diaHora}</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </motion.div>
+        )}
 
         {/* Actions */}
         <div className="space-y-3">
