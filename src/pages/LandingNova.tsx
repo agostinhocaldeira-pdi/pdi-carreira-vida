@@ -26,9 +26,19 @@ import {
   Sparkles,
   Instagram
 } from "lucide-react";
+import { motion } from "framer-motion";
 import logoPdi from "@/assets/logo_pdi.png";
 import WhatsAppButton from "@/components/WhatsAppButton";
 import ExcellenteParaSection from "@/components/landing-nova/ExcellenteParaSection";
+
+const fadeUp = {
+  hidden: { opacity: 0, y: 30 },
+  visible: (i: number) => ({
+    opacity: 1,
+    y: 0,
+    transition: { delay: i * 0.08, duration: 0.5, ease: "easeOut" as const },
+  }),
+};
 
 // Import testimonial photos
 import ericPereira from "@/assets/testimonials/eric-pereira.jpg";
@@ -116,41 +126,53 @@ const LandingNova = () => {
       {/* ============================================================ */}
       {/* 2. SEÇÃO DE PROBLEMA - A Conexão com a Persona */}
       {/* ============================================================ */}
-      <section className="py-12 sm:py-16 px-4 bg-[#222222]">
-        <div className="container mx-auto max-w-4xl">
-          <div className="text-center mb-8">
+      <section className="py-12 sm:py-16 px-0 sm:px-4 bg-[#222222]">
+        <div className="container mx-auto max-w-4xl px-4 sm:px-0">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+            className="text-center mb-8"
+          >
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 text-white">
               Por que pessoas se esforçam tanto mas não alcançam{" "}
               <span className="text-[#d4a853]">resultados?</span>
             </h2>
-          </div>
+          </motion.div>
           
-          <div className="space-y-6 max-w-2xl mx-auto">
-            <div className="flex items-start gap-4 bg-[#1a1a1a] rounded-xl p-5 border border-red-500/30">
-              <div className="w-8 h-8 rounded-full bg-red-500/20 flex items-center justify-center flex-shrink-0">
-                <X className="h-4 w-4 text-red-400" />
-              </div>
-              <div>
-                <p className="font-semibold text-white mb-1">O Erro Comum:</p>
-                <p className="text-gray-400">
-                  Você anota tudo em listas ou apps, mas a sensação de sobrecarga nunca passa.
-                </p>
-              </div>
-            </div>
+          <div className="space-y-4 sm:space-y-6 max-w-2xl mx-auto">
+            {[
+              { label: "O Erro Comum:", text: "Você anota tudo em listas ou apps, mas a sensação de sobrecarga nunca passa.", color: "red", icon: X },
+              { label: "O Sintoma:", text: "Sua agenda está cheia de urgências, mas seus projetos pessoais de longo prazo estão parados.", color: "amber", icon: X },
+            ].map((item, i) => (
+              <motion.div
+                key={i}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true }}
+                custom={i}
+                variants={fadeUp}
+                className="flex items-start gap-4 bg-[#1a1a1a] sm:rounded-xl p-5"
+              >
+                <div className={`w-8 h-8 rounded-full bg-${item.color}-500/20 flex items-center justify-center flex-shrink-0`}>
+                  <item.icon className={`h-4 w-4 text-${item.color}-400`} />
+                </div>
+                <div>
+                  <p className="font-semibold text-white mb-1">{item.label}</p>
+                  <p className="text-gray-400">{item.text}</p>
+                </div>
+              </motion.div>
+            ))}
 
-            <div className="flex items-start gap-4 bg-[#1a1a1a] rounded-xl p-5 border border-amber-500/30">
-              <div className="w-8 h-8 rounded-full bg-amber-500/20 flex items-center justify-center flex-shrink-0">
-                <X className="h-4 w-4 text-amber-400" />
-              </div>
-              <div>
-                <p className="font-semibold text-white mb-1">O Sintoma:</p>
-                <p className="text-gray-400">
-                  Sua agenda está cheia de urgências, mas seus projetos pessoais de longo prazo estão parados.
-                </p>
-              </div>
-            </div>
-            
-            <div className="flex items-start gap-4 bg-[#1a1a1a] rounded-xl p-5 border border-[#d4a853]/30">
+            <motion.div
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+              custom={2}
+              variants={fadeUp}
+              className="flex items-start gap-4 bg-[#1a1a1a] sm:rounded-xl p-5"
+            >
               <div className="w-8 h-8 rounded-full bg-[#d4a853]/20 flex items-center justify-center flex-shrink-0">
                 <Check className="h-4 w-4 text-[#d4a853]" />
               </div>
@@ -161,10 +183,16 @@ const LandingNova = () => {
                   quando deveria estar gerenciando <strong className="text-[#d4a853]">decisões (o essencial)</strong>.
                 </p>
               </div>
-            </div>
+            </motion.div>
 
             {/* Destaque principal */}
-            <div className="relative mt-8 bg-gradient-to-br from-[#d4a853]/20 via-[#d4a853]/10 to-[#1a1a1a] rounded-2xl p-6 sm:p-8 border-2 border-[#d4a853] shadow-[0_0_30px_rgba(212,168,83,0.3)]">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: 0.3 }}
+              className="relative mt-8 bg-gradient-to-br from-[#d4a853]/20 via-[#d4a853]/10 to-[#1a1a1a] sm:rounded-2xl p-6 sm:p-8 border-y-2 sm:border-2 border-[#d4a853] shadow-[0_0_30px_rgba(212,168,83,0.3)]"
+            >
               <div className="absolute -top-3 left-1/2 -translate-x-1/2 w-max">
                 <span className="bg-[#d4a853] text-[#1a1a1a] text-[10px] sm:text-xs font-bold uppercase tracking-wider px-3 sm:px-4 py-1 rounded-full whitespace-nowrap">
                   O Problema Central
@@ -177,7 +205,7 @@ const LandingNova = () => {
                 Você se esforça muito, mas executa tarefas que não geram grandes resultados. 
                 <strong className="text-white"> Quando deveria ter ao menos uma tarefa no dia que faz você avançar.</strong>
               </p>
-            </div>
+            </motion.div>
           </div>
         </div>
       </section>
@@ -185,9 +213,15 @@ const LandingNova = () => {
       {/* ============================================================ */}
       {/* 3. SEÇÃO DE MÉTODO - O Sistema Operacional */}
       {/* ============================================================ */}
-      <section className="py-12 sm:py-20 px-4 bg-[#1a1a1a]">
-        <div className="container mx-auto max-w-6xl">
-          <div className="text-center mb-10 sm:mb-14">
+      <section className="py-12 sm:py-20 px-0 sm:px-4 bg-[#1a1a1a]">
+        <div className="container mx-auto max-w-6xl px-4 sm:px-0">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+            className="text-center mb-10 sm:mb-14"
+          >
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 text-white">
               O Sistema Operacional da{" "}
               <span className="text-[#d4a853]">Vida Consciente.</span>
@@ -195,53 +229,44 @@ const LandingNova = () => {
             <p className="text-gray-400 max-w-2xl mx-auto text-base sm:text-lg">
               O PDI não é um "balde de tarefas". É um sistema guiado que traduz sua visão em execução, em <strong className="text-[#d4a853] font-semibold">3 grandes pilares</strong>
             </p>
-          </div>
+          </motion.div>
           
-          <div className="grid md:grid-cols-3 gap-6 sm:gap-8">
-            {/* Coluna 1: A Raiz (Identidade) */}
-            <div className="bg-[#252525] rounded-2xl p-6 sm:p-8 border border-[#d4a853]/30 hover:border-[#d4a853]/50 transition-all">
-              <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#d4a853]/30 to-[#d4a853]/10 flex items-center justify-center mb-6">
-                <Compass className="h-7 w-7 text-[#d4a853]" />
-              </div>
-              <div className="flex items-center gap-2 mb-3">
-                <span className="text-xs font-bold text-[#d4a853] bg-[#d4a853]/20 px-2 py-1 rounded-full">1</span>
-                <h3 className="text-xl font-bold text-white">A Identidade</h3>
-              </div>
-              <p className="text-sm font-medium text-[#d4a853] mb-2">Você define o Ponto de Partida</p>
-              <p className="text-gray-400 leading-relaxed">
-                Defina seus valores e Visão de Vida Desejada. Onde você quer estar daqui a 5 anos?
-              </p>
-            </div>
-
-            {/* Coluna 2: O Tronco (Estratégia) */}
-            <div className="bg-[#252525] rounded-2xl p-6 sm:p-8 border border-purple-500/30 hover:border-purple-500/50 transition-all">
-              <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-purple-500/30 to-purple-500/10 flex items-center justify-center mb-6">
-                <Cog className="h-7 w-7 text-purple-400" />
-              </div>
-              <div className="flex items-center gap-2 mb-3">
-                <span className="text-xs font-bold text--purple-400 bg-purple-500/20 px-2 py-1 rounded-full">2</span>
-                <h3 className="text-xl font-bold text-white">A Estratégia</h3>
-              </div>
-              <p className="text-sm font-medium text-purple-400 mb-2">O Sistema estrutura o Plano</p>
-              <p className="text-gray-400 leading-relaxed">
-                O PDI quebra esse desejo grande em Objetivos, Metas e Projetos organizados.
-              </p>
-            </div>
-
-            {/* Coluna 3: A Ação (Execução) */}
-            <div className="bg-[#252525] rounded-2xl p-6 sm:p-8 border border-emerald-500/30 hover:border-emerald-500/50 transition-all">
-              <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-emerald-500/30 to-emerald-500/10 flex items-center justify-center mb-6">
-                <CalendarCheck className="h-7 w-7 text-emerald-400" />
-              </div>
-              <div className="flex items-center gap-2 mb-3">
-                <span className="text-xs font-bold text-emerald-400 bg-emerald-500/20 px-2 py-1 rounded-full">3</span>
-                <h3 className="text-xl font-bold text-white">A Execução</h3>
-              </div>
-              <p className="text-sm font-medium text-emerald-400 mb-2">Você executa na Agenda</p>
-              <p className="text-gray-400 leading-relaxed">
-                O sistema blinda seu tempo e entrega apenas o próximo passo. Sem ansiedade.
-              </p>
-            </div>
+          <div className="grid md:grid-cols-3 gap-4 sm:gap-8">
+            {[
+              { num: "1", title: "A Identidade", subtitle: "Você define o Ponto de Partida", desc: "Defina seus valores e Visão de Vida Desejada. Onde você quer estar daqui a 5 anos?", Icon: Compass, accent: "#d4a853" },
+              { num: "2", title: "A Estratégia", subtitle: "O Sistema estrutura o Plano", desc: "O PDI quebra esse desejo grande em Objetivos, Metas e Projetos organizados.", Icon: Cog, accent: "#a78bfa" },
+              { num: "3", title: "A Execução", subtitle: "Você executa na Agenda", desc: "O sistema blinda seu tempo e entrega apenas o próximo passo. Sem ansiedade.", Icon: CalendarCheck, accent: "#34d399" },
+            ].map((col, i) => (
+              <motion.div
+                key={i}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true }}
+                custom={i}
+                variants={fadeUp}
+                whileHover={{ y: -4, transition: { duration: 0.2 } }}
+                className="bg-[#252525] sm:rounded-2xl p-6 sm:p-8 border-l-4 sm:border-l-0 sm:border-t-4 transition-shadow hover:shadow-xl hover:shadow-black/30"
+                style={{ borderColor: `${col.accent}50` }}
+              >
+                <div
+                  className="w-14 h-14 rounded-2xl flex items-center justify-center mb-6"
+                  style={{ background: `${col.accent}20` }}
+                >
+                  <col.Icon className="h-7 w-7" style={{ color: col.accent }} />
+                </div>
+                <div className="flex items-center gap-2 mb-3">
+                  <span
+                    className="text-xs font-bold px-2 py-1 rounded-full"
+                    style={{ color: col.accent, background: `${col.accent}20` }}
+                  >
+                    {col.num}
+                  </span>
+                  <h3 className="text-xl font-bold text-white">{col.title}</h3>
+                </div>
+                <p className="text-sm font-medium mb-2" style={{ color: col.accent }}>{col.subtitle}</p>
+                <p className="text-gray-400 leading-relaxed">{col.desc}</p>
+              </motion.div>
+            ))}
           </div>
         </div>
       </section>
@@ -249,59 +274,54 @@ const LandingNova = () => {
       {/* ============================================================ */}
       {/* 4. SEÇÃO DE FUNCIONALIDADES */}
       {/* ============================================================ */}
-      <section className="py-12 sm:py-16 px-4 bg-[#222222]">
-        <div className="container mx-auto max-w-4xl">
-          <div className="text-center mb-10">
+      <section className="py-12 sm:py-16 px-0 sm:px-4 bg-[#222222]">
+        <div className="container mx-auto max-w-4xl px-4 sm:px-0">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+            className="text-center mb-10"
+          >
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 text-white">
               Tudo o que você precisa para{" "}
               <span className="text-[#d4a853]">sair do caos.</span>
             </h2>
-          </div>
+          </motion.div>
           
-          <div className="grid sm:grid-cols-2 gap-4 sm:gap-6">
-            <div className="flex items-start gap-4 bg-[#1a1a1a] rounded-xl p-5 border border-gray-700">
-              <div className="w-10 h-10 rounded-lg bg-[#d4a853]/20 flex items-center justify-center flex-shrink-0">
-                <Target className="h-5 w-5 text-[#d4a853]" />
-              </div>
-              <div>
-                <h4 className="font-semibold text-white mb-1">Gestão de Identidade</h4>
-                <p className="text-sm text-gray-400">Pare de construir o teto antes da fundação. Defina quem você é para saber para onde ir.</p>
-              </div>
-            </div>
-
-            <div className="flex items-start gap-4 bg-[#1a1a1a] rounded-xl p-5 border border-gray-700">
-              <div className="w-10 h-10 rounded-lg bg-purple-500/20 flex items-center justify-center flex-shrink-0">
-                <Sparkles className="h-5 w-5 text-purple-400" />
-              </div>
-              <div>
-                <h4 className="font-semibold text-white mb-1">Metas SMART Guiadas</h4>
-                <p className="text-sm text-gray-400">Transforme sonhos vagos em planos concretos com prazos e métricas claras.</p>
-              </div>
-            </div>
-
-            <div className="flex items-start gap-4 bg-[#1a1a1a] rounded-xl p-5 border border-gray-700">
-              <div className="w-10 h-10 rounded-lg bg-emerald-500/20 flex items-center justify-center flex-shrink-0">
-                <CalendarCheck className="h-5 w-5 text-emerald-400" />
-              </div>
-              <div>
-                <h4 className="font-semibold text-white mb-1">Agenda Inteligente</h4>
-                <p className="text-sm text-gray-400">Não é sobre encaixar mais coisas. É sobre garantir tempo para o que é essencial.</p>
-              </div>
-            </div>
-
-            <div className="flex items-start gap-4 bg-[#1a1a1a] rounded-xl p-5 border border-gray-700">
-              <div className="w-10 h-10 rounded-lg bg-cyan-500/20 flex items-center justify-center flex-shrink-0">
-                <Brain className="h-5 w-5 text-cyan-400" />
-              </div>
-              <div>
-                <h4 className="font-semibold text-white mb-1">Mentor IA Estratégico</h4>
-                <p className="text-sm text-gray-400">Se sente perdido? Peça ajuda para nosso mentor de IA, que vai te ajudar a ter clareza do próximo passo a executar.</p>
-              </div>
-            </div>
+          <div className="grid sm:grid-cols-2 gap-3 sm:gap-6">
+            {[
+              { title: "Gestão de Identidade", desc: "Pare de construir o teto antes da fundação. Defina quem você é para saber para onde ir.", Icon: Target, accent: "#d4a853" },
+              { title: "Metas SMART Guiadas", desc: "Transforme sonhos vagos em planos concretos com prazos e métricas claras.", Icon: Sparkles, accent: "#a78bfa" },
+              { title: "Agenda Inteligente", desc: "Não é sobre encaixar mais coisas. É sobre garantir tempo para o que é essencial.", Icon: CalendarCheck, accent: "#34d399" },
+              { title: "Mentor IA Estratégico", desc: "Se sente perdido? Peça ajuda para nosso mentor de IA, que vai te ajudar a ter clareza do próximo passo.", Icon: Brain, accent: "#22d3ee" },
+            ].map((feat, i) => (
+              <motion.div
+                key={i}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true }}
+                custom={i}
+                variants={fadeUp}
+                whileHover={{ scale: 1.02, transition: { duration: 0.2 } }}
+                className="flex items-start gap-4 bg-[#1a1a1a] sm:rounded-xl p-5"
+              >
+                <div
+                  className="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0"
+                  style={{ background: `${feat.accent}20` }}
+                >
+                  <feat.Icon className="h-5 w-5" style={{ color: feat.accent }} />
+                </div>
+                <div>
+                  <h4 className="font-semibold text-white mb-1">{feat.title}</h4>
+                  <p className="text-sm text-gray-400">{feat.desc}</p>
+                </div>
+              </motion.div>
+            ))}
           </div>
 
           {/* CTA Intermediário */}
-          <div className="text-center mt-10">
+          <div className="text-center mt-10 px-4 sm:px-0">
             <Button 
               size="lg" 
               onClick={handleCTAClick}
@@ -320,9 +340,15 @@ const LandingNova = () => {
       {/* ============================================================ */}
       {/* 5. PROVA SOCIAL - Depoimentos */}
       {/* ============================================================ */}
-      <section className="py-12 sm:py-16 px-4 bg-[#1a1a1a]">
-        <div className="container mx-auto max-w-6xl">
-          <div className="text-center mb-10">
+      <section className="py-12 sm:py-16 px-0 sm:px-4 bg-[#1a1a1a]">
+        <div className="container mx-auto max-w-6xl px-4 sm:px-0">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+            className="text-center mb-10"
+          >
             <span className="inline-flex items-center gap-1.5 mb-4 bg-[#d4a853]/20 text-[#d4a853] text-xs sm:text-sm px-4 py-1.5 rounded-full border border-[#d4a853]/30">
               <Sparkles className="h-3.5 w-3.5" />
               Histórias reais
@@ -330,121 +356,48 @@ const LandingNova = () => {
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 text-white">
               Quem já usa, <span className="text-[#d4a853]">recomenda.</span>
             </h2>
-          </div>
+          </motion.div>
           
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-            {/* Depoimento 1 - Eric */}
-            <Card className="border-gray-700 bg-[#252525]">
-              <CardContent className="p-5 sm:p-6">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
+            {[
+              { name: "Eric Pereira", img: ericPereira, quote: "O PDI me deu a clareza que eu precisava para sair do piloto automático. Pela primeira vez, sinto que minhas ações diárias estão conectadas com algo maior.", videoId: "i1VgEBOW4PI" },
+              { name: "Gabriele Campos", img: gabrieleCampos, quote: "O PDI me ajudou a enxergar padrões que eu mesma criava. O processo de reflexão foi transformador — hoje tenho clareza sobre minhas prioridades.", videoId: "NjEA4WBiUvA" },
+              { name: "Larissa Schuartz", img: larissaSchuartz, quote: "Eu estava travada há muito tempo. O PDI me ajudou a identificar o que estava me prendendo e me deu ferramentas práticas para superar.", videoId: "Tpz2mmxUYHc" },
+              { name: "Lucas Sá", img: lucasSa, quote: "Antes do PDI eu tinha muitos objetivos, mas nenhuma organização. O sistema me ensinou a priorizar e executar de forma consistente.", videoId: null },
+            ].map((t, i) => (
+              <motion.div
+                key={i}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true }}
+                custom={i}
+                variants={fadeUp}
+                whileHover={{ y: -4, transition: { duration: 0.2 } }}
+                className="bg-[#252525] sm:rounded-xl p-5 sm:p-6"
+              >
                 <div className="flex justify-center gap-1 mb-4">
-                  {[...Array(5)].map((_, i) => (
-                    <Star key={i} className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                  {[...Array(5)].map((_, j) => (
+                    <Star key={j} className="h-4 w-4 fill-yellow-400 text-yellow-400" />
                   ))}
                 </div>
                 <p className="text-sm text-gray-400 italic mb-4 leading-relaxed">
-                  "O PDI me deu a clareza que eu precisava para sair do piloto automático. 
-                  Pela primeira vez, sinto que minhas ações diárias estão conectadas com algo maior."
+                  "{t.quote}"
                 </p>
                 <div className="flex items-center justify-center gap-3">
-                  <img 
-                    src={ericPereira} 
-                    alt="Eric Pereira" 
-                    className="w-10 h-10 rounded-full object-cover"
-                  />
-                  <p className="text-sm font-medium text-white">Eric Pereira</p>
+                  <img src={t.img} alt={t.name} className="w-10 h-10 rounded-full object-cover" />
+                  <p className="text-sm font-medium text-white">{t.name}</p>
                 </div>
-                <button
-                  onClick={() => setVideoModalUrl("i1VgEBOW4PI")}
-                  className="flex items-center justify-center gap-2 text-xs text-[#d4a853] hover:text-[#d4a853]/80 transition-colors mt-3 w-full"
-                >
-                  <Play className="h-4 w-4" />
-                  <span>Assista o depoimento</span>
-                </button>
-              </CardContent>
-            </Card>
-
-            {/* Depoimento 2 - Gabriele */}
-            <Card className="border-gray-700 bg-[#252525]">
-              <CardContent className="p-5 sm:p-6">
-                <div className="flex justify-center gap-1 mb-4">
-                  {[...Array(5)].map((_, i) => (
-                    <Star key={i} className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                  ))}
-                </div>
-                <p className="text-sm text-gray-400 italic mb-4 leading-relaxed">
-                  "O PDI me ajudou a enxergar padrões que eu mesma criava. 
-                  O processo de reflexão foi transformador — hoje tenho clareza sobre minhas prioridades."
-                </p>
-                <div className="flex items-center justify-center gap-3">
-                  <img 
-                    src={gabrieleCampos} 
-                    alt="Gabriele Campos" 
-                    className="w-10 h-10 rounded-full object-cover"
-                  />
-                  <p className="text-sm font-medium text-white">Gabriele Campos</p>
-                </div>
-                <button
-                  onClick={() => setVideoModalUrl("NjEA4WBiUvA")}
-                  className="flex items-center justify-center gap-2 text-xs text-[#d4a853] hover:text-[#d4a853]/80 transition-colors mt-3 w-full"
-                >
-                  <Play className="h-4 w-4" />
-                  <span>Assista o depoimento</span>
-                </button>
-              </CardContent>
-            </Card>
-
-            {/* Depoimento 3 - Larissa */}
-            <Card className="border-gray-700 bg-[#252525]">
-              <CardContent className="p-5 sm:p-6">
-                <div className="flex justify-center gap-1 mb-4">
-                  {[...Array(5)].map((_, i) => (
-                    <Star key={i} className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                  ))}
-                </div>
-                <p className="text-sm text-gray-400 italic mb-4 leading-relaxed">
-                  "Eu estava travada há muito tempo. O PDI me ajudou a 
-                  identificar o que estava me prendendo e me deu ferramentas práticas para superar."
-                </p>
-                <div className="flex items-center justify-center gap-3">
-                  <img 
-                    src={larissaSchuartz} 
-                    alt="Larissa Schuartz" 
-                    className="w-10 h-10 rounded-full object-cover"
-                  />
-                  <p className="text-sm font-medium text-white">Larissa Schuartz</p>
-                </div>
-                <button
-                  onClick={() => setVideoModalUrl("Tpz2mmxUYHc")}
-                  className="flex items-center justify-center gap-2 text-xs text-[#d4a853] hover:text-[#d4a853]/80 transition-colors mt-3 w-full"
-                >
-                  <Play className="h-4 w-4" />
-                  <span>Assista o depoimento</span>
-                </button>
-              </CardContent>
-            </Card>
-
-            {/* Depoimento 4 - Lucas */}
-            <Card className="border-gray-700 bg-[#252525]">
-              <CardContent className="p-5 sm:p-6">
-                <div className="flex justify-center gap-1 mb-4">
-                  {[...Array(5)].map((_, i) => (
-                    <Star key={i} className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                  ))}
-                </div>
-                <p className="text-sm text-gray-400 italic mb-4 leading-relaxed">
-                  "Antes do PDI eu tinha muitos objetivos, mas nenhuma organização. 
-                  O sistema me ensinou a priorizar e executar de forma consistente."
-                </p>
-                <div className="flex items-center justify-center gap-3">
-                  <img 
-                    src={lucasSa} 
-                    alt="Lucas Sá" 
-                    className="w-10 h-10 rounded-full object-cover"
-                  />
-                  <p className="text-sm font-medium text-white">Lucas Sá</p>
-                </div>
-              </CardContent>
-            </Card>
+                {t.videoId && (
+                  <button
+                    onClick={() => setVideoModalUrl(t.videoId)}
+                    className="flex items-center justify-center gap-2 text-xs text-[#d4a853] hover:text-[#d4a853]/80 transition-colors mt-3 w-full"
+                  >
+                    <Play className="h-4 w-4" />
+                    <span>Assista o depoimento</span>
+                  </button>
+                )}
+              </motion.div>
+            ))}
           </div>
         </div>
       </section>
