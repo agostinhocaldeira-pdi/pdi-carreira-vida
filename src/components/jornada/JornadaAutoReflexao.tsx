@@ -271,7 +271,7 @@ export default function JornadaAutoReflexao({ onComplete, onBack }: Props) {
 
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="text-center space-y-2">
           <h2 className="text-2xl font-bold text-slate-800">Escolha seus 5 valores 💎</h2>
-          <p className="text-sm text-slate-500">Valores são a bússola da sua vida. Escolha os 5 que mais representam quem você é.</p>
+          <p className="text-sm text-slate-500">Valores são a bússola da sua vida. Escolha os 5 que mais representam quem você é, ou inclua manualmente digitando no campo abaixo.</p>
           <div className="inline-flex items-center gap-1 bg-pink-100 text-pink-700 px-3 py-1 rounded-full text-sm font-medium">
             <Heart className="w-4 h-4" />
             {selectedValues.length}/5 selecionados
@@ -287,6 +287,20 @@ export default function JornadaAutoReflexao({ onComplete, onBack }: Props) {
             ))}
           </motion.div>
         )}
+
+        <div className="flex gap-2">
+          <Input
+            placeholder="Adicionar valor personalizado..."
+            value={customValue}
+            onChange={(e) => setCustomValue(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && addCustom()}
+            className="flex-1"
+            disabled={selectedValues.length >= 5}
+          />
+          <Button size="icon" variant="outline" onClick={addCustom} disabled={selectedValues.length >= 5 || !customValue.trim()}>
+            <Plus className="w-4 h-4" />
+          </Button>
+        </div>
 
         <div className="flex flex-wrap gap-2 justify-center">
           {suggestedValues.filter((v) => !selectedValues.includes(v)).map((value, i) => (
@@ -306,20 +320,6 @@ export default function JornadaAutoReflexao({ onComplete, onBack }: Props) {
               {value}
             </motion.button>
           ))}
-        </div>
-
-        <div className="flex gap-2">
-          <Input
-            placeholder="Adicionar valor personalizado..."
-            value={customValue}
-            onChange={(e) => setCustomValue(e.target.value)}
-            onKeyDown={(e) => e.key === "Enter" && addCustom()}
-            className="flex-1"
-            disabled={selectedValues.length >= 5}
-          />
-          <Button size="icon" variant="outline" onClick={addCustom} disabled={selectedValues.length >= 5 || !customValue.trim()}>
-            <Plus className="w-4 h-4" />
-          </Button>
         </div>
 
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: selectedValues.length >= 3 ? 1 : 0.4 }} className="pt-4">
