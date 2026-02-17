@@ -1,7 +1,8 @@
 import { motion } from "framer-motion";
-import { Printer, Download, Crown, Star, ArrowLeft, Trophy, Rocket, ExternalLink, CalendarCheck, Zap, Play, Check, Users } from "lucide-react";
+import { Printer, Download, Crown, Star, ArrowLeft, Trophy, Rocket, ExternalLink, CalendarCheck, Zap, Play, Check, Users, Flame } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { useNavigate } from "react-router-dom";
 
 interface Props {
@@ -174,8 +175,13 @@ export default function JornadaFinal({ onBack, smartActionData }: Props) {
             </Card>
           </motion.div>
 
-          {/* Premium Black */}
-          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.6 }} className="space-y-3">
+          {/* Premium Black — Melhor custo-benefício */}
+          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.6 }} className="space-y-3 relative">
+            <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-10">
+              <Badge className="bg-gradient-to-r from-amber-500 to-yellow-500 text-white border-0 shadow-lg shadow-amber-200/50 px-4 py-1 text-xs font-bold uppercase tracking-wider">
+                <Flame className="w-3 h-3 mr-1" /> Melhor custo-benefício
+              </Badge>
+            </div>
             <div className="rounded-xl overflow-hidden border-2 border-amber-300 bg-amber-950 aspect-video flex items-center justify-center">
               <div className="text-center text-amber-300 space-y-2">
                 <ExternalLink className="w-10 h-10 mx-auto opacity-50" />
@@ -183,7 +189,7 @@ export default function JornadaFinal({ onBack, smartActionData }: Props) {
                 <p className="text-xs opacity-60">Espaço reservado para vídeo explicativo</p>
               </div>
             </div>
-            <Card className="border-2 border-amber-400 bg-gradient-to-br from-amber-50 to-yellow-50 cursor-pointer hover:shadow-lg transition-shadow">
+            <Card className="border-2 border-amber-400 bg-gradient-to-br from-amber-50 to-yellow-50 cursor-pointer hover:shadow-lg transition-shadow ring-2 ring-amber-300/50 ring-offset-2">
               <CardContent className="p-5">
                 <div className="flex items-start gap-3">
                   <div className="w-12 h-12 bg-gradient-to-br from-amber-500 to-yellow-600 rounded-xl flex items-center justify-center shrink-0">
@@ -197,7 +203,7 @@ export default function JornadaFinal({ onBack, smartActionData }: Props) {
                     <p className="text-xs text-slate-500 mt-1">
                       Tudo do Completo + Desafio 30 Dias, IA ilimitada, WhatsApp diário.
                     </p>
-                    <Button size="sm" className="mt-3 bg-gradient-to-r from-amber-500 to-yellow-600 hover:from-amber-600 hover:to-yellow-700 w-full">
+                    <Button size="sm" className="mt-3 bg-gradient-to-r from-amber-500 to-yellow-600 hover:from-amber-600 hover:to-yellow-700 w-full shadow-md shadow-amber-200">
                       Assinar Premium Black
                     </Button>
                   </div>
@@ -267,9 +273,15 @@ export default function JornadaFinal({ onBack, smartActionData }: Props) {
                   Quero a Mentoria 1:1
                 </Button>
 
-                <p className="text-center text-[11px] text-slate-400">
-                  Vagas limitadas · Início imediato após a confirmação
-                </p>
+                <div className="flex items-center justify-center gap-2 bg-red-50 border border-red-200 rounded-lg p-2">
+                  <span className="relative flex h-2.5 w-2.5">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75" />
+                    <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-red-500" />
+                  </span>
+                  <p className="text-[11px] text-red-600 font-semibold">
+                    Apenas 2 vagas por mês · Início imediato após a confirmação
+                  </p>
+                </div>
               </CardContent>
             </Card>
           </motion.div>
