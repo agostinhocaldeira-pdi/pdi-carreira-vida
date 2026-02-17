@@ -6,7 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import JornadaAIEvaluation from "./JornadaAIEvaluation";
 
 interface Props {
-  onComplete: (answers?: { especifica: string; mensuravel: string; alcancavel: string; relevante: string; temporal: string; primeiraAcao: string; diaHora: string }) => void;
+  onComplete: (answers?: { especifica: string; mensuravel: string; alcancavel: string; relevante: string; temporal: string; aprender: string; sabotador: string; antiSabotagem: string; primeiraAcao: string; diaHora: string }) => void;
   onBack: () => void;
 }
 
@@ -55,6 +55,33 @@ const smartSteps = [
     emoji: "⏰",
     color: "from-blue-400 to-blue-600",
     hint: "Defina uma data concreta. Prazos criam urgência.",
+  },
+  {
+    letter: "📚",
+    title: "Aprendizado",
+    question: "O que você precisa aprender para conseguir conquistar sua meta?",
+    placeholder: "Ex: Preciso aprender gestão de tempo e técnicas de leitura rápida",
+    emoji: "📚",
+    color: "from-violet-400 to-violet-600",
+    hint: "Identifique conhecimentos, habilidades ou competências que você ainda não tem.",
+  },
+  {
+    letter: "🚧",
+    title: "Sabotadores",
+    question: "O que pode te sabotar? O que na sua rotina pode impedir ou dificultar que você execute seus planos?",
+    placeholder: "Ex: Redes sociais, procrastinação, excesso de compromissos",
+    emoji: "🚧",
+    color: "from-rose-400 to-rose-600",
+    hint: "Seja honesto. Reconhecer os obstáculos é o primeiro passo para superá-los.",
+  },
+  {
+    letter: "🛡️",
+    title: "Anti-Sabotagem",
+    question: "Como você vai impedir ou minimizar o que pode te sabotar no seu dia-a-dia?",
+    placeholder: "Ex: Desativar notificações no horário de estudo, bloquear apps por 1h",
+    emoji: "🛡️",
+    color: "from-emerald-400 to-emerald-600",
+    hint: "Crie estratégias práticas e específicas para cada sabotador identificado.",
   },
   {
     letter: "🔥",
@@ -131,22 +158,43 @@ export default function JornadaSmart({ onComplete, onBack }: Props) {
         </motion.div>
 
         {/* SMART letters nav */}
-        <div className="flex gap-2 justify-center flex-wrap">
-          {smartSteps.map((s, i) => (
-            <button
-              key={s.letter}
-              onClick={() => setCurrentIdx(i)}
-              className={`w-11 h-11 rounded-xl text-sm font-black transition-all ${
-                currentIdx === i
-                  ? `bg-gradient-to-br ${s.color} text-white scale-110 shadow-lg`
-                  : answers[i].trim().length > 5
-                  ? "bg-green-100 text-green-700 border-2 border-green-300"
-                  : "bg-slate-100 text-slate-500"
-              }`}
-            >
-              {s.letter}
-            </button>
-          ))}
+        <div className="space-y-2">
+          {/* SMART letters row */}
+          <div className="flex gap-2 justify-center">
+            {smartSteps.slice(0, 5).map((s, i) => (
+              <button
+                key={s.letter}
+                onClick={() => setCurrentIdx(i)}
+                className={`w-11 h-11 rounded-xl text-sm font-black transition-all ${
+                  currentIdx === i
+                    ? `bg-gradient-to-br ${s.color} text-white scale-110 shadow-lg`
+                    : answers[i].trim().length > 5
+                    ? "bg-green-100 text-green-700 border-2 border-green-300"
+                    : "bg-slate-100 text-slate-500"
+                }`}
+              >
+                {s.letter}
+              </button>
+            ))}
+          </div>
+          {/* Extra steps row */}
+          <div className="flex gap-2 justify-center">
+            {smartSteps.slice(5).map((s, i) => (
+              <button
+                key={s.letter}
+                onClick={() => setCurrentIdx(i + 5)}
+                className={`w-11 h-11 rounded-xl text-sm font-black transition-all ${
+                  currentIdx === i + 5
+                    ? `bg-gradient-to-br ${s.color} text-white scale-110 shadow-lg`
+                    : answers[i + 5].trim().length > 5
+                    ? "bg-green-100 text-green-700 border-2 border-green-300"
+                    : "bg-slate-100 text-slate-500"
+                }`}
+              >
+                {s.letter}
+              </button>
+            ))}
+          </div>
         </div>
 
         {/* Current SMART step */}
@@ -208,7 +256,7 @@ export default function JornadaSmart({ onComplete, onBack }: Props) {
 
         {/* Complete */}
         {showEvaluation ? (
-          <JornadaAIEvaluation stepId="smart" onContinue={() => onComplete({ especifica: answers[0], mensuravel: answers[1], alcancavel: answers[2], relevante: answers[3], temporal: answers[4], primeiraAcao: answers[5], diaHora: answers[6] })} />
+          <JornadaAIEvaluation stepId="smart" onContinue={() => onComplete({ especifica: answers[0], mensuravel: answers[1], alcancavel: answers[2], relevante: answers[3], temporal: answers[4], aprender: answers[5], sabotador: answers[6], antiSabotagem: answers[7], primeiraAcao: answers[8], diaHora: answers[9] })} />
         ) : (
           <motion.div animate={{ opacity: allAnswered ? 1 : 0.4 }} className="pt-2">
             <Button
