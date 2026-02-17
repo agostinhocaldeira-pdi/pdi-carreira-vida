@@ -8,13 +8,39 @@ interface Props {
   onContinue: () => void;
 }
 
+/**
+ * REGRA DE AVALIAÇÃO IA — Etapa 3 (Auto Reflexão)
+ * 
+ * A IA deve cruzar TODAS as informações coletadas até aqui:
+ * - Etapa 1: Vida dos Sonhos (VVD) — como o aluno imagina sua vida ideal
+ * - Etapa 2: Vida que NÃO quero viver — o que acontece se nada mudar
+ * - Valores pessoais — os 3-5 valores escolhidos pelo aluno
+ * - Roda da Vida — notas de 0-10 em 8 áreas da vida
+ * - Crenças Limitantes — crenças identificadas e suas origens
+ * 
+ * A avaliação deve buscar DUAS coisas:
+ * 
+ * 1. COERÊNCIA: O que é consistente entre todas as etapas.
+ *    Ex: Se o aluno valoriza "Família" e na Vida dos Sonhos descreve 
+ *    momentos com a família, isso é coerente. Reconheça e valide.
+ * 
+ * 2. PONTOS CEGOS / INCOERÊNCIAS: O que não faz sentido quando cruzado.
+ *    Ex: O aluno diz que "Família" é o valor mais importante, mas sua 
+ *    Vida dos Sonhos foca em viajar sozinho pelo mundo — isso é incoerente.
+ *    Ex: Aluno tem nota baixa em Saúde na Roda da Vida, mas não menciona 
+ *    saúde na Vida que NÃO quer viver — ponto cego.
+ *    Ex: Crença limitante contradiz diretamente um valor escolhido.
+ *    Aponte com empatia, sem julgamento, mostrando a contradição.
+ * 
+ * Tom: direto, empático, linguagem simples (nível 14 anos).
+ * Formato: primeiro as coerências (validação), depois os pontos cegos (provocação construtiva).
+ */
+
 const mockEvaluations: Record<string, string> = {
-  valores:
-    "Seus valores mostram uma forte orientação para conexões humanas e crescimento pessoal — isso é uma base sólida. Um ponto de atenção: valores como 'Liberdade' e 'Segurança' podem parecer opostos na prática, e reconhecer essa tensão será importante para tomar decisões alinhadas no futuro. No geral, você tem clareza sobre o que importa, o que já te coloca à frente da maioria.",
-  "roda-da-vida":
-    "Cruzando seus valores com a Roda da Vida, percebo que áreas como Saúde e Lazer estão abaixo da média, apesar de 'Família' e 'Liberdade' serem valores centrais para você — isso pode indicar que você está negligenciando o autocuidado em nome de outras prioridades. Sua nota alta em Carreira mostra foco, mas cuidado: sem equilíbrio, o burnout pode comprometer tudo. Ação sugerida: eleve pelo menos uma área pessoal antes de avançar.",
+  "auto-reflexao":
+    "✅ Coerências: Seus valores de Família e Crescimento estão alinhados com sua Vida dos Sonhos — você quer evoluir sem abrir mão de quem ama. Sua nota alta em Carreira na Roda da Vida confirma que você já está investindo no seu desenvolvimento. A Vida que você NÃO quer viver reforça esse compromisso: você tem clareza do que quer evitar.\n\n⚠️ Pontos Cegos: Você escolheu 'Saúde' como valor, mas sua nota na Roda da Vida nessa área é 4 — existe uma distância entre o que você diz valorizar e como está vivendo. Além disso, sua crença limitante ('não sou bom o suficiente') pode estar sabotando justamente as áreas que você mais quer desenvolver. Perceber essa contradição já é o primeiro passo para mudar.",
   vvd:
-    "Sua Vida dos Sonhos revela um desejo forte por autonomia e propósito — totalmente coerente com seus valores de Liberdade e Crescimento. Porém, note que suas respostas focam muito no 'ter' e pouco no 'ser': descrever quem você quer se tornar (não só o que quer conquistar) vai tornar sua visão mais poderosa e sustentável. As áreas mais fracas da sua Roda da Vida também não aparecem na sua visão — integrar saúde e lazer no seu sonho é essencial.",
+    "Sua Vida dos Sonhos revela um desejo forte por autonomia e propósito — totalmente coerente com seus valores de Liberdade e Crescimento. Porém, note que suas respostas focam muito no 'ter' e pouco no 'ser': descrever quem você quer se tornar (não só o que quer conquistar) vai tornar sua visão mais poderosa e sustentável.",
   smart:
     "Sua meta SMART está bem estruturada e conectada com sua Vida dos Sonhos — parabéns pela coerência! O prazo é realista e a mensuração está clara. Um ponto cego: sua meta foca em uma área que já está forte na Roda da Vida. Considere se uma meta nas áreas mais fracas (Saúde ou Lazer) não traria um impacto maior na sua satisfação geral. Lembre-se: o PDI mais eficaz equilibra ambição profissional com bem-estar pessoal.",
 };
