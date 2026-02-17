@@ -109,7 +109,7 @@ export default function JornadaSmart({ onComplete, onBack }: Props) {
   const [showEvaluation, setShowEvaluation] = useState(false);
 
   const step = smartSteps[currentIdx];
-  const allAnswered = answers.every((a) => a.trim().length > 5);
+  const allAnswered = answers.length === smartSteps.length && answers.every((a) => (a ?? "").trim().length > 5);
 
   const updateAnswer = (value: string) => {
     const newAnswers = [...answers];
@@ -168,7 +168,7 @@ export default function JornadaSmart({ onComplete, onBack }: Props) {
                 className={`w-11 h-11 rounded-xl text-sm font-black transition-all ${
                   currentIdx === i
                     ? `bg-gradient-to-br ${s.color} text-white scale-110 shadow-lg`
-                    : answers[i].trim().length > 5
+                    : (answers[i] ?? "").trim().length > 5
                     ? "bg-green-100 text-green-700 border-2 border-green-300"
                     : "bg-slate-100 text-slate-500"
                 }`}
@@ -186,7 +186,7 @@ export default function JornadaSmart({ onComplete, onBack }: Props) {
                 className={`w-11 h-11 rounded-xl text-sm font-black transition-all ${
                   currentIdx === i + 5
                     ? `bg-gradient-to-br ${s.color} text-white scale-110 shadow-lg`
-                    : answers[i + 5].trim().length > 5
+                    : (answers[i + 5] ?? "").trim().length > 5
                     ? "bg-green-100 text-green-700 border-2 border-green-300"
                     : "bg-slate-100 text-slate-500"
                 }`}
