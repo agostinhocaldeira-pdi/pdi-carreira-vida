@@ -1,13 +1,14 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Lock, Check, ChevronRight, Play, ArrowLeft, Trophy, Sparkles, AlertTriangle, Compass, Target, Bug } from "lucide-react";
+import { Lock, Check, ChevronRight, Play, ArrowLeft, Trophy, Sparkles, AlertTriangle, Compass, Target, Bug, Heart, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { useNavigate } from "react-router-dom";
+import JornadaValores from "@/components/jornada/JornadaValores";
 import JornadaVVD from "@/components/jornada/JornadaVVD";
 import JornadaVidaNaoQuero from "@/components/jornada/JornadaVidaNaoQuero";
-import JornadaRodaDaVida from "@/components/jornada/JornadaRodaDaVida";
+import JornadaAutoReflexao from "@/components/jornada/JornadaAutoReflexao";
 import JornadaSmart from "@/components/jornada/JornadaSmart";
 import JornadaFinal from "@/components/jornada/JornadaFinal";
 
@@ -22,6 +23,15 @@ interface Step {
 }
 
 const steps: Step[] = [
+  {
+    id: "valores",
+    title: "Seus Valores",
+    subtitle: "O que é mais importante pra você?",
+    icon: <Heart className="w-6 h-6" />,
+    emoji: "💎",
+    color: "text-pink-500",
+    bgGradient: "from-pink-500/20 to-rose-500/20",
+  },
   {
     id: "vvd",
     title: "Vida dos Sonhos",
@@ -41,11 +51,11 @@ const steps: Step[] = [
     bgGradient: "from-red-500/20 to-orange-500/20",
   },
   {
-    id: "roda-da-vida",
-    title: "Roda da Vida",
-    subtitle: "Como está cada área da sua vida?",
-    icon: <Compass className="w-6 h-6" />,
-    emoji: "🎯",
+    id: "auto-reflexao",
+    title: "Auto Reflexão",
+    subtitle: "Roda da Vida + Crenças limitantes",
+    icon: <Search className="w-6 h-6" />,
+    emoji: "🔍",
     color: "text-blue-500",
     bgGradient: "from-blue-500/20 to-cyan-500/20",
   },
@@ -108,9 +118,10 @@ export default function Jornada() {
           exit={{ opacity: 0, x: -50 }}
           transition={{ duration: 0.3 }}
         >
+          {currentStep === "valores" && <JornadaValores {...stepProps} />}
           {currentStep === "vvd" && <JornadaVVD {...stepProps} />}
           {currentStep === "vida-nao-quero" && <JornadaVidaNaoQuero {...stepProps} />}
-          {currentStep === "roda-da-vida" && <JornadaRodaDaVida {...stepProps} />}
+          {currentStep === "auto-reflexao" && <JornadaAutoReflexao {...stepProps} />}
           {currentStep === "smart" && <JornadaSmart {...stepProps} />}
         </motion.div>
       </AnimatePresence>

@@ -37,7 +37,7 @@ export default function JornadaVVD({ onComplete, onBack }: Props) {
           <Button variant="ghost" size="sm" onClick={onBack}>
             <ArrowLeft className="w-4 h-4 mr-1" /> Voltar
           </Button>
-          <span className="text-sm font-medium text-purple-600">Etapa 1 de 4</span>
+          <span className="text-sm font-medium text-purple-600">Etapa 2 de 5</span>
         </div>
       </div>
 
