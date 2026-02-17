@@ -17,25 +17,13 @@ export default function JornadaFinal({ onBack, smartActionData }: Props) {
       <div className="max-w-lg mx-auto px-4 py-8 space-y-8">
         {/* Celebration */}
         <motion.div
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ type: "spring", damping: 15 }}
-          className="text-center space-y-4"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="text-center"
         >
-          <motion.div
-            animate={{ rotate: [0, -10, 10, -10, 0] }}
-            transition={{ duration: 0.6, delay: 0.3 }}
-            className="text-7xl"
-          >
-            🎉
-          </motion.div>
-          <h1 className="text-3xl font-bold text-slate-800">
-            Parabéns! Você concluiu!
-          </h1>
-          <p className="text-slate-500">
+          <h1 className="text-2xl font-bold text-slate-800">
             Você acabou de dar um passo enorme em direção à vida que deseja.
-            Agora escolha o que fazer com seu plano:
-          </p>
+          </h1>
         </motion.div>
 
         {/* Summary card */}
