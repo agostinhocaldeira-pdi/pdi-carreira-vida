@@ -97,7 +97,7 @@ export default function JornadaSmart({ onComplete, onBack }: Props) {
           <Button variant="ghost" size="sm" onClick={onBack}>
             <ArrowLeft className="w-4 h-4 mr-1" /> Voltar
           </Button>
-          <span className="text-sm font-medium text-orange-600">Etapa 5 de 5</span>
+          <span className="text-sm font-medium text-orange-600">Etapa 4 de 4</span>
         </div>
       </div>
 

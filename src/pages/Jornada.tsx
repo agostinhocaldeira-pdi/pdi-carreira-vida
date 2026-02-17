@@ -1,11 +1,10 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Lock, Check, ChevronRight, Play, ArrowLeft, Trophy, Sparkles, AlertTriangle, Compass, Target, Bug, Heart, Search } from "lucide-react";
+import { Lock, Check, ChevronRight, Play, ArrowLeft, Trophy, Sparkles, AlertTriangle, Target, Bug, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { useNavigate } from "react-router-dom";
-import JornadaValores from "@/components/jornada/JornadaValores";
 import JornadaVVD from "@/components/jornada/JornadaVVD";
 import JornadaVidaNaoQuero from "@/components/jornada/JornadaVidaNaoQuero";
 import JornadaAutoReflexao from "@/components/jornada/JornadaAutoReflexao";
@@ -23,15 +22,6 @@ interface Step {
 }
 
 const steps: Step[] = [
-  {
-    id: "valores",
-    title: "Seus Valores",
-    subtitle: "O que é mais importante pra você?",
-    icon: <Heart className="w-6 h-6" />,
-    emoji: "💎",
-    color: "text-pink-500",
-    bgGradient: "from-pink-500/20 to-rose-500/20",
-  },
   {
     id: "vvd",
     title: "Vida dos Sonhos",
@@ -53,7 +43,7 @@ const steps: Step[] = [
   {
     id: "auto-reflexao",
     title: "Auto Reflexão",
-    subtitle: "Roda da Vida + Crenças limitantes",
+    subtitle: "Valores + Roda da Vida + Crenças",
     icon: <Search className="w-6 h-6" />,
     emoji: "🔍",
     color: "text-blue-500",
@@ -118,7 +108,6 @@ export default function Jornada() {
           exit={{ opacity: 0, x: -50 }}
           transition={{ duration: 0.3 }}
         >
-          {currentStep === "valores" && <JornadaValores {...stepProps} />}
           {currentStep === "vvd" && <JornadaVVD {...stepProps} />}
           {currentStep === "vida-nao-quero" && <JornadaVidaNaoQuero {...stepProps} />}
           {currentStep === "auto-reflexao" && <JornadaAutoReflexao {...stepProps} />}
