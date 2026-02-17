@@ -33,7 +33,7 @@ const steps: Step[] = [
   },
   {
     id: "vida-nao-quero",
-    title: "Vida que eu NÃO quero",
+    title: "Vida que eu NÃO quero viver",
     subtitle: "O que acontece se nada mudar?",
     icon: <AlertTriangle className="w-6 h-6" />,
     emoji: "🚫",
