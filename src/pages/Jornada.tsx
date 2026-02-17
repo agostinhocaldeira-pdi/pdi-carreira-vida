@@ -91,9 +91,10 @@ export default function Jornada() {
     setCurrentStep(null);
   };
 
-  // Show final screen
-  if (allComplete && !currentStep) {
-    return <JornadaFinal onBack={() => setCompletedSteps(completedSteps.slice(0, -1))} smartActionData={smartActionData} />;
+  // Show final screen only after SMART (last step) is explicitly completed
+  const smartCompleted = completedSteps.includes("smart");
+  if (smartCompleted && allComplete && !currentStep) {
+    return <JornadaFinal onBack={() => setCompletedSteps(completedSteps.filter(s => s !== "smart"))} smartActionData={smartActionData} />;
   }
 
   // Show active step
