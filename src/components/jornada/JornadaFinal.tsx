@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { Printer, Download, Crown, Star, ArrowLeft, Trophy, Rocket, ExternalLink, CalendarCheck, Zap } from "lucide-react";
+import { Printer, Download, Crown, Star, ArrowLeft, Trophy, Rocket, ExternalLink, CalendarCheck, Zap, Play, Check, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useNavigate } from "react-router-dom";
@@ -214,6 +214,74 @@ export default function JornadaFinal({ onBack, smartActionData }: Props) {
                     </Button>
                   </div>
                 </div>
+              </CardContent>
+            </Card>
+          </motion.div>
+
+          {/* Mentoria 1:1 */}
+          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.7 }} className="space-y-3">
+            <div className="rounded-xl overflow-hidden border-2 border-emerald-300 bg-emerald-950 aspect-video flex items-center justify-center relative group cursor-pointer">
+              <div className="absolute inset-0 bg-black/20 group-hover:bg-black/30 transition-colors" />
+              <div className="relative text-center text-emerald-300 space-y-2">
+                <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center mx-auto group-hover:scale-110 transition-transform">
+                  <Play className="w-7 h-7 text-emerald-300 ml-1" />
+                </div>
+                <p className="text-sm font-medium">Vídeo: Mentoria 1:1</p>
+                <p className="text-xs opacity-60">Conheça como funciona o acompanhamento individual</p>
+              </div>
+            </div>
+
+            <Card className="border-2 border-emerald-400 bg-gradient-to-br from-emerald-50 to-teal-50 overflow-hidden">
+              <CardContent className="p-5 space-y-4">
+                <div className="flex items-start gap-3">
+                  <div className="w-12 h-12 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-xl flex items-center justify-center shrink-0">
+                    <Users className="w-6 h-6 text-white" />
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="font-bold text-slate-800 text-lg">Mentoria 1:1</h3>
+                    <p className="text-xs text-emerald-600 font-medium">Acompanhamento individual e personalizado</p>
+                  </div>
+                </div>
+
+                <p className="text-sm text-slate-600 leading-relaxed">
+                  Eu vou te acompanhar pessoalmente durante <strong>3 meses</strong>, com reuniões semanais de <strong>1 hora</strong>, guiando você na construção do seu sonho — passo a passo, sem atalhos.
+                </p>
+
+                {/* O que está incluso */}
+                <div className="bg-white rounded-xl p-4 border border-emerald-100 space-y-2.5">
+                  <p className="text-xs font-semibold text-emerald-700 uppercase tracking-wide">O que está incluso:</p>
+                  {[
+                    "12 sessões individuais de 1 hora (semanais)",
+                    "Plano de ação personalizado para sua realidade",
+                    "Acompanhamento contínuo entre sessões",
+                    "Acesso direto via WhatsApp para dúvidas",
+                    "Acesso Premium Black incluso durante a mentoria",
+                    "Suporte para destravar crenças e sabotadores",
+                  ].map((item, i) => (
+                    <div key={i} className="flex items-start gap-2">
+                      <Check className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
+                      <span className="text-sm text-slate-700">{item}</span>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Preço */}
+                <div className="bg-emerald-900 rounded-xl p-4 text-center space-y-1">
+                  <p className="text-emerald-300 text-xs font-medium">Investimento único</p>
+                  <div className="flex items-baseline justify-center gap-1">
+                    <span className="text-white text-3xl font-bold">R$ 997</span>
+                    <span className="text-emerald-300 text-sm">,00</span>
+                  </div>
+                  <p className="text-emerald-400 text-xs">ou em até 12x no cartão</p>
+                </div>
+
+                <Button className="w-full h-12 text-base bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 shadow-lg shadow-emerald-200">
+                  Quero a Mentoria 1:1
+                </Button>
+
+                <p className="text-center text-[11px] text-slate-400">
+                  Vagas limitadas · Início imediato após a confirmação
+                </p>
               </CardContent>
             </Card>
           </motion.div>
