@@ -49,7 +49,7 @@ export default function JornadaVidaNaoQuero({ onComplete, onBack }: Props) {
           <Button variant="ghost" size="sm" onClick={onBack}>
             <ArrowLeft className="w-4 h-4 mr-1" /> Voltar
           </Button>
-          <span className="text-sm font-medium text-red-600">Etapa 2 de 4</span>
+          <span className="text-sm font-medium text-red-600">Etapa 3 de 5</span>
         </div>
       </div>
 
