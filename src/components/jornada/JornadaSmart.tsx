@@ -1,8 +1,14 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowLeft, Check, ChevronRight, Play, Target } from "lucide-react";
+import { ArrowLeft, Check, ChevronRight, Play, Target, CalendarIcon, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { Input } from "@/components/ui/input";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Calendar } from "@/components/ui/calendar";
+import { cn } from "@/lib/utils";
+import { format } from "date-fns";
+import { ptBR } from "date-fns/locale";
 import JornadaAIEvaluation from "./JornadaAIEvaluation";
 
 interface Props {
@@ -106,7 +112,29 @@ const smartSteps = [
 export default function JornadaSmart({ onComplete, onBack }: Props) {
   const [currentIdx, setCurrentIdx] = useState(0);
   const [answers, setAnswers] = useState<string[]>(smartSteps.map(() => ""));
+  const [selectedDate, setSelectedDate] = useState<Date>();
+  const [selectedTime, setSelectedTime] = useState("");
   const [showEvaluation, setShowEvaluation] = useState(false);
+
+  const diaHoraStepIdx = smartSteps.length - 1; // last step = "Dia e Hora"
+
+  const handleDateChange = (date: Date | undefined) => {
+    setSelectedDate(date);
+    const dateStr = date ? format(date, "dd/MM/yyyy", { locale: ptBR }) : "";
+    const combined = `${dateStr}${selectedTime ? " às " + selectedTime : ""}`;
+    const newAnswers = [...answers];
+    newAnswers[diaHoraStepIdx] = combined;
+    setAnswers(newAnswers);
+  };
+
+  const handleTimeChange = (time: string) => {
+    setSelectedTime(time);
+    const dateStr = selectedDate ? format(selectedDate, "dd/MM/yyyy", { locale: ptBR }) : "";
+    const combined = `${dateStr}${time ? " às " + time : ""}`;
+    const newAnswers = [...answers];
+    newAnswers[diaHoraStepIdx] = combined;
+    setAnswers(newAnswers);
+  };
 
   const step = smartSteps[currentIdx];
   const allAnswered = answers.length === smartSteps.length && answers.every((a) => (a ?? "").trim().length > 5);
@@ -232,12 +260,52 @@ export default function JornadaSmart({ onComplete, onBack }: Props) {
                 💡 {step.hint}
               </div>
 
-              <Textarea
-                placeholder={step.placeholder}
-                value={answers[currentIdx]}
-                onChange={(e) => updateAnswer(e.target.value)}
-                className="min-h-[100px] resize-none border-orange-200 focus:border-orange-400"
-              />
+              {currentIdx === diaHoraStepIdx ? (
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-medium text-slate-600">📅 Data</label>
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant="outline"
+                          className={cn(
+                            "w-full justify-start text-left font-normal h-11",
+                            !selectedDate && "text-muted-foreground"
+                          )}
+                        >
+                          <CalendarIcon className="mr-2 h-4 w-4" />
+                          {selectedDate ? format(selectedDate, "dd/MM/yyyy", { locale: ptBR }) : "Escolha a data"}
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0" align="start">
+                        <Calendar
+                          mode="single"
+                          selected={selectedDate}
+                          onSelect={handleDateChange}
+                          initialFocus
+                          className={cn("p-3 pointer-events-auto")}
+                        />
+                      </PopoverContent>
+                    </Popover>
+                  </div>
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-medium text-slate-600">🕐 Horário</label>
+                    <Input
+                      type="time"
+                      value={selectedTime}
+                      onChange={(e) => handleTimeChange(e.target.value)}
+                      className="h-11 border-orange-200 focus:border-orange-400"
+                    />
+                  </div>
+                </div>
+              ) : (
+                <Textarea
+                  placeholder={step.placeholder}
+                  value={answers[currentIdx]}
+                  onChange={(e) => updateAnswer(e.target.value)}
+                  className="min-h-[100px] resize-none border-orange-200 focus:border-orange-400"
+                />
+              )}
             </div>
 
             {/* Next button */}
