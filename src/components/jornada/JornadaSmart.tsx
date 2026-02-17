@@ -262,32 +262,33 @@ export default function JornadaSmart({ onComplete, onBack }: Props) {
 
               {currentIdx === diaHoraStepIdx ? (
                 <div className="grid grid-cols-2 gap-3">
-                  <div className="space-y-1.5">
-                    <label className="text-xs font-medium text-slate-600">📅 Data</label>
-                    <Popover>
-                      <PopoverTrigger asChild>
-                        <Button
-                          variant="outline"
-                          className={cn(
-                            "w-full justify-start text-left font-normal h-11",
-                            !selectedDate && "text-muted-foreground"
-                          )}
-                        >
-                          <CalendarIcon className="mr-2 h-4 w-4" />
-                          {selectedDate ? format(selectedDate, "dd/MM/yyyy", { locale: ptBR }) : "Escolha a data"}
-                        </Button>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-auto p-0" align="start">
-                        <Calendar
-                          mode="single"
-                          selected={selectedDate}
-                          onSelect={handleDateChange}
-                          initialFocus
-                          className={cn("p-3 pointer-events-auto")}
-                        />
-                      </PopoverContent>
-                    </Popover>
-                  </div>
+                   <div className="space-y-1.5 min-w-0">
+                     <label className="text-xs font-medium text-slate-600 truncate block">📅 Data</label>
+                     <Popover>
+                       <PopoverTrigger asChild>
+                         <Button
+                           variant="outline"
+                           className={cn(
+                             "w-full justify-start text-left font-normal h-11",
+                             !selectedDate && "text-muted-foreground"
+                           )}
+                         >
+                           <CalendarIcon className="mr-2 h-4 w-4 shrink-0" />
+                           <span className="truncate">{selectedDate ? format(selectedDate, "dd/MM/yyyy", { locale: ptBR }) : "Escolha a data"}</span>
+                         </Button>
+                       </PopoverTrigger>
+                       <PopoverContent className="w-auto p-0" align="start">
+                         <Calendar
+                           mode="single"
+                           selected={selectedDate}
+                           onSelect={handleDateChange}
+                           locale={ptBR}
+                           initialFocus
+                           className={cn("p-3 pointer-events-auto")}
+                         />
+                       </PopoverContent>
+                     </Popover>
+                   </div>
                   <div className="space-y-1.5">
                     <label className="text-xs font-medium text-slate-600">🕐 Horário</label>
                     <Input
