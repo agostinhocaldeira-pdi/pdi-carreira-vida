@@ -36,6 +36,44 @@ interface Props {
  * Formato: primeiro as coerências (validação), depois os pontos cegos (provocação construtiva).
  */
 
+/**
+ * REGRA DE AVALIAÇÃO IA — Etapa SMART (Avaliação Final)
+ * 
+ * Esta é a ÚLTIMA avaliação de IA da jornada. Ela aparece na tela final (JornadaFinal),
+ * APÓS a seção "Sua Meta SMART + Primeira Ação".
+ * 
+ * A IA deve fazer DUAS coisas nesta avaliação:
+ * 
+ * PARTE 1 — AVALIAÇÃO DA META SMART:
+ * Avaliar a construção da meta dentro da metodologia SMART:
+ * - A meta é realmente Específica? Está clara e sem ambiguidade?
+ * - A mensuração (M) é objetiva? Dá pra medir com números?
+ * - É Alcançável dado o contexto atual do aluno?
+ * - É Relevante para a vida que ele descreveu querer?
+ * - O prazo Temporal é realista?
+ * - A Primeira Ação está concreta o suficiente?
+ * - O Dia/Hora agendado é realista?
+ * Avaliar também as respostas extras da etapa SMART expandida:
+ * - Aprendizado necessário, Sabotadores identificados, Estratégia anti-sabotagem
+ * 
+ * PARTE 2 — CRUZAMENTO COM TODAS AS AVALIAÇÕES ANTERIORES:
+ * Consolidar e cruzar com TODAS as avaliações de IA feitas nas etapas anteriores:
+ * - Etapa 1 (VVD): A meta SMART está conectada à Vida dos Sonhos?
+ * - Etapa 2 (Vida que NÃO quero): A meta ajuda a evitar o cenário indesejado?
+ * - Etapa 3 (Auto Reflexão — Valores, Roda da Vida, Crenças):
+ *   - A meta respeita os valores do aluno?
+ *   - A meta ataca áreas fracas da Roda da Vida ou fortalece as fortes?
+ *   - Os sabotadores identificados na SMART batem com as crenças limitantes?
+ * 
+ * FORMATO DO FEEDBACK FINAL:
+ * 1. ✅ O que foi BOM: reconhecer o esforço, validar coerências entre etapas
+ * 2. 🎯 O que o aluno vai TIRAR DE PROVEITO: benefícios concretos dos exercícios feitos
+ * 3. ⚠️ PONTOS DE ATENÇÃO: riscos, contradições, pontos cegos que merecem cuidado
+ * 
+ * Tom: direto, empático, linguagem simples (nível 14 anos).
+ * Esta avaliação é o "fechamento" da jornada — deve ser inspiradora mas honesta.
+ */
+
 const mockEvaluations: Record<string, string> = {
   "auto-reflexao":
     "✅ Coerências: Seus valores de Família e Crescimento estão alinhados com sua Vida dos Sonhos — você quer evoluir sem abrir mão de quem ama. Sua nota alta em Carreira na Roda da Vida confirma que você já está investindo no seu desenvolvimento. A Vida que você NÃO quer viver reforça esse compromisso: você tem clareza do que quer evitar.\n\n⚠️ Pontos Cegos: Você escolheu 'Saúde' como valor, mas sua nota na Roda da Vida nessa área é 4 — existe uma distância entre o que você diz valorizar e como está vivendo. Além disso, sua crença limitante ('não sou bom o suficiente') pode estar sabotando justamente as áreas que você mais quer desenvolver. Perceber essa contradição já é o primeiro passo para mudar.",
