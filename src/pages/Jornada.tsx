@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Lock, Check, ChevronRight, Play, ArrowLeft, Trophy, Sparkles, AlertTriangle, Target, Bug, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -69,6 +69,10 @@ export default function Jornada() {
 
   const progress = (completedSteps.length / steps.length) * 100;
   const allComplete = completedSteps.length === steps.length;
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [currentStep, allComplete]);
 
   const isUnlocked = (stepId: string) => {
     if (devMode) return true;
