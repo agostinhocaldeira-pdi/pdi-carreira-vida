@@ -1,13 +1,13 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Lock, Check, ChevronRight, Play, ArrowLeft, Printer, Download, Crown, Star, Sparkles, Heart, Target, Compass, Zap, Trophy } from "lucide-react";
+import { Lock, Check, ChevronRight, Play, ArrowLeft, Trophy, Sparkles, AlertTriangle, Compass, Target, Bug } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { useNavigate } from "react-router-dom";
-import JornadaValores from "@/components/jornada/JornadaValores";
-import JornadaRodaDaVida from "@/components/jornada/JornadaRodaDaVida";
 import JornadaVVD from "@/components/jornada/JornadaVVD";
+import JornadaVidaNaoQuero from "@/components/jornada/JornadaVidaNaoQuero";
+import JornadaRodaDaVida from "@/components/jornada/JornadaRodaDaVida";
 import JornadaSmart from "@/components/jornada/JornadaSmart";
 import JornadaFinal from "@/components/jornada/JornadaFinal";
 
@@ -23,13 +23,22 @@ interface Step {
 
 const steps: Step[] = [
   {
-    id: "valores",
-    title: "Seus Valores",
-    subtitle: "O que é mais importante pra você?",
-    icon: <Heart className="w-6 h-6" />,
-    emoji: "💎",
-    color: "text-pink-500",
-    bgGradient: "from-pink-500/20 to-rose-500/20",
+    id: "vvd",
+    title: "Vida dos Sonhos",
+    subtitle: "Como seria sua vida ideal?",
+    icon: <Sparkles className="w-6 h-6" />,
+    emoji: "✨",
+    color: "text-purple-500",
+    bgGradient: "from-purple-500/20 to-violet-500/20",
+  },
+  {
+    id: "vida-nao-quero",
+    title: "Vida que eu NÃO quero",
+    subtitle: "O que acontece se nada mudar?",
+    icon: <AlertTriangle className="w-6 h-6" />,
+    emoji: "🚫",
+    color: "text-red-500",
+    bgGradient: "from-red-500/20 to-orange-500/20",
   },
   {
     id: "roda-da-vida",
@@ -39,15 +48,6 @@ const steps: Step[] = [
     emoji: "🎯",
     color: "text-blue-500",
     bgGradient: "from-blue-500/20 to-cyan-500/20",
-  },
-  {
-    id: "vvd",
-    title: "Vida dos Sonhos",
-    subtitle: "Como seria sua vida ideal?",
-    icon: <Sparkles className="w-6 h-6" />,
-    emoji: "✨",
-    color: "text-purple-500",
-    bgGradient: "from-purple-500/20 to-violet-500/20",
   },
   {
     id: "smart",
@@ -65,11 +65,13 @@ export default function Jornada() {
   const [currentStep, setCurrentStep] = useState<string | null>(null);
   const [completedSteps, setCompletedSteps] = useState<string[]>([]);
   const [smartActionData, setSmartActionData] = useState<{ especifica: string; mensuravel: string; alcancavel: string; relevante: string; temporal: string; primeiraAcao: string; diaHora: string } | null>(null);
+  const [devMode, setDevMode] = useState(false);
 
   const progress = (completedSteps.length / steps.length) * 100;
   const allComplete = completedSteps.length === steps.length;
 
   const isUnlocked = (stepId: string) => {
+    if (devMode) return true;
     const idx = steps.findIndex((s) => s.id === stepId);
     if (idx === 0) return true;
     return completedSteps.includes(steps[idx - 1].id);
@@ -106,9 +108,9 @@ export default function Jornada() {
           exit={{ opacity: 0, x: -50 }}
           transition={{ duration: 0.3 }}
         >
-          {currentStep === "valores" && <JornadaValores {...stepProps} />}
-          {currentStep === "roda-da-vida" && <JornadaRodaDaVida {...stepProps} />}
           {currentStep === "vvd" && <JornadaVVD {...stepProps} />}
+          {currentStep === "vida-nao-quero" && <JornadaVidaNaoQuero {...stepProps} />}
+          {currentStep === "roda-da-vida" && <JornadaRodaDaVida {...stepProps} />}
           {currentStep === "smart" && <JornadaSmart {...stepProps} />}
         </motion.div>
       </AnimatePresence>
@@ -126,6 +128,15 @@ export default function Jornada() {
             Voltar
           </Button>
           <div className="flex items-center gap-2">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setDevMode(!devMode)}
+              className={`text-xs ${devMode ? "text-red-500 bg-red-50" : "text-slate-400"}`}
+            >
+              <Bug className="w-3 h-3 mr-1" />
+              DEV
+            </Button>
             <Trophy className="w-5 h-5 text-amber-500" />
             <span className="text-sm font-semibold text-slate-700">
               {completedSteps.length}/{steps.length}
@@ -133,6 +144,26 @@ export default function Jornada() {
           </div>
         </div>
       </div>
+
+      {/* Dev mode nav */}
+      {devMode && (
+        <div className="bg-red-50 border-b border-red-200 px-4 py-2">
+          <div className="max-w-lg mx-auto flex flex-wrap gap-2">
+            <span className="text-xs text-red-500 font-medium mr-2 self-center">Ir para:</span>
+            {steps.map((step) => (
+              <Button
+                key={step.id}
+                size="sm"
+                variant="outline"
+                className="text-xs h-7 border-red-200 text-red-600 hover:bg-red-100"
+                onClick={() => setCurrentStep(step.id)}
+              >
+                {step.emoji} {step.title}
+              </Button>
+            ))}
+          </div>
+        </div>
+      )}
 
       <div className="max-w-lg mx-auto px-4 py-6 space-y-6">
         {/* Hero */}
@@ -187,16 +218,14 @@ export default function Jornada() {
                       ? "border-slate-200 hover:border-blue-300 hover:shadow-lg bg-white"
                       : "border-slate-100 bg-slate-50 opacity-60"
                   }`}
-                  onClick={() => unlocked && !completed && setCurrentStep(step.id)}
+                  onClick={() => (unlocked || devMode) && setCurrentStep(step.id)}
                 >
-                  {/* Gradient accent */}
                   <div
                     className={`absolute top-0 left-0 w-1.5 h-full bg-gradient-to-b ${step.bgGradient}`}
                   />
 
                   <CardContent className="p-4 pl-6">
                     <div className="flex items-center gap-4">
-                      {/* Step number / status */}
                       <div
                         className={`w-12 h-12 rounded-xl flex items-center justify-center text-xl shrink-0 ${
                           completed
@@ -215,7 +244,6 @@ export default function Jornada() {
                         )}
                       </div>
 
-                      {/* Content */}
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2">
                           <span className="text-xs font-medium text-slate-400 uppercase tracking-wide">
@@ -235,8 +263,7 @@ export default function Jornada() {
                         </p>
                       </div>
 
-                      {/* Arrow */}
-                      {unlocked && !completed && (
+                      {(unlocked || devMode) && !completed && (
                         <ChevronRight className="w-5 h-5 text-slate-400 shrink-0" />
                       )}
                     </div>
