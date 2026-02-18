@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Lock, Loader2, CheckCircle, Copy, ClipboardPaste } from "lucide-react";
+import { Lock, Loader2, Copy, ClipboardPaste } from "lucide-react";
 
 interface PasswordGateProps {
   password: string;
@@ -17,7 +17,7 @@ export const PasswordGate = ({
   onBeforeSuccess,
   beforeSuccessDelay = 0,
 }: PasswordGateProps) => {
-  const [stage, setStage] = useState<"input" | "loading" | "success">("input");
+  const [stage, setStage] = useState<"input" | "loading">("input");
   const [inputValue, setInputValue] = useState("");
   const [loadingStep, setLoadingStep] = useState(0);
   const [copied, setCopied] = useState(false);
@@ -50,12 +50,10 @@ export const PasswordGate = ({
         if (step >= loadingSteps.length) {
           clearInterval(interval);
           setTimeout(() => {
-            setStage("success");
-            // Trigger before success callback (e.g., start video)
             if (onBeforeSuccess) {
               onBeforeSuccess();
             }
-            setTimeout(onSuccess, 1500 + beforeSuccessDelay);
+            setTimeout(onSuccess, beforeSuccessDelay);
           }, 800);
         }
       }, 700);
@@ -77,24 +75,6 @@ export const PasswordGate = ({
     );
   }
 
-  if (stage === "success") {
-    return (
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        className="fixed inset-0 bg-[#0b141a] z-50 flex flex-col items-center justify-center p-8"
-      >
-        <motion.div
-          initial={{ scale: 0 }}
-          animate={{ scale: 1 }}
-          transition={{ type: "spring", damping: 15 }}
-        >
-          <CheckCircle className="w-16 h-16 text-[#25D366] mb-6" />
-        </motion.div>
-        <p className="text-white text-xl font-medium">Parabéns — Acesso concedido</p>
-      </motion.div>
-    );
-  }
 
   return (
     <motion.div
