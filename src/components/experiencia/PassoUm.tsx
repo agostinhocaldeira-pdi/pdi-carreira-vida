@@ -89,6 +89,7 @@ export const PassoUm = ({ onAdvance }: PassoUmProps) => {
   ];
 
   const portaSecretaMessages = [
+    'A partir de agora, você vai começar a perceber esse <strong>"modo de viver"</strong> no seu dia a dia.',
     "É um conteúdo que não divulgo para todo mundo.",
     "Anote essa senha para acessar o conteúdo.",
     "Por favor, não compartilhe com ninguém.",
