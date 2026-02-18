@@ -62,7 +62,7 @@ export const PassoDois = ({ onAdvance, onPrepareNextStep }: PassoDoisProps) => {
     encerramento: [
       'Esse <strong>"modo de viver"</strong> cansa.',
       "Mas existe um jeito de superar isso.",
-      "Agora, faz sentido falarmos de objetivos.",
+      "Quer saber como?",
     ],
     porta: [
       "Isso é sinal que você quer mudanças...",
