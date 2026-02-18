@@ -9,7 +9,7 @@ import ringtoneAudio from "@/assets/ringtone.m4a";
 import audioRespira from "@/assets/audio-respira.mp4";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Play } from "lucide-react";
+import { ArrowRight, Volume2 } from "lucide-react";
 
 export type ExperienciaStep = 0 | 1 | 2 | 3 | 4 | 5;
 
@@ -22,8 +22,6 @@ const ExperienciaNarrativa = () => {
   const [currentStep, setCurrentStep] = useState<ExperienciaStep>(0);
   const [isAudioReady, setIsAudioReady] = useState(false);
   const [showIntro, setShowIntro] = useState(true);
-  const [isVideoPlaying, setIsVideoPlaying] = useState(false);
-  const [showYouTubeControls, setShowYouTubeControls] = useState(false);
   const [isTiktokVideoReady, setIsTiktokVideoReady] = useState(false);
   const preloadedAudiosRef = useRef<PreloadedAudios>({ ringtone: null, respira: null });
 
@@ -84,19 +82,6 @@ const ExperienciaNarrativa = () => {
     };
   }, []);
 
-  // Auto-advance after 9 seconds when video starts playing
-  useEffect(() => {
-    if (!showIntro || !isVideoPlaying) return;
-
-    const timerId = setTimeout(() => {
-      setShowIntro(false);
-    }, 9000);
-
-    return () => {
-      clearTimeout(timerId);
-    };
-  }, [showIntro, isVideoPlaying]);
-
   const advanceStep = () => {
     setCurrentStep((prev) => Math.min(prev + 1, 5) as ExperienciaStep);
   };
@@ -105,98 +90,45 @@ const ExperienciaNarrativa = () => {
     setIsTiktokVideoReady(true);
   };
 
-  const handleWatchVideo = () => {
-    setIsVideoPlaying(true);
-    // Fallback: se autoplay não funcionar, mostrar controles do YouTube após 1.5s
-    setTimeout(() => {
-      setShowYouTubeControls(true);
-    }, 1500);
-  };
-
-  const handleSkipToExperience = () => {
+  const handleStartExperience = () => {
     setShowIntro(false);
   };
 
-  // Intro screen with YouTube Shorts video
+  // Intro screen
   if (showIntro) {
     return (
-      <div className="min-h-screen bg-black text-white flex flex-col items-center justify-center px-4 py-8">
+      <div className="min-h-screen bg-black text-white flex flex-col items-center justify-center px-6">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="w-full max-w-sm flex flex-col items-center gap-6"
+          transition={{ duration: 0.8 }}
+          className="w-full max-w-sm flex flex-col items-center gap-10 text-center"
         >
-          {/* YouTube Shorts-style container - reduced size for mobile first fold */}
-          <div className="relative w-full aspect-[9/16] max-h-[55vh] bg-gray-900 rounded-2xl overflow-hidden shadow-2xl border border-gray-800">
-            {!isVideoPlaying ? (
-              // Black screen with question mark before playing
-              <div className="w-full h-full bg-black flex items-center justify-center">
-                <span className="text-white text-[12rem] font-light select-none">?</span>
-              </div>
-            ) : (
-              // Playing state with JS API enabled
-              <div className="relative w-full h-full">
-                <iframe
-                  src={`https://www.youtube-nocookie.com/embed/dZybFglDt80?autoplay=1&modestbranding=1&rel=0&showinfo=0&controls=${showYouTubeControls ? 1 : 0}&playsinline=1`}
-                  className="w-full h-full"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                  title="PDI - Introdução"
-                />
-                
-                {/* Overlay com botão de play caso autoplay falhe */}
-                {!showYouTubeControls && (
-                  <div 
-                    className="absolute inset-0 flex items-center justify-center cursor-pointer"
-                    onClick={() => setShowYouTubeControls(true)}
-                  >
-                    <div className="w-16 h-16 rounded-full bg-red-600/90 flex items-center justify-center shadow-lg hover:bg-red-500 transition-colors">
-                      <Play className="w-8 h-8 text-white fill-white ml-1" />
-                    </div>
-                    <p className="absolute bottom-4 text-white/70 text-xs">Toque para iniciar</p>
-                  </div>
-                )}
-              </div>
-            )}
-            
-            {/* Shorts-style branding */}
-            <div className="absolute top-4 left-4 flex items-center gap-2">
-              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-red-500 to-pink-500 flex items-center justify-center">
-                <Play className="w-4 h-4 text-white fill-white ml-0.5" />
-              </div>
-              <span className="text-white text-sm font-semibold">Shorts</span>
-            </div>
+          <h1 className="text-2xl md:text-3xl font-light leading-relaxed text-white/90">
+            está preparado para viver uma experiência{" "}
+            <span className="font-semibold text-white">diferente de tudo</span>{" "}
+            que você já viu?
+          </h1>
+
+          <div className="flex items-center gap-2 text-white/50 text-sm">
+            <Volume2 className="w-4 h-4 shrink-0" />
+            <p>aumente o volume do seu celular para uma melhor experiência</p>
           </div>
 
-          {/* Buttons */}
-          <div className="w-full flex flex-col gap-3">
-            {!isVideoPlaying && (
-              <Button
-                onClick={handleWatchVideo}
-                className="w-full h-12 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-xl"
-              >
-                <Play className="w-5 h-5 mr-2" />
-                Assistir o vídeo
-              </Button>
-            )}
-            
-            <Button
-              onClick={handleSkipToExperience}
-              variant="outline"
-              className="w-full h-12 border-gray-600 bg-transparent text-gray-300 hover:bg-gray-800 hover:text-white font-semibold rounded-xl"
-            >
-              <ArrowRight className="w-5 h-5 mr-2" />
-              Começar a experiência
-            </Button>
-          </div>
+          <Button
+            onClick={handleStartExperience}
+            className="w-full h-14 bg-white text-black hover:bg-white/90 font-semibold rounded-xl text-base"
+          >
+            <ArrowRight className="w-5 h-5 mr-2" />
+            Começar a experiência
+          </Button>
 
           {/* Loading indicator */}
           {!isAudioReady && (
             <motion.p
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              className="text-white/50 text-sm text-center"
+              className="text-white/30 text-xs"
             >
               Preparando áudios...
             </motion.p>

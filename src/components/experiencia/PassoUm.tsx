@@ -341,7 +341,7 @@ export const PassoUm = ({ onAdvance }: PassoUmProps) => {
             >
               <ChatButton
                 text="Entendi"
-                onClick={() => handleNextStage("ancora")}
+                onClick={() => handleNextStage("encerramento")}
               />
             </motion.div>
           )}
