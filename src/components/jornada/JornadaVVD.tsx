@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { ArrowLeft, Check, Play, Sparkles } from "lucide-react";
+import { ArrowLeft, Check, Sparkles } from "lucide-react";
+import vvdVideo from "@/assets/jornada-vvd-video.mp4";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import JornadaAIEvaluation from "./JornadaAIEvaluation";
@@ -47,15 +48,15 @@ export default function JornadaVVD({ onComplete, onBack, hasEvaluated }: Props) 
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
-          className="aspect-video bg-gradient-to-br from-purple-200 to-violet-300 rounded-2xl flex items-center justify-center cursor-pointer group relative overflow-hidden"
+          className="aspect-video rounded-2xl overflow-hidden shadow-lg"
         >
-          <div className="absolute inset-0 bg-black/20 group-hover:bg-black/30 transition-colors" />
-          <div className="relative w-16 h-16 bg-white/90 rounded-full flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
-            <Play className="w-7 h-7 text-purple-600 ml-1" />
-          </div>
-          <span className="absolute bottom-3 left-3 text-white/80 text-xs font-medium">
-            1 min • Descubra sua vida ideal
-          </span>
+          <video
+            src={vvdVideo}
+            controls
+            playsInline
+            className="w-full h-full object-cover"
+            poster=""
+          />
         </motion.div>
 
         <motion.div
