@@ -1,9 +1,11 @@
 import { Link } from "react-router-dom";
-import { BookOpen, Target, MessagesSquare, Link2, HelpCircle, FileText, Users, ChevronRight, Sparkles, TrendingUp, User, Footprints, Trophy, Lock, Home } from "lucide-react";
+import { BookOpen, Target, MessagesSquare, Link2, HelpCircle, FileText, Users, ChevronRight, Sparkles, TrendingUp, User, Footprints, Trophy, Lock, Home, Compass } from "lucide-react";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { useSubscriptionContext } from "@/contexts/SubscriptionContext";
 import { cn } from "@/lib/utils";
+import { useState, useEffect } from "react";
+import { supabase } from "@/integrations/supabase/client";
 
 interface QuickAccessNavProps {
   isGestor?: boolean;
@@ -28,6 +30,13 @@ const strategicItems = [
     icon: Footprints, 
     path: "/plano-vida/como-chegar",
     group: 'strategic'
+  },
+  { 
+    label: "Jornada", 
+    icon: Compass, 
+    path: "/jornada",
+    group: 'strategic',
+    requiresJornada: true
   },
   { 
     label: "Desafio", 
@@ -106,10 +115,28 @@ const gestorItem = {
 };
 
 export const QuickAccessNav = ({ isGestor = false }: QuickAccessNavProps) => {
-  const { status } = useSubscriptionContext();
+  const { status, plan } = useSubscriptionContext();
   
   // User has active subscription if status is 'active' (paid) - trial doesn't count for premium features
   const hasActiveSubscription = status === 'active';
+  
+  // Jornada access: completo/black OR pdismart role
+  const [hasJornadaAccess, setHasJornadaAccess] = useState(false);
+  
+  useEffect(() => {
+    const checkAccess = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+      const { data: roles } = await supabase
+        .from('user_roles')
+        .select('role')
+        .eq('user_id', user.id);
+      const hasPdismart = roles?.some(r => r.role === 'pdismart');
+      const hasCompleteOrBlack = status === 'active' && (plan === 'completo' || plan === 'black');
+      setHasJornadaAccess(hasPdismart || hasCompleteOrBlack);
+    };
+    checkAccess();
+  }, [status, plan]);
 
   // Combine items with gestor item if applicable
   const allMaintenanceItems = isGestor 
@@ -117,15 +144,19 @@ export const QuickAccessNav = ({ isGestor = false }: QuickAccessNavProps) => {
     : maintenanceItems;
 
   const renderStrategicItem = (item: typeof strategicItems[0]) => {
-    const isLocked = 'requiresSubscription' in item && item.requiresSubscription && !hasActiveSubscription;
+    const isLockedDesafio = 'requiresSubscription' in item && item.requiresSubscription && !hasActiveSubscription;
+    const isLockedJornada = 'requiresJornada' in item && item.requiresJornada && !hasJornadaAccess;
+    const isLocked = isLockedDesafio || isLockedJornada;
     const isDesafio = item.path === "/desafio-30-dias";
+    const isJornada = item.path === "/jornada";
     
     const navContent = (
       <div className={cn(
         "w-20 sm:w-24 h-20 sm:h-24 rounded-xl border-2 transition-all flex flex-col items-center justify-center gap-1.5 sm:gap-2 p-1.5 sm:p-2 group relative",
         isLocked && "border-border/50 bg-card/50 cursor-not-allowed opacity-60",
         !isLocked && isDesafio && "border-[#d4a853] bg-black hover:bg-[#d4a853]/20 hover:border-[#d4a853] cursor-pointer",
-        !isLocked && !isDesafio && "border-primary/40 bg-primary/5 hover:bg-primary/10 hover:border-primary cursor-pointer"
+        !isLocked && !isDesafio && !isJornada && "border-primary/40 bg-primary/5 hover:bg-primary/10 hover:border-primary cursor-pointer",
+        !isLocked && isJornada && "border-emerald-500/40 bg-emerald-500/5 hover:bg-emerald-500/10 hover:border-emerald-500 cursor-pointer"
       )}>
         {isLocked && (
           <div className="absolute top-1 right-1">
@@ -136,20 +167,23 @@ export const QuickAccessNav = ({ isGestor = false }: QuickAccessNavProps) => {
           "w-8 h-8 sm:w-10 sm:h-10 rounded-lg flex items-center justify-center transition-colors",
           isLocked && "bg-muted/50",
           !isLocked && isDesafio && "bg-[#d4a853]/20 group-hover:bg-[#d4a853]/30",
-          !isLocked && !isDesafio && "bg-primary/15 group-hover:bg-primary/25"
+          !isLocked && isJornada && "bg-emerald-500/15 group-hover:bg-emerald-500/25",
+          !isLocked && !isDesafio && !isJornada && "bg-primary/15 group-hover:bg-primary/25"
         )}>
           <item.icon className={cn(
             "w-4 h-4 sm:w-5 sm:h-5",
             isLocked && "text-muted-foreground",
             !isLocked && isDesafio && "text-[#d4a853]",
-            !isLocked && !isDesafio && "text-primary"
+            !isLocked && isJornada && "text-emerald-500",
+            !isLocked && !isDesafio && !isJornada && "text-primary"
           )} />
         </div>
         <span className={cn(
           "text-[10px] sm:text-xs font-medium text-center leading-tight line-clamp-2",
           isLocked && "text-muted-foreground",
           !isLocked && isDesafio && "text-[#d4a853]",
-          !isLocked && !isDesafio && "text-foreground"
+          !isLocked && isJornada && "text-emerald-500",
+          !isLocked && !isDesafio && !isJornada && "text-foreground"
         )}>
           {item.label}
         </span>
@@ -167,7 +201,9 @@ export const QuickAccessNav = ({ isGestor = false }: QuickAccessNavProps) => {
             </TooltipTrigger>
             <TooltipContent side="bottom" className="max-w-[200px] text-center">
               <p className="text-sm">
-                🔒 Conteúdo exclusivo do Plano Black. Assine o Plano Black para desbloquear o Desafio 30 Dias.
+                {isLockedJornada 
+                  ? '🔒 Método simplificado para quem tem urgência na construção de uma meta. Disponível para Plano Completo, Black ou PDI Smart.'
+                  : '🔒 Conteúdo exclusivo do Plano Black. Assine o Plano Black para desbloquear o Desafio 30 Dias.'}
               </p>
             </TooltipContent>
           </Tooltip>
