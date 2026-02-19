@@ -275,11 +275,14 @@ export default function Jornada() {
           </p>
 
           {/* Video */}
-          <div className="rounded-xl overflow-hidden border border-slate-200 bg-slate-900 aspect-video flex items-center justify-center shadow-lg">
-            <div className="text-center text-slate-400 space-y-2">
-              <Play className="w-10 h-10 mx-auto opacity-50" />
-              <p className="text-sm font-medium">Vídeo explicativo</p>
-            </div>
+          <div className="rounded-xl overflow-hidden border border-slate-200 bg-slate-900 aspect-video shadow-lg">
+            <iframe
+              className="w-full h-full"
+              src="https://www.youtube.com/embed/b6KRYzno0Q4?rel=0"
+              title="Vídeo explicativo"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+            />
           </div>
         </motion.div>
 
