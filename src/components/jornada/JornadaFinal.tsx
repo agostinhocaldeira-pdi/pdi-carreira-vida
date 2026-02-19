@@ -515,9 +515,16 @@ export default function JornadaFinal({ onBack, smartActionData, vvdAnswers = [],
                   <p className="text-emerald-400 text-xs">ou em até 12x no cartão</p>
                 </div>
 
-                <Button className="w-full h-12 text-base bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 shadow-lg shadow-emerald-200">
-                  Quero a Mentoria 1:1
-                </Button>
+                <a
+                  href={`https://wa.me/5511995677999?text=${encodeURIComponent("gostaria de contratar a mentoria 1:1")}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full"
+                >
+                  <Button className="w-full h-12 text-base bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 shadow-lg shadow-emerald-200">
+                    Consultar Disponibilidade
+                  </Button>
+                </a>
 
                 <div className="flex items-center justify-center gap-2 bg-red-50 border border-red-200 rounded-lg p-2">
                   <span className="relative flex h-2.5 w-2.5">
