@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowLeft, Check, ChevronRight, Play, Target, CalendarIcon, Clock } from "lucide-react";
+import smartVideo from "@/assets/jornada-smart-video.mp4";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
@@ -162,15 +163,14 @@ export default function JornadaSmart({ onComplete, onBack, hasEvaluated }: Props
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
-          className="aspect-video bg-gradient-to-br from-orange-200 to-amber-300 rounded-2xl flex items-center justify-center cursor-pointer group relative overflow-hidden"
+          className="aspect-video rounded-2xl overflow-hidden shadow-lg"
         >
-          <div className="absolute inset-0 bg-black/20 group-hover:bg-black/30 transition-colors" />
-          <div className="relative w-16 h-16 bg-white/90 rounded-full flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
-            <Play className="w-7 h-7 text-orange-600 ml-1" />
-          </div>
-          <span className="absolute bottom-3 left-3 text-white/80 text-xs font-medium">
-            1 min • Como criar metas que funcionam
-          </span>
+          <video
+            src={smartVideo}
+            controls
+            playsInline
+            className="w-full h-full object-cover"
+          />
         </motion.div>
 
         <motion.div
