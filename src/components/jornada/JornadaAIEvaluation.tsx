@@ -99,7 +99,7 @@ export default function JornadaAIEvaluation({ stepId, onContinue }: Props) {
           className="w-full h-12 text-base bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-600 hover:to-purple-600 shadow-lg shadow-indigo-200 gap-2"
         >
           <Brain className="w-5 h-5" />
-          Ver Avaliação da IA
+          Ver avaliação
         </Button>
       </motion.div>
     );
