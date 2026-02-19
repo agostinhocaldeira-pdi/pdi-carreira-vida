@@ -8,6 +8,7 @@ import alcancavelVideo from "@/assets/jornada-smart-alcancavel-video.mp4";
 import relevanteVideo from "@/assets/jornada-smart-relevante-video.mp4";
 import temporalVideo from "@/assets/jornada-smart-temporal-video.mp4";
 import aprendizadoVideo from "@/assets/jornada-smart-aprendizado-video.mp4";
+import sabotadoresVideo from "@/assets/jornada-smart-sabotadores-video.mp4";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
@@ -245,10 +246,10 @@ export default function JornadaSmart({ onComplete, onBack, hasEvaluated }: Props
             className="space-y-4"
           >
             {/* Video for this letter */}
-            {currentIdx <= 5 ? (
+            {currentIdx <= 6 ? (
               <div
                 onClick={() => {
-                  const videos = [especificaVideo, mensuravelVideo, alcancavelVideo, relevanteVideo, temporalVideo, aprendizadoVideo];
+                  const videos = [especificaVideo, mensuravelVideo, alcancavelVideo, relevanteVideo, temporalVideo, aprendizadoVideo, sabotadoresVideo];
                   setVideoModalSrc(videos[currentIdx]);
                   setVideoModalOpen(true);
                 }}
