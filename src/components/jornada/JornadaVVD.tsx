@@ -12,8 +12,8 @@ interface Props {
 
 const prompts = [
   { question: "Se você pudesse mudar 3 coisas na sua vida hoje (trabalho, saúde, dinheiro, relacionamentos...), o que mudaria?", emoji: "🔄" },
-  { question: "Como seria o seu dia a dia se essas mudanças já tivessem acontecido?", emoji: "🌅" },
   { question: "O que te impede hoje de viver essa vida? O que falta?", emoji: "🧩" },
+  { question: "Como seria o seu dia a dia se essas mudanças já tivessem acontecido?", emoji: "🌅" },
 ];
 
 export default function JornadaVVD({ onComplete, onBack }: Props) {
