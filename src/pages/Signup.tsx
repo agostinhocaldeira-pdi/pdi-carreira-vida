@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link, useSearchParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -13,6 +13,8 @@ import Logo from "@/components/Logo";
 
 const Signup = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const isPdiSmart = searchParams.get("source") === "pdismart";
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -89,6 +91,38 @@ const Signup = () => {
           .from('user_consents')
           .upsert(consents, { onConflict: 'user_id,consent_type' });
 
+        // If pdismart source, verify payment and assign role
+        if (isPdiSmart) {
+          try {
+            const { data: session } = await supabase.auth.getSession();
+            if (session?.session?.access_token) {
+              await supabase.functions.invoke('verify-pdismart-payment', {
+                headers: {
+                  Authorization: `Bearer ${session.session.access_token}`,
+                },
+              });
+            }
+          } catch (err) {
+            console.error('Error verifying pdismart payment:', err);
+          }
+
+          localStorage.setItem("user", JSON.stringify({
+            id: data.user.id,
+            name: formData.name,
+            email: formData.email,
+            phone: formData.phone,
+            role: "pdismart",
+            createdAt: new Date().toISOString()
+          }));
+
+          localStorage.setItem('lgpd_consent_accepted', 'true');
+          localStorage.setItem('lgpd_consent_date', new Date().toISOString());
+
+          toast.success("Conta criada! Bem-vindo ao PDI Smart.");
+          navigate("/jornada");
+          return;
+        }
+
         // Manter localStorage para compatibilidade com código existente
         localStorage.setItem("user", JSON.stringify({
           id: data.user.id,
@@ -130,20 +164,26 @@ const Signup = () => {
           <div className="flex justify-center mb-2">
             <Logo size="lg" showText={false} />
           </div>
-          <CardTitle className="text-2xl sm:text-3xl font-bold text-white">PDI - Carreira & Vida</CardTitle>
+          <CardTitle className="text-2xl sm:text-3xl font-bold text-white">
+            {isPdiSmart ? "PDI Smart – Crie sua conta" : "PDI - Carreira & Vida"}
+          </CardTitle>
           <CardDescription className="text-gray-400">
-            Um sistema para organizar seus objetivos com clareza.
+            {isPdiSmart 
+              ? "Pagamento confirmado! Crie sua conta para acessar a ferramenta."
+              : "Um sistema para organizar seus objetivos com clareza."}
           </CardDescription>
-          <div className="pt-4">
-            <p className="text-lg font-bold text-[#d4a853] mb-2">
-              Acesso Grátis por 30 dias
-            </p>
-            <p className="text-sm text-gray-400">
-              Use o sistema completo por 30 dias para estruturar seus objetivos, metas e próximos passos com mais clareza.
-              <br />
-              Sem compromisso. Cancele quando quiser.
-            </p>
-          </div>
+          {!isPdiSmart && (
+            <div className="pt-4">
+              <p className="text-lg font-bold text-[#d4a853] mb-2">
+                Acesso Grátis por 30 dias
+              </p>
+              <p className="text-sm text-gray-400">
+                Use o sistema completo por 30 dias para estruturar seus objetivos, metas e próximos passos com mais clareza.
+                <br />
+                Sem compromisso. Cancele quando quiser.
+              </p>
+            </div>
+          )}
         </CardHeader>
         <CardContent className="px-4 sm:px-6">
           <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
@@ -246,7 +286,7 @@ const Signup = () => {
           <div className="mt-6 text-center">
             <p className="text-sm text-gray-400">
               Já tem conta?{" "}
-              <Link to="/login" className="text-[#d4a853] hover:underline font-medium">
+              <Link to={isPdiSmart ? "/login?source=pdismart" : "/login"} className="text-[#d4a853] hover:underline font-medium">
                 Entrar
               </Link>
             </p>

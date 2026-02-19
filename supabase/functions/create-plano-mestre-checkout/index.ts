@@ -41,7 +41,7 @@ serve(async (req) => {
         },
       ],
       mode: "payment",
-      success_url: `${origin}/payment-success?source=plano-mestre`,
+      success_url: `${origin}/login?source=pdismart`,
       cancel_url: `${origin}/news`,
     });
 

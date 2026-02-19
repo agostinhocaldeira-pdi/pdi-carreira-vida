@@ -122,3 +122,6 @@ verify_jwt = false
 
 [functions.create-plano-mestre-checkout]
 verify_jwt = false
+
+[functions.verify-pdismart-payment]
+verify_jwt = false
