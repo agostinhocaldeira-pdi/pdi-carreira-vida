@@ -40,63 +40,155 @@ export default function JornadaFinal({ onBack, smartActionData, vvdAnswers = [],
 
   const generatePDF = () => {
     const doc = new jsPDF();
-    const mg = 15;
+    const mg = 20;
     const pw = doc.internal.pageSize.getWidth();
+    const ph = doc.internal.pageSize.getHeight();
     const mw = pw - 2 * mg;
-    let y = 20;
+    let y = 0;
 
-    const ck = (n = 12) => { if (y + n > 275) { doc.addPage(); y = 20; } };
-    const h1 = (t: string) => { ck(18); doc.setFontSize(14); doc.setFont("helvetica", "bold"); doc.text(t, mg, y); y += 9; };
-    const bl = (t: string) => { ck(); doc.setFontSize(10); doc.setFont("helvetica", "bold"); const l = doc.splitTextToSize(t, mw); doc.text(l, mg, y); y += l.length * 5 + 2; };
-    const tx = (t?: string) => { ck(); doc.setFontSize(10); doc.setFont("helvetica", "normal"); const l = doc.splitTextToSize(t || "-", mw); l.forEach((ln: string) => { ck(5); doc.text(ln, mg, y); y += 5; }); y += 3; };
-    const sp = () => { y += 3; ck(); doc.setDrawColor(200); doc.line(mg, y, pw - mg, y); y += 6; };
+    const accent: [number, number, number] = [59, 130, 246];
+    const dark: [number, number, number] = [30, 41, 59];
+    const muted: [number, number, number] = [100, 116, 139];
+    const divider: [number, number, number] = [226, 232, 240];
 
-    doc.setFontSize(18); doc.setFont("helvetica", "bold");
-    doc.text("Minha Jornada PDI", mg, y); y += 14;
+    const ck = (n = 12) => { if (y + n > ph - 25) { doc.addPage(); y = 25; } };
 
-    h1("Quadro 1 - Minha vida dos sonhos");
-    bl("Para atingir minha vida dos sonhos, preciso mudar:"); tx(vvdAnswers[0]);
-    bl("Para conquistar, preciso superar esses desafios:"); tx(vvdAnswers[1]);
-    bl("Com essas mudancas, minha vida ficaria assim:"); tx(vvdAnswers[2]);
+    const label = (t: string) => {
+      ck(8);
+      doc.setFontSize(10); doc.setFont("helvetica", "normal"); doc.setTextColor(...muted);
+      const l = doc.splitTextToSize(t, mw);
+      doc.text(l, mg, y); y += l.length * 5;
+    };
+
+    const answer = (t?: string) => {
+      ck(8);
+      doc.setFontSize(10); doc.setFont("helvetica", "bold"); doc.setTextColor(...dark);
+      const l = doc.splitTextToSize(t || "—", mw);
+      l.forEach((ln: string) => { ck(5); doc.text(ln, mg, y); y += 5; });
+      y += 4;
+    };
+
+    const sectionTitle = (emoji: string, title: string, color: [number, number, number]) => {
+      ck(20);
+      y += 4;
+      doc.setFillColor(color[0], color[1], color[2]);
+      doc.roundedRect(mg, y - 5, mw, 12, 2, 2, "F");
+      doc.setFontSize(11); doc.setFont("helvetica", "bold"); doc.setTextColor(255, 255, 255);
+      doc.text(`${emoji}  ${title}`, mg + 5, y + 3);
+      y += 14;
+    };
+
+    const sp = () => { y += 2; ck(); doc.setDrawColor(...divider); doc.line(mg, y, pw - mg, y); y += 6; };
+
+    // Cover / Header
+    doc.setFillColor(30, 41, 59);
+    doc.rect(0, 0, pw, 55, "F");
+    doc.setFontSize(22); doc.setFont("helvetica", "bold"); doc.setTextColor(255, 255, 255);
+    doc.text("Minha Jornada PDI", mg, 30);
+    doc.setFontSize(10); doc.setFont("helvetica", "normal"); doc.setTextColor(148, 163, 184);
+    doc.text("Plano de Desenvolvimento Individual", mg, 40);
+    const today = new Date().toLocaleDateString("pt-BR", { day: "2-digit", month: "long", year: "numeric" });
+    doc.text(today, pw - mg - doc.getTextWidth(today), 40);
+    y = 70;
+
+    // Section 1
+    sectionTitle("✨", "Minha vida dos sonhos", [139, 92, 246]);
+    label("Para atingir minha vida dos sonhos, preciso mudar:"); answer(vvdAnswers[0]);
+    label("Para conquistar, preciso superar esses desafios:"); answer(vvdAnswers[1]);
+    label("Com essas mudanças, minha vida ficaria assim:"); answer(vvdAnswers[2]);
     sp();
 
-    h1("Quadro 2 - Nao quero para minha vida");
-    bl("Hoje tenho certeza que NAO quero para minha vida:"); tx("Continuar fazendo " + (vidaNaoQueroAnswers[0] || ""));
-    bl("Para nao acontecer isso, preciso mudar os habitos de:"); tx(vidaNaoQueroAnswers[1]);
-    bl("Pois me assusta pensar que:"); tx(vidaNaoQueroAnswers[2]);
+    // Section 2
+    sectionTitle("🚫", "Não quero para minha vida", [239, 68, 68]);
+    label("Hoje tenho certeza que NÃO quero para minha vida:"); answer("Continuar fazendo " + (vidaNaoQueroAnswers[0] || ""));
+    label("Para não acontecer isso, preciso mudar os hábitos de:"); answer(vidaNaoQueroAnswers[1]);
+    label("Pois me assusta pensar que:"); answer(vidaNaoQueroAnswers[2]);
     sp();
 
-    h1("Quadro 3 - Meu Objetivo");
-    tx("Minha meta tem o objetivo de me aproximar da vida dos sonhos, e me afastar da vida que nao quero viver.");
-    bl("Minha meta precisa estar alinhada com meus valores:"); tx(valores.join(", ") || "-");
-    bl("Para atingir minha meta, preciso mudar minha crenca sobre:"); tx(crenca1);
+    // Section 3
+    sectionTitle("🎯", "Meu Objetivo", [59, 130, 246]);
+    label("Minha meta tem o objetivo de me aproximar da vida dos sonhos, e me afastar da vida que não quero viver.");
+    y += 2;
+    label("Minha meta precisa estar alinhada com meus valores:"); answer(valores.join(", ") || "—");
+    label("Para atingir minha meta, preciso mudar minha crença sobre:"); answer(crenca1);
     sp();
 
-    h1("Quadro 4 - Minha Meta");
-    bl("Alinhado com meu objetivo, minha meta e:"); tx(s?.especifica);
-    bl("Essa meta e forte e vou conseguir realiza-la, porque:");
-    tx([s?.mensuravel, s?.alcancavel, s?.relevante, s?.temporal].filter(Boolean).join("; "));
-    bl("Para conquistar minha meta vou precisar aprender:"); tx(s?.aprender);
-    bl("Vou tomar cuidado com:"); tx(s?.sabotador);
-    bl("Para evitar os sabotadores, eu vou:"); tx(s?.antiSabotagem);
+    // Section 4
+    sectionTitle("🚀", "Minha Meta", [249, 115, 22]);
+    label("Alinhado com meu objetivo, minha meta é:"); answer(s?.especifica);
+    label("Essa meta é forte e vou conseguir realizá-la, porque:");
+    answer([s?.mensuravel, s?.alcancavel, s?.relevante, s?.temporal].filter(Boolean).join("; "));
+    label("Para conquistar minha meta vou precisar aprender:"); answer(s?.aprender);
+    label("Vou tomar cuidado com:"); answer(s?.sabotador);
+    label("Para evitar os sabotadores, eu vou:"); answer(s?.antiSabotagem);
     sp();
 
-    h1("Quadro 5 - Plano de Acao");
-    bl("META:"); tx(s?.especifica);
-    bl("Acao:"); tx(s?.primeiraAcao);
-    bl("Data e horario:"); tx(s?.diaHora);
+    // Section 5 - Table
+    sectionTitle("📋", "Plano de Ação", [20, 184, 166]);
+    ck(35);
+    // Table header
+    doc.setFillColor(240, 253, 250);
+    doc.roundedRect(mg, y - 3, mw, 30, 2, 2, "F");
+    doc.setDrawColor(153, 246, 228);
+    doc.roundedRect(mg, y - 3, mw, 30, 2, 2, "S");
+    doc.setFontSize(9); doc.setFont("helvetica", "bold"); doc.setTextColor(15, 118, 110);
+    doc.text("META", mg + 4, y + 3);
+    doc.setFont("helvetica", "normal"); doc.setTextColor(...dark);
+    const metaLines = doc.splitTextToSize(s?.especifica || "—", mw - 8);
+    doc.text(metaLines, mg + 4, y + 9);
+    y += 34;
+
+    ck(25);
+    const colW = mw / 2;
+    doc.setFillColor(240, 253, 250);
+    doc.roundedRect(mg, y - 3, mw, 22, 2, 2, "F");
+    doc.setDrawColor(153, 246, 228);
+    doc.roundedRect(mg, y - 3, colW, 22, 2, 2, "S");
+    doc.roundedRect(mg + colW, y - 3, colW, 22, 2, 2, "S");
+    doc.setFontSize(8); doc.setFont("helvetica", "bold"); doc.setTextColor(15, 118, 110);
+    doc.text("AÇÃO", mg + 4, y + 3);
+    doc.text("DATA E HORÁRIO", mg + colW + 4, y + 3);
+    doc.setFont("helvetica", "normal"); doc.setTextColor(...dark); doc.setFontSize(9);
+    const acaoLines = doc.splitTextToSize(s?.primeiraAcao || "—", colW - 8);
+    doc.text(acaoLines, mg + 4, y + 9);
+    doc.text(s?.diaHora || "—", mg + colW + 4, y + 9);
+    y += 28;
     sp();
 
+    // Section 6 - AI
     if (s?.smartEvaluation) {
-      h1("Quadro 6 - Avaliacao da IA");
-      tx(s.smartEvaluation);
+      sectionTitle("🤖", "Avaliação", [99, 102, 241]);
+      doc.setFontSize(10); doc.setFont("helvetica", "normal"); doc.setTextColor(...dark);
+      const evalLines = doc.splitTextToSize(s.smartEvaluation, mw);
+      evalLines.forEach((ln: string) => { ck(5); doc.text(ln, mg, y); y += 5; });
+      y += 4;
       sp();
     }
 
-    h1("Quadro 7 - Texto Final");
-    tx("A vida so premia o movimento.");
-    tx("Voce ja fez a parte teorica da coisa. Agora, a distancia entre a vida que voce tem e a vida que voce sonha chama-se atitude.");
-    tx("Nao espere pelas condicoes perfeitas; elas nao existem. O que existe e a sua decisao de nao aceitar mais o que te limita.");
+    // Section 7 - Final
+    sectionTitle("💫", "Mensagem Final", [245, 158, 11]);
+    doc.setFontSize(10); doc.setFont("helvetica", "italic"); doc.setTextColor(...dark);
+    const finalTexts = [
+      "A vida só premia o movimento.",
+      "",
+      "Você já fez a parte teórica da coisa. Agora, a distância entre a vida que você tem e a vida que você sonha chama-se atitude.",
+      "",
+      "Não espere pelas condições perfeitas; elas não existem. O que existe é a sua decisão de não aceitar mais o que te limita."
+    ];
+    finalTexts.forEach(t => {
+      if (t === "") { y += 3; return; }
+      const l = doc.splitTextToSize(t, mw);
+      l.forEach((ln: string) => { ck(5); doc.text(ln, mg, y); y += 5; });
+    });
+
+    // Footer on every page
+    const totalPages = doc.getNumberOfPages();
+    for (let i = 1; i <= totalPages; i++) {
+      doc.setPage(i);
+      doc.setFontSize(8); doc.setFont("helvetica", "normal"); doc.setTextColor(...muted);
+      doc.text("PDI Carreira e Vida — pdicarreiraevida.lovable.app", mg, ph - 10);
+      doc.text(`${i}/${totalPages}`, pw - mg - 10, ph - 10);
+    }
 
     doc.save("minha-jornada-pdi.pdf");
   };
@@ -115,11 +207,11 @@ export default function JornadaFinal({ onBack, smartActionData, vvdAnswers = [],
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
           <Card className="border-2 border-purple-200 bg-purple-50/50">
             <CardContent className="p-5 space-y-3">
-              <h3 className="font-semibold text-slate-800 text-base">✨ Quadro 1 – Minha vida dos sonhos</h3>
+              <h3 className="font-semibold text-slate-800 text-base">✨ Minha vida dos sonhos</h3>
               <div className="space-y-3 text-sm text-slate-700 leading-relaxed">
-                <p><strong>Para atingir minha vida dos sonhos, preciso mudar:</strong> {vvdAnswers[0] || "—"}</p>
-                <p><strong>Para conquistar minha vida dos sonhos, preciso superar esses desafios:</strong> {vvdAnswers[1] || "—"}</p>
-                <p><strong>Com essas mudanças, minha vida ficaria assim:</strong> {vvdAnswers[2] || "—"}</p>
+                <p>Para atingir minha vida dos sonhos, preciso mudar: <strong>{vvdAnswers[0] || "—"}</strong></p>
+                <p>Para conquistar minha vida dos sonhos, preciso superar esses desafios: <strong>{vvdAnswers[1] || "—"}</strong></p>
+                <p>Com essas mudanças, minha vida ficaria assim: <strong>{vvdAnswers[2] || "—"}</strong></p>
               </div>
             </CardContent>
           </Card>
@@ -129,11 +221,11 @@ export default function JornadaFinal({ onBack, smartActionData, vvdAnswers = [],
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }}>
           <Card className="border-2 border-red-200 bg-red-50/50">
             <CardContent className="p-5 space-y-3">
-              <h3 className="font-semibold text-slate-800 text-base">🚫 Quadro 2 – Não quero para minha vida</h3>
+              <h3 className="font-semibold text-slate-800 text-base">🚫 Não quero para minha vida</h3>
               <div className="space-y-3 text-sm text-slate-700 leading-relaxed">
-                <p><strong>Hoje tenho certeza que NÃO quero para minha vida:</strong> Continuar fazendo {vidaNaoQueroAnswers[0] || "—"}</p>
-                <p><strong>Para não acontecer isso, preciso mudar os hábitos de:</strong> {vidaNaoQueroAnswers[1] || "—"}</p>
-                <p><strong>Pois me assusta pensar que:</strong> {vidaNaoQueroAnswers[2] || "—"}</p>
+                <p>Hoje tenho certeza que NÃO quero para minha vida: <strong>Continuar fazendo {vidaNaoQueroAnswers[0] || "—"}</strong></p>
+                <p>Para não acontecer isso, preciso mudar os hábitos de: <strong>{vidaNaoQueroAnswers[1] || "—"}</strong></p>
+                <p>Pois me assusta pensar que: <strong>{vidaNaoQueroAnswers[2] || "—"}</strong></p>
               </div>
             </CardContent>
           </Card>
@@ -143,11 +235,11 @@ export default function JornadaFinal({ onBack, smartActionData, vvdAnswers = [],
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
           <Card className="border-2 border-blue-200 bg-blue-50/50">
             <CardContent className="p-5 space-y-3">
-              <h3 className="font-semibold text-slate-800 text-base">🎯 Quadro 3 – Meu Objetivo</h3>
+              <h3 className="font-semibold text-slate-800 text-base">🎯 Meu Objetivo</h3>
               <div className="space-y-3 text-sm text-slate-700 leading-relaxed">
                 <p>Minha meta tem o objetivo de <strong>me aproximar da vida dos sonhos</strong>, e me <strong>afastar da vida que não quero viver.</strong></p>
-                <p><strong>Minha meta precisa estar alinhada com meus valores:</strong> {valores.length > 0 ? valores.join(", ") : "—"}</p>
-                <p><strong>E para atingir minha meta, preciso mudar minha crença sobre:</strong> {crenca1 || "—"}</p>
+                <p>Minha meta precisa estar alinhada com meus valores: <strong>{valores.length > 0 ? valores.join(", ") : "—"}</strong></p>
+                <p>E para atingir minha meta, preciso mudar minha crença sobre: <strong>{crenca1 || "—"}</strong></p>
               </div>
             </CardContent>
           </Card>
@@ -157,13 +249,13 @@ export default function JornadaFinal({ onBack, smartActionData, vvdAnswers = [],
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }}>
           <Card className="border-2 border-orange-200 bg-orange-50/50">
             <CardContent className="p-5 space-y-3">
-              <h3 className="font-semibold text-slate-800 text-base">🚀 Quadro 4 – Minha Meta</h3>
+              <h3 className="font-semibold text-slate-800 text-base">🚀 Minha Meta</h3>
               <div className="space-y-3 text-sm text-slate-700 leading-relaxed">
-                <p><strong>Alinhado com meu objetivo, minha meta é:</strong> {s?.especifica || "—"}</p>
-                <p><strong>Essa meta é forte e vou conseguir realizá-la, porque:</strong> {[s?.mensuravel, s?.alcancavel, s?.relevante, s?.temporal].filter(Boolean).join("; ") || "—"}</p>
-                <p><strong>Eu sei que para conquistar minha meta eu vou precisar aprender:</strong> {s?.aprender || "—"}</p>
-                <p><strong>Eu sei que para conquistar minha meta eu vou tomar cuidado com:</strong> {s?.sabotador || "—"}</p>
-                <p><strong>E para evitar que os sabotadores impeçam que eu conquiste minha meta, eu vou:</strong> {s?.antiSabotagem || "—"}</p>
+                <p>Alinhado com meu objetivo, minha meta é: <strong>{s?.especifica || "—"}</strong></p>
+                <p>Essa meta é forte e vou conseguir realizá-la, porque: <strong>{[s?.mensuravel, s?.alcancavel, s?.relevante, s?.temporal].filter(Boolean).join("; ") || "—"}</strong></p>
+                <p>Eu sei que para conquistar minha meta eu vou precisar aprender: <strong>{s?.aprender || "—"}</strong></p>
+                <p>Eu sei que para conquistar minha meta eu vou tomar cuidado com: <strong>{s?.sabotador || "—"}</strong></p>
+                <p>E para evitar que os sabotadores impeçam que eu conquiste minha meta, eu vou: <strong>{s?.antiSabotagem || "—"}</strong></p>
               </div>
             </CardContent>
           </Card>
@@ -173,7 +265,7 @@ export default function JornadaFinal({ onBack, smartActionData, vvdAnswers = [],
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
           <Card className="border-2 border-teal-200 bg-teal-50/50">
             <CardContent className="p-5 space-y-3">
-              <h3 className="font-semibold text-slate-800 text-base">📋 Quadro 5 – Plano de Ação</h3>
+              <h3 className="font-semibold text-slate-800 text-base">📋 Plano de Ação</h3>
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
                   <tbody>
@@ -205,7 +297,7 @@ export default function JornadaFinal({ onBack, smartActionData, vvdAnswers = [],
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.35 }}>
             <Card className="border-2 border-indigo-200 bg-indigo-50/50">
               <CardContent className="p-5 space-y-3">
-                <h3 className="font-semibold text-slate-800 text-base">🤖 Quadro 6 – Avaliação</h3>
+                <h3 className="font-semibold text-slate-800 text-base">🤖 Avaliação</h3>
                 <p className="text-sm text-slate-700 leading-relaxed whitespace-pre-line">{s.smartEvaluation}</p>
               </CardContent>
             </Card>
@@ -216,7 +308,7 @@ export default function JornadaFinal({ onBack, smartActionData, vvdAnswers = [],
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}>
           <Card className="border-2 border-amber-200 bg-amber-50/50">
             <CardContent className="p-5 space-y-4">
-              <h3 className="font-semibold text-slate-800 text-base">💫 Quadro 7 – Texto Final</h3>
+              <h3 className="font-semibold text-slate-800 text-base">💫 Mensagem Final</h3>
               <div className="text-sm text-slate-700 leading-relaxed italic space-y-3">
                 <p>A vida só premia o movimento.</p>
                 <p>Você já fez a parte teórica da coisa. Agora, a distância entre a vida que você tem e a vida que você sonha chama-se atitude.</p>
@@ -260,8 +352,8 @@ export default function JornadaFinal({ onBack, smartActionData, vvdAnswers = [],
         {/* Quer ir além? */}
         <div className="space-y-6">
           <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.55 }}>
-            <h2 className="text-center text-3xl font-extrabold bg-gradient-to-r from-amber-600 via-orange-500 to-red-500 bg-clip-text text-transparent py-2">
-              Quer ir além? 🚀
+            <h2 className="text-center text-3xl font-extrabold text-slate-800 py-2">
+              Quer ir além? <span role="img" aria-label="foguete">🚀</span>
             </h2>
           </motion.div>
 
