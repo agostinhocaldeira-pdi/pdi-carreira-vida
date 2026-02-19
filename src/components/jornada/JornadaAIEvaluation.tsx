@@ -1,107 +1,105 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Brain, ChevronRight, Sparkles } from "lucide-react";
+import { Brain, ChevronRight, Sparkles, CreditCard, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 interface Props {
   stepId: string;
-  onContinue: () => void;
+  onContinue: (evaluationText?: string) => void;
+  hasEvaluated?: boolean;
 }
 
 /**
- * REGRA DE AVALIAÇÃO IA — Etapa 3 (Auto Reflexão)
+ * REGRAS DE AVALIAÇÃO IA
  * 
- * A IA deve cruzar TODAS as informações coletadas até aqui:
- * - Etapa 1: Vida dos Sonhos (VVD) — como o aluno imagina sua vida ideal
- * - Etapa 2: Vida que NÃO quero viver — o que acontece se nada mudar
- * - Valores pessoais — os 3-5 valores escolhidos pelo aluno
- * - Roda da Vida — notas de 0-10 em 8 áreas da vida
- * - Crenças Limitantes — crenças identificadas e suas origens
+ * Cada avaliação deve ser concisa, simples, como se explicasse para uma criança de 14 anos.
  * 
- * A avaliação deve buscar DUAS coisas:
+ * Etapa VVD: Avaliar clareza da visão e especificidade das mudanças desejadas.
+ * Etapa Vida Não Quero: Avaliar consciência dos padrões negativos e motivação para mudar.
+ * Etapa Auto Reflexão: Cruzar valores + roda da vida + crenças, identificar coerências e pontos cegos.
+ * Etapa SMART (última): Usar TODAS as respostas de TODAS as etapas anteriores + avaliações anteriores
+ *   para fazer uma análise robusta e profunda da meta SMART criada.
  * 
- * 1. COERÊNCIA: O que é consistente entre todas as etapas.
- *    Ex: Se o aluno valoriza "Família" e na Vida dos Sonhos descreve 
- *    momentos com a família, isso é coerente. Reconheça e valide.
- * 
- * 2. PONTOS CEGOS / INCOERÊNCIAS: O que não faz sentido quando cruzado.
- *    Ex: O aluno diz que "Família" é o valor mais importante, mas sua 
- *    Vida dos Sonhos foca em viajar sozinho pelo mundo — isso é incoerente.
- *    Ex: Aluno tem nota baixa em Saúde na Roda da Vida, mas não menciona 
- *    saúde na Vida que NÃO quer viver — ponto cego.
- *    Ex: Crença limitante contradiz diretamente um valor escolhido.
- *    Aponte com empatia, sem julgamento, mostrando a contradição.
- * 
- * Tom: direto, empático, linguagem simples (nível 14 anos).
- * Formato: primeiro as coerências (validação), depois os pontos cegos (provocação construtiva).
- */
-
-/**
- * REGRA DE AVALIAÇÃO IA — Etapa SMART (Avaliação Final)
- * 
- * Esta é a ÚLTIMA avaliação de IA da jornada. Ela aparece na tela final (JornadaFinal),
- * APÓS a seção "Sua Meta SMART + Primeira Ação".
- * 
- * A IA deve fazer DUAS coisas nesta avaliação:
- * 
- * PARTE 1 — AVALIAÇÃO DA META SMART:
- * Avaliar a construção da meta dentro da metodologia SMART:
- * - A meta é realmente Específica? Está clara e sem ambiguidade?
- * - A mensuração (M) é objetiva? Dá pra medir com números?
- * - É Alcançável dado o contexto atual do aluno?
- * - É Relevante para a vida que ele descreveu querer?
- * - O prazo Temporal é realista?
- * - A Primeira Ação está concreta o suficiente?
- * - O Dia/Hora agendado é realista?
- * Avaliar também as respostas extras da etapa SMART expandida:
- * - Aprendizado necessário, Sabotadores identificados, Estratégia anti-sabotagem
- * 
- * PARTE 2 — CRUZAMENTO COM TODAS AS AVALIAÇÕES ANTERIORES:
- * Consolidar e cruzar com TODAS as avaliações de IA feitas nas etapas anteriores:
- * - Etapa 1 (VVD): A meta SMART está conectada à Vida dos Sonhos?
- * - Etapa 2 (Vida que NÃO quero): A meta ajuda a evitar o cenário indesejado?
- * - Etapa 3 (Auto Reflexão — Valores, Roda da Vida, Crenças):
- *   - A meta respeita os valores do aluno?
- *   - A meta ataca áreas fracas da Roda da Vida ou fortalece as fortes?
- *   - Os sabotadores identificados na SMART batem com as crenças limitantes?
- * 
- * FORMATO DO FEEDBACK FINAL:
- * 1. ✅ O que foi BOM: reconhecer o esforço, validar coerências entre etapas
- * 2. 🎯 O que o aluno vai TIRAR DE PROVEITO: benefícios concretos dos exercícios feitos
- * 3. ⚠️ PONTOS DE ATENÇÃO: riscos, contradições, pontos cegos que merecem cuidado
- * 
- * Tom: direto, empático, linguagem simples (nível 14 anos).
- * Esta avaliação é o "fechamento" da jornada — deve ser inspiradora mas honesta.
+ * LIMITE: Cada botão permite UMA ÚNICA avaliação gratuita.
+ * Segunda tentativa → popup de compra avulsa R$ 10,00.
  */
 
 const mockEvaluations: Record<string, string> = {
-  "auto-reflexao":
-    "✅ Coerências: Seus valores de Família e Crescimento estão alinhados com sua Vida dos Sonhos — você quer evoluir sem abrir mão de quem ama. Sua nota alta em Carreira na Roda da Vida confirma que você já está investindo no seu desenvolvimento. A Vida que você NÃO quer viver reforça esse compromisso: você tem clareza do que quer evitar.\n\n⚠️ Pontos Cegos: Você escolheu 'Saúde' como valor, mas sua nota na Roda da Vida nessa área é 4 — existe uma distância entre o que você diz valorizar e como está vivendo. Além disso, sua crença limitante ('não sou bom o suficiente') pode estar sabotando justamente as áreas que você mais quer desenvolver. Perceber essa contradição já é o primeiro passo para mudar.",
-  vvd:
-    "Sua Vida dos Sonhos revela um desejo forte por autonomia e propósito — totalmente coerente com seus valores de Liberdade e Crescimento. Porém, note que suas respostas focam muito no 'ter' e pouco no 'ser': descrever quem você quer se tornar (não só o que quer conquistar) vai tornar sua visão mais poderosa e sustentável.",
-  smart:
-    "Sua meta SMART está bem estruturada e conectada com sua Vida dos Sonhos — parabéns pela coerência! O prazo é realista e a mensuração está clara. Um ponto cego: sua meta foca em uma área que já está forte na Roda da Vida. Considere se uma meta nas áreas mais fracas (Saúde ou Lazer) não traria um impacto maior na sua satisfação geral. Lembre-se: o PDI mais eficaz equilibra ambição profissional com bem-estar pessoal.",
+  vvd: "Você mostrou clareza ao descrever o que quer mudar — isso é ótimo! Suas respostas mostram que você sabe onde dói, e isso é o primeiro passo pra mudar de verdade. Tente ser ainda mais específico: ao invés de 'quero melhorar', pense 'quero fazer X até tal data'. Quanto mais detalhado, mais fácil fica transformar sonho em plano.",
+  "vida-nao-quero": "Parabéns por ter coragem de olhar pro futuro que você NÃO quer! A maioria das pessoas evita isso. Perceba: os hábitos que te levam pra essa vida ruim são os mesmos que você faz TODO DIA. A mudança começa quando você troca UM hábito pequeno por dia. Comece pelo mais fácil.",
+  "auto-reflexao": "Seus valores e sua Roda da Vida contam uma história. Perceba se suas notas baixas estão nas áreas que mais importam pra você — se sim, é ali que está o maior potencial de melhoria. Sua crença limitante pode estar te travando justamente nas áreas que você mais valoriza. Reconhecer isso já é metade do caminho.",
+  smart: "Sua meta está conectada com tudo que você descreveu nas etapas anteriores — isso mostra consistência. Você não criou uma meta solta, mas sim uma que nasce da sua reflexão profunda. Cuide para que seus sabotadores não virem desculpas. A estratégia anti-sabotagem que você criou é sua armadura — use todos os dias. A distância entre quem você é e quem quer ser se chama AÇÃO.",
 };
 
-export default function JornadaAIEvaluation({ stepId, onContinue }: Props) {
+export default function JornadaAIEvaluation({ stepId, onContinue, hasEvaluated }: Props) {
   const [revealed, setRevealed] = useState(false);
+  const [showPurchaseModal, setShowPurchaseModal] = useState(false);
   const evaluation = mockEvaluations[stepId] || "Avaliação não disponível.";
+
+  const handleReveal = () => {
+    if (hasEvaluated) {
+      setShowPurchaseModal(true);
+    } else {
+      setRevealed(true);
+    }
+  };
 
   if (!revealed) {
     return (
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="space-y-4"
-      >
-        <Button
-          onClick={() => setRevealed(true)}
-          className="w-full h-12 text-base bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-600 hover:to-purple-600 shadow-lg shadow-indigo-200 gap-2"
+      <>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="space-y-4"
         >
-          <Brain className="w-5 h-5" />
-          Ver avaliação
-        </Button>
-      </motion.div>
+          <Button
+            onClick={handleReveal}
+            className="w-full h-12 text-base bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-600 hover:to-purple-600 shadow-lg shadow-indigo-200 gap-2"
+          >
+            <Brain className="w-5 h-5" />
+            Ver avaliação
+          </Button>
+        </motion.div>
+
+        <Dialog open={showPurchaseModal} onOpenChange={setShowPurchaseModal}>
+          <DialogContent className="sm:max-w-md">
+            <DialogHeader>
+              <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-indigo-100 to-purple-100">
+                <Sparkles className="h-8 w-8 text-indigo-600" />
+              </div>
+              <DialogTitle className="text-center text-xl">
+                Avaliação já realizada
+              </DialogTitle>
+              <DialogDescription className="text-center space-y-3 pt-2">
+                <p>Você já utilizou sua avaliação gratuita nesta etapa.</p>
+                <p>Para gerar uma nova avaliação com a IA, adquira um uso adicional.</p>
+              </DialogDescription>
+            </DialogHeader>
+            <div className="my-4 rounded-lg bg-muted/50 p-4 text-center">
+              <div className="text-3xl font-bold text-indigo-600">R$ 10,00</div>
+              <div className="text-sm text-muted-foreground mt-1">Pagamento único • Uso imediato</div>
+            </div>
+            <DialogFooter className="flex-col gap-2 sm:flex-col">
+              <Button className="w-full gap-2 bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-600 hover:to-purple-600">
+                <CreditCard className="h-4 w-4" />
+                Comprar Avaliação Adicional
+              </Button>
+              <Button variant="outline" onClick={() => setShowPurchaseModal(false)} className="w-full gap-2">
+                <X className="h-4 w-4" />
+                Cancelar
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      </>
     );
   }
 
@@ -118,11 +116,11 @@ export default function JornadaAIEvaluation({ stepId, onContinue }: Props) {
           </div>
           <h3 className="font-bold text-slate-800 text-sm">Avaliação do Mentor IA</h3>
         </div>
-        <p className="text-sm text-slate-700 leading-relaxed">{evaluation}</p>
+        <p className="text-sm text-slate-700 leading-relaxed whitespace-pre-line">{evaluation}</p>
       </div>
 
       <Button
-        onClick={onContinue}
+        onClick={() => onContinue(evaluation)}
         className="w-full h-12 text-base bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 shadow-lg shadow-green-200 gap-2"
       >
         Continuar Jornada

@@ -9,8 +9,9 @@ import { Textarea } from "@/components/ui/textarea";
 import JornadaAIEvaluation from "./JornadaAIEvaluation";
 
 interface Props {
-  onComplete: () => void;
+  onComplete: (data?: any) => void;
   onBack: () => void;
+  hasEvaluated?: boolean;
 }
 
 const suggestedValues = [
@@ -33,7 +34,7 @@ const areas = [
 
 type Phase = "valores" | "roda" | "crencas" | "evaluation";
 
-export default function JornadaAutoReflexao({ onComplete, onBack }: Props) {
+export default function JornadaAutoReflexao({ onComplete, onBack, hasEvaluated }: Props) {
   const [phase, setPhase] = useState<Phase>("valores");
 
   useEffect(() => {
@@ -90,7 +91,7 @@ export default function JornadaAutoReflexao({ onComplete, onBack }: Props) {
           </div>
         </div>
         <div className="max-w-lg mx-auto px-4 py-6">
-          <JornadaAIEvaluation stepId="auto-reflexao" onContinue={onComplete} />
+          <JornadaAIEvaluation stepId="auto-reflexao" onContinue={() => onComplete({ valores: selectedValues, rodaScores: scores, crencas })} hasEvaluated={hasEvaluated} />
         </div>
       </div>
     );
