@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { ArrowLeft, Check, ChevronRight, Play, Target, CalendarIcon, Clock } from "lucide-react";
 import smartVideo from "@/assets/jornada-smart-video.mp4";
 import especificaVideo from "@/assets/jornada-smart-especifica-video.mp4";
+import mensuravelVideo from "@/assets/jornada-smart-mensuravel-video.mp4";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
@@ -120,6 +121,7 @@ export default function JornadaSmart({ onComplete, onBack, hasEvaluated }: Props
   const [selectedTime, setSelectedTime] = useState("");
   const [showEvaluation, setShowEvaluation] = useState(false);
   const [videoModalOpen, setVideoModalOpen] = useState(false);
+  const [videoModalSrc, setVideoModalSrc] = useState("");
 
   const diaHoraStepIdx = smartSteps.length - 1; // last step = "Dia e Hora"
 
@@ -239,9 +241,12 @@ export default function JornadaSmart({ onComplete, onBack, hasEvaluated }: Props
             className="space-y-4"
           >
             {/* Video for this letter */}
-            {currentIdx === 0 ? (
+            {currentIdx === 0 || currentIdx === 1 ? (
               <div
-                onClick={() => setVideoModalOpen(true)}
+                onClick={() => {
+                  setVideoModalSrc(currentIdx === 0 ? especificaVideo : mensuravelVideo);
+                  setVideoModalOpen(true);
+                }}
                 className="bg-white/60 rounded-xl p-3 flex items-center gap-3 border border-orange-100 cursor-pointer hover:bg-white/80 transition-colors"
               >
                 <div className={`w-10 h-10 rounded-lg bg-gradient-to-br ${step.color} flex items-center justify-center`}>
@@ -249,7 +254,7 @@ export default function JornadaSmart({ onComplete, onBack, hasEvaluated }: Props
                 </div>
                 <div>
                   <p className="text-xs font-medium text-slate-700">Vídeo: {step.letter} — {step.title}</p>
-                  <p className="text-[10px] text-slate-400">15 seg</p>
+                  <p className="text-[10px] text-slate-400">{currentIdx === 0 ? "15 seg" : "30 seg"}</p>
                 </div>
               </div>
             ) : (
@@ -363,7 +368,7 @@ export default function JornadaSmart({ onComplete, onBack, hasEvaluated }: Props
         <DialogContent className="max-w-lg p-0 overflow-hidden rounded-2xl">
           <div className="aspect-video">
             <video
-              src={especificaVideo}
+              src={videoModalSrc}
               controls
               autoPlay
               playsInline
