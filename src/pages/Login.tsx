@@ -291,7 +291,49 @@ const Login = () => {
       return;
     }
 
-    // 6. Usuário comum
+    // 5.5 Verificar se é pdismart (acesso apenas à jornada)
+    if (userRole === 'pdismart') {
+      localStorage.setItem("user", JSON.stringify({
+        id: userId,
+        name: userName,
+        email: userEmail,
+        phone: userPhone,
+        role: "pdismart",
+      }));
+
+      navigate("/jornada");
+      return;
+    }
+
+    // 6. Usuário comum - verificar se veio do pdismart
+    const searchParams = new URLSearchParams(location.search);
+    const source = searchParams.get('source');
+    
+    if (source === 'pdismart' && userRole === 'user') {
+      // Verify pdismart payment and update role
+      try {
+        const { data: session } = await supabase.auth.getSession();
+        if (session?.session?.access_token) {
+          const { data: verifyData } = await supabase.functions.invoke('verify-pdismart-payment', {
+            headers: { Authorization: `Bearer ${session.session.access_token}` },
+          });
+          if (verifyData?.verified) {
+            localStorage.setItem("user", JSON.stringify({
+              id: userId,
+              name: userName,
+              email: userEmail,
+              phone: userPhone,
+              role: "pdismart",
+            }));
+            navigate("/jornada");
+            return;
+          }
+        }
+      } catch (err) {
+        console.error('Error verifying pdismart:', err);
+      }
+    }
+
     localStorage.setItem("user", JSON.stringify({
       id: userId,
       name: userName,
@@ -301,7 +343,6 @@ const Login = () => {
     }));
 
     // Check for redirect parameter (e.g., redirect=checkout from 7-day email)
-    const searchParams = new URLSearchParams(location.search);
     const redirectTo = searchParams.get('redirect');
     
     if (redirectTo === 'checkout') {
@@ -671,7 +712,7 @@ const Login = () => {
             <div className="mt-6 text-center">
               <p className="text-sm text-muted-foreground">
                 Não tem uma conta?{" "}
-                <Link to="/signup" className="text-primary hover:underline font-medium">
+                <Link to={new URLSearchParams(location.search).get('source') === 'pdismart' ? "/signup?source=pdismart" : "/signup"} className="text-primary hover:underline font-medium">
                   Cadastre-se
                 </Link>
               </p>

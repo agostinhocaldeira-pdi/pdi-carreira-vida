@@ -1,10 +1,12 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Lock, Check, ChevronRight, Play, ArrowLeft, Trophy, Sparkles, AlertTriangle, Target, Bug, Search } from "lucide-react";
+import { Lock, Check, ChevronRight, Play, ArrowLeft, Trophy, Sparkles, AlertTriangle, Target, Bug, Search, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { useNavigate } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 import JornadaVVD from "@/components/jornada/JornadaVVD";
 import JornadaVidaNaoQuero from "@/components/jornada/JornadaVidaNaoQuero";
 import JornadaAutoReflexao from "@/components/jornada/JornadaAutoReflexao";
@@ -70,6 +72,73 @@ export default function Jornada() {
   const [autoReflexaoData, setAutoReflexaoData] = useState<{ valores: string[]; rodaScores: Record<string, number>; crencas: string[] } | null>(null);
   const [evaluatedSteps, setEvaluatedSteps] = useState<string[]>([]);
   const [devMode, setDevMode] = useState(false);
+  const [authChecked, setAuthChecked] = useState(false);
+  const [isAuthorized, setIsAuthorized] = useState(false);
+
+  // Auth & payment verification
+  useEffect(() => {
+    const checkAccess = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        toast.error("Faça login para acessar a Jornada");
+        navigate("/login?source=pdismart");
+        return;
+      }
+
+      // Check user role
+      const { data: roles } = await supabase
+        .from('user_roles')
+        .select('role')
+        .eq('user_id', user.id);
+
+      const userRoles = roles?.map(r => r.role) || [];
+      const hasPdismartAccess = userRoles.includes('pdismart');
+      const hasFullAccess = userRoles.some(r => ['admin', 'user', 'empresa', 'gestor'].includes(r));
+
+      // Check if has active subscription (for regular users)
+      let hasSubscription = false;
+      if (hasFullAccess) {
+        try {
+          const { data: session } = await supabase.auth.getSession();
+          if (session?.session?.access_token) {
+            const { data } = await supabase.functions.invoke('check-subscription', {
+              headers: { Authorization: `Bearer ${session.session.access_token}` },
+            });
+            hasSubscription = data?.subscribed === true;
+          }
+        } catch (err) {
+          console.error('Error checking subscription:', err);
+        }
+      }
+
+      if (hasPdismartAccess || hasFullAccess || hasSubscription) {
+        setIsAuthorized(true);
+      } else {
+        // Verify Stripe payment for pdismart
+        try {
+          const { data: session } = await supabase.auth.getSession();
+          if (session?.session?.access_token) {
+            const { data } = await supabase.functions.invoke('verify-pdismart-payment', {
+              headers: { Authorization: `Bearer ${session.session.access_token}` },
+            });
+            if (data?.verified) {
+              setIsAuthorized(true);
+            } else {
+              toast.error("Você precisa adquirir o PDI Smart para acessar esta página");
+              navigate("/news");
+              return;
+            }
+          }
+        } catch (err) {
+          toast.error("Erro ao verificar acesso");
+          navigate("/news");
+          return;
+        }
+      }
+      setAuthChecked(true);
+    };
+    checkAccess();
+  }, [navigate]);
 
   const progress = (completedSteps.length / steps.length) * 100;
   const allComplete = completedSteps.length === steps.length;
@@ -77,6 +146,19 @@ export default function Jornada() {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [currentStep, allComplete]);
+
+  // Show loading while checking auth
+  if (!authChecked) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-slate-50 to-blue-50">
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  if (!isAuthorized) {
+    return null;
+  }
 
   const isUnlocked = (stepId: string) => {
     if (devMode) return true;
