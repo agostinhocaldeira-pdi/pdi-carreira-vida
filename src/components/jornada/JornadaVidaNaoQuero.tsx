@@ -17,14 +17,14 @@ const prompts = [
     hint: "Pense em saúde, carreira, dinheiro, relacionamentos... Seja honesto.",
   },
   {
-    question: "O que mais te assusta nessa projeção? O que você não quer de jeito nenhum?",
-    emoji: "😰",
-    hint: "Identifique o que te causa desconforto ao imaginar esse futuro.",
-  },
-  {
     question: "Que hábitos ou comportamentos de hoje estão te levando para essa vida que você NÃO quer?",
     emoji: "🔗",
     hint: "Quais padrões você repete que te afastam da vida que deseja?",
+  },
+  {
+    question: "O que mais te assusta nessa projeção? O que você não quer de jeito nenhum?",
+    emoji: "😰",
+    hint: "Identifique o que te causa desconforto ao imaginar esse futuro.",
   },
 ];
 
