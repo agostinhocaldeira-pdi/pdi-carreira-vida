@@ -40,7 +40,7 @@ const SubscriberLanding = () => {
         {/* Video */}
         <div className="relative w-full aspect-video rounded-lg overflow-hidden shadow-lg mb-8 bg-black">
           <iframe
-            src="https://www.youtube-nocookie.com/embed/nmU11AHP70E?autoplay=0&mute=1&controls=1&modestbranding=1&rel=0"
+            src="https://www.youtube-nocookie.com/embed/NZR6TC17FNw?rel=0&modestbranding=1"
             title="Plano Mestre – PDI"
             className="absolute inset-0 w-full h-full"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
