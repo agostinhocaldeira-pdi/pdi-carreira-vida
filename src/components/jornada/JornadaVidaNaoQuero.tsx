@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { ArrowLeft, Play, AlertTriangle } from "lucide-react";
+import { ArrowLeft, AlertTriangle } from "lucide-react";
+import vidaNaoQueroVideo from "@/assets/jornada-vida-nao-quero-video.mp4";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import JornadaAIEvaluation from "./JornadaAIEvaluation";
@@ -59,15 +60,14 @@ export default function JornadaVidaNaoQuero({ onComplete, onBack, hasEvaluated }
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
-          className="aspect-video bg-gradient-to-br from-red-200 to-orange-300 rounded-2xl flex items-center justify-center cursor-pointer group relative overflow-hidden"
+          className="aspect-video rounded-2xl overflow-hidden shadow-lg"
         >
-          <div className="absolute inset-0 bg-black/20 group-hover:bg-black/30 transition-colors" />
-          <div className="relative w-16 h-16 bg-white/90 rounded-full flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
-            <Play className="w-7 h-7 text-red-600 ml-1" />
-          </div>
-          <span className="absolute bottom-3 left-3 text-white/80 text-xs font-medium">
-            1 min • A vida que você NÃO quer
-          </span>
+          <video
+            src={vidaNaoQueroVideo}
+            controls
+            playsInline
+            className="w-full h-full object-cover"
+          />
         </motion.div>
 
         <motion.div
