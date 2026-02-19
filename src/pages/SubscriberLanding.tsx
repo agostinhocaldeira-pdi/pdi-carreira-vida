@@ -1,555 +1,289 @@
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Checkbox } from "@/components/ui/checkbox";
-import { useNavigate, Link } from "react-router-dom";
-import { 
-  ArrowRight,
-  Eye,
-  EyeOff,
-  Loader2,
-  UserPlus,
-  Compass,
-  Target,
-  CheckCircle2,
-  Calendar,
-  Brain,
-  Shield
-} from "lucide-react";
-import { toast } from "sonner";
+import { Loader2, Check } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { LGPDConsentModal } from "@/components/lgpd/LGPDConsentModal";
-import Logo from "@/components/Logo";
+import { toast } from "sonner";
 
 const SubscriberLanding = () => {
-  const navigate = useNavigate();
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    password: "",
-  });
-  const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [showLGPDModal, setShowLGPDModal] = useState(false);
-  const [lgpdAccepted, setLgpdAccepted] = useState(false);
 
-  const validateForm = () => {
-    if (!formData.name || !formData.email || !formData.password) {
-      toast.error("Por favor, preencha todos os campos");
-      return false;
-    }
-
-    if (formData.password.length < 6) {
-      toast.error("A senha deve ter pelo menos 6 caracteres");
-      return false;
-    }
-
-    return true;
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    if (!validateForm()) return;
-
-    if (!lgpdAccepted) {
-      toast.error("Você precisa aceitar os Termos de Uso e Política de Privacidade");
-      return;
-    }
-
-    await performSignup();
-  };
-
-  const performSignup = async () => {
+  const handleCheckout = async () => {
     setIsLoading(true);
-
     try {
-      const { data, error } = await supabase.auth.signUp({
-        email: formData.email,
-        password: formData.password,
-        options: {
-          emailRedirectTo: `${window.location.origin}/`,
-          data: {
-            name: formData.name,
-          }
-        }
+      const { data, error } = await supabase.functions.invoke("create-plano-mestre-checkout", {
+        body: {},
       });
-
-      if (error) {
-        if (error.message.includes("already registered")) {
-          toast.error("Este e-mail já está cadastrado. Faça login.");
-        } else {
-          toast.error(error.message);
-        }
-        return;
+      if (error) throw error;
+      if (data?.url) {
+        window.location.href = data.url;
       }
-
-      if (data.user) {
-        const consents = [
-          { user_id: data.user.id, consent_type: 'terms_of_service' },
-          { user_id: data.user.id, consent_type: 'privacy_policy' },
-          { user_id: data.user.id, consent_type: 'data_processing' },
-        ];
-
-        await supabase
-          .from('user_consents')
-          .upsert(consents, { onConflict: 'user_id,consent_type' });
-
-        localStorage.setItem("user", JSON.stringify({
-          id: data.user.id,
-          name: formData.name,
-          email: formData.email,
-          role: "user",
-          createdAt: new Date().toISOString()
-        }));
-
-        localStorage.setItem('lgpd_consent_accepted', 'true');
-        localStorage.setItem('lgpd_consent_date', new Date().toISOString());
-
-        supabase.functions.invoke('send-welcome-email', {
-          body: {
-            name: formData.name,
-            email: formData.email,
-          },
-        }).catch((emailError) => {
-          console.error('Error sending welcome email:', emailError);
-        });
-        
-        navigate("/onboarding?signup=success");
-      }
-    } catch (error: any) {
-      console.error("Erro no cadastro:", error);
-      toast.error("Erro ao criar perfil. Tente novamente.");
+    } catch (err: any) {
+      console.error("Checkout error:", err);
+      toast.error("Erro ao iniciar checkout. Tente novamente.");
     } finally {
       setIsLoading(false);
     }
   };
 
-  const features = [
-    {
-      icon: Compass,
-      title: "Identidade",
-      description: "Defina como quer viver\nantes de decidir o que fazer."
-    },
-    {
-      icon: Target,
-      title: "Objetivos / Estratégia",
-      description: "Objetivos coerentes com a vida que você quer sustentar."
-    },
-    {
-      icon: CheckCircle2,
-      title: "Metas",
-      description: "Poucas, essenciais e conectadas ao que importa."
-    },
-    {
-      icon: Calendar,
-      title: "Agenda / Execução",
-      description: "O próximo passo aparece.\nO ruído some."
-    },
-    {
-      icon: Brain,
-      title: "Mentor IA",
-      description: "Apoio para pensar melhor\nquando a clareza falha."
-    }
-  ];
-
-  const clarityBenefits = [
-    "o cansaço diminui antes mesmo dos resultados aparecerem",
-    "decisões ficam menos dramáticas",
-    "dizer \"não\" gera menos culpa",
-    "a semana deixa de parecer uma reação em cadeia"
-  ];
-
   return (
-    <div className="min-h-screen bg-[#1A1A1A]">
-      {/* Header */}
-      <header className="fixed top-0 left-0 right-0 z-50 bg-[#1A1A1A]/95 backdrop-blur-sm border-b border-[#D4AF37]/20">
-        <div className="container mx-auto px-4 py-3 sm:py-4 flex items-center justify-between">
-          <Logo size="md" />
-          <Button 
-            onClick={() => navigate("/login")}
-            variant="ghost"
-            className="text-[#D4AF37] hover:bg-[#D4AF37]/10 text-sm sm:text-base"
-          >
-            Entrar
-          </Button>
+    <div className="min-h-screen bg-white text-black">
+      {/* Hero */}
+      <section className="px-5 pt-16 pb-12 max-w-2xl mx-auto">
+        <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold leading-tight mb-6">
+          Você não tem dificuldade em cumprir metas.
+          <br />
+          <span className="mt-2 block">
+            Você tem dificuldade em construir metas que realmente funcionam.
+          </span>
+        </h1>
+        <p className="text-base sm:text-lg text-gray-600 leading-relaxed mb-8">
+          Se a meta nasce errada, o abandono é inevitável.
+          <br />
+          O <strong>Plano Mestre – PDI</strong> corrige a estrutura antes da execução.
+        </p>
+
+        {/* Video */}
+        <div className="relative w-full aspect-video rounded-lg overflow-hidden shadow-lg mb-8 bg-black">
+          <iframe
+            src="https://www.youtube-nocookie.com/embed/nmU11AHP70E?autoplay=0&mute=1&controls=1&modestbranding=1&rel=0"
+            title="Plano Mestre – PDI"
+            className="absolute inset-0 w-full h-full"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+            loading="lazy"
+          />
         </div>
-      </header>
 
-      {/* Hero Section */}
-      <section className="pt-20 sm:pt-28 pb-6 sm:pb-16 px-4 relative overflow-hidden min-h-[100dvh] sm:min-h-0 flex flex-col justify-center">
-        <div className="absolute inset-0 bg-gradient-to-br from-[#D4AF37]/5 via-transparent to-[#D4AF37]/3" />
-        <div className="absolute top-20 right-0 w-96 h-96 bg-[#D4AF37]/10 rounded-full blur-3xl animate-pulse" />
-        <div className="absolute bottom-0 left-0 w-80 h-80 bg-[#D4AF37]/5 rounded-full blur-3xl" />
-        
-        <div className="container relative mx-auto max-w-6xl">
-          {/* Headlines - centered on all screens */}
-          <div className="text-center mb-6 sm:mb-10">
-            <div className="flex justify-center mb-4">
-              <span className="inline-block bg-[#D4AF37]/15 border border-[#D4AF37]/40 text-[#D4AF37] text-xs sm:text-sm font-semibold px-4 py-1.5 rounded-full">
-                30 dias Grátis
-              </span>
-            </div>
-            <h1 className="text-xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-3 sm:mb-6 text-white leading-tight">
-              Você já percebeu onde sua vida está{" "}
-              <span className="text-[#D4AF37]">desalinhada</span>.
-            </h1>
-            
-            <h2 className="text-base sm:text-xl md:text-2xl text-white/80 font-light leading-relaxed">
-              Agora é hora de viver com mais clareza, intenção e direção.
-            </h2>
-          </div>
-
-          {/* Layout responsivo: Mobile = vídeo centralizado, Desktop = duas colunas */}
-          <div className="grid lg:grid-cols-2 gap-6 lg:gap-10 items-center">
-            {/* Video 9:16 - Único iframe compartilhado */}
-            <div className="flex justify-center">
-              <div className="relative w-full max-w-[280px] lg:max-w-[320px] aspect-[9/16] rounded-xl overflow-hidden shadow-2xl">
-                <iframe
-                  src="https://www.youtube-nocookie.com/embed/nmU11AHP70E?autoplay=1&mute=0&loop=1&playlist=nmU11AHP70E&controls=1&modestbranding=1&rel=0&showinfo=0"
-                  title="PDI - Sistema de Clareza"
-                  className="absolute inset-0 w-full h-full"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                />
-              </div>
-            </div>
-
-            {/* O que acontece agora - Visível apenas no desktop */}
-            <div className="hidden lg:block text-left">
-              <h2 className="text-2xl md:text-3xl font-bold text-white mb-6">
-                O que acontece agora
-              </h2>
-              
-              <div className="text-white/70 text-base md:text-lg leading-relaxed space-y-5">
-                <p>
-                  A partir daqui, você não vai aprender a fazer mais.<br />
-                  Vai aprender a <span className="text-[#D4AF37] font-medium">decidir melhor</span>.
-                </p>
-                
-                <p>
-                  O sistema que você está prestes a acessar<br />
-                  organiza a vida na única ordem que realmente sustenta:
-                </p>
-                
-                <p className="text-[#D4AF37] font-medium text-lg md:text-xl">
-                  vida → objetivo → metas → ações → passos → presença
-                </p>
-                
-                <p>
-                  Não para acelerar você.<br />
-                  <span className="text-white font-medium">Para tirar peso.</span>
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
+        <button
+          onClick={handleCheckout}
+          disabled={isLoading}
+          className="w-full py-4 bg-black text-white font-bold text-lg rounded-lg hover:bg-gray-900 transition-colors disabled:opacity-60 flex items-center justify-center gap-2"
+        >
+          {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : null}
+          Criar minha meta
+        </button>
       </section>
 
-      {/* O que acontece agora - Mobile only */}
-      <section className="lg:hidden py-12 px-4">
-        <div className="container mx-auto max-w-3xl">
-          <h2 className="text-xl sm:text-2xl font-bold text-white mb-6 text-center">
-            O que acontece agora
-          </h2>
-          
-          <div className="text-white/70 text-base sm:text-lg leading-relaxed text-center space-y-6">
-            <p>
-              A partir daqui, você não vai aprender a fazer mais.<br />
-              Vai aprender a <span className="text-[#D4AF37] font-medium">decidir melhor</span>.
-            </p>
-            
-            <p>
-              O sistema que você está prestes a acessar<br />
-              organiza a vida na única ordem que realmente sustenta:
-            </p>
-            
-            <p className="text-[#D4AF37] font-medium text-lg sm:text-xl">
-              vida → objetivo → metas → ações → passos → presença
-            </p>
-            
-            <p>
-              Não para acelerar você.<br />
-              <span className="text-white font-medium">Para tirar peso.</span>
-            </p>
-          </div>
-        </div>
-      </section>
+      {/* Separador */}
+      <div className="w-16 h-px bg-gray-300 mx-auto" />
 
-      {/* Nome do sistema */}
-      <section className="py-8 sm:py-12 px-4">
-        <div className="container mx-auto max-w-3xl text-center">
-          <p className="text-3xl sm:text-4xl md:text-5xl font-bold text-[#D4AF37] mb-4">
-            PDI
+      {/* Identificação (Dor) */}
+      <section className="px-5 py-12 max-w-2xl mx-auto">
+        <div className="text-base sm:text-lg text-gray-700 leading-relaxed space-y-6">
+          <p>
+            Você começa motivado.
+            <br />
+            Organiza ideias.
+            <br />
+            Promete que agora será diferente.
           </p>
-          <p className="text-white/70 text-lg sm:text-xl">
-            Um sistema para voltar a confiar<br />
-            nas próprias decisões.
+          <p>
+            Algumas semanas depois:
+          </p>
+          <p>
+            A rotina aperta.
+            <br />
+            As prioridades se misturam.
+            <br />
+            A meta perde força.
+          </p>
+          <p>
+            E mais um plano fica pelo caminho.
+          </p>
+          <p>
+            Até que um dia, você desiste de criar metas.
+          </p>
+          <p>
+            Não por falta de capacidade.
+            <br />
+            Mas por falta de <strong>método</strong>.
+          </p>
+        </div>
+        <p className="mt-10 text-xl sm:text-2xl font-bold text-center">
+          Quão comprometido você está com sua vida?
+        </p>
+      </section>
+
+      <div className="w-16 h-px bg-gray-300 mx-auto" />
+
+      {/* Quebra de Crença */}
+      <section className="px-5 py-12 max-w-2xl mx-auto">
+        <h2 className="text-2xl sm:text-3xl font-bold mb-6">
+          O problema nunca foi você.
+        </h2>
+        <div className="text-base sm:text-lg text-gray-700 leading-relaxed space-y-4">
+          <p>Mas a forma como você cria metas.</p>
+          <p>
+            Metas vagas não geram ação.
+            <br />
+            Metas exageradas geram frustração.
+            <br />
+            Metas desconectadas da sua rotina geram abandono.
           </p>
         </div>
       </section>
 
-      {/* Formulário de Cadastro */}
-      <section id="criar-acesso" className="py-12 sm:py-16 px-0 sm:px-4">
-        <div className="container mx-auto max-w-none sm:max-w-md">
-          <Card className="bg-[#222222] border-0 sm:border sm:border-[#D4AF37]/30 rounded-none sm:rounded-xl">
-            <CardContent className="p-4 sm:p-8">
-              <h3 className="text-xl sm:text-2xl font-bold text-white text-center mb-2">
-                Criar acesso ao seu sistema de clareza
-              </h3>
-              <p className="text-white/60 text-center text-sm mb-6">
-                Leva menos de 1 minuto.<br />
-                Nada aqui é definitivo.<br />
-                Você pode sair quando quiser.
-              </p>
+      <div className="w-16 h-px bg-gray-300 mx-auto" />
 
-              <form onSubmit={handleSubmit} className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="name" className="text-white/80">Como podemos te chamar?</Label>
-                  <Input
-                    id="name"
-                    type="text"
-                    placeholder="Seu nome"
-                    value={formData.name}
-                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    required
-                    disabled={isLoading}
-                    className="bg-[#1a1a1a] border-white/20 text-white placeholder:text-white/40 focus:border-[#D4AF37]"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="email" className="text-white/80">E-mail</Label>
-                  <Input
-                    id="email"
-                    type="email"
-                    placeholder="seu@email.com"
-                    value={formData.email}
-                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    required
-                    disabled={isLoading}
-                    className="bg-[#1a1a1a] border-white/20 text-white placeholder:text-white/40 focus:border-[#D4AF37]"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="password" className="text-white/80">Crie uma senha</Label>
-                  <div className="relative">
-                    <Input
-                      id="password"
-                      type={showPassword ? "text" : "password"}
-                      placeholder="Mínimo 6 caracteres"
-                      value={formData.password}
-                      onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                      required
-                      className="pr-10 bg-[#1a1a1a] border-white/20 text-white placeholder:text-white/40 focus:border-[#D4AF37]"
-                      disabled={isLoading}
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-white/40 hover:text-white transition-colors"
-                      disabled={isLoading}
-                    >
-                      {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                    </button>
-                  </div>
-                </div>
-
-                <div className="flex items-start space-x-2 pt-2">
-                  <Checkbox 
-                    id="lgpd-preview" 
-                    checked={lgpdAccepted}
-                    onCheckedChange={(checked) => setLgpdAccepted(checked === true)}
-                    disabled={isLoading}
-                    className="border-white/30 data-[state=checked]:bg-[#D4AF37] data-[state=checked]:border-[#D4AF37]"
-                  />
-                  <label htmlFor="lgpd-preview" className="text-xs text-white/50 cursor-pointer leading-relaxed">
-                    Ao criar sua conta, você concorda com os{" "}
-                    <button 
-                      type="button" 
-                      onClick={(e) => {
-                        e.preventDefault();
-                        setShowLGPDModal(true);
-                      }}
-                      className="text-[#D4AF37] hover:underline"
-                    >
-                      Termos de Uso e Política de Privacidade
-                    </button>
-                    .
-                  </label>
-                </div>
-
-                <Button 
-                  type="submit" 
-                  className="w-full mt-4 bg-[#D4AF37] hover:bg-[#C9A431] text-[#1a1a1a] font-semibold py-6" 
-                  size="lg" 
-                  disabled={isLoading}
-                >
-                  {isLoading ? (
-                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                  ) : (
-                    <ArrowRight className="w-4 h-4 mr-2" />
-                  )}
-                  {isLoading ? "Processando..." : "Continuar com clareza"}
-                </Button>
-                
-                <p className="text-center text-xs text-white/50">
-                  Trial de 30 dias · sem cartão
-                </p>
-              </form>
-
-              <div className="mt-6 text-center">
-                <p className="text-sm text-white/50">
-                  Já tem conta?{" "}
-                  <Link to="/login" className="text-[#D4AF37] hover:underline font-medium">
-                    Entrar
-                  </Link>
-                </p>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      </section>
-
-      {/* Bloco de funcionalidades */}
-      <section className="py-12 sm:py-16 px-4 bg-[#1d1d1d]">
-        <div className="container mx-auto max-w-4xl">
-          <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-white mb-10 text-center">
-            O que sustenta decisões melhores no dia a dia
-          </h2>
-
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-            {features.map((feature, index) => (
-              <div 
-                key={index}
-                className="p-5 rounded-xl bg-[#252525] border border-white/10 hover:border-[#D4AF37]/30 transition-all duration-300"
-              >
-                <div className="w-10 h-10 rounded-full bg-[#D4AF37]/10 flex items-center justify-center mb-4">
-                  <feature.icon className="w-5 h-5 text-[#D4AF37]" />
-                </div>
-                <h3 className="font-bold text-white mb-2">{feature.title}</h3>
-                <p className="text-sm text-white/60 whitespace-pre-line leading-relaxed">
-                  {feature.description}
-                </p>
-              </div>
+      {/* O Mecanismo */}
+      <section className="px-5 py-12 max-w-2xl mx-auto">
+        <h2 className="text-2xl sm:text-3xl font-bold mb-6">
+          Como o Plano Mestre funciona
+        </h2>
+        <div className="text-base sm:text-lg text-gray-700 leading-relaxed space-y-4">
+          <p>
+            Não é curso.
+            <br />
+            Não são aulas gravadas.
+          </p>
+          <p>
+            É uma <strong>ferramenta prática</strong>, guiada, passo a passo.
+          </p>
+          <ol className="space-y-3 mt-6 pl-0">
+            {[
+              "Define o que realmente quer",
+              "Esclarece por que isso importa",
+              "Ajusta a meta à sua realidade",
+              "Constrói um plano executável",
+              "Sai com o primeiro passo definido",
+            ].map((item, i) => (
+              <li key={i} className="flex items-start gap-3">
+                <span className="flex-shrink-0 w-7 h-7 rounded-full bg-black text-white flex items-center justify-center text-sm font-bold mt-0.5">
+                  {i + 1}
+                </span>
+                <span>{item}</span>
+              </li>
             ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Prova social - O que costuma acontecer */}
-      <section className="py-12 sm:py-16 px-4">
-        <div className="container mx-auto max-w-3xl">
-          <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-white mb-6 text-center">
-            O que costuma acontecer quando a clareza vem primeiro
-          </h2>
-          
-          <p className="text-white/60 text-center mb-8">
-            Não é uma transformação cinematográfica.<br />
-            É algo mais silencioso — e mais sustentável.
-          </p>
-
-          <div className="text-white/70 text-base sm:text-lg leading-relaxed text-center space-y-4">
-            <p>Com mais clareza, as pessoas percebem que:</p>
-            
-            <ul className="space-y-3 text-left max-w-md mx-auto">
-              {clarityBenefits.map((benefit, index) => (
-                <li key={index} className="flex items-start gap-3">
-                  <CheckCircle2 className="w-5 h-5 text-[#D4AF37] flex-shrink-0 mt-0.5" />
-                  <span>{benefit}</span>
-                </li>
-              ))}
-            </ul>
-            
-            <p className="pt-4">
-              Não porque a vida ficou perfeita.<br />
-              Mas porque ela passou a <span className="text-white font-medium">fazer mais sentido</span>.
-            </p>
-          </div>
-        </div>
-      </section>
-
-      {/* Acesso sem risco */}
-      <section className="py-12 sm:py-16 px-4 bg-gradient-to-t from-[#D4AF37]/10 via-[#1A1A1A] to-[#1A1A1A]">
-        <div className="container mx-auto max-w-3xl text-center">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#D4AF37]/10 border border-[#D4AF37]/20 mb-6">
-            <Shield className="w-5 h-5 text-[#D4AF37]" />
-            <span className="text-[#D4AF37] font-medium">Acesso sem risco</span>
-          </div>
-
-          <div className="text-white/70 text-base sm:text-lg leading-relaxed space-y-4 mb-8">
-            <p>
-              Use o PDI por 30 dias completos.<br />
-              Sem cartão.<br />
-              Sem compromisso.
-            </p>
-            
-            <p>Se em um mês você não sentir:</p>
-            
-            <ul className="space-y-2 text-left max-w-xs mx-auto">
-              <li className="flex items-center gap-2">
-                <span className="text-[#D4AF37]">•</span>
-                <span>mais clareza</span>
-              </li>
-              <li className="flex items-center gap-2">
-                <span className="text-[#D4AF37]">•</span>
-                <span>menos peso mental</span>
-              </li>
-              <li className="flex items-center gap-2">
-                <span className="text-[#D4AF37]">•</span>
-                <span>mais coerência entre vida e ações</span>
-              </li>
-            </ul>
-            
-            <p>você simplesmente sai.</p>
-          </div>
-        </div>
-      </section>
-
-      {/* CTA Final */}
-      <section className="py-12 sm:py-16 px-4">
-        <div className="container mx-auto max-w-2xl text-center">
-          <Button 
-            size="lg" 
-            onClick={() => {
-              document.getElementById('criar-acesso')?.scrollIntoView({ behavior: 'smooth' });
-            }}
-            className="text-lg px-10 py-7 bg-[#D4AF37] hover:bg-[#C9A431] text-[#1A1A1A] font-semibold shadow-xl hover:shadow-2xl transition-all duration-300"
-          >
-            Acessar o PDI agora
-            <ArrowRight className="ml-3 w-5 h-5" />
-          </Button>
-          <p className="text-white/50 text-sm mt-4">
-            Trial gratuito · leva menos de 1 minuto
+          </ol>
+          <p className="mt-8">
+            Você não sai motivado.
+            <br />
+            <strong>Você sai com direção.</strong>
           </p>
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="py-6 border-t border-white/10 bg-[#151515]">
-        <div className="container mx-auto px-4">
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 text-sm text-white/50">
-            <Link to="/termos" className="hover:text-[#D4AF37] transition-colors">
-              Termos de uso
-            </Link>
-            <span className="hidden sm:inline">·</span>
-            <Link to="/privacidade" className="hover:text-[#D4AF37] transition-colors">
-              Política de privacidade
-            </Link>
-            <span className="hidden sm:inline">·</span>
-            <span>© {new Date().getFullYear()} PDI - Carreira e Vida</span>
-          </div>
+      <div className="w-16 h-px bg-gray-300 mx-auto" />
+
+      {/* O Que Você Recebe */}
+      <section className="px-5 py-12 max-w-2xl mx-auto">
+        <h2 className="text-2xl sm:text-3xl font-bold mb-6">
+          O que você recebe
+        </h2>
+        <ul className="space-y-3 text-base sm:text-lg text-gray-700">
+          {[
+            "Ferramenta guiada passo a passo",
+            "Meta clara e estruturada",
+            "Plano ajustado à sua rotina",
+            "Etapas organizadas",
+            "Primeiro passo definido",
+          ].map((item, i) => (
+            <li key={i} className="flex items-start gap-3">
+              <Check className="w-5 h-5 text-black flex-shrink-0 mt-0.5" strokeWidth={3} />
+              <span>{item}</span>
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      <div className="w-16 h-px bg-gray-300 mx-auto" />
+
+      {/* Investimento */}
+      <section className="px-5 py-12 max-w-2xl mx-auto text-center">
+        <h2 className="text-2xl sm:text-3xl font-bold mb-6">Investimento</h2>
+        <p className="text-base sm:text-lg text-gray-700 mb-4">
+          Acesso completo ao Plano Mestre – PDI:
+        </p>
+        <p className="text-5xl sm:text-6xl font-bold mb-4">R$ 47<span className="text-2xl">,00</span></p>
+        <div className="text-base text-gray-500 space-y-1">
+          <p>Pagamento único.</p>
+          <p>Sem mensalidade.</p>
+          <p>Sem parcelas.</p>
+          <p>Sem renovação automática.</p>
         </div>
+      </section>
+
+      <div className="w-16 h-px bg-gray-300 mx-auto" />
+
+      {/* Garantia */}
+      <section className="px-5 py-12 max-w-2xl mx-auto">
+        <h2 className="text-2xl sm:text-3xl font-bold mb-6">
+          Garantia de 30 dias
+        </h2>
+        <div className="text-base sm:text-lg text-gray-700 leading-relaxed space-y-4">
+          <p>Por lei, você tem 7 dias de reembolso.</p>
+          <p>
+            Aqui você tem <strong>30 dias completos</strong>.
+          </p>
+          <p>
+            Use a ferramenta.
+            <br />
+            Construa sua meta.
+            <br />
+            Execute.
+          </p>
+          <p>
+            Se não fizer sentido para você,
+            <br />
+            solicite o reembolso.
+          </p>
+          <p>
+            Sem perguntas.
+            <br />
+            Sem justificativas.
+            <br />
+            Com um clique.
+          </p>
+          <p className="font-bold">Risco zero.</p>
+        </div>
+      </section>
+
+      <div className="w-16 h-px bg-gray-300 mx-auto" />
+
+      {/* Custo da Inação */}
+      <section className="px-5 py-12 max-w-2xl mx-auto">
+        <div className="text-base sm:text-lg text-gray-700 leading-relaxed space-y-4">
+          <p>
+            Se você não estruturar sua próxima meta corretamente,
+            <br />
+            provavelmente acontecerá o mesmo de sempre.
+          </p>
+          <p>
+            Entusiasmo inicial.
+            <br />
+            Interrupção.
+            <br />
+            Abandono.
+          </p>
+          <p>
+            O custo real não é R$ 47,00.
+          </p>
+          <p>
+            <strong>É continuar repetindo o mesmo ciclo.</strong>
+          </p>
+        </div>
+      </section>
+
+      <div className="w-16 h-px bg-gray-300 mx-auto" />
+
+      {/* Decisão Final */}
+      <section className="px-5 py-16 max-w-2xl mx-auto text-center">
+        <p className="text-xl sm:text-2xl font-bold mb-8">
+          Quanto você está comprometido em criar metas para sua vida melhorar?
+        </p>
+        <button
+          onClick={handleCheckout}
+          disabled={isLoading}
+          className="w-full max-w-md mx-auto py-4 bg-black text-white font-bold text-lg rounded-lg hover:bg-gray-900 transition-colors disabled:opacity-60 flex items-center justify-center gap-2"
+        >
+          {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : null}
+          Começar
+        </button>
+      </section>
+
+      {/* Footer mínimo */}
+      <footer className="px-5 py-6 text-center text-xs text-gray-400">
+        © {new Date().getFullYear()} PDI – Carreira e Vida
       </footer>
-
-      {/* Modal LGPD */}
-      <LGPDConsentModal 
-        open={showLGPDModal}
-        onClose={() => setShowLGPDModal(false)}
-      />
     </div>
   );
 };
