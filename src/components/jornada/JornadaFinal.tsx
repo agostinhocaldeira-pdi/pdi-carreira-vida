@@ -68,13 +68,13 @@ export default function JornadaFinal({ onBack, smartActionData, vvdAnswers = [],
       y += 4;
     };
 
-    const sectionTitle = (emoji: string, title: string, color: [number, number, number]) => {
+    const sectionTitle = (title: string, color: [number, number, number]) => {
       ck(20);
       y += 4;
       doc.setFillColor(color[0], color[1], color[2]);
       doc.roundedRect(mg, y - 5, mw, 12, 2, 2, "F");
       doc.setFontSize(11); doc.setFont("helvetica", "bold"); doc.setTextColor(255, 255, 255);
-      doc.text(`${emoji}  ${title}`, mg + 5, y + 3);
+      doc.text(title, mg + 5, y + 3);
       y += 14;
     };
 
@@ -92,21 +92,21 @@ export default function JornadaFinal({ onBack, smartActionData, vvdAnswers = [],
     y = 70;
 
     // Section 1
-    sectionTitle("✨", "Minha vida dos sonhos", [139, 92, 246]);
+    sectionTitle("Minha vida dos sonhos", [139, 92, 246]);
     label("Para atingir minha vida dos sonhos, preciso mudar:"); answer(vvdAnswers[0]);
     label("Para conquistar, preciso superar esses desafios:"); answer(vvdAnswers[1]);
     label("Com essas mudanças, minha vida ficaria assim:"); answer(vvdAnswers[2]);
     sp();
 
     // Section 2
-    sectionTitle("🚫", "Não quero para minha vida", [239, 68, 68]);
+    sectionTitle("Nao quero para minha vida", [239, 68, 68]);
     label("Hoje tenho certeza que NÃO quero para minha vida:"); answer("Continuar fazendo " + (vidaNaoQueroAnswers[0] || ""));
     label("Para não acontecer isso, preciso mudar os hábitos de:"); answer(vidaNaoQueroAnswers[1]);
     label("Pois me assusta pensar que:"); answer(vidaNaoQueroAnswers[2]);
     sp();
 
     // Section 3
-    sectionTitle("🎯", "Meu Objetivo", [59, 130, 246]);
+    sectionTitle("Meu Objetivo", [59, 130, 246]);
     label("Minha meta tem o objetivo de me aproximar da vida dos sonhos, e me afastar da vida que não quero viver.");
     y += 2;
     label("Minha meta precisa estar alinhada com meus valores:"); answer(valores.join(", ") || "—");
@@ -114,7 +114,7 @@ export default function JornadaFinal({ onBack, smartActionData, vvdAnswers = [],
     sp();
 
     // Section 4
-    sectionTitle("🚀", "Minha Meta", [249, 115, 22]);
+    sectionTitle("Minha Meta", [249, 115, 22]);
     label("Alinhado com meu objetivo, minha meta é:"); answer(s?.especifica);
     label("Essa meta é forte e vou conseguir realizá-la, porque:");
     answer([s?.mensuravel, s?.alcancavel, s?.relevante, s?.temporal].filter(Boolean).join("; "));
@@ -124,7 +124,7 @@ export default function JornadaFinal({ onBack, smartActionData, vvdAnswers = [],
     sp();
 
     // Section 5 - Table
-    sectionTitle("📋", "Plano de Ação", [20, 184, 166]);
+    sectionTitle("Plano de Acao", [20, 184, 166]);
     ck(35);
     // Table header
     doc.setFillColor(240, 253, 250);
@@ -157,7 +157,7 @@ export default function JornadaFinal({ onBack, smartActionData, vvdAnswers = [],
 
     // Section 6 - AI
     if (s?.smartEvaluation) {
-      sectionTitle("🤖", "Avaliação", [99, 102, 241]);
+      sectionTitle("Avaliacao", [99, 102, 241]);
       doc.setFontSize(10); doc.setFont("helvetica", "normal"); doc.setTextColor(...dark);
       const evalLines = doc.splitTextToSize(s.smartEvaluation, mw);
       evalLines.forEach((ln: string) => { ck(5); doc.text(ln, mg, y); y += 5; });
@@ -166,7 +166,7 @@ export default function JornadaFinal({ onBack, smartActionData, vvdAnswers = [],
     }
 
     // Section 7 - Final
-    sectionTitle("💫", "Mensagem Final", [245, 158, 11]);
+    sectionTitle("Mensagem Final", [245, 158, 11]);
     doc.setFontSize(10); doc.setFont("helvetica", "italic"); doc.setTextColor(...dark);
     const finalTexts = [
       "A vida só premia o movimento.",
