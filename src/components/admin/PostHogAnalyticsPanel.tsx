@@ -63,7 +63,8 @@ const RankingList = ({ items, icon: Icon, iconColor, maxItems = 8 }: {
       <div key={item.label} className="flex items-center justify-between text-sm py-1.5 border-b border-border/30 last:border-0">
         <span className="text-muted-foreground truncate max-w-[70%]">
           <span className="text-foreground font-medium mr-2">{i + 1}.</span>
-          {item.label}
+          <span className="hidden sm:inline">{item.label}</span>
+          <span className="sm:hidden">{item.label.startsWith('/') ? `/${item.label.split('/').pop()}` : item.label}</span>
         </span>
         <Badge variant="secondary" className="text-xs shrink-0">{item.count}</Badge>
       </div>
