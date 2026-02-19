@@ -29,11 +29,7 @@ const SubscriberLanding = () => {
       {/* Hero */}
       <section className="px-5 pt-16 pb-12 max-w-2xl mx-auto">
         <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold leading-tight mb-6">
-          Você não tem dificuldade em cumprir metas.
-          <br />
-          <span className="mt-2 block">
-            Você tem dificuldade em construir metas que realmente funcionam.
-          </span>
+          Crie uma meta que você realmente consegue realizar e comece a obter resultados reais em sua vida.
         </h1>
         <p className="text-base sm:text-lg text-gray-600 leading-relaxed mb-8">
           Se a meta nasce errada, o abandono é inevitável.
