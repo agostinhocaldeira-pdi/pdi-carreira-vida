@@ -182,18 +182,6 @@ export default function JornadaAutoReflexao({ onComplete, onBack, hasEvaluated }
         </div>
 
         <div className="max-w-lg mx-auto px-4 py-6 space-y-6">
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="aspect-video rounded-2xl overflow-hidden shadow-lg"
-          >
-            <video
-              src={autoReflexaoVideo}
-              controls
-              playsInline
-              className="w-full h-full object-cover"
-            />
-          </motion.div>
 
           <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="text-center space-y-2">
             <h2 className="text-2xl font-bold text-slate-800">Roda da Vida 🎯</h2>
