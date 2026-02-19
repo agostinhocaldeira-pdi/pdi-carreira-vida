@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Users, Building2, UserCog, UserCheck, TrendingUp, Target, CheckCircle2, Activity, Calendar, Eye } from "lucide-react";
+import { Users, Building2, UserCog, UserCheck, TrendingUp, Target, CheckCircle2, Activity, Calendar, Eye, Compass } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -13,6 +13,7 @@ interface Metrics {
   totalEmployees: number;
   activeManagers: number;
   activeEmployees: number;
+  pdiSmartUsers: number;
   totalObjectives: number;
   completedObjectives: number;
   totalGoals: number;
@@ -43,7 +44,8 @@ const AdminMetricsPanel = () => {
         objectivesResult,
         goalsResult,
         actionsResult,
-        diaryResult
+        diaryResult,
+        pdiSmartResult
       ] = await Promise.all([
         // Total users from edge function (accurate count with email filter)
         fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/get-admin-users`, {
@@ -67,7 +69,9 @@ const AdminMetricsPanel = () => {
         // Diary entries last 30 days
         supabase.from('diary_entries')
           .select('id, user_id, entry_date')
-          .gte('entry_date', new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0])
+          .gte('entry_date', new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]),
+        // PDI Smart users count
+        supabase.from('user_roles').select('id', { count: 'exact' }).eq('role', 'pdismart')
       ]);
 
       // Calculate metrics
@@ -96,6 +100,7 @@ const AdminMetricsPanel = () => {
 
       const diaryEntries = diaryResult.data || [];
       const diaryEntriesLast30Days = diaryEntries.length;
+      const pdiSmartUsers = pdiSmartResult.count || 0;
       
       // Unique users with diary entries in last 7 days
       const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
@@ -117,7 +122,8 @@ const AdminMetricsPanel = () => {
         totalActions,
         completedActions,
         diaryEntriesLast30Days,
-        usersWithDiaryLast7Days
+        usersWithDiaryLast7Days,
+        pdiSmartUsers
       });
     } catch (error) {
       console.error('Error fetching metrics:', error);
@@ -163,7 +169,7 @@ const AdminMetricsPanel = () => {
   return (
     <div className="space-y-4">
       {/* Main Metrics Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
         {/* Total Users */}
         <Card 
           className="hover:shadow-medium transition-all cursor-pointer hover:border-primary/50"
@@ -261,7 +267,26 @@ const AdminMetricsPanel = () => {
                 <CheckCircle2 className="w-3 h-3" />
                 <span>Últimos 30 dias</span>
               </div>
+        {/* PDI Smart Users */}
+        <Card className="hover:shadow-medium transition-all">
+          <CardContent className="pt-6">
+            <div className="flex items-center justify-between mb-4">
+              <div className="w-12 h-12 bg-emerald-500/10 rounded-lg flex items-center justify-center">
+                <Compass className="w-6 h-6 text-emerald-600" />
+              </div>
+              <Badge variant="secondary" className="text-xs">R$ 47</Badge>
             </div>
+            <h3 className="text-2xl font-bold mb-1">{metrics.pdiSmartUsers}</h3>
+            <p className="text-sm text-muted-foreground">Usuários PDI Smart</p>
+            <div className="mt-3 pt-3 border-t border-border/50">
+              <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                <Target className="w-3 h-3" />
+                <span>Jornada (compra avulsa)</span>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
           </CardContent>
         </Card>
       </div>
