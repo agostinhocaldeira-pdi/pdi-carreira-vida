@@ -6,8 +6,9 @@ import { Textarea } from "@/components/ui/textarea";
 import JornadaAIEvaluation from "./JornadaAIEvaluation";
 
 interface Props {
-  onComplete: () => void;
+  onComplete: (data?: any) => void;
   onBack: () => void;
+  hasEvaluated?: boolean;
 }
 
 const prompts = [
@@ -16,7 +17,7 @@ const prompts = [
   { question: "Como seria o seu dia a dia se essas mudanças já tivessem acontecido?", emoji: "🌅" },
 ];
 
-export default function JornadaVVD({ onComplete, onBack }: Props) {
+export default function JornadaVVD({ onComplete, onBack, hasEvaluated }: Props) {
   const [currentPrompt, setCurrentPrompt] = useState(0);
   const [answers, setAnswers] = useState<string[]>(["", "", ""]);
 
@@ -130,7 +131,7 @@ export default function JornadaVVD({ onComplete, onBack }: Props) {
 
         {/* Complete */}
         {showEvaluation ? (
-          <JornadaAIEvaluation stepId="vvd" onContinue={onComplete} />
+          <JornadaAIEvaluation stepId="vvd" onContinue={() => onComplete(answers)} hasEvaluated={hasEvaluated} />
         ) : (
           <motion.div animate={{ opacity: allAnswered ? 1 : 0.4 }}>
             <Button

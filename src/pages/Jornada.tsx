@@ -64,7 +64,11 @@ export default function Jornada() {
   const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState<string | null>(null);
   const [completedSteps, setCompletedSteps] = useState<string[]>([]);
-  const [smartActionData, setSmartActionData] = useState<{ especifica: string; mensuravel: string; alcancavel: string; relevante: string; temporal: string; primeiraAcao: string; diaHora: string } | null>(null);
+  const [smartActionData, setSmartActionData] = useState<{ especifica: string; mensuravel: string; alcancavel: string; relevante: string; temporal: string; aprender: string; sabotador: string; antiSabotagem: string; primeiraAcao: string; diaHora: string; smartEvaluation?: string } | null>(null);
+  const [vvdAnswers, setVvdAnswers] = useState<string[]>([]);
+  const [vidaNaoQueroAnswers, setVidaNaoQueroAnswers] = useState<string[]>([]);
+  const [autoReflexaoData, setAutoReflexaoData] = useState<{ valores: string[]; rodaScores: Record<string, number>; crencas: string[] } | null>(null);
+  const [evaluatedSteps, setEvaluatedSteps] = useState<string[]>([]);
   const [devMode, setDevMode] = useState(false);
 
   const progress = (completedSteps.length / steps.length) * 100;
@@ -85,21 +89,25 @@ export default function Jornada() {
     if (!completedSteps.includes(stepId)) {
       setCompletedSteps((prev) => [...prev, stepId]);
     }
-    if (stepId === "smart" && data) {
-      setSmartActionData(data);
+    if (!evaluatedSteps.includes(stepId)) {
+      setEvaluatedSteps((prev) => [...prev, stepId]);
     }
+    if (stepId === "vvd" && data) setVvdAnswers(data);
+    if (stepId === "vida-nao-quero" && data) setVidaNaoQueroAnswers(data);
+    if (stepId === "auto-reflexao" && data) setAutoReflexaoData(data);
+    if (stepId === "smart" && data) setSmartActionData(data);
     setCurrentStep(null);
   };
 
   // Show final screen only after SMART (last step) is explicitly completed
   const smartCompleted = completedSteps.includes("smart");
   if (smartCompleted && allComplete && !currentStep) {
-    return <JornadaFinal onBack={() => setCompletedSteps(completedSteps.filter(s => s !== "smart"))} smartActionData={smartActionData} />;
+    return <JornadaFinal onBack={() => setCompletedSteps(completedSteps.filter(s => s !== "smart"))} smartActionData={smartActionData} vvdAnswers={vvdAnswers} vidaNaoQueroAnswers={vidaNaoQueroAnswers} autoReflexaoData={autoReflexaoData} />;
   }
 
   // Show active step
   if (currentStep) {
-    const stepProps = {
+    const baseProps = {
       onComplete: (data?: any) => handleComplete(currentStep, data),
       onBack: () => setCurrentStep(null),
     };
@@ -113,10 +121,10 @@ export default function Jornada() {
           exit={{ opacity: 0, x: -50 }}
           transition={{ duration: 0.3 }}
         >
-          {currentStep === "vvd" && <JornadaVVD {...stepProps} />}
-          {currentStep === "vida-nao-quero" && <JornadaVidaNaoQuero {...stepProps} />}
-          {currentStep === "auto-reflexao" && <JornadaAutoReflexao {...stepProps} />}
-          {currentStep === "smart" && <JornadaSmart {...stepProps} />}
+          {currentStep === "vvd" && <JornadaVVD {...baseProps} hasEvaluated={evaluatedSteps.includes("vvd")} />}
+          {currentStep === "vida-nao-quero" && <JornadaVidaNaoQuero {...baseProps} hasEvaluated={evaluatedSteps.includes("vida-nao-quero")} />}
+          {currentStep === "auto-reflexao" && <JornadaAutoReflexao {...baseProps} hasEvaluated={evaluatedSteps.includes("auto-reflexao")} />}
+          {currentStep === "smart" && <JornadaSmart {...baseProps} hasEvaluated={evaluatedSteps.includes("smart")} />}
         </motion.div>
       </AnimatePresence>
     );

@@ -1,128 +1,248 @@
 import { motion } from "framer-motion";
-import { Printer, Download, Crown, Star, ArrowLeft, Trophy, Rocket, ExternalLink, CalendarCheck, Zap, Play, Check, Users, Flame } from "lucide-react";
+import { FileText, Download, Crown, Star, ArrowLeft, Flame, ExternalLink, Play, Check, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useNavigate } from "react-router-dom";
+import jsPDF from "jspdf";
+
+interface SmartData {
+  especifica: string;
+  mensuravel: string;
+  alcancavel: string;
+  relevante: string;
+  temporal: string;
+  aprender: string;
+  sabotador: string;
+  antiSabotagem: string;
+  primeiraAcao: string;
+  diaHora: string;
+  smartEvaluation?: string;
+}
 
 interface Props {
   onBack: () => void;
-  smartActionData?: { especifica: string; mensuravel: string; alcancavel: string; relevante: string; temporal: string; primeiraAcao: string; diaHora: string } | null;
+  smartActionData?: SmartData | null;
+  vvdAnswers?: string[];
+  vidaNaoQueroAnswers?: string[];
+  autoReflexaoData?: {
+    valores: string[];
+    rodaScores: Record<string, number>;
+    crencas: string[];
+  } | null;
 }
 
-export default function JornadaFinal({ onBack, smartActionData }: Props) {
+export default function JornadaFinal({ onBack, smartActionData, vvdAnswers = [], vidaNaoQueroAnswers = [], autoReflexaoData }: Props) {
   const navigate = useNavigate();
+  const valores = autoReflexaoData?.valores || [];
+  const crenca1 = autoReflexaoData?.crencas?.[0] || "";
+  const s = smartActionData;
+
+  const generatePDF = () => {
+    const doc = new jsPDF();
+    const mg = 15;
+    const pw = doc.internal.pageSize.getWidth();
+    const mw = pw - 2 * mg;
+    let y = 20;
+
+    const ck = (n = 12) => { if (y + n > 275) { doc.addPage(); y = 20; } };
+    const h1 = (t: string) => { ck(18); doc.setFontSize(14); doc.setFont("helvetica", "bold"); doc.text(t, mg, y); y += 9; };
+    const bl = (t: string) => { ck(); doc.setFontSize(10); doc.setFont("helvetica", "bold"); const l = doc.splitTextToSize(t, mw); doc.text(l, mg, y); y += l.length * 5 + 2; };
+    const tx = (t?: string) => { ck(); doc.setFontSize(10); doc.setFont("helvetica", "normal"); const l = doc.splitTextToSize(t || "-", mw); l.forEach((ln: string) => { ck(5); doc.text(ln, mg, y); y += 5; }); y += 3; };
+    const sp = () => { y += 3; ck(); doc.setDrawColor(200); doc.line(mg, y, pw - mg, y); y += 6; };
+
+    doc.setFontSize(18); doc.setFont("helvetica", "bold");
+    doc.text("Minha Jornada PDI", mg, y); y += 14;
+
+    h1("Quadro 1 - Minha vida dos sonhos");
+    bl("Para atingir minha vida dos sonhos, preciso mudar:"); tx(vvdAnswers[0]);
+    bl("Para conquistar, preciso superar esses desafios:"); tx(vvdAnswers[1]);
+    bl("Com essas mudancas, minha vida ficaria assim:"); tx(vvdAnswers[2]);
+    sp();
+
+    h1("Quadro 2 - Nao quero para minha vida");
+    bl("Hoje tenho certeza que NAO quero para minha vida:"); tx("Continuar fazendo " + (vidaNaoQueroAnswers[0] || ""));
+    bl("Para nao acontecer isso, preciso mudar os habitos de:"); tx(vidaNaoQueroAnswers[1]);
+    bl("Pois me assusta pensar que:"); tx(vidaNaoQueroAnswers[2]);
+    sp();
+
+    h1("Quadro 3 - Meu Objetivo");
+    tx("Minha meta tem o objetivo de me aproximar da vida dos sonhos, e me afastar da vida que nao quero viver.");
+    bl("Minha meta precisa estar alinhada com meus valores:"); tx(valores.join(", ") || "-");
+    bl("Para atingir minha meta, preciso mudar minha crenca sobre:"); tx(crenca1);
+    sp();
+
+    h1("Quadro 4 - Minha Meta");
+    bl("Alinhado com meu objetivo, minha meta e:"); tx(s?.especifica);
+    bl("Essa meta e forte e vou conseguir realiza-la, porque:");
+    tx([s?.mensuravel, s?.alcancavel, s?.relevante, s?.temporal].filter(Boolean).join("; "));
+    bl("Para conquistar minha meta vou precisar aprender:"); tx(s?.aprender);
+    bl("Vou tomar cuidado com:"); tx(s?.sabotador);
+    bl("Para evitar os sabotadores, eu vou:"); tx(s?.antiSabotagem);
+    sp();
+
+    h1("Quadro 5 - Plano de Acao");
+    bl("META:"); tx(s?.especifica);
+    bl("Acao:"); tx(s?.primeiraAcao);
+    bl("Data e horario:"); tx(s?.diaHora);
+    sp();
+
+    if (s?.smartEvaluation) {
+      h1("Quadro 6 - Avaliacao da IA");
+      tx(s.smartEvaluation);
+      sp();
+    }
+
+    h1("Quadro 7 - Texto Final");
+    tx("A vida so premia o movimento.");
+    tx("Voce ja fez a parte teorica da coisa. Agora, a distancia entre a vida que voce tem e a vida que voce sonha chama-se atitude.");
+    tx("Nao espere pelas condicoes perfeitas; elas nao existem. O que existe e a sua decisao de nao aceitar mais o que te limita.");
+
+    doc.save("minha-jornada-pdi.pdf");
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-amber-50 via-white to-blue-50">
-      <div className="max-w-lg mx-auto px-4 py-8 space-y-8">
-        {/* Celebration */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="text-center"
-        >
+      <div className="max-w-lg mx-auto px-4 py-8 space-y-6">
+        {/* Title */}
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center">
           <h1 className="text-2xl font-bold text-slate-800">
             Você acabou de dar um passo enorme em direção à vida que deseja.
           </h1>
         </motion.div>
 
-        {/* Summary card */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-        >
-          <Card className="border-2 border-amber-200 bg-amber-50/50">
+        {/* Quadro 1 – Vida dos Sonhos */}
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
+          <Card className="border-2 border-purple-200 bg-purple-50/50">
             <CardContent className="p-5 space-y-3">
-              <h3 className="font-semibold text-slate-800 flex items-center gap-2">
-                <Trophy className="w-5 h-5 text-amber-500" />
-                Seu Resumo
-              </h3>
-              <div className="space-y-2 text-sm text-slate-600">
-                <div className="flex items-center gap-2">
-                  <span className="w-2 h-2 rounded-full bg-pink-400" />
-                  <span><strong>5 valores</strong> definidos</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="w-2 h-2 rounded-full bg-blue-400" />
-                  <span><strong>8 áreas</strong> da vida avaliadas</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="w-2 h-2 rounded-full bg-purple-400" />
-                  <span><strong>Vida dos sonhos</strong> descrita</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="w-2 h-2 rounded-full bg-orange-400" />
-                  <span><strong>1 meta SMART</strong> criada</span>
-                </div>
+              <h3 className="font-semibold text-slate-800 text-base">✨ Quadro 1 – Minha vida dos sonhos</h3>
+              <div className="space-y-3 text-sm text-slate-700 leading-relaxed">
+                <p><strong>Para atingir minha vida dos sonhos, preciso mudar:</strong> {vvdAnswers[0] || "—"}</p>
+                <p><strong>Para conquistar minha vida dos sonhos, preciso superar esses desafios:</strong> {vvdAnswers[1] || "—"}</p>
+                <p><strong>Com essas mudanças, minha vida ficaria assim:</strong> {vvdAnswers[2] || "—"}</p>
               </div>
             </CardContent>
           </Card>
         </motion.div>
 
-        {/* Sua Primeira Ação */}
-        {smartActionData && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.25 }}
-          >
-            <Card className="border-2 border-purple-200 bg-purple-50/50">
-              <CardContent className="p-5 space-y-4">
-                <h3 className="font-semibold text-slate-800 flex items-center gap-2">
-                  <Zap className="w-5 h-5 text-purple-500" />
-                  Sua Meta SMART + Primeira Ação
-                </h3>
-                <div className="space-y-3">
-                  {[
-                    { letter: "S", label: "Específica", value: smartActionData.especifica, color: "text-red-500" },
-                    { letter: "M", label: "Mensurável", value: smartActionData.mensuravel, color: "text-orange-500" },
-                    { letter: "A", label: "Alcançável", value: smartActionData.alcancavel, color: "text-amber-500" },
-                    { letter: "R", label: "Relevante", value: smartActionData.relevante, color: "text-green-500" },
-                    { letter: "T", label: "Temporal", value: smartActionData.temporal, color: "text-blue-500" },
-                  ].map((item) => (
-                    <div key={item.letter} className="bg-white rounded-lg p-3 border border-purple-100">
-                      <p className="text-xs font-medium text-purple-600 mb-1">
-                        <span className={`font-black ${item.color}`}>{item.letter}</span> — {item.label}
-                      </p>
-                      <p className="text-sm text-slate-700">{item.value}</p>
-                    </div>
-                  ))}
-                  <div className="border-t border-purple-200 pt-3" />
-                  <div className="bg-white rounded-lg p-3 border border-purple-100">
-                    <p className="text-xs font-medium text-purple-600 mb-1">🔥 O que vou fazer nos próximos 7 dias:</p>
-                    <p className="text-sm text-slate-700">{smartActionData.primeiraAcao}</p>
-                  </div>
-                  <div className="bg-white rounded-lg p-3 border border-purple-100">
-                    <p className="text-xs font-medium text-purple-600 mb-1 flex items-center gap-1">
-                      <CalendarCheck className="w-3 h-3" /> Dia e hora agendados:
-                    </p>
-                    <p className="text-sm text-slate-700">{smartActionData.diaHora}</p>
-                  </div>
-                </div>
+        {/* Quadro 2 – Não quero */}
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }}>
+          <Card className="border-2 border-red-200 bg-red-50/50">
+            <CardContent className="p-5 space-y-3">
+              <h3 className="font-semibold text-slate-800 text-base">🚫 Quadro 2 – Não quero para minha vida</h3>
+              <div className="space-y-3 text-sm text-slate-700 leading-relaxed">
+                <p><strong>Hoje tenho certeza que NÃO quero para minha vida:</strong> Continuar fazendo {vidaNaoQueroAnswers[0] || "—"}</p>
+                <p><strong>Para não acontecer isso, preciso mudar os hábitos de:</strong> {vidaNaoQueroAnswers[1] || "—"}</p>
+                <p><strong>Pois me assusta pensar que:</strong> {vidaNaoQueroAnswers[2] || "—"}</p>
+              </div>
+            </CardContent>
+          </Card>
+        </motion.div>
+
+        {/* Quadro 3 – Meu Objetivo */}
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
+          <Card className="border-2 border-blue-200 bg-blue-50/50">
+            <CardContent className="p-5 space-y-3">
+              <h3 className="font-semibold text-slate-800 text-base">🎯 Quadro 3 – Meu Objetivo</h3>
+              <div className="space-y-3 text-sm text-slate-700 leading-relaxed">
+                <p>Minha meta tem o objetivo de <strong>me aproximar da vida dos sonhos</strong>, e me <strong>afastar da vida que não quero viver.</strong></p>
+                <p><strong>Minha meta precisa estar alinhada com meus valores:</strong> {valores.length > 0 ? valores.join(", ") : "—"}</p>
+                <p><strong>E para atingir minha meta, preciso mudar minha crença sobre:</strong> {crenca1 || "—"}</p>
+              </div>
+            </CardContent>
+          </Card>
+        </motion.div>
+
+        {/* Quadro 4 – Minha Meta */}
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }}>
+          <Card className="border-2 border-orange-200 bg-orange-50/50">
+            <CardContent className="p-5 space-y-3">
+              <h3 className="font-semibold text-slate-800 text-base">🚀 Quadro 4 – Minha Meta</h3>
+              <div className="space-y-3 text-sm text-slate-700 leading-relaxed">
+                <p><strong>Alinhado com meu objetivo, minha meta é:</strong> {s?.especifica || "—"}</p>
+                <p><strong>Essa meta é forte e vou conseguir realizá-la, porque:</strong> {[s?.mensuravel, s?.alcancavel, s?.relevante, s?.temporal].filter(Boolean).join("; ") || "—"}</p>
+                <p><strong>Eu sei que para conquistar minha meta eu vou precisar aprender:</strong> {s?.aprender || "—"}</p>
+                <p><strong>Eu sei que para conquistar minha meta eu vou tomar cuidado com:</strong> {s?.sabotador || "—"}</p>
+                <p><strong>E para evitar que os sabotadores impeçam que eu conquiste minha meta, eu vou:</strong> {s?.antiSabotagem || "—"}</p>
+              </div>
+            </CardContent>
+          </Card>
+        </motion.div>
+
+        {/* Quadro 5 – Tabela */}
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
+          <Card className="border-2 border-teal-200 bg-teal-50/50">
+            <CardContent className="p-5 space-y-3">
+              <h3 className="font-semibold text-slate-800 text-base">📋 Quadro 5 – Plano de Ação</h3>
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm">
+                  <tbody>
+                    <tr className="border-b-2 border-teal-200">
+                      <td colSpan={2} className="py-3">
+                        <span className="font-bold text-teal-700">META</span>
+                        <p className="text-slate-700 mt-1">{s?.especifica || "—"}</p>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td className="py-3 pr-3 border-r border-teal-200 w-1/2 align-top">
+                        <span className="font-bold text-teal-700 text-xs">Ação</span>
+                        <p className="text-slate-700 mt-1">{s?.primeiraAcao || "—"}</p>
+                      </td>
+                      <td className="py-3 pl-3 w-1/2 align-top">
+                        <span className="font-bold text-teal-700 text-xs">Data e Horário</span>
+                        <p className="text-slate-700 mt-1">{s?.diaHora || "—"}</p>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </CardContent>
+          </Card>
+        </motion.div>
+
+        {/* Quadro 6 – Avaliação IA */}
+        {s?.smartEvaluation && (
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.35 }}>
+            <Card className="border-2 border-indigo-200 bg-indigo-50/50">
+              <CardContent className="p-5 space-y-3">
+                <h3 className="font-semibold text-slate-800 text-base">🤖 Quadro 6 – Avaliação</h3>
+                <p className="text-sm text-slate-700 leading-relaxed whitespace-pre-line">{s.smartEvaluation}</p>
               </CardContent>
             </Card>
           </motion.div>
         )}
 
+        {/* Quadro 7 – Texto Final */}
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}>
+          <Card className="border-2 border-amber-200 bg-amber-50/50">
+            <CardContent className="p-5 space-y-4">
+              <h3 className="font-semibold text-slate-800 text-base">💫 Quadro 7 – Texto Final</h3>
+              <div className="text-sm text-slate-700 leading-relaxed italic space-y-3">
+                <p>A vida só premia o movimento.</p>
+                <p>Você já fez a parte teórica da coisa. Agora, a distância entre a vida que você tem e a vida que você sonha chama-se atitude.</p>
+                <p>Não espere pelas condições perfeitas; elas não existem. O que existe é a sua decisão de não aceitar mais o que te limita.</p>
+              </div>
+            </CardContent>
+          </Card>
+        </motion.div>
+
         {/* Actions */}
         <div className="space-y-3">
-          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
+          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.45 }}>
             <Button
               variant="outline"
               className="w-full h-12 justify-start gap-3 text-left"
-              onClick={() => window.print()}
+              onClick={generatePDF}
             >
-              <Printer className="w-5 h-5 text-slate-500" />
+              <FileText className="w-5 h-5 text-slate-500" />
               <div>
-                <p className="font-medium">Imprimir meu plano</p>
-                <p className="text-xs text-slate-400">Gere um PDF com tudo que você preencheu</p>
+                <p className="font-medium">Gerar relatório em PDF</p>
+                <p className="text-xs text-slate-400">Baixe um PDF com tudo que você preencheu</p>
               </div>
             </Button>
           </motion.div>
 
-          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}>
+          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }}>
             <Button
               variant="outline"
               className="w-full h-12 justify-start gap-3 text-left"
@@ -137,14 +257,16 @@ export default function JornadaFinal({ onBack, smartActionData }: Props) {
           </motion.div>
         </div>
 
-        {/* Upgrade options */}
+        {/* Quer ir além? */}
         <div className="space-y-6">
-          <p className="text-center text-sm font-semibold text-slate-600">
-            Quer ir além? 🚀
-          </p>
+          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.55 }}>
+            <h2 className="text-center text-3xl font-extrabold bg-gradient-to-r from-amber-600 via-orange-500 to-red-500 bg-clip-text text-transparent py-2">
+              Quer ir além? 🚀
+            </h2>
+          </motion.div>
 
           {/* Acesso Completo */}
-          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }} className="space-y-3">
+          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.6 }} className="space-y-3">
             <div className="rounded-xl overflow-hidden border-2 border-blue-200 bg-blue-950 aspect-video flex items-center justify-center">
               <div className="text-center text-blue-300 space-y-2">
                 <ExternalLink className="w-10 h-10 mx-auto opacity-50" />
@@ -175,8 +297,8 @@ export default function JornadaFinal({ onBack, smartActionData }: Props) {
             </Card>
           </motion.div>
 
-          {/* Premium Black — Melhor custo-benefício */}
-          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.6 }} className="space-y-3 relative">
+          {/* Premium Black */}
+          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.7 }} className="space-y-3 relative">
             <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-10">
               <Badge className="bg-gradient-to-r from-amber-500 to-yellow-500 text-white border-0 shadow-lg shadow-amber-200/50 px-4 py-1 text-xs font-bold uppercase tracking-wider">
                 <Flame className="w-3 h-3 mr-1" /> Melhor custo-benefício
@@ -213,7 +335,7 @@ export default function JornadaFinal({ onBack, smartActionData }: Props) {
           </motion.div>
 
           {/* Mentoria 1:1 */}
-          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.7 }} className="space-y-3">
+          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.8 }} className="space-y-3">
             <div className="rounded-xl overflow-hidden border-2 border-emerald-300 bg-emerald-950 aspect-video flex items-center justify-center relative group cursor-pointer">
               <div className="absolute inset-0 bg-black/20 group-hover:bg-black/30 transition-colors" />
               <div className="relative text-center text-emerald-300 space-y-2">
@@ -241,7 +363,6 @@ export default function JornadaFinal({ onBack, smartActionData }: Props) {
                   Eu vou te acompanhar pessoalmente durante <strong>3 meses</strong>, com reuniões semanais de <strong>1 hora</strong>, guiando você na construção do seu sonho — passo a passo, sem atalhos.
                 </p>
 
-                {/* O que está incluso */}
                 <div className="bg-white rounded-xl p-4 border border-emerald-100 space-y-2.5">
                   <p className="text-xs font-semibold text-emerald-700 uppercase tracking-wide">O que está incluso:</p>
                   {[
@@ -259,7 +380,6 @@ export default function JornadaFinal({ onBack, smartActionData }: Props) {
                   ))}
                 </div>
 
-                {/* Preço */}
                 <div className="bg-emerald-900 rounded-xl p-4 text-center space-y-1">
                   <p className="text-emerald-300 text-xs font-medium">Investimento único</p>
                   <div className="flex items-baseline justify-center gap-1">

@@ -12,8 +12,9 @@ import { ptBR } from "date-fns/locale";
 import JornadaAIEvaluation from "./JornadaAIEvaluation";
 
 interface Props {
-  onComplete: (answers?: { especifica: string; mensuravel: string; alcancavel: string; relevante: string; temporal: string; aprender: string; sabotador: string; antiSabotagem: string; primeiraAcao: string; diaHora: string }) => void;
+  onComplete: (answers?: { especifica: string; mensuravel: string; alcancavel: string; relevante: string; temporal: string; aprender: string; sabotador: string; antiSabotagem: string; primeiraAcao: string; diaHora: string; smartEvaluation?: string }) => void;
   onBack: () => void;
+  hasEvaluated?: boolean;
 }
 
 const smartSteps = [
@@ -109,7 +110,7 @@ const smartSteps = [
   },
 ];
 
-export default function JornadaSmart({ onComplete, onBack }: Props) {
+export default function JornadaSmart({ onComplete, onBack, hasEvaluated }: Props) {
   const [currentIdx, setCurrentIdx] = useState(0);
   const [answers, setAnswers] = useState<string[]>(smartSteps.map(() => ""));
   const [selectedDate, setSelectedDate] = useState<Date>();
@@ -325,7 +326,7 @@ export default function JornadaSmart({ onComplete, onBack }: Props) {
 
         {/* Complete */}
         {showEvaluation ? (
-          <JornadaAIEvaluation stepId="smart" onContinue={() => onComplete({ especifica: answers[0], mensuravel: answers[1], alcancavel: answers[2], relevante: answers[3], temporal: answers[4], aprender: answers[5], sabotador: answers[6], antiSabotagem: answers[7], primeiraAcao: answers[8], diaHora: answers[9] })} />
+          <JornadaAIEvaluation stepId="smart" onContinue={(evalText) => onComplete({ especifica: answers[0], mensuravel: answers[1], alcancavel: answers[2], relevante: answers[3], temporal: answers[4], aprender: answers[5], sabotador: answers[6], antiSabotagem: answers[7], primeiraAcao: answers[8], diaHora: answers[9], smartEvaluation: evalText })} hasEvaluated={hasEvaluated} />
         ) : (
           <motion.div animate={{ opacity: allAnswered ? 1 : 0.4 }} className="pt-2">
             <Button

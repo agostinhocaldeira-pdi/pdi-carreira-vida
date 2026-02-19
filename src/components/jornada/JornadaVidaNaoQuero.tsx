@@ -6,8 +6,9 @@ import { Textarea } from "@/components/ui/textarea";
 import JornadaAIEvaluation from "./JornadaAIEvaluation";
 
 interface Props {
-  onComplete: () => void;
+  onComplete: (data?: any) => void;
   onBack: () => void;
+  hasEvaluated?: boolean;
 }
 
 const prompts = [
@@ -28,7 +29,7 @@ const prompts = [
   },
 ];
 
-export default function JornadaVidaNaoQuero({ onComplete, onBack }: Props) {
+export default function JornadaVidaNaoQuero({ onComplete, onBack, hasEvaluated }: Props) {
   const [currentPrompt, setCurrentPrompt] = useState(0);
   const [answers, setAnswers] = useState<string[]>(["", "", ""]);
   const [showEvaluation, setShowEvaluation] = useState(false);
@@ -146,7 +147,7 @@ export default function JornadaVidaNaoQuero({ onComplete, onBack }: Props) {
 
         {/* Complete */}
         {showEvaluation ? (
-          <JornadaAIEvaluation stepId="vida-nao-quero" onContinue={onComplete} />
+          <JornadaAIEvaluation stepId="vida-nao-quero" onContinue={() => onComplete(answers)} hasEvaluated={hasEvaluated} />
         ) : (
           <motion.div animate={{ opacity: allAnswered ? 1 : 0.4 }}>
             <Button
