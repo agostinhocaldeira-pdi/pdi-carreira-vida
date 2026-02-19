@@ -2,11 +2,13 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowLeft, Check, ChevronRight, Play, Target, CalendarIcon, Clock } from "lucide-react";
 import smartVideo from "@/assets/jornada-smart-video.mp4";
+import especificaVideo from "@/assets/jornada-smart-especifica-video.mp4";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
@@ -117,6 +119,7 @@ export default function JornadaSmart({ onComplete, onBack, hasEvaluated }: Props
   const [selectedDate, setSelectedDate] = useState<Date>();
   const [selectedTime, setSelectedTime] = useState("");
   const [showEvaluation, setShowEvaluation] = useState(false);
+  const [videoModalOpen, setVideoModalOpen] = useState(false);
 
   const diaHoraStepIdx = smartSteps.length - 1; // last step = "Dia e Hora"
 
@@ -236,15 +239,30 @@ export default function JornadaSmart({ onComplete, onBack, hasEvaluated }: Props
             className="space-y-4"
           >
             {/* Video for this letter */}
-            <div className="bg-white/60 rounded-xl p-3 flex items-center gap-3 border border-orange-100 cursor-pointer hover:bg-white/80 transition-colors">
-              <div className={`w-10 h-10 rounded-lg bg-gradient-to-br ${step.color} flex items-center justify-center`}>
-                <Play className="w-4 h-4 text-white ml-0.5" />
+            {currentIdx === 0 ? (
+              <div
+                onClick={() => setVideoModalOpen(true)}
+                className="bg-white/60 rounded-xl p-3 flex items-center gap-3 border border-orange-100 cursor-pointer hover:bg-white/80 transition-colors"
+              >
+                <div className={`w-10 h-10 rounded-lg bg-gradient-to-br ${step.color} flex items-center justify-center`}>
+                  <Play className="w-4 h-4 text-white ml-0.5" />
+                </div>
+                <div>
+                  <p className="text-xs font-medium text-slate-700">Vídeo: {step.letter} — {step.title}</p>
+                  <p className="text-[10px] text-slate-400">15 seg</p>
+                </div>
               </div>
-              <div>
-                <p className="text-xs font-medium text-slate-700">Vídeo: {step.letter} — {step.title}</p>
-                <p className="text-[10px] text-slate-400">30 seg</p>
+            ) : (
+              <div className="bg-white/60 rounded-xl p-3 flex items-center gap-3 border border-orange-100 cursor-pointer hover:bg-white/80 transition-colors">
+                <div className={`w-10 h-10 rounded-lg bg-gradient-to-br ${step.color} flex items-center justify-center`}>
+                  <Play className="w-4 h-4 text-white ml-0.5" />
+                </div>
+                <div>
+                  <p className="text-xs font-medium text-slate-700">Vídeo: {step.letter} — {step.title}</p>
+                  <p className="text-[10px] text-slate-400">30 seg</p>
+                </div>
               </div>
-            </div>
+            )}
 
             <div className="bg-white rounded-2xl p-5 border-2 border-orange-100 shadow-sm space-y-4">
               <div className="flex items-center gap-3">
@@ -340,6 +358,20 @@ export default function JornadaSmart({ onComplete, onBack, hasEvaluated }: Props
           </motion.div>
         )}
       </div>
+
+      <Dialog open={videoModalOpen} onOpenChange={setVideoModalOpen}>
+        <DialogContent className="max-w-lg p-0 overflow-hidden rounded-2xl">
+          <div className="aspect-video">
+            <video
+              src={especificaVideo}
+              controls
+              autoPlay
+              playsInline
+              className="w-full h-full object-cover"
+            />
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
