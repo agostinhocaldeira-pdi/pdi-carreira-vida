@@ -119,3 +119,6 @@ verify_jwt = false
 
 [functions.posthog-analytics]
 verify_jwt = false
+
+[functions.create-plano-mestre-checkout]
+verify_jwt = false
