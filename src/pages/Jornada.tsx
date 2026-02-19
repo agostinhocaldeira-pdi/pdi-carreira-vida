@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Lock, Check, ChevronRight, Play, ArrowLeft, Trophy, Sparkles, AlertTriangle, Target, Bug, Search, Loader2 } from "lucide-react";
+import { Lock, Check, ChevronRight, Play, ArrowLeft, Trophy, Sparkles, AlertTriangle, Target, Search, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
@@ -71,7 +71,6 @@ export default function Jornada() {
   const [vidaNaoQueroAnswers, setVidaNaoQueroAnswers] = useState<string[]>([]);
   const [autoReflexaoData, setAutoReflexaoData] = useState<{ valores: string[]; rodaScores: Record<string, number>; crencas: string[] } | null>(null);
   const [evaluatedSteps, setEvaluatedSteps] = useState<string[]>([]);
-  const [devMode, setDevMode] = useState(false);
   const [authChecked, setAuthChecked] = useState(false);
   const [isAuthorized, setIsAuthorized] = useState(false);
 
@@ -161,7 +160,6 @@ export default function Jornada() {
   }
 
   const isUnlocked = (stepId: string) => {
-    if (devMode) return true;
     const idx = steps.findIndex((s) => s.id === stepId);
     if (idx === 0) return true;
     return completedSteps.includes(steps[idx - 1].id);
@@ -223,15 +221,6 @@ export default function Jornada() {
             Voltar
           </Button>
           <div className="flex items-center gap-2">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setDevMode(!devMode)}
-              className={`text-xs ${devMode ? "text-red-500 bg-red-50" : "text-slate-400"}`}
-            >
-              <Bug className="w-3 h-3 mr-1" />
-              DEV
-            </Button>
             <Trophy className="w-5 h-5 text-amber-500" />
             <span className="text-sm font-semibold text-slate-700">
               {completedSteps.length}/{steps.length}
@@ -240,25 +229,6 @@ export default function Jornada() {
         </div>
       </div>
 
-      {/* Dev mode nav */}
-      {devMode && (
-        <div className="bg-red-50 border-b border-red-200 px-4 py-2">
-          <div className="max-w-lg mx-auto flex flex-wrap gap-2">
-            <span className="text-xs text-red-500 font-medium mr-2 self-center">Ir para:</span>
-            {steps.map((step) => (
-              <Button
-                key={step.id}
-                size="sm"
-                variant="outline"
-                className="text-xs h-7 border-red-200 text-red-600 hover:bg-red-100"
-                onClick={() => setCurrentStep(step.id)}
-              >
-                {step.emoji} {step.title}
-              </Button>
-            ))}
-          </div>
-        </div>
-      )}
 
       <div className="max-w-lg mx-auto px-4 py-6 space-y-6">
         {/* Hero */}
@@ -316,7 +286,7 @@ export default function Jornada() {
                       ? "border-slate-200 hover:border-blue-300 hover:shadow-lg bg-white"
                       : "border-slate-100 bg-slate-50 opacity-60"
                   }`}
-                  onClick={() => (unlocked || devMode) && setCurrentStep(step.id)}
+                  onClick={() => unlocked && setCurrentStep(step.id)}
                 >
                   <div
                     className={`absolute top-0 left-0 w-1.5 h-full bg-gradient-to-b ${step.bgGradient}`}
@@ -361,7 +331,7 @@ export default function Jornada() {
                         </p>
                       </div>
 
-                      {(unlocked || devMode) && !completed && (
+                      {unlocked && !completed && (
                         <ChevronRight className="w-5 h-5 text-slate-400 shrink-0" />
                       )}
                     </div>
