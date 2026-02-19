@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { ArrowLeft, Check, Play, ChevronRight, Heart, Plus, X } from "lucide-react";
+import { ArrowLeft, Check, ChevronRight, Heart, Plus, X } from "lucide-react";
+import autoReflexaoVideo from "@/assets/jornada-auto-reflexao-video.mp4";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
@@ -184,15 +185,14 @@ export default function JornadaAutoReflexao({ onComplete, onBack, hasEvaluated }
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="aspect-video bg-gradient-to-br from-blue-200 to-cyan-300 rounded-2xl flex items-center justify-center cursor-pointer group relative overflow-hidden"
+            className="aspect-video rounded-2xl overflow-hidden shadow-lg"
           >
-            <div className="absolute inset-0 bg-black/20 group-hover:bg-black/30 transition-colors" />
-            <div className="relative w-16 h-16 bg-white/90 rounded-full flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
-              <Play className="w-7 h-7 text-blue-600 ml-1" />
-            </div>
-            <span className="absolute bottom-3 left-3 text-white/80 text-xs font-medium">
-              1 min • Como avaliar sua vida
-            </span>
+            <video
+              src={autoReflexaoVideo}
+              controls
+              playsInline
+              className="w-full h-full object-cover"
+            />
           </motion.div>
 
           <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="text-center space-y-2">
@@ -263,15 +263,14 @@ export default function JornadaAutoReflexao({ onComplete, onBack, hasEvaluated }
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
-          className="aspect-video bg-gradient-to-br from-pink-200 to-rose-300 rounded-2xl flex items-center justify-center cursor-pointer group relative overflow-hidden"
+          className="aspect-video rounded-2xl overflow-hidden shadow-lg"
         >
-          <div className="absolute inset-0 bg-black/20 group-hover:bg-black/30 transition-colors" />
-          <div className="relative w-16 h-16 bg-white/90 rounded-full flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
-            <Play className="w-7 h-7 text-pink-600 ml-1" />
-          </div>
-          <span className="absolute bottom-3 left-3 text-white/80 text-xs font-medium">
-            1 min • O que são valores pessoais?
-          </span>
+          <video
+            src={autoReflexaoVideo}
+            controls
+            playsInline
+            className="w-full h-full object-cover"
+          />
         </motion.div>
 
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="text-center space-y-2">
