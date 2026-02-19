@@ -1,9 +1,12 @@
+import { useState } from "react";
 import { motion } from "framer-motion";
-import { FileText, Download, Crown, Star, ArrowLeft, Flame, ExternalLink, Play, Check, Users } from "lucide-react";
+import { FileText, Download, Crown, Star, ArrowLeft, Flame, ExternalLink, Play, Check, Users, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useNavigate } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 import jsPDF from "jspdf";
 
 interface SmartData {
@@ -37,6 +40,25 @@ export default function JornadaFinal({ onBack, smartActionData, vvdAnswers = [],
   const valores = autoReflexaoData?.valores || [];
   const crenca1 = autoReflexaoData?.crencas?.[0] || "";
   const s = smartActionData;
+  const [loadingPlan, setLoadingPlan] = useState<string | null>(null);
+
+  const handleSubscribe = async (priceId: string, planName: string) => {
+    setLoadingPlan(planName);
+    try {
+      const { data, error } = await supabase.functions.invoke("create-checkout", {
+        body: { price_id: priceId },
+      });
+      if (error) throw error;
+      if (data?.url) {
+        window.location.href = data.url;
+      }
+    } catch (err: any) {
+      console.error("Checkout error:", err);
+      toast.error("Erro ao iniciar checkout. Tente novamente.");
+    } finally {
+      setLoadingPlan(null);
+    }
+  };
 
   const generatePDF = () => {
     const doc = new jsPDF();
@@ -380,7 +402,13 @@ export default function JornadaFinal({ onBack, smartActionData, vvdAnswers = [],
                     <p className="text-xs text-slate-500 mt-1">
                       Diário, agenda, relatórios, IA, progresso e todas as ferramentas desbloqueadas.
                     </p>
-                    <Button size="sm" className="mt-3 bg-blue-500 hover:bg-blue-600 w-full">
+                    <Button
+                      size="sm"
+                      className="mt-3 bg-blue-500 hover:bg-blue-600 w-full"
+                      onClick={() => handleSubscribe("price_1Sjo293aJLvyiewRDW1gCi39", "completo")}
+                      disabled={loadingPlan === "completo"}
+                    >
+                      {loadingPlan === "completo" ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
                       Assinar Acesso Completo
                     </Button>
                   </div>
@@ -417,7 +445,13 @@ export default function JornadaFinal({ onBack, smartActionData, vvdAnswers = [],
                     <p className="text-xs text-slate-500 mt-1">
                       Tudo do Completo + Desafio 30 Dias, IA ilimitada, WhatsApp diário.
                     </p>
-                    <Button size="sm" className="mt-3 bg-gradient-to-r from-amber-500 to-yellow-600 hover:from-amber-600 hover:to-yellow-700 w-full shadow-md shadow-amber-200">
+                    <Button
+                      size="sm"
+                      className="mt-3 bg-gradient-to-r from-amber-500 to-yellow-600 hover:from-amber-600 hover:to-yellow-700 w-full shadow-md shadow-amber-200"
+                      onClick={() => handleSubscribe("price_1SzMoi3aJLvyiewRtfFcNYju", "black")}
+                      disabled={loadingPlan === "black"}
+                    >
+                      {loadingPlan === "black" ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
                       Assinar Premium Black
                     </Button>
                   </div>
