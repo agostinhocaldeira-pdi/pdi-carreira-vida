@@ -24,6 +24,7 @@ interface MonitoringData {
   usersWithSwot: number;
   usersWithBeliefs: number;
   usersWithSelfAssessment: number;
+  usersWithJornada: number;
 
   // Engagement
   diaryEntriesLast7Days: number;
@@ -128,7 +129,7 @@ const AdminMonitoringSection = () => {
         vvdRes, valoresRes, lifeAreasRes, objectivesRes, goalsRes, actionsRes,
         diaryRes, swotRes, beliefsRes, selfAssessRes,
         companiesRes, managersRes, employeesRes,
-        pageViewsRes, satisfactionRes
+        pageViewsRes, satisfactionRes, jornadaRes
       ] = await Promise.all([
         // Total users
         fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/get-admin-users`, {
@@ -154,6 +155,8 @@ const AdminMonitoringSection = () => {
           .gte('created_at', new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString()),
         // Satisfaction
         supabase.from('satisfaction_surveys').select('rating'),
+        // Jornada (PDI Smart) users
+        supabase.from('user_roles').select('user_id').eq('role', 'pdismart'),
       ]);
 
       const totalUsers = usersRes?.users?.length || 0;
@@ -211,6 +214,7 @@ const AdminMonitoringSection = () => {
         usersWithSwot: distinctUsers(swotRes.data),
         usersWithBeliefs: distinctUsers(beliefsRes.data),
         usersWithSelfAssessment: distinctUsers(selfAssessRes.data),
+        usersWithJornada: distinctUsers(jornadaRes.data),
         diaryEntriesLast7Days: diary7.length,
         diaryEntriesLast30Days: diary30.length,
         activeUsersLast7Days: activeUsers7,
@@ -341,6 +345,8 @@ const AdminMonitoringSection = () => {
               tooltip="Ações práticas do dia a dia. Base do 'Mão na Massa'." />
             <FunnelBar label="Diário Utilizado" value={data.usersWithDiary} total={data.totalUsers}
               tooltip="Usuários que usaram o diário pelo menos 1 vez. Sinal de engajamento contínuo." />
+            <FunnelBar label="Jornada (PDI Smart)" value={data.usersWithJornada} total={data.totalUsers}
+              tooltip="Usuários que compraram o PDI Smart (R$ 47). Compra avulsa da ferramenta Jornada." />
           </div>
         </section>
 
@@ -454,9 +460,10 @@ const AdminMonitoringSection = () => {
             <div className="space-y-1 p-4 bg-muted/30 rounded-xl border border-border/50">
               {data.topPages.map((p, i) => (
                 <div key={p.page} className="flex items-center justify-between text-sm py-1.5 border-b border-border/30 last:border-0">
-                  <span className="text-muted-foreground">
+                  <span className="text-muted-foreground truncate max-w-[70%]">
                     <span className="text-foreground font-medium mr-2">{i + 1}.</span>
-                    {p.page}
+                    <span className="hidden sm:inline">{p.page}</span>
+                    <span className="sm:hidden">{p.page.split('/').pop() ? `/${p.page.split('/').pop()}` : p.page}</span>
                   </span>
                   <Badge variant="secondary" className="text-xs">{p.views} views</Badge>
                 </div>
