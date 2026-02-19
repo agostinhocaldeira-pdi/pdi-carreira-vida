@@ -278,7 +278,7 @@ export default function Jornada() {
           <div className="rounded-xl overflow-hidden border border-slate-200 bg-slate-900 aspect-video shadow-lg">
             <iframe
               className="w-full h-full"
-              src="https://www.youtube.com/embed/b6KRYzno0Q4?rel=0"
+              src="https://www.youtube-nocookie.com/embed/b6KRYzno0Q4?rel=0&modestbranding=1"
               title="Vídeo explicativo"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
               allowFullScreen
