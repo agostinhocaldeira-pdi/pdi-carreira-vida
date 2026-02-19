@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { ArrowLeft, Check, Play, ChevronRight, Heart, Plus, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -35,6 +35,10 @@ type Phase = "valores" | "roda" | "crencas" | "evaluation";
 
 export default function JornadaAutoReflexao({ onComplete, onBack }: Props) {
   const [phase, setPhase] = useState<Phase>("valores");
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [phase]);
 
   // Valores
   const [selectedValues, setSelectedValues] = useState<string[]>([]);
