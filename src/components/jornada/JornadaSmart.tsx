@@ -261,7 +261,7 @@ export default function JornadaSmart({ onComplete, onBack }: Props) {
               </div>
 
               {currentIdx === diaHoraStepIdx ? (
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                    <div className="space-y-1.5 min-w-0">
                      <label className="text-xs font-medium text-slate-600 truncate block">📅 Data</label>
                      <Popover>
