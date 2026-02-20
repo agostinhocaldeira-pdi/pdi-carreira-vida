@@ -1447,6 +1447,27 @@ export type Database = {
         }
         Relationships: []
       }
+      user_jornada_completions: {
+        Row: {
+          completed_at: string
+          created_at: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          completed_at?: string
+          created_at?: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          completed_at?: string
+          created_at?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_life_areas: {
         Row: {
           area_name: string
