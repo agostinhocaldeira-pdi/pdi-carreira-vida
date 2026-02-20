@@ -421,12 +421,14 @@ export default function JornadaFinal({ onBack, smartActionData, vvdAnswers = [],
 
           {/* Acesso Completo */}
           <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.6 }} className="space-y-3">
-            <div className="rounded-xl overflow-hidden border-2 border-blue-200 bg-blue-950 aspect-video flex items-center justify-center">
-              <div className="text-center text-blue-300 space-y-2">
-                <ExternalLink className="w-10 h-10 mx-auto opacity-50" />
-                <p className="text-sm font-medium">Vídeo: Acesso Completo</p>
-                <p className="text-xs opacity-60">Espaço reservado para vídeo explicativo</p>
-              </div>
+            <div className="rounded-xl overflow-hidden border-2 border-blue-200 bg-blue-950 aspect-video">
+              <iframe
+                className="w-full h-full"
+                src="https://www.youtube-nocookie.com/embed/NGiQsTByXu0?rel=0&modestbranding=1"
+                title="Vídeo: PDI Plano Básico"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+              />
             </div>
             <Card className="border-2 border-blue-300 bg-gradient-to-br from-blue-50 to-blue-100/50 cursor-pointer hover:shadow-lg transition-shadow">
               <CardContent className="p-5">
