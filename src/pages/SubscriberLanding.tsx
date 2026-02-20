@@ -57,6 +57,7 @@ const SubscriberLanding = () => {
           {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : null}
           Criar minha meta
         </button>
+        <p className="text-center text-sm text-gray-500 mt-2">Ferramenta Grátis – Aproveite!</p>
       </section>
 
       {/* Separador */}
@@ -183,58 +184,6 @@ const SubscriberLanding = () => {
 
       <div className="w-16 h-px bg-gray-300 mx-auto" />
 
-      {/* Investimento */}
-      <section className="px-5 py-12 max-w-2xl mx-auto text-center">
-        <h2 className="text-2xl sm:text-3xl font-bold mb-6">Investimento</h2>
-        <p className="text-base sm:text-lg text-gray-700 mb-4">
-          Acesso completo ao Plano Mestre – PDI:
-        </p>
-        <p className="text-5xl sm:text-6xl font-bold mb-4">R$ 47<span className="text-2xl">,00</span></p>
-        <div className="text-base text-gray-500 space-y-1">
-          <p>Pagamento único.</p>
-          <p>Sem mensalidade.</p>
-          <p>Sem parcelas.</p>
-          <p>Sem renovação automática.</p>
-        </div>
-      </section>
-
-      <div className="w-16 h-px bg-gray-300 mx-auto" />
-
-      {/* Garantia */}
-      <section className="px-5 py-12 max-w-2xl mx-auto">
-        <h2 className="text-2xl sm:text-3xl font-bold mb-6">
-          Garantia de 30 dias
-        </h2>
-        <div className="text-base sm:text-lg text-gray-700 leading-relaxed space-y-4">
-          <p>Por lei, você tem 7 dias de reembolso.</p>
-          <p>
-            Aqui você tem <strong>30 dias completos</strong>.
-          </p>
-          <p>
-            Use a ferramenta.
-            <br />
-            Construa sua meta.
-            <br />
-            Execute.
-          </p>
-          <p>
-            Se não fizer sentido para você,
-            <br />
-            solicite o reembolso.
-          </p>
-          <p>
-            Sem perguntas.
-            <br />
-            Sem justificativas.
-            <br />
-            Com um clique.
-          </p>
-          <p className="font-bold">Risco zero.</p>
-        </div>
-      </section>
-
-      <div className="w-16 h-px bg-gray-300 mx-auto" />
-
       {/* Custo da Inação */}
       <section className="px-5 py-12 max-w-2xl mx-auto">
         <div className="text-base sm:text-lg text-gray-700 leading-relaxed space-y-4">
@@ -251,10 +200,7 @@ const SubscriberLanding = () => {
             Abandono.
           </p>
           <p>
-            O custo real não é R$ 47,00.
-          </p>
-          <p>
-            <strong>É continuar repetindo o mesmo ciclo.</strong>
+            <strong>A ferramenta não é cobrada, mas você tem um custo invisível de continuar repetindo o mesmo ciclo.</strong>
           </p>
         </div>
       </section>
@@ -274,6 +220,7 @@ const SubscriberLanding = () => {
           {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : null}
           Começar
         </button>
+        <p className="text-center text-sm text-gray-500 mt-2">Ferramenta Grátis – Aproveite!</p>
       </section>
 
       {/* Footer mínimo */}
