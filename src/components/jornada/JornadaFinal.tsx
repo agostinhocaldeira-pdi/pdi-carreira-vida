@@ -393,9 +393,27 @@ export default function JornadaFinal({ onBack, smartActionData, vvdAnswers = [],
           </motion.div>
         </div>
 
+        {/* Antes de sair */}
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.55 }}>
+          <Card className="border-2 border-slate-200 bg-white">
+            <CardContent className="p-6 space-y-4">
+              <h3 className="text-xl font-bold text-slate-800">💫 Antes de você sair…</h3>
+              <div className="text-sm text-slate-700 leading-relaxed space-y-3">
+                <p>Você acabou de organizar sua visão, seus valores, sua meta e seu plano inicial.</p>
+                <p><strong>Isso é clareza.</strong></p>
+                <p>Mas clareza não garante constância.<br />E constância é o que transforma intenção em resultado.</p>
+                <p>O Plano Mestre define o norte.<br />Ele não acompanha sua execução.<br />Não mede sua evolução.<br />Não ajusta sua rota quando você oscila.</p>
+                <p><strong>E você vai oscilar.</strong></p>
+                <p>A diferença entre quem sonha e quem constrói não está na meta.<br />Está no acompanhamento.</p>
+                <p>Se você parar aqui, terá um plano.<br /><strong>Se continuar, terá um sistema.</strong></p>
+              </div>
+            </CardContent>
+          </Card>
+        </motion.div>
+
         {/* Quer ir além? */}
         <div className="space-y-6">
-          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.55 }}>
+          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.6 }}>
             <h2 className="text-center text-3xl font-extrabold text-slate-800 py-2">
               Quer ir além? <span role="img" aria-label="foguete">🚀</span>
             </h2>
