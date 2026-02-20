@@ -40,6 +40,9 @@ const SubscriberLanding = () => {
         >
           Criar minha meta
         </button>
+        <p className="text-center text-sm text-gray-500 mt-2">
+          <strong className="text-black">Acesso gratuito</strong>
+        </p>
       </section>
 
       {/* Separador */}
@@ -200,7 +203,9 @@ const SubscriberLanding = () => {
         >
           Começar
         </button>
-        <p className="text-center text-sm text-gray-500 mt-2">Ferramenta Grátis – Aproveite!</p>
+        <p className="text-center text-sm text-gray-500 mt-2">
+          <strong className="text-black">Acesso gratuito</strong> – Aproveite!
+        </p>
       </section>
 
       {/* Footer mínimo */}
