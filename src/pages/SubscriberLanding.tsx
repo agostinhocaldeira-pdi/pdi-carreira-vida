@@ -1,27 +1,12 @@
 import { useState } from "react";
 import { Loader2, Check } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
-import { toast } from "sonner";
+import { useNavigate } from "react-router-dom";
 
 const SubscriberLanding = () => {
-  const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
 
-  const handleCheckout = async () => {
-    setIsLoading(true);
-    try {
-      const { data, error } = await supabase.functions.invoke("create-checkout", {
-        body: { price_id: "price_1T2X7v3aJLvyiewRo5lRInWO" },
-      });
-      if (error) throw error;
-      if (data?.url) {
-        window.location.href = data.url;
-      }
-    } catch (err: any) {
-      console.error("Checkout error:", err);
-      toast.error("Erro ao iniciar checkout. Tente novamente.");
-    } finally {
-      setIsLoading(false);
-    }
+  const handleCTA = () => {
+    navigate("/signup?redirect=/jornada");
   };
 
   return (
@@ -50,14 +35,11 @@ const SubscriberLanding = () => {
         </div>
 
         <button
-          onClick={handleCheckout}
-          disabled={isLoading}
-          className="w-full py-4 bg-black text-white font-bold text-lg rounded-lg hover:bg-gray-900 transition-colors disabled:opacity-60 flex items-center justify-center gap-2"
+          onClick={handleCTA}
+          className="w-full py-4 bg-black text-white font-bold text-lg rounded-lg hover:bg-gray-900 transition-colors flex items-center justify-center gap-2"
         >
-          {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : null}
           Criar minha meta
         </button>
-        <p className="text-center text-sm text-gray-500 mt-2">Ferramenta Grátis – Aproveite!</p>
       </section>
 
       {/* Separador */}
@@ -213,11 +195,9 @@ const SubscriberLanding = () => {
           Quanto você está comprometido em criar metas para sua vida melhorar?
         </p>
         <button
-          onClick={handleCheckout}
-          disabled={isLoading}
-          className="w-full max-w-md mx-auto py-4 bg-black text-white font-bold text-lg rounded-lg hover:bg-gray-900 transition-colors disabled:opacity-60 flex items-center justify-center gap-2"
+          onClick={handleCTA}
+          className="w-full max-w-md mx-auto py-4 bg-black text-white font-bold text-lg rounded-lg hover:bg-gray-900 transition-colors flex items-center justify-center gap-2"
         >
-          {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : null}
           Começar
         </button>
         <p className="text-center text-sm text-gray-500 mt-2">Ferramenta Grátis – Aproveite!</p>
