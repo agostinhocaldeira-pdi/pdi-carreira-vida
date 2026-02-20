@@ -30,6 +30,8 @@ import { motion } from "framer-motion";
 import logoPdi from "@/assets/logo_pdi.png";
 import WhatsAppButton from "@/components/WhatsAppButton";
 import ExcellenteParaSection from "@/components/landing-nova/ExcellenteParaSection";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 30 },
@@ -51,14 +53,25 @@ const LandingNova = () => {
   const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [videoModalUrl, setVideoModalUrl] = useState<string | null>(null);
+  const [isCheckoutLoading, setIsCheckoutLoading] = useState(false);
 
-  const handlePessoaFisicaClick = () => {
+  const handlePessoaFisicaClick = async () => {
     setIsModalOpen(false);
-    navigate("/signup");
+    await handleCTAClick();
   };
 
-  const handleCTAClick = () => {
-    navigate("/signup");
+  const handleCTAClick = async () => {
+    setIsCheckoutLoading(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("create-checkout");
+      if (error) throw error;
+      if (data?.url) window.location.href = data.url;
+    } catch (err) {
+      console.error("Checkout error:", err);
+      toast.error("Erro ao iniciar checkout. Tente novamente.");
+    } finally {
+      setIsCheckoutLoading(false);
+    }
   };
 
   return (
@@ -107,11 +120,11 @@ const LandingNova = () => {
                 onClick={handleCTAClick}
                 className="text-base sm:text-lg px-6 sm:px-8 py-5 sm:py-6 bg-[#d4a853] hover:bg-[#c49843] text-[#1a1a1a] font-bold uppercase tracking-wide"
               >
-                Começar
-                <ArrowRight className="ml-2 h-5 w-5" />
+                {isCheckoutLoading ? "Processando..." : "Começar"}
+                {!isCheckoutLoading && <ArrowRight className="ml-2 h-5 w-5" />}
               </Button>
               <p className="text-sm text-gray-500">
-                Organize sua vida nos próximos 30 dias, de graça, sem cartão, sem compromisso. Só vem!
+                R$ 67/ano • Acesso completo • Cancele quando quiser
               </p>
             </div>
           </div>
@@ -327,11 +340,11 @@ const LandingNova = () => {
               onClick={handleCTAClick}
               className="text-base sm:text-lg px-6 sm:px-8 py-5 sm:py-6 bg-[#d4a853] hover:bg-[#c49843] text-[#1a1a1a] font-semibold"
             >
-              Começar Teste Grátis
-              <ArrowRight className="ml-2 h-5 w-5" />
+              {isCheckoutLoading ? "Processando..." : "Começar"}
+              {!isCheckoutLoading && <ArrowRight className="ml-2 h-5 w-5" />}
             </Button>
             <p className="text-sm text-gray-500 mt-4">
-              Organize sua vida nos próximos 30 dias, de graça, sem cartão, sem compromisso. Só vem!
+              R$ 67/ano • Acesso completo • Cancele quando quiser
             </p>
           </div>
         </div>

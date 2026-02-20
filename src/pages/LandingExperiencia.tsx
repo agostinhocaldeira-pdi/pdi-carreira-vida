@@ -27,238 +27,63 @@ import lucasSa from "@/assets/testimonials/lucas-sa.jpg";
 
 const LandingExperiencia = () => {
   const navigate = useNavigate();
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    phone: "",
-    password: "",
-  });
-  const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [showLGPDModal, setShowLGPDModal] = useState(false);
-  const [lgpdAccepted, setLgpdAccepted] = useState(false);
   const [videoModalUrl, setVideoModalUrl] = useState<string | null>(null);
 
-  const validateForm = () => {
-    if (!formData.name || !formData.email || !formData.password) {
-      toast.error("Por favor, preencha todos os campos");
-      return false;
-    }
-
-    if (formData.password.length < 6) {
-      toast.error("A senha deve ter pelo menos 6 caracteres");
-      return false;
-    }
-
-    return true;
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    if (!validateForm()) return;
-
-    if (!lgpdAccepted) {
-      toast.error("Você precisa aceitar os Termos de Uso e Política de Privacidade");
-      return;
-    }
-
-    await performSignup();
-  };
-
-  const performSignup = async () => {
+  const handleCheckout = async () => {
     setIsLoading(true);
-
     try {
-      const { data, error } = await supabase.auth.signUp({
-        email: formData.email,
-        password: formData.password,
-        options: {
-          emailRedirectTo: `${window.location.origin}/`,
-          data: {
-            name: formData.name,
-            phone: formData.phone,
-          }
-        }
-      });
-
-      if (error) {
-        if (error.message.includes("already registered")) {
-          toast.error("Este e-mail já está cadastrado. Faça login.");
-        } else {
-          toast.error(error.message);
-        }
-        return;
-      }
-
-      if (data.user) {
-        const consents = [
-          { user_id: data.user.id, consent_type: 'terms_of_service' },
-          { user_id: data.user.id, consent_type: 'privacy_policy' },
-          { user_id: data.user.id, consent_type: 'data_processing' },
-        ];
-
-        await supabase
-          .from('user_consents')
-          .upsert(consents, { onConflict: 'user_id,consent_type' });
-
-        localStorage.setItem("user", JSON.stringify({
-          id: data.user.id,
-          name: formData.name,
-          email: formData.email,
-          phone: formData.phone,
-          role: "user",
-          createdAt: new Date().toISOString()
-        }));
-
-        localStorage.setItem('lgpd_consent_accepted', 'true');
-        localStorage.setItem('lgpd_consent_date', new Date().toISOString());
-
-        supabase.functions.invoke('send-welcome-email', {
-          body: {
-            name: formData.name,
-            email: formData.email,
-          },
-        }).catch((emailError) => {
-          console.error('Error sending welcome email:', emailError);
-        });
-
-        toast.success("Cadastro realizado! Você tem 30 dias de acesso gratuito.");
-        navigate("/onboarding?signup=success");
-      }
-    } catch (error: any) {
-      console.error("Erro no cadastro:", error);
-      toast.error("Erro ao criar perfil. Tente novamente.");
+      const { data, error } = await supabase.functions.invoke("create-checkout");
+      if (error) throw error;
+      if (data?.url) window.location.href = data.url;
+    } catch (err) {
+      console.error("Checkout error:", err);
+      toast.error("Erro ao iniciar checkout. Tente novamente.");
     } finally {
       setIsLoading(false);
     }
   };
 
-  const scrollToSignup = () => {
+  const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   return (
     <div className="min-h-screen bg-[#1a1a1a]">
-      {/* ============================================================ */}
-      {/* SIGNUP SECTION - No topo */}
-      {/* ============================================================ */}
       <section className="pt-8 pb-8 md:pb-12">
-        {/* Mobile: sem card, full-width */}
-        <div className="md:hidden px-4">
+        <div className="container mx-auto max-w-md px-4">
           <div className="space-y-2 text-center pb-4">
             <div className="flex justify-center mb-2">
               <Logo size="lg" showText={false} />
             </div>
-            <h1 className="text-2xl font-bold text-white">PDI - Carreira & Vida</h1>
+            <h1 className="text-2xl sm:text-3xl font-bold text-white">PDI - Carreira & Vida</h1>
             <p className="text-gray-400">
               Um sistema para organizar seus objetivos com clareza.
             </p>
             <div className="pt-4 border border-[#d4a853]/40 rounded-lg p-4 bg-[#d4a853]/5">
               <p className="text-lg font-bold text-[#d4a853] mb-2">
-                Acesso completo por 30 dias
+                Acesso Completo
               </p>
               <p className="text-sm text-gray-400">
-                Use o sistema completo por 30 dias para estruturar seus objetivos, metas e próximos passos com mais clareza.
-                <br />
-                Sem compromisso. Cancele quando quiser.
+                Use o sistema completo para estruturar seus objetivos, metas e próximos passos com mais clareza.
               </p>
             </div>
           </div>
-          <form onSubmit={handleSubmit} className="space-y-3">
-            <div className="space-y-2">
-              <Label htmlFor="name-mobile" className="text-gray-300">Como podemos te chamar?</Label>
-              <Input
-                id="name-mobile"
-                type="text"
-                placeholder="Seu nome"
-                value={formData.name}
-                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                required
-                disabled={isLoading}
-                className="bg-[#1a1a1a] border-gray-600 text-white placeholder:text-gray-500"
-              />
-            </div>
-
-            <div className="space-y-1">
-              <Label htmlFor="email-mobile" className="text-gray-300">E-mail</Label>
-              <Input
-                id="email-mobile"
-                type="email"
-                placeholder="seu@email.com"
-                value={formData.email}
-                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                required
-                disabled={isLoading}
-                className="bg-[#1a1a1a] border-gray-600 text-white placeholder:text-gray-500"
-              />
-              <p className="text-xs text-gray-500">Usado para salvar seu progresso e acessar o sistema.</p>
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="password-mobile" className="text-gray-300">Crie uma senha para acessar sua conta</Label>
-              <div className="relative">
-                <Input
-                  id="password-mobile"
-                  type={showPassword ? "text" : "password"}
-                  placeholder="Mínimo 6 caracteres"
-                  value={formData.password}
-                  onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                  required
-                  className="pr-10 bg-[#1a1a1a] border-gray-600 text-white placeholder:text-gray-500"
-                  disabled={isLoading}
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white transition-colors"
-                  disabled={isLoading}
-                >
-                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                </button>
-              </div>
-            </div>
-
-            <div className="flex items-start space-x-2 pt-2">
-              <Checkbox 
-                id="lgpd-mobile" 
-                checked={lgpdAccepted}
-                onCheckedChange={(checked) => setLgpdAccepted(checked === true)}
-                disabled={isLoading}
-                className="border-gray-600 data-[state=checked]:bg-[#d4a853] data-[state=checked]:border-[#d4a853]"
-              />
-              <label htmlFor="lgpd-mobile" className="text-xs text-gray-400 cursor-pointer leading-relaxed">
-                Ao criar sua conta, você concorda com os{" "}
-                <button 
-                  type="button" 
-                  onClick={(e) => {
-                    e.preventDefault();
-                    setShowLGPDModal(true);
-                  }}
-                  className="text-[#d4a853] hover:underline"
-                >
-                  Termos de Uso e Política de Privacidade
-                </button>
-                .
-              </label>
-            </div>
-
-            <Button 
-              type="submit" 
-              className="w-full mt-4 bg-[#d4a853] hover:bg-[#c49843] text-[#1a1a1a] font-semibold" 
-              size="lg" 
-              disabled={isLoading}
-            >
-              {isLoading ? (
-                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-              ) : (
-                <UserPlus className="w-4 h-4 mr-2" />
-              )}
-              {isLoading ? "Processando..." : "Acessar o sistema"}
-            </Button>
-            <p className="text-center text-xs text-gray-500">Leva menos de 1 minuto</p>
-          </form>
-
+          <Button 
+            onClick={handleCheckout}
+            className="w-full mt-4 bg-[#d4a853] hover:bg-[#c49843] text-[#1a1a1a] font-semibold" 
+            size="lg" 
+            disabled={isLoading}
+          >
+            {isLoading ? (
+              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+            ) : (
+              <UserPlus className="w-4 h-4 mr-2" />
+            )}
+            {isLoading ? "Processando..." : "Começar – R$ 67/ano"}
+          </Button>
+          <p className="text-center text-xs text-gray-500 mt-2">Acesso completo • Cancele quando quiser</p>
           <div className="mt-6 text-center">
             <p className="text-sm text-gray-400">
               Já tem conta?{" "}
@@ -267,135 +92,6 @@ const LandingExperiencia = () => {
               </Link>
             </p>
           </div>
-        </div>
-
-        {/* Desktop: card com borda */}
-        <div className="hidden md:block container mx-auto max-w-md px-4">
-          <Card className="shadow-large bg-[#222222] border border-gray-700">
-            <CardHeader className="space-y-2 text-center pb-6">
-              <div className="flex justify-center mb-2">
-                <Logo size="lg" showText={false} />
-              </div>
-              <CardTitle className="text-3xl font-bold text-white">PDI - Carreira & Vida</CardTitle>
-              <CardDescription className="text-gray-400">
-                Um sistema para organizar seus objetivos com clareza.
-              </CardDescription>
-              <div className="pt-4 border border-[#d4a853]/40 rounded-lg p-4 bg-[#d4a853]/5">
-                <p className="text-lg font-bold text-[#d4a853] mb-2">
-                  Acesso completo por 30 dias
-                </p>
-                <p className="text-sm text-gray-400">
-                  Use o sistema completo por 30 dias para estruturar seus objetivos, metas e próximos passos com mais clareza.
-                  <br />
-                  Sem compromisso. Cancele quando quiser.
-                </p>
-              </div>
-            </CardHeader>
-            <CardContent className="px-6">
-              <form onSubmit={handleSubmit} className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="name" className="text-gray-300">Como podemos te chamar?</Label>
-                  <Input
-                    id="name"
-                    type="text"
-                    placeholder="Seu nome"
-                    value={formData.name}
-                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    required
-                    disabled={isLoading}
-                    className="bg-[#1a1a1a] border-gray-600 text-white placeholder:text-gray-500"
-                  />
-                </div>
-
-                <div className="space-y-1">
-                  <Label htmlFor="email" className="text-gray-300">E-mail</Label>
-                  <Input
-                    id="email"
-                    type="email"
-                    placeholder="seu@email.com"
-                    value={formData.email}
-                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    required
-                    disabled={isLoading}
-                    className="bg-[#1a1a1a] border-gray-600 text-white placeholder:text-gray-500"
-                  />
-                  <p className="text-xs text-gray-500">Usado para salvar seu progresso e acessar o sistema.</p>
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="password" className="text-gray-300">Crie uma senha para acessar sua conta</Label>
-                  <div className="relative">
-                    <Input
-                      id="password"
-                      type={showPassword ? "text" : "password"}
-                      placeholder="Mínimo 6 caracteres"
-                      value={formData.password}
-                      onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                      required
-                      className="pr-10 bg-[#1a1a1a] border-gray-600 text-white placeholder:text-gray-500"
-                      disabled={isLoading}
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white transition-colors"
-                      disabled={isLoading}
-                    >
-                      {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                    </button>
-                  </div>
-                </div>
-
-                <div className="flex items-start space-x-2 pt-2">
-                  <Checkbox 
-                    id="lgpd-preview" 
-                    checked={lgpdAccepted}
-                    onCheckedChange={(checked) => setLgpdAccepted(checked === true)}
-                    disabled={isLoading}
-                    className="border-gray-600 data-[state=checked]:bg-[#d4a853] data-[state=checked]:border-[#d4a853]"
-                  />
-                  <label htmlFor="lgpd-preview" className="text-xs text-gray-400 cursor-pointer leading-relaxed">
-                    Ao criar sua conta, você concorda com os{" "}
-                    <button 
-                      type="button" 
-                      onClick={(e) => {
-                        e.preventDefault();
-                        setShowLGPDModal(true);
-                      }}
-                      className="text-[#d4a853] hover:underline"
-                    >
-                      Termos de Uso e Política de Privacidade
-                    </button>
-                    .
-                  </label>
-                </div>
-
-                <Button 
-                  type="submit" 
-                  className="w-full mt-6 bg-[#d4a853] hover:bg-[#c49843] text-[#1a1a1a] font-semibold" 
-                  size="lg" 
-                  disabled={isLoading}
-                >
-                  {isLoading ? (
-                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                  ) : (
-                    <UserPlus className="w-4 h-4 mr-2" />
-                  )}
-                  {isLoading ? "Processando..." : "Acessar o sistema"}
-                </Button>
-                <p className="text-center text-xs text-gray-500">Leva menos de 1 minuto</p>
-              </form>
-
-              <div className="mt-6 text-center">
-                <p className="text-sm text-gray-400">
-                  Já tem conta?{" "}
-                  <Link to="/login" className="text-[#d4a853] hover:underline font-medium">
-                    Entrar
-                  </Link>
-                </p>
-              </div>
-            </CardContent>
-          </Card>
         </div>
       </section>
 
@@ -585,7 +281,7 @@ const LandingExperiencia = () => {
           <div className="text-center mt-10">
             <Button 
               size="lg" 
-              onClick={scrollToSignup}
+              onClick={handleCheckout}
               className="text-base sm:text-lg px-6 sm:px-8 py-5 sm:py-6 bg-[#d4a853] hover:bg-[#c49843] text-[#1a1a1a] font-semibold"
             >
               Começar Teste Grátis
@@ -740,7 +436,7 @@ const LandingExperiencia = () => {
           <div className="flex flex-col items-center gap-4">
             <Button 
               size="lg" 
-              onClick={scrollToSignup}
+              onClick={handleCheckout}
               className="text-base sm:text-lg px-6 sm:px-10 py-5 sm:py-6 bg-[#d4a853] hover:bg-[#c49843] text-[#1a1a1a] font-bold uppercase tracking-wide w-full sm:w-auto max-w-xs sm:max-w-none"
             >
               Começar
