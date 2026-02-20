@@ -75,9 +75,12 @@ serve(async (req) => {
     const defaultPriceId = "price_1Sjo293aJLvyiewRDW1gCi39";
     const priceId = typeof body?.price_id === "string" ? body.price_id : defaultPriceId;
 
+    // Support mode override (subscription or payment), default to subscription
+    const checkoutMode = body?.mode === "payment" ? "payment" : "subscription";
+
     const origin = req.headers.get("origin") || "https://pdicarreiraevida.lovable.app";
 
-    const session = await stripe.checkout.sessions.create({
+    const sessionParams: any = {
       customer: customerId,
       customer_email: customerId ? undefined : (email || undefined),
       line_items: [
@@ -86,12 +89,16 @@ serve(async (req) => {
           quantity: 1,
         },
       ],
-      mode: "subscription",
+      mode: checkoutMode,
       allow_promotion_codes: true,
-      success_url: `${origin}/signup?checkout=success`,
+      success_url: checkoutMode === "payment" 
+        ? `${origin}/signup?checkout=success&plan=pdismart`
+        : `${origin}/signup?checkout=success`,
       cancel_url: `${origin}/?checkout=canceled`,
       metadata: userId ? { user_id: userId } : { source: "landing_checkout" },
-    });
+    };
+
+    const session = await stripe.checkout.sessions.create(sessionParams);
 
     logStep("Checkout session created", { sessionId: session.id, url: session.url });
 
