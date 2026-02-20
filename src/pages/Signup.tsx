@@ -148,8 +148,12 @@ const Signup = () => {
           console.error('Error sending welcome email:', emailError);
         });
         
-        // Direcionar para onboarding (sem Stripe checkout)
-        navigate("/onboarding?signup=success");
+        // Direcionar baseado na origem
+        if (isJornadaRedirect) {
+          navigate("/jornada");
+        } else {
+          navigate("/onboarding?signup=success");
+        }
       }
     } catch (error: any) {
       console.error("Erro no cadastro:", error);
