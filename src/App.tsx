@@ -65,6 +65,7 @@ import CheckoutDireto from "./pages/CheckoutDireto";
 import ExperienciaNarrativa from "./pages/ExperienciaNarrativa";
 import ExperienciaTest from "./pages/ExperienciaTest";
 import Jornada from "./pages/Jornada";
+import JornadaFinalPreview from "./pages/JornadaFinalPreview";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -161,6 +162,7 @@ const App = () => (
                 <Route path="/experiencia" element={<ExperienciaNarrativa />} />
                 <Route path="/experiencia-test" element={<ExperienciaTest />} />
                 <Route path="/jornada" element={<Jornada />} />
+                <Route path="/jornada-final-preview" element={<JornadaFinalPreview />} />
                 <Route path="/comecar" element={<SubscriberLanding />} />
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                 <Route path="*" element={<NotFound />} />
