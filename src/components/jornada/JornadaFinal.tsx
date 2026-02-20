@@ -436,7 +436,7 @@ export default function JornadaFinal({ onBack, smartActionData, vvdAnswers = [],
                   </div>
                   <div className="flex-1">
                     <div className="flex items-center justify-between">
-                      <h3 className="font-bold text-slate-800">PDI Acesso Completo</h3>
+                      <h3 className="font-bold text-slate-800">Sistema PDI</h3>
                       <span className="text-blue-600 font-bold">R$ 67<span className="text-xs font-normal">/ano</span></span>
                     </div>
                     <p className="text-xs text-slate-500 mt-1">
@@ -449,7 +449,7 @@ export default function JornadaFinal({ onBack, smartActionData, vvdAnswers = [],
                       disabled={loadingPlan === "completo"}
                     >
                       {loadingPlan === "completo" ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
-                      Assinar Acesso Completo
+                      Assinar plano PDI
                     </Button>
                   </div>
                 </div>
