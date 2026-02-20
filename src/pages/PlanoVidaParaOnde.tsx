@@ -16,6 +16,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { useIsMobile } from "@/hooks/use-mobile";
 import { PDILoader } from "@/components/ui/pdi-loader";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import ConfirmDeleteDialog from "@/components/ConfirmDeleteDialog";
 import { OKRLinkSection, CompanyOKRsOverview } from "@/components/home/OKRLinkSection";
@@ -312,10 +313,21 @@ const PlanoVidaParaOnde = () => {
   const confirmRemoveObjetivo = () => {
     if (deleteObjetivoId == null) return;
 
+    const deletedId = String(deleteObjetivoId);
     const prevObjetivos = objetivos;
-    const novosObjetivos = prevObjetivos.filter((obj) => String(obj.id) !== String(deleteObjetivoId));
+    const novosObjetivos = prevObjetivos.filter((obj) => String(obj.id) !== deletedId);
     setObjetivos(novosObjetivos);
     localStorage.setItem("objetivos", JSON.stringify(novosObjetivos));
+
+    // Cascade: remove metas linked to this objective from localStorage
+    try {
+      const localMetas = JSON.parse(localStorage.getItem("metas") || "[]");
+      const filteredMetas = localMetas.filter((m: any) => String(m.objetivo_id || m.objetivoId) !== deletedId);
+      localStorage.setItem("metas", JSON.stringify(filteredMetas));
+    } catch (e) {
+      console.error("Error cleaning metas from localStorage:", e);
+    }
+
     toast.success("Objetivo removido!");
     setDeleteObjetivoId(null);
 
@@ -327,11 +339,37 @@ const PlanoVidaParaOnde = () => {
       status: obj.status || 'a fazer',
       is_principal: obj.isPrincipal,
     }));
-    storage.saveObjetivos(objetivosToSave as any).then(() => {
-      queryClient.invalidateQueries({ queryKey: PDI_QUERY_KEYS.pdiData() });
-    }).catch(error => {
-      console.error("Background objetivos sync error:", error);
-    });
+
+    // Save objectives + cascade delete goals in Supabase
+    const cascadeDelete = async () => {
+      try {
+        await storage.saveObjetivos(objetivosToSave as any);
+        // Delete goals linked to this objective from Supabase
+        const { data: linkedGoals } = await supabase
+          .from("user_goals")
+          .select("id")
+          .eq("objective_id", deletedId);
+        if (linkedGoals && linkedGoals.length > 0) {
+          for (const goal of linkedGoals) {
+            // Delete steps linked to actions of this goal
+            const { data: linkedActions } = await supabase
+              .from("user_actions")
+              .select("id")
+              .eq("goal_id", goal.id);
+            if (linkedActions && linkedActions.length > 0) {
+              const actionIds = linkedActions.map((a: any) => a.id);
+              await supabase.from("user_steps").delete().in("action_id", actionIds);
+              await supabase.from("user_actions").delete().eq("goal_id", goal.id);
+            }
+            await supabase.from("user_goals").delete().eq("id", goal.id);
+          }
+        }
+        queryClient.invalidateQueries({ queryKey: PDI_QUERY_KEYS.pdiData() });
+      } catch (error) {
+        console.error("Background cascade delete error:", error);
+      }
+    };
+    cascadeDelete();
   };
 
   const handleStartEditObjetivo = (obj: any) => {

@@ -685,14 +685,25 @@ const PlanoDeVida = ({ onTabChange, onOpenChange, forcedTab, forcedOpen }: Plano
   const confirmRemoveObjetivo = () => {
     if (deleteObjetivoId == null) return;
 
+    const deletedId = String(deleteObjetivoId);
     const prevObjetivos = objetivos;
-    const novosObjetivos = prevObjetivos.filter((obj) => String(obj.id) !== String(deleteObjetivoId));
+    const novosObjetivos = prevObjetivos.filter((obj) => String(obj.id) !== deletedId);
     setObjetivos(novosObjetivos);
     localStorage.setItem("objetivos", JSON.stringify(novosObjetivos));
+
+    // Cascade: remove metas linked to this objective from localStorage
+    try {
+      const localMetas = JSON.parse(localStorage.getItem("metas") || "[]");
+      const filteredMetas = localMetas.filter((m: any) => String(m.objetivo_id || m.objetivoId) !== deletedId);
+      localStorage.setItem("metas", JSON.stringify(filteredMetas));
+    } catch (e) {
+      console.error("Error cleaning metas from localStorage:", e);
+    }
+
     toast.success("Objetivo removido!");
     setDeleteObjetivoId(null);
 
-    // Save in background (non-blocking)
+    // Save in background (non-blocking) + cascade delete goals
     const objetivosToSave = novosObjetivos.map((obj) => ({
       id: obj.id,
       texto: obj.texto,
@@ -700,11 +711,35 @@ const PlanoDeVida = ({ onTabChange, onOpenChange, forcedTab, forcedOpen }: Plano
       conexao_vvd: obj.conexaoVvd,
       status: obj.status || 'a fazer',
     }));
-    storage.saveObjetivos(objetivosToSave as any).then(() => {
-      queryClient.invalidateQueries({ queryKey: PDI_QUERY_KEYS.pdiData() });
-    }).catch(error => {
-      console.error("Background objetivos sync error:", error);
-    });
+
+    const cascadeDelete = async () => {
+      try {
+        await storage.saveObjetivos(objetivosToSave as any);
+        // Delete goals linked to this objective from Supabase
+        const { data: linkedGoals } = await supabase
+          .from("user_goals")
+          .select("id")
+          .eq("objective_id", deletedId);
+        if (linkedGoals && linkedGoals.length > 0) {
+          for (const goal of linkedGoals) {
+            const { data: linkedActions } = await supabase
+              .from("user_actions")
+              .select("id")
+              .eq("goal_id", goal.id);
+            if (linkedActions && linkedActions.length > 0) {
+              const actionIds = linkedActions.map((a: any) => a.id);
+              await supabase.from("user_steps").delete().in("action_id", actionIds);
+              await supabase.from("user_actions").delete().eq("goal_id", goal.id);
+            }
+            await supabase.from("user_goals").delete().eq("id", goal.id);
+          }
+        }
+        queryClient.invalidateQueries({ queryKey: PDI_QUERY_KEYS.pdiData() });
+      } catch (error) {
+        console.error("Background cascade delete error:", error);
+      }
+    };
+    cascadeDelete();
   };
 
   const handleStartEditObjetivo = (obj: any) => {
