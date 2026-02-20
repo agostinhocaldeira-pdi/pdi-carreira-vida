@@ -1,15 +1,8 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Brain, ChevronRight, Sparkles, CreditCard, X } from "lucide-react";
+import { Brain, ChevronRight, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import JornadaUpgradeModal from "@/components/jornada/JornadaUpgradeModal";
 
 interface Props {
   stepId: string;
@@ -18,18 +11,10 @@ interface Props {
 }
 
 /**
- * REGRAS DE AVALIAÇÃO IA
- * 
- * Cada avaliação deve ser concisa, simples, como se explicasse para uma criança de 14 anos.
- * 
- * Etapa VVD: Avaliar clareza da visão e especificidade das mudanças desejadas.
- * Etapa Vida Não Quero: Avaliar consciência dos padrões negativos e motivação para mudar.
- * Etapa Auto Reflexão: Cruzar valores + roda da vida + crenças, identificar coerências e pontos cegos.
- * Etapa SMART (última): Usar TODAS as respostas de TODAS as etapas anteriores + avaliações anteriores
- *   para fazer uma análise robusta e profunda da meta SMART criada.
- * 
- * LIMITE: Cada botão permite UMA ÚNICA avaliação gratuita.
- * Segunda tentativa → popup de compra avulsa R$ 10,00.
+ * Avaliação de IA na Jornada.
+ * Ao clicar "Ver avaliação", abre modal com 3 opções de pagamento
+ * (PDI Básico R$67, PDI Smart R$47, Avulso R$10).
+ * Não há uso gratuito — sempre exige pagamento.
  */
 
 const mockEvaluations: Record<string, string> = {
@@ -41,15 +26,12 @@ const mockEvaluations: Record<string, string> = {
 
 export default function JornadaAIEvaluation({ stepId, onContinue, hasEvaluated }: Props) {
   const [revealed, setRevealed] = useState(false);
-  const [showPurchaseModal, setShowPurchaseModal] = useState(false);
+  const [showUpgradeModal, setShowUpgradeModal] = useState(false);
   const evaluation = mockEvaluations[stepId] || "Avaliação não disponível.";
 
   const handleReveal = () => {
-    if (hasEvaluated) {
-      setShowPurchaseModal(true);
-    } else {
-      setRevealed(true);
-    }
+    // Always show upgrade modal — AI evaluation requires payment
+    setShowUpgradeModal(true);
   };
 
   if (!revealed) {
@@ -65,40 +47,24 @@ export default function JornadaAIEvaluation({ stepId, onContinue, hasEvaluated }
             className="w-full h-12 text-base bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-600 hover:to-purple-600 shadow-lg shadow-indigo-200 gap-2"
           >
             <Brain className="w-5 h-5" />
-            Ver avaliação
+            Ver avaliação da IA
+          </Button>
+          <Button
+            onClick={() => onContinue()}
+            variant="outline"
+            className="w-full h-10 text-sm gap-2"
+          >
+            Continuar sem avaliação
+            <ChevronRight className="w-4 h-4" />
           </Button>
         </motion.div>
 
-        <Dialog open={showPurchaseModal} onOpenChange={setShowPurchaseModal}>
-          <DialogContent className="sm:max-w-md">
-            <DialogHeader>
-              <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-indigo-100 to-purple-100">
-                <Sparkles className="h-8 w-8 text-indigo-600" />
-              </div>
-              <DialogTitle className="text-center text-xl">
-                Avaliação já realizada
-              </DialogTitle>
-              <DialogDescription className="text-center space-y-3 pt-2">
-                <p>Você já utilizou sua avaliação gratuita nesta etapa.</p>
-                <p>Para gerar uma nova avaliação com a IA, adquira um uso adicional.</p>
-              </DialogDescription>
-            </DialogHeader>
-            <div className="my-4 rounded-lg bg-muted/50 p-4 text-center">
-              <div className="text-3xl font-bold text-indigo-600">R$ 10,00</div>
-              <div className="text-sm text-muted-foreground mt-1">Pagamento único • Uso imediato</div>
-            </div>
-            <DialogFooter className="flex-col gap-2 sm:flex-col">
-              <Button className="w-full gap-2 bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-600 hover:to-purple-600">
-                <CreditCard className="h-4 w-4" />
-                Comprar Avaliação Adicional
-              </Button>
-              <Button variant="outline" onClick={() => setShowPurchaseModal(false)} className="w-full gap-2">
-                <X className="h-4 w-4" />
-                Cancelar
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
+        <JornadaUpgradeModal
+          open={showUpgradeModal}
+          onOpenChange={setShowUpgradeModal}
+          title="Avaliação de IA"
+          description="A avaliação personalizada da IA está disponível para assinantes ou mediante pagamento avulso."
+        />
       </>
     );
   }

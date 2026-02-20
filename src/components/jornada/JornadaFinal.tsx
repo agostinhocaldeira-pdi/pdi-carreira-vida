@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { FileText, Download, Crown, Star, ArrowLeft, Flame, ExternalLink, Play, Check, Users, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -8,7 +8,7 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import jsPDF from "jspdf";
-
+import JornadaUpgradeModal from "@/components/jornada/JornadaUpgradeModal";
 interface SmartData {
   especifica: string;
   mensuravel: string;
@@ -41,6 +41,23 @@ export default function JornadaFinal({ onBack, smartActionData, vvdAnswers = [],
   const crenca1 = autoReflexaoData?.crencas?.[0] || "";
   const s = smartActionData;
   const [loadingPlan, setLoadingPlan] = useState<string | null>(null);
+  const [showPdfUpgradeModal, setShowPdfUpgradeModal] = useState(false);
+
+  // Record completion on mount
+  useEffect(() => {
+    const recordCompletion = async () => {
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) return;
+        await supabase
+          .from('user_jornada_completions')
+          .upsert({ user_id: user.id, completed_at: new Date().toISOString() }, { onConflict: 'user_id' });
+      } catch (err) {
+        console.error('Error recording jornada completion:', err);
+      }
+    };
+    recordCompletion();
+  }, []);
 
   const handleSubscribe = async (priceId: string, planName: string) => {
     setLoadingPlan(planName);
@@ -58,6 +75,11 @@ export default function JornadaFinal({ onBack, smartActionData, vvdAnswers = [],
     } finally {
       setLoadingPlan(null);
     }
+  };
+
+  const handleGeneratePDF = () => {
+    // PDF generation requires payment
+    setShowPdfUpgradeModal(true);
   };
 
   const generatePDF = () => {
@@ -346,7 +368,7 @@ export default function JornadaFinal({ onBack, smartActionData, vvdAnswers = [],
             <Button
               variant="outline"
               className="w-full h-12 justify-start gap-3 text-left"
-              onClick={generatePDF}
+              onClick={handleGeneratePDF}
             >
               <FileText className="w-5 h-5 text-slate-500" />
               <div>
@@ -544,6 +566,13 @@ export default function JornadaFinal({ onBack, smartActionData, vvdAnswers = [],
           <ArrowLeft className="w-4 h-4 mr-1" /> Voltar e revisar
         </Button>
       </div>
+
+      <JornadaUpgradeModal
+        open={showPdfUpgradeModal}
+        onOpenChange={setShowPdfUpgradeModal}
+        title="Relatório em PDF"
+        description="O download do relatório em PDF está disponível para assinantes ou mediante pagamento avulso."
+      />
     </div>
   );
 }
