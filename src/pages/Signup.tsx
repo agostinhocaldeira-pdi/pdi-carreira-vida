@@ -16,6 +16,7 @@ const Signup = () => {
   const [searchParams] = useSearchParams();
   const isPdiSmart = searchParams.get("source") === "pdismart";
   const isCheckoutSuccess = searchParams.get("checkout") === "success";
+  const isJornadaRedirect = searchParams.get("redirect") === "/jornada";
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -175,7 +176,7 @@ const Signup = () => {
               ? "Crie sua conta abaixo usando o mesmo e-mail que você usou no pagamento."
               : "Um sistema para organizar seus objetivos com clareza."}
           </CardDescription>
-          {!isPdiSmart && !isCheckoutSuccess && (
+          {!isPdiSmart && !isCheckoutSuccess && !isJornadaRedirect && (
             <div className="pt-4">
               <p className="text-lg font-bold text-[#d4a853] mb-2">
                 Acesso Completo – R$ 67/ano
@@ -184,6 +185,13 @@ const Signup = () => {
                 Use o sistema completo para estruturar seus objetivos, metas e próximos passos com mais clareza.
                 <br />
                 Cancele quando quiser.
+              </p>
+            </div>
+          )}
+          {isJornadaRedirect && !isPdiSmart && !isCheckoutSuccess && (
+            <div className="pt-4">
+              <p className="text-lg font-bold text-emerald-400">
+                Acesso gratuito
               </p>
             </div>
           )}
