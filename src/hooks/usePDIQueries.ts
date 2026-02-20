@@ -23,6 +23,17 @@ export const PDI_QUERY_KEYS = {
   homeCache: () => ['home-cache'] as const,
 };
 
+// Flag to skip overnight cache after a mutation (deletion, save, etc.)
+let skipOvernightCache = false;
+
+/**
+ * Force the next usePDIData fetch to bypass overnight cache
+ * and go directly to Supabase for fresh data.
+ */
+export function forceDirectFetch() {
+  skipOvernightCache = true;
+}
+
 // Helper to check auth status
 async function checkAuthStatus() {
   const { data: { session } } = await supabase.auth.getSession();
@@ -104,27 +115,33 @@ export function usePDIData() {
       
       if (isAuthenticated && userId) {
         // PRIORITY 1: Try overnight cache first (fastest, pre-computed at 3am)
-        try {
-          const { data: cacheData } = await supabase
-            .from('user_home_cache')
-            .select('objectives_data, plano_vida_summary')
-            .eq('user_id', userId)
-            .maybeSingle();
-          
-          if (cacheData?.objectives_data) {
-            console.log('[usePDIData] Using overnight cache');
-            const extracted = extractPDIFromCache(cacheData);
+        // BUT skip it if a mutation just happened (deletion, save, etc.)
+        if (!skipOvernightCache) {
+          try {
+            const { data: cacheData } = await supabase
+              .from('user_home_cache')
+              .select('objectives_data, plano_vida_summary')
+              .eq('user_id', userId)
+              .maybeSingle();
             
-            // Update localStorage for offline access
-            localStorage.setItem('objetivos', JSON.stringify(extracted.objetivos));
-            localStorage.setItem('metas', JSON.stringify(extracted.metas));
-            if (extracted.vvd) localStorage.setItem('vvd', extracted.vvd);
-            if (extracted.valores.length > 0) localStorage.setItem('valores', JSON.stringify(extracted.valores));
-            
-            return extracted;
+            if (cacheData?.objectives_data) {
+              console.log('[usePDIData] Using overnight cache');
+              const extracted = extractPDIFromCache(cacheData);
+              
+              // Update localStorage for offline access
+              localStorage.setItem('objetivos', JSON.stringify(extracted.objetivos));
+              localStorage.setItem('metas', JSON.stringify(extracted.metas));
+              if (extracted.vvd) localStorage.setItem('vvd', extracted.vvd);
+              if (extracted.valores.length > 0) localStorage.setItem('valores', JSON.stringify(extracted.valores));
+              
+              return extracted;
+            }
+          } catch (err) {
+            console.warn('[usePDIData] Cache read failed, falling back to direct query');
           }
-        } catch (err) {
-          console.warn('[usePDIData] Cache read failed, falling back to direct query');
+        } else {
+          console.log('[usePDIData] Skipping overnight cache (forced direct fetch)');
+          skipOvernightCache = false; // Reset flag after use
         }
         
         // PRIORITY 2: Direct Supabase query (for new users without cache)
@@ -181,7 +198,7 @@ export function useObjetivos() {
   return {
     objetivos,
     isLoading,
-    invalidate: () => queryClient.invalidateQueries({ queryKey: PDI_QUERY_KEYS.pdiData() }),
+    invalidate: () => { forceDirectFetch(); queryClient.invalidateQueries({ queryKey: PDI_QUERY_KEYS.pdiData() }); },
   };
 }
 
@@ -197,7 +214,7 @@ export function useMetas() {
   return {
     metas,
     isLoading,
-    invalidate: () => queryClient.invalidateQueries({ queryKey: PDI_QUERY_KEYS.pdiData() }),
+    invalidate: () => { forceDirectFetch(); queryClient.invalidateQueries({ queryKey: PDI_QUERY_KEYS.pdiData() }); },
   };
 }
 
@@ -219,6 +236,7 @@ export function useSaveObjetivo() {
       }
     },
     onSuccess: () => {
+      forceDirectFetch();
       queryClient.invalidateQueries({ queryKey: PDI_QUERY_KEYS.pdiData() });
     },
   });
@@ -242,6 +260,7 @@ export function useSaveMeta() {
       }
     },
     onSuccess: () => {
+      forceDirectFetch();
       queryClient.invalidateQueries({ queryKey: PDI_QUERY_KEYS.pdiData() });
     },
   });
@@ -267,6 +286,7 @@ export function useDeleteMeta() {
       }
     },
     onSuccess: () => {
+      forceDirectFetch();
       queryClient.invalidateQueries({ queryKey: PDI_QUERY_KEYS.pdiData() });
     },
   });

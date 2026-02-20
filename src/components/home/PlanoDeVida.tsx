@@ -22,7 +22,7 @@ import { OKRLinkSection, CompanyOKRsOverview } from "@/components/home/OKRLinkSe
 import MaoNaMassa from "@/components/home/MaoNaMassa";
 import { useQueryClient } from "@tanstack/react-query";
 import { usePDIStorage } from "@/hooks/usePDIStorage";
-import { PDI_QUERY_KEYS, usePDIData } from "@/hooks/usePDIQueries";
+import { PDI_QUERY_KEYS, usePDIData, forceDirectFetch } from "@/hooks/usePDIQueries";
 import { RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, Legend, ResponsiveContainer } from "recharts";
 import { useAIUsage } from "@/hooks/useAIUsage";
 import { AIUsageLimitModal } from "@/components/AIUsageLimitModal";
@@ -734,6 +734,7 @@ const PlanoDeVida = ({ onTabChange, onOpenChange, forcedTab, forcedOpen }: Plano
             await supabase.from("user_goals").delete().eq("id", goal.id);
           }
         }
+        forceDirectFetch();
         queryClient.invalidateQueries({ queryKey: PDI_QUERY_KEYS.pdiData() });
       } catch (error) {
         console.error("Background cascade delete error:", error);

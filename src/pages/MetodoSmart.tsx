@@ -25,7 +25,7 @@ import {
 import { toast } from "sonner";
 import { usePDIStorage } from "@/hooks/usePDIStorage";
 import { useQueryClient } from "@tanstack/react-query";
-import { PDI_QUERY_KEYS } from "@/hooks/usePDIQueries";
+import { PDI_QUERY_KEYS, forceDirectFetch } from "@/hooks/usePDIQueries";
 import SmartScientificModal from "@/components/SmartScientificModal";
 import { supabase } from "@/integrations/supabase/client";
 import { useAIUsage } from "@/hooks/useAIUsage";
@@ -333,6 +333,7 @@ const MetodoSmart = () => {
 
       // Save to Supabase in background, then navigate
       storage.saveMetas(metasAtualizadas).then(() => {
+        forceDirectFetch();
         queryClient.invalidateQueries({ queryKey: PDI_QUERY_KEYS.pdiData() });
       }).catch(error => {
         console.error('Background sync error:', error);
@@ -340,6 +341,7 @@ const MetodoSmart = () => {
 
       // Navigate to como-chegar with force refresh
       setTimeout(() => {
+        forceDirectFetch();
         queryClient.invalidateQueries({ queryKey: PDI_QUERY_KEYS.pdiData() });
         navigate("/plano-vida/como-chegar", { state: { fromSmart: true } });
       }, 1500);
