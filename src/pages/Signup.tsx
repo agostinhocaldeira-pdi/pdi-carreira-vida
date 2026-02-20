@@ -15,6 +15,7 @@ const Signup = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const isPdiSmart = searchParams.get("source") === "pdismart";
+  const isCheckoutSuccess = searchParams.get("checkout") === "success";
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -165,22 +166,31 @@ const Signup = () => {
             <Logo size="lg" showText={false} />
           </div>
           <CardTitle className="text-2xl sm:text-3xl font-bold text-white">
-            {isPdiSmart ? "PDI Smart – Crie sua conta" : "PDI - Carreira & Vida"}
+            {isPdiSmart ? "PDI Smart – Crie sua conta" : isCheckoutSuccess ? "Pagamento confirmado!" : "PDI - Carreira & Vida"}
           </CardTitle>
           <CardDescription className="text-gray-400">
             {isPdiSmart 
               ? "Pagamento confirmado! Crie sua conta para acessar a ferramenta."
+              : isCheckoutSuccess
+              ? "Crie sua conta abaixo usando o mesmo e-mail que você usou no pagamento."
               : "Um sistema para organizar seus objetivos com clareza."}
           </CardDescription>
-          {!isPdiSmart && (
+          {!isPdiSmart && !isCheckoutSuccess && (
             <div className="pt-4">
               <p className="text-lg font-bold text-[#d4a853] mb-2">
-                Acesso Grátis por 30 dias
+                Acesso Completo – R$ 67/ano
               </p>
               <p className="text-sm text-gray-400">
-                Use o sistema completo por 30 dias para estruturar seus objetivos, metas e próximos passos com mais clareza.
+                Use o sistema completo para estruturar seus objetivos, metas e próximos passos com mais clareza.
                 <br />
-                Sem compromisso. Cancele quando quiser.
+                Cancele quando quiser.
+              </p>
+            </div>
+          )}
+          {isCheckoutSuccess && (
+            <div className="pt-4 border border-emerald-500/40 rounded-lg p-4 bg-emerald-500/5">
+              <p className="text-sm text-emerald-400">
+                ✅ Use o <strong>mesmo e-mail</strong> do pagamento para que sua assinatura seja reconhecida automaticamente.
               </p>
             </div>
           )}

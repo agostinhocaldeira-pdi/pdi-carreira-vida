@@ -6,6 +6,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Brain, Target, Calendar, Flame, Heart, ArrowRight, Sparkles, Volume2, VolumeX, Loader2 } from "lucide-react";
 import logoPdi from "@/assets/logo_pdi.png";
 import { useQuizResultAudio } from "@/hooks/useQuizResultAudio";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 // New quiz structure - will receive more questions
 type Trava = "EXAUSTAO" | "INERCIA" | "DISPERSAO" | "LENTIDAO";
@@ -264,8 +266,20 @@ const Diagnostico = () => {
     return winners[0];
   };
 
-  const handleCTA = () => {
-    navigate("/signup");
+  const [isCheckoutLoading, setIsCheckoutLoading] = useState(false);
+
+  const handleCTA = async () => {
+    setIsCheckoutLoading(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("create-checkout");
+      if (error) throw error;
+      if (data?.url) window.location.href = data.url;
+    } catch (err) {
+      console.error("Checkout error:", err);
+      toast.error("Erro ao iniciar checkout. Tente novamente.");
+    } finally {
+      setIsCheckoutLoading(false);
+    }
   };
 
   // Build narration text for current result
@@ -510,15 +524,16 @@ const Diagnostico = () => {
                     <Button
                       onClick={handleCTA}
                       size="lg"
-                      className="w-full bg-gradient-to-r from-[#d4a853] to-[#b8912f] hover:from-[#e5b964] hover:to-[#c9a240] text-[#1a1a1a] font-bold text-sm sm:text-base py-4 sm:py-6 min-h-[72px] sm:min-h-[56px] rounded-xl shadow-lg shadow-[#d4a853]/30 whitespace-normal leading-snug"
+                      disabled={isCheckoutLoading}
+                      className="w-full bg-gradient-to-r from-[#d4a853] to-[#b8912f] hover:from-[#e5b964] hover:to-[#c9a240] text-[#1a1a1a] font-bold text-sm sm:text-base py-4 sm:py-6 min-h-[72px] sm:min-h-[56px] rounded-xl shadow-lg shadow-[#d4a853]/30 whitespace-normal leading-snug disabled:opacity-60"
                     >
                       <span className="flex items-center justify-center gap-2 text-center">
-                        <span>Começar</span>
-                        <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
+                        <span>{isCheckoutLoading ? "Processando..." : "Começar"}</span>
+                        {!isCheckoutLoading && <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />}
                       </span>
                     </Button>
                     <p className="text-center text-xs text-gray-400 mt-3">
-                      Transforme intenção em resultado
+                      R$ 67/ano • Acesso completo
                     </p>
                   </div>
                 </div>

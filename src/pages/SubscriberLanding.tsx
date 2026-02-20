@@ -9,9 +9,7 @@ const SubscriberLanding = () => {
   const handleCheckout = async () => {
     setIsLoading(true);
     try {
-      const { data, error } = await supabase.functions.invoke("create-plano-mestre-checkout", {
-        body: {},
-      });
+      const { data, error } = await supabase.functions.invoke("create-checkout");
       if (error) throw error;
       if (data?.url) {
         window.location.href = data.url;

@@ -28,8 +28,8 @@ import {
   Sparkles
 } from "lucide-react";
 import logoPdi from "@/assets/logo_pdi.png";
-
-// Import testimonial photos
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 import ericPereira from "@/assets/testimonials/eric-pereira.jpg";
 import gabrieleCampos from "@/assets/testimonials/gabriele-campos.jpg";
 import larissaSchuartz from "@/assets/testimonials/larissa-schuartz.jpg";
@@ -40,10 +40,25 @@ const Index = () => {
   const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [videoModalUrl, setVideoModalUrl] = useState<string | null>(null);
+  const [isCheckoutLoading, setIsCheckoutLoading] = useState(false);
 
-  const handlePessoaFisicaClick = () => {
+  const handleCheckout = async () => {
+    setIsCheckoutLoading(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("create-checkout");
+      if (error) throw error;
+      if (data?.url) window.location.href = data.url;
+    } catch (err) {
+      console.error("Checkout error:", err);
+      toast.error("Erro ao iniciar checkout. Tente novamente.");
+    } finally {
+      setIsCheckoutLoading(false);
+    }
+  };
+
+  const handlePessoaFisicaClick = async () => {
     setIsModalOpen(false);
-    navigate("/signup");
+    await handleCheckout();
   };
 
   const handleCTAClick = () => {
@@ -92,11 +107,11 @@ const Index = () => {
                 onClick={handleCTAClick}
                 className="text-lg px-8 py-6 bg-[#d4a853] hover:bg-[#c49843] text-[#1a1a1a] font-bold uppercase tracking-wide"
               >
-                Começar Teste Grátis
+                Começar
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
               <p className="text-sm text-gray-500">
-                30 dias gratuitos • Sem cartão de crédito • Acesso imediato
+                R$ 67/ano • Acesso completo • Cancele quando quiser
               </p>
             </div>
 
@@ -295,7 +310,7 @@ const Index = () => {
               onClick={handleCTAClick}
               className="text-base sm:text-lg px-6 sm:px-8 py-5 sm:py-6 bg-[#d4a853] hover:bg-[#c49843] text-[#1a1a1a] font-semibold"
             >
-              Começar Teste Grátis
+              Começar
               <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
           </div>

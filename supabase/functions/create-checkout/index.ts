@@ -31,7 +31,7 @@ serve(async (req) => {
 
     const stripe = new Stripe(stripeKey, { apiVersion: "2025-08-27.basil" });
 
-    // Support both authenticated (app) and unauthenticated (email deep link) flows.
+    // Support both authenticated (app) and unauthenticated (landing page) flows.
     const authHeader = req.headers.get("Authorization");
     const hasBearer = !!authHeader?.startsWith("Bearer ");
 
@@ -56,21 +56,22 @@ serve(async (req) => {
       userId = user.id;
       logStep("User authenticated", { userId: user.id, email: user.email });
     } else {
-      // Public flow: accept email in request body
+      // Public flow: accept email in request body (optional — Stripe can collect it)
       email = typeof body?.email === "string" ? body.email.trim() : null;
-      if (!email) throw new Error("No authorization header provided and no email in body");
-      logStep("Public checkout requested", { email });
+      logStep("Public checkout requested", { email: email || "(Stripe will collect)" });
     }
 
-    // Check if customer already exists
-    const customers = await stripe.customers.list({ email: email!, limit: 1 });
-    let customerId;
-    if (customers.data.length > 0) {
-      customerId = customers.data[0].id;
-      logStep("Found existing customer", { customerId });
+    // Check if customer already exists (only if we have an email)
+    let customerId: string | undefined;
+    if (email) {
+      const customers = await stripe.customers.list({ email: email, limit: 1 });
+      if (customers.data.length > 0) {
+        customerId = customers.data[0].id;
+        logStep("Found existing customer", { customerId });
+      }
     }
 
-    // Support price_id override (for Black plan), default to Acesso Completo
+    // Support price_id override, default to Acesso Completo
     const defaultPriceId = "price_1Sjo293aJLvyiewRDW1gCi39";
     const priceId = typeof body?.price_id === "string" ? body.price_id : defaultPriceId;
 
@@ -78,7 +79,7 @@ serve(async (req) => {
 
     const session = await stripe.checkout.sessions.create({
       customer: customerId,
-      customer_email: customerId ? undefined : email!,
+      customer_email: customerId ? undefined : (email || undefined),
       line_items: [
         {
           price: priceId,
@@ -86,13 +87,10 @@ serve(async (req) => {
         },
       ],
       mode: "subscription",
-      subscription_data: {
-        trial_period_days: 30,
-      },
       allow_promotion_codes: true,
-      success_url: `${origin}/onboarding?checkout=success`,
+      success_url: `${origin}/signup?checkout=success`,
       cancel_url: `${origin}/?checkout=canceled`,
-      metadata: userId ? { user_id: userId } : { source: "email_direct" },
+      metadata: userId ? { user_id: userId } : { source: "landing_checkout" },
     });
 
     logStep("Checkout session created", { sessionId: session.id, url: session.url });
