@@ -51,11 +51,16 @@ serve(async (req) => {
       const token = authHeader!.replace("Bearer ", "");
       const { data } = await supabaseClient.auth.getUser(token);
       const user = data.user;
-      if (!user?.email) throw new Error("User not authenticated or email not available");
-      email = user.email;
-      userId = user.id;
-      logStep("User authenticated", { userId: user.id, email: user.email });
-    } else {
+      if (user?.email) {
+        email = user.email;
+        userId = user.id;
+        logStep("User authenticated", { userId: user.id, email: user.email });
+      } else {
+        logStep("Bearer token present but no valid user, falling through to public flow");
+      }
+    }
+
+    if (!userId) {
       // Public flow: accept email in request body (optional — Stripe can collect it)
       email = typeof body?.email === "string" ? body.email.trim() : null;
       logStep("Public checkout requested", { email: email || "(Stripe will collect)" });
