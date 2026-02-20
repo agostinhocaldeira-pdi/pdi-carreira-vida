@@ -15,7 +15,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
 import ConfirmDeleteDialog from "@/components/ConfirmDeleteDialog";
 import { usePDIStorage } from "@/hooks/usePDIStorage";
-import { usePDIData, useDeleteMeta, useSaveMeta, PDI_QUERY_KEYS } from "@/hooks/usePDIQueries";
+import { usePDIData, useDeleteMeta, useSaveMeta, PDI_QUERY_KEYS, forceDirectFetch } from "@/hooks/usePDIQueries";
 import { useActionCelebration } from "@/contexts/ActionCelebrationContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useExplanationAudio } from "@/hooks/useExplanationAudio";
@@ -774,6 +774,7 @@ const MaoNaMassa = ({ embedded = false, fullscreenMode = false, onOpenFullscreen
               onClick={async () => {
                 setShowMetaSavedModal(false);
                 if (onCloseFullscreen) onCloseFullscreen();
+                forceDirectFetch();
                 queryClient.invalidateQueries({ queryKey: PDI_QUERY_KEYS.pdiData() });
                 queryClient.invalidateQueries({ queryKey: ['home-cache'] });
                 try {

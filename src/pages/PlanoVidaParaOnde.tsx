@@ -22,7 +22,7 @@ import ConfirmDeleteDialog from "@/components/ConfirmDeleteDialog";
 import { OKRLinkSection, CompanyOKRsOverview } from "@/components/home/OKRLinkSection";
 import { useQueryClient } from "@tanstack/react-query";
 import { usePDIStorage } from "@/hooks/usePDIStorage";
-import { PDI_QUERY_KEYS, usePDIData } from "@/hooks/usePDIQueries";
+import { PDI_QUERY_KEYS, usePDIData, forceDirectFetch } from "@/hooks/usePDIQueries";
 import { useRoleProtection } from "@/hooks/useRoleProtection";
 import LogoutButton from "@/components/LogoutButton";
 import { useObjetivoExplanationAudio } from "@/hooks/useObjetivoExplanationAudio";
@@ -230,6 +230,7 @@ const PlanoVidaParaOnde = () => {
       is_principal: obj.isPrincipal,
     }));
     storage.saveObjetivos(objetivosToSave as any).then(() => {
+      forceDirectFetch();
       queryClient.invalidateQueries({ queryKey: PDI_QUERY_KEYS.pdiData() });
     }).catch(error => {
       console.error("Background objetivos sync error:", error);
@@ -274,6 +275,7 @@ const PlanoVidaParaOnde = () => {
     try {
       await storage.saveObjetivos(objetivosToSave as any);
       // Invalidate cache so the new objective appears immediately on other pages
+      forceDirectFetch();
       await queryClient.invalidateQueries({ queryKey: PDI_QUERY_KEYS.pdiData() });
     } catch (error) {
       console.error("Background objetivos sync error:", error);
@@ -364,6 +366,7 @@ const PlanoVidaParaOnde = () => {
             await supabase.from("user_goals").delete().eq("id", goal.id);
           }
         }
+        forceDirectFetch();
         queryClient.invalidateQueries({ queryKey: PDI_QUERY_KEYS.pdiData() });
       } catch (error) {
         console.error("Background cascade delete error:", error);
