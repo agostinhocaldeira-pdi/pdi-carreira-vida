@@ -456,12 +456,11 @@ const Index = () => {
         <div className="container mx-auto max-w-3xl text-center">
           <Zap className="h-12 w-12 text-[#d4a853] mx-auto mb-6" />
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 text-white">
-            Organize sua vida nos próximos 30 dias,{" "}
-            <span className="text-[#d4a853]">de graça.</span>
+            Comece agora a{" "}
+            <span className="text-[#d4a853]">organizar sua vida.</span>
           </h2>
           <p className="text-gray-400 mb-8 text-base sm:text-lg max-w-2xl mx-auto">
-            Acesse a plataforma completa. Se em um mês você não sentir que recuperou o controle do seu tempo, 
-            você não paga nada. Simples assim.
+            R$ 67/ano • Acesso completo • Cancele quando quiser
           </p>
           <div className="flex flex-col items-center gap-3">
             <Button 
@@ -469,7 +468,7 @@ const Index = () => {
               onClick={handleCTAClick}
               className="text-lg px-10 py-6 bg-[#d4a853] hover:bg-[#c49843] text-[#1a1a1a] font-bold uppercase tracking-wide"
             >
-              Criar Minha Conta Grátis
+              Começar Agora
               <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
           </div>
