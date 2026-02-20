@@ -715,11 +715,39 @@ const PlanoDeVida = ({ onTabChange, onOpenChange, forcedTab, forcedOpen }: Plano
     const cascadeDelete = async () => {
       try {
         await storage.saveObjetivos(objetivosToSave as any);
-        // Delete goals linked to this objective from Supabase
+
+        // 1. Collect all source IDs BEFORE deleting anything
+        const allSourceIds: string[] = [deletedId];
         const { data: linkedGoals } = await supabase
           .from("user_goals")
           .select("id")
           .eq("objective_id", deletedId);
+        if (linkedGoals && linkedGoals.length > 0) {
+          allSourceIds.push(...linkedGoals.map((g: any) => g.id));
+          for (const goal of linkedGoals) {
+            const { data: linkedActions } = await supabase
+              .from("user_actions")
+              .select("id")
+              .eq("goal_id", goal.id);
+            if (linkedActions && linkedActions.length > 0) {
+              allSourceIds.push(...linkedActions.map((a: any) => a.id));
+              for (const act of linkedActions) {
+                const { data: steps } = await supabase
+                  .from("user_steps")
+                  .select("id")
+                  .eq("action_id", act.id);
+                if (steps) allSourceIds.push(...steps.map((s: any) => s.id));
+              }
+            }
+          }
+        }
+
+        // 2. Delete agenda events referencing any of these source_ids
+        if (allSourceIds.length > 0) {
+          await supabase.from("agenda_events").delete().in("source_id", allSourceIds);
+        }
+
+        // 3. Now delete the actual data (steps → actions → goals)
         if (linkedGoals && linkedGoals.length > 0) {
           for (const goal of linkedGoals) {
             const { data: linkedActions } = await supabase
@@ -734,6 +762,7 @@ const PlanoDeVida = ({ onTabChange, onOpenChange, forcedTab, forcedOpen }: Plano
             await supabase.from("user_goals").delete().eq("id", goal.id);
           }
         }
+
         forceDirectFetch();
         queryClient.invalidateQueries({ queryKey: PDI_QUERY_KEYS.pdiData() });
       } catch (error) {
