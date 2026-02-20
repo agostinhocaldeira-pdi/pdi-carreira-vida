@@ -12,6 +12,7 @@ import JornadaVidaNaoQuero from "@/components/jornada/JornadaVidaNaoQuero";
 import JornadaAutoReflexao from "@/components/jornada/JornadaAutoReflexao";
 import JornadaSmart from "@/components/jornada/JornadaSmart";
 import JornadaFinal from "@/components/jornada/JornadaFinal";
+import JornadaUpgradeModal from "@/components/jornada/JornadaUpgradeModal";
 
 interface Step {
   id: string;
@@ -73,8 +74,10 @@ export default function Jornada() {
   const [evaluatedSteps, setEvaluatedSteps] = useState<string[]>([]);
   const [authChecked, setAuthChecked] = useState(false);
   const [isAuthorized, setIsAuthorized] = useState(false);
+  const [hasCompleted, setHasCompleted] = useState(false);
+  const [showCompletedModal, setShowCompletedModal] = useState(false);
 
-  // Auth & payment verification
+  // Auth check — any logged-in user can access (free)
   useEffect(() => {
     const checkAccess = async () => {
       const { data: { user } } = await supabase.auth.getUser();
@@ -84,19 +87,24 @@ export default function Jornada() {
         return;
       }
 
-      // Check user role
-      const { data: roles } = await supabase
-        .from('user_roles')
-        .select('role')
-        .eq('user_id', user.id);
+      // Check if user already completed the jornada
+      const { data: completion } = await supabase
+        .from('user_jornada_completions')
+        .select('id')
+        .eq('user_id', user.id)
+        .limit(1);
 
-      const userRoles = roles?.map(r => r.role) || [];
-      const hasPdismartAccess = userRoles.includes('pdismart');
-      const hasFullAccess = userRoles.some(r => ['admin', 'user', 'empresa', 'gestor'].includes(r));
+      if (completion && completion.length > 0) {
+        // Already completed — check if they have paid access to use again
+        const { data: roles } = await supabase
+          .from('user_roles')
+          .select('role')
+          .eq('user_id', user.id);
 
-      // Check if has active subscription (for regular users)
-      let hasSubscription = false;
-      if (hasFullAccess) {
+        const userRoles = roles?.map(r => r.role) || [];
+        const hasPdismartAccess = userRoles.includes('pdismart');
+
+        let hasSubscription = false;
         try {
           const { data: session } = await supabase.auth.getSession();
           if (session?.session?.access_token) {
@@ -108,32 +116,17 @@ export default function Jornada() {
         } catch (err) {
           console.error('Error checking subscription:', err);
         }
+
+        if (hasPdismartAccess || hasSubscription) {
+          setIsAuthorized(true);
+        } else {
+          setHasCompleted(true);
+          setShowCompletedModal(true);
+        }
+      } else {
+        setIsAuthorized(true);
       }
 
-      if (hasPdismartAccess || hasFullAccess || hasSubscription) {
-        setIsAuthorized(true);
-      } else {
-        // Verify Stripe payment for pdismart
-        try {
-          const { data: session } = await supabase.auth.getSession();
-          if (session?.session?.access_token) {
-            const { data } = await supabase.functions.invoke('verify-pdismart-payment', {
-              headers: { Authorization: `Bearer ${session.session.access_token}` },
-            });
-            if (data?.verified) {
-              setIsAuthorized(true);
-            } else {
-              toast.error("Você precisa adquirir o PDI Smart para acessar esta página");
-              navigate("/news");
-              return;
-            }
-          }
-        } catch (err) {
-          toast.error("Erro ao verificar acesso");
-          navigate("/news");
-          return;
-        }
-      }
       setAuthChecked(true);
     };
     checkAccess();
@@ -151,6 +144,22 @@ export default function Jornada() {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-slate-50 to-blue-50">
         <Loader2 className="w-8 h-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  if (!isAuthorized && hasCompleted) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-slate-50 to-blue-50">
+        <JornadaUpgradeModal
+          open={showCompletedModal}
+          onOpenChange={(open) => {
+            setShowCompletedModal(open);
+            if (!open) navigate("/");
+          }}
+          title="Jornada já concluída"
+          description="Você já completou a Jornada! Para usar novamente, escolha uma opção:"
+        />
       </div>
     );
   }
