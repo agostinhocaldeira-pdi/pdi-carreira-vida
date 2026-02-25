@@ -8,7 +8,7 @@ import { useNavigate } from "react-router-dom";
 import {
   BarChart3, Users, Target, CheckCircle2, BookOpen, Calendar,
   TrendingUp, TrendingDown, HelpCircle, Activity, Map, Layers,
-  Percent, Clock, ArrowRightLeft, Eye
+  Percent, Clock, ArrowRightLeft, Eye, Compass
 } from "lucide-react";
 
 interface MonitoringData {
@@ -25,6 +25,11 @@ interface MonitoringData {
   usersWithBeliefs: number;
   usersWithSelfAssessment: number;
   usersWithJornada: number;
+
+  // PDI Smart
+  jornadaPageViews: number;
+  jornadaUniqueVisitors: number;
+  jornadaCompletions: number;
 
   // Engagement
   diaryEntriesLast7Days: number;
@@ -129,7 +134,8 @@ const AdminMonitoringSection = () => {
         vvdRes, valoresRes, lifeAreasRes, objectivesRes, goalsRes, actionsRes,
         diaryRes, swotRes, beliefsRes, selfAssessRes,
         companiesRes, managersRes, employeesRes,
-        pageViewsRes, satisfactionRes, jornadaRes
+        pageViewsRes, satisfactionRes, jornadaRes, jornadaCompletionsRes,
+        jornadaPageViewsRes
       ] = await Promise.all([
         // Total users
         fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/get-admin-users`, {
@@ -155,8 +161,13 @@ const AdminMonitoringSection = () => {
           .gte('created_at', new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString()),
         // Satisfaction
         supabase.from('satisfaction_surveys').select('rating'),
-        // Jornada (PDI Smart) users
+        // Jornada (PDI Smart) users by role
         supabase.from('user_roles').select('user_id').eq('role', 'pdismart'),
+        // Jornada completions
+        supabase.from('user_jornada_completions').select('user_id'),
+        // Page views for /jornada
+        (supabase as any).from('page_views').select('user_id')
+          .eq('page_path', '/jornada'),
       ]);
 
       const totalUsers = usersRes?.users?.length || 0;
@@ -202,6 +213,10 @@ const AdminMonitoringSection = () => {
         ? Math.round((surveys.reduce((s: number, r: any) => s + r.rating, 0) / surveys.length) * 10) / 10
         : 0;
 
+      // PDI Smart metrics
+      const jornadaPageViewsData = jornadaPageViewsRes.data || [];
+      const jornadaCompletionsData = jornadaCompletionsRes.data || [];
+
       setData({
         totalUsers,
         usersWithVvd: distinctUsers(vvdRes.data),
@@ -215,6 +230,9 @@ const AdminMonitoringSection = () => {
         usersWithBeliefs: distinctUsers(beliefsRes.data),
         usersWithSelfAssessment: distinctUsers(selfAssessRes.data),
         usersWithJornada: distinctUsers(jornadaRes.data),
+        jornadaPageViews: jornadaPageViewsData.length,
+        jornadaUniqueVisitors: new Set(jornadaPageViewsData.map((r: any) => r.user_id)).size,
+        jornadaCompletions: new Set(jornadaCompletionsData.map((r: any) => r.user_id)).size,
         diaryEntriesLast7Days: diary7.length,
         diaryEntriesLast30Days: diary30.length,
         activeUsersLast7Days: activeUsers7,
@@ -350,7 +368,39 @@ const AdminMonitoringSection = () => {
           </div>
         </section>
 
-        {/* 3. Engajamento do Diário */}
+        {/* 2.5. PDI Smart / Jornada */}
+        <section className="space-y-3">
+          <h3 className="font-semibold text-sm flex items-center gap-2">
+            <Compass className="w-4 h-4 text-emerald-600" />
+            PDI Smart (Jornada)
+            <Badge variant="secondary" className="text-xs">R$ 47</Badge>
+          </h3>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            <MetricCard
+              icon={Eye} iconColor="text-blue-600" label="Page Views"
+              value={data.jornadaPageViews}
+              tooltip="Total de acessos à página /jornada (todos os tempos). Fonte: page_views."
+            />
+            <MetricCard
+              icon={Users} iconColor="text-blue-600" label="Visitantes Únicos"
+              value={data.jornadaUniqueVisitors}
+              tooltip="Usuários distintos que acessaram /jornada. Fonte: page_views."
+            />
+            <MetricCard
+              icon={CheckCircle2} iconColor="text-green-600" label="Completaram"
+              value={data.jornadaCompletions}
+              tooltip="Usuários que completaram a Jornada (chegaram ao final). Fonte: user_jornada_completions."
+            />
+            <MetricCard
+              icon={Compass} iconColor="text-emerald-600" label="Compraram"
+              value={data.usersWithJornada}
+              subtitle="role pdismart"
+              tooltip="Usuários que compraram o PDI Smart (R$ 47) e possuem a role 'pdismart'."
+            />
+          </div>
+        </section>
+
+
         <section className="space-y-3">
           <h3 className="font-semibold text-sm flex items-center gap-2">
             <BookOpen className="w-4 h-4 text-primary" />
