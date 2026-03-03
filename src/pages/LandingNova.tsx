@@ -28,6 +28,8 @@ import {
 } from "lucide-react";
 import { motion } from "framer-motion";
 import logoPdi from "@/assets/logo_pdi.png";
+import evoluirPdi from "@/assets/landing/evoluir-pdi.png";
+import smartScreenshot from "@/assets/smart-screenshot.png";
 import WhatsAppButton from "@/components/WhatsAppButton";
 import ExcellenteParaSection from "@/components/landing-nova/ExcellenteParaSection";
 
@@ -74,19 +76,59 @@ const LandingNova = () => {
             <p className="text-base sm:text-lg text-gray-400 mb-8 sm:mb-10 max-w-3xl mx-auto leading-relaxed">
               Elimine excessos e distrações e comece a executar o que realmente gera resultados pra você.
             </p>
-            {/* CTA Principal */}
-            <div className="flex flex-col items-center gap-4">
-              <Button 
-                size="lg" 
-                onClick={() => navigate("/signup")}
-                className="text-base sm:text-lg px-6 sm:px-8 py-5 sm:py-6 bg-[#d4a853] hover:bg-[#c49843] text-[#1a1a1a] font-bold uppercase tracking-wide"
+            {/* Two product CTAs */}
+            <div className="grid sm:grid-cols-2 gap-6 max-w-3xl mx-auto">
+              {/* PDI Completa */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+                className="bg-[#252525] rounded-2xl p-6 border border-gray-700 hover:border-[#d4a853]/50 transition-all"
               >
-                Criar minha conta grátis
-                <ArrowRight className="ml-2 h-5 w-5" />
-              </Button>
-              <p className="text-sm text-gray-500">
-                Acesso gratuito • Sem cartão de crédito
-              </p>
+                <img 
+                  src={evoluirPdi} 
+                  alt="PDI Completa - Plataforma" 
+                  className="w-full rounded-xl mb-5 shadow-lg border border-gray-700"
+                />
+                <Button 
+                  size="lg" 
+                  onClick={() => navigate("/signup")}
+                  className="w-full text-base px-6 py-5 bg-[#d4a853] hover:bg-[#c49843] text-[#1a1a1a] font-bold"
+                >
+                  Acessar PDI Completa
+                  <ArrowRight className="ml-2 h-5 w-5" />
+                </Button>
+                <p className="text-xs text-gray-400 mt-3 leading-relaxed">
+                  Plataforma completa com Plano de Vida, Valores, VVD, Diário, Agenda, Mentor IA e todas as ferramentas para organizar sua vida e carreira.
+                </p>
+                <p className="text-xs text-gray-500 mt-2">Acesso gratuito • Sem cartão de crédito</p>
+              </motion.div>
+
+              {/* PDI Smart */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.1 }}
+                className="bg-[#252525] rounded-2xl p-6 border border-gray-700 hover:border-[#a78bfa]/50 transition-all"
+              >
+                <img 
+                  src={smartScreenshot} 
+                  alt="PDI Smart - Método SMART" 
+                  className="w-full rounded-xl mb-5 shadow-lg border border-gray-700"
+                />
+                <Button 
+                  size="lg" 
+                  onClick={() => navigate("/ferramentas/smart")}
+                  className="w-full text-base px-6 py-5 bg-[#a78bfa] hover:bg-[#9775e8] text-white font-bold"
+                >
+                  Experimentar PDISmart
+                  <ArrowRight className="ml-2 h-5 w-5" />
+                </Button>
+                <p className="text-xs text-gray-400 mt-3 leading-relaxed">
+                  Ferramenta focada em metas SMART com avaliação por IA. Ideal para quem quer definir e validar uma meta específica rapidamente.
+                </p>
+                <p className="text-xs text-gray-500 mt-2">Ferramenta gratuita • Resultado imediato</p>
+              </motion.div>
             </div>
           </div>
         </div>
