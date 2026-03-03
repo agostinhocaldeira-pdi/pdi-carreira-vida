@@ -16,8 +16,7 @@ import {
   Rocket, 
   Feather, 
   Sparkles,
-  Zap,
-  Compass
+  Zap
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -65,29 +64,6 @@ const Home = () => {
   
   // Desafio requires Black plan specifically
   const hasBlackSubscription = subscriptionStatus === 'active' && subscriptionPlan === 'black';
-  
-  // Jornada access: completo/black subscribers OR pdismart role
-  const [hasJornadaAccess, setHasJornadaAccess] = useState(false);
-  
-  useEffect(() => {
-    const checkJornadaAccess = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
-      
-      // Check pdismart role
-      const { data: roles } = await supabase
-        .from('user_roles')
-        .select('role')
-        .eq('user_id', user.id);
-      
-      const hasPdismart = roles?.some(r => r.role === 'pdismart');
-      const hasCompleteOrBlack = subscriptionStatus === 'active' && 
-        (subscriptionPlan === 'completo' || subscriptionPlan === 'black');
-      
-      setHasJornadaAccess(hasPdismart || hasCompleteOrBlack);
-    };
-    checkJornadaAccess();
-  }, [subscriptionStatus, subscriptionPlan]);
 
   // Determine mode
   const isInitiationMode = !hasCompletedBase;
@@ -211,7 +187,7 @@ const Home = () => {
               </motion.p>
             )}
 
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3">
+            <div className="grid grid-cols-3 lg:grid-cols-3 gap-2 sm:gap-3">
               {/* Base Pessoal - Highlighted in initiation mode */}
               <div className="col-span-1">
                 <HubCard
@@ -251,20 +227,6 @@ const Home = () => {
                   isLocked={isInitiationMode || !step2Done}
                   lockMessage={isInitiationMode ? "Requer Base Pessoal" : "Defina objetivos primeiro"}
                   tooltipContent="Transforme seus objetivos em ação: defina passos concretos e rotinas diárias."
-                  className="aspect-square sm:aspect-auto"
-                />
-              </div>
-
-              {/* Jornada */}
-              <div className="col-span-1">
-                <HubCard
-                  title="Jornada"
-                  icon={<Compass className="w-full h-full" />}
-                  to="/jornada"
-                  variant="compact"
-                  isLocked={!hasJornadaAccess}
-                  lockMessage="Disponível para assinantes do Plano Completo, Black ou compradores do PDI Smart."
-                  tooltipContent="Método simplificado para quem tem urgência na construção de uma meta."
                   className="aspect-square sm:aspect-auto"
                 />
               </div>
