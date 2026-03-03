@@ -121,7 +121,7 @@ const LandingNova = () => {
                   onClick={() => navigate("/ferramentas/smart")}
                   className="w-full text-base px-6 py-5 bg-[#a78bfa] hover:bg-[#9775e8] text-white font-bold"
                 >
-                  Fazer meu PDI
+                  Fazer meu PDISmart
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
                 <p className="text-xs text-gray-400 mt-3 leading-relaxed">
