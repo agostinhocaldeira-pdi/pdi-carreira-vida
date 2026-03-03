@@ -422,24 +422,23 @@ const LandingNova = () => {
         <div className="container mx-auto max-w-3xl text-center">
           <Zap className="h-12 w-12 text-[#d4a853] mx-auto mb-6" />
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 text-white">
-            Organize sua vida nos próximos 30 dias,{" "}
-            <span className="text-[#d4a853]">de graça.</span>
+            Utilize nossa plataforma para organizar sua vida em 2026,{" "}
+            <span className="text-[#d4a853]">gratuitamente.</span>
           </h2>
-          <p className="text-gray-400 mb-8 text-base sm:text-lg max-w-2xl mx-auto">
-            Acesse a plataforma completa. Se em um mês você não sentir que recuperou o controle do seu tempo, 
-            você não paga nada. Simples assim.
+          <p className="text-gray-400 text-base sm:text-lg mb-8 max-w-xl mx-auto">
+            Crie sua conta e comece agora mesmo.
           </p>
           <div className="flex flex-col items-center gap-4">
             <Button 
               size="lg" 
-              onClick={handleCTAClick}
-              className="text-base sm:text-lg px-6 sm:px-10 py-5 sm:py-6 bg-[#d4a853] hover:bg-[#c49843] text-[#1a1a1a] font-bold uppercase tracking-wide w-full sm:w-auto max-w-xs sm:max-w-none"
+              className="bg-[#d4a853] hover:bg-[#c49943] text-black font-bold text-lg px-8 py-6"
+              onClick={() => navigate("/signup")}
             >
-              Começar
+              Criar minha conta grátis
               <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
             <p className="text-sm text-gray-500">
-              Organize sua vida nos próximos 30 dias, de graça, sem cartão, sem compromisso. Só vem!
+              Acesso gratuito • Sem cartão de crédito
             </p>
           </div>
         </div>
