@@ -95,7 +95,7 @@ const LandingNova = () => {
                   onClick={() => navigate("/signup")}
                   className="w-full text-base px-6 py-5 bg-[#d4a853] hover:bg-[#c49843] text-[#1a1a1a] font-bold"
                 >
-                  Acessar PDI Completa
+                  Fazer meu PDI
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
                 <p className="text-xs text-gray-400 mt-3 leading-relaxed">
@@ -121,7 +121,7 @@ const LandingNova = () => {
                   onClick={() => navigate("/ferramentas/smart")}
                   className="w-full text-base px-6 py-5 bg-[#a78bfa] hover:bg-[#9775e8] text-white font-bold"
                 >
-                  Experimentar PDISmart
+                  Fazer meu PDI
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
                 <p className="text-xs text-gray-400 mt-3 leading-relaxed">
@@ -343,7 +343,7 @@ const LandingNova = () => {
               onClick={() => navigate("/signup")}
               className="text-base sm:text-lg px-6 sm:px-8 py-5 sm:py-6 bg-[#d4a853] hover:bg-[#c49843] text-[#1a1a1a] font-semibold"
             >
-              Criar minha conta grátis
+              Fazer meu PDI
               <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
             <p className="text-sm text-gray-500 mt-4">
@@ -437,7 +437,7 @@ const LandingNova = () => {
               className="bg-[#d4a853] hover:bg-[#c49943] text-black font-bold text-lg px-8 py-6"
               onClick={() => navigate("/signup")}
             >
-              Criar minha conta grátis
+              Fazer meu PDI
               <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
             <p className="text-sm text-gray-500">
