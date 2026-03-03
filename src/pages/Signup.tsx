@@ -183,7 +183,7 @@ const Signup = () => {
           {!isPdiSmart && !isCheckoutSuccess && !isJornadaRedirect && (
             <div className="pt-4">
               <p className="text-lg font-bold text-[#d4a853] mb-2">
-                Acesso Completo – R$ 67/ano
+                Acesso Completo – Gratuito
               </p>
               <p className="text-sm text-gray-400">
                 Use o sistema completo para estruturar seus objetivos, metas e próximos passos com mais clareza.
@@ -274,7 +274,7 @@ const Signup = () => {
                 className="border-gray-600 data-[state=checked]:bg-[#d4a853] data-[state=checked]:border-[#d4a853]"
               />
               <label htmlFor="lgpd-preview" className="text-xs text-gray-400 cursor-pointer leading-relaxed">
-                Ao criar sua conta, você concorda com os{" "}
+                Ao se cadastrar, você concorda com os{" "}
                 <button 
                   type="button" 
                   onClick={(e) => {
