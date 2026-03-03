@@ -30,8 +30,6 @@ import { motion } from "framer-motion";
 import logoPdi from "@/assets/logo_pdi.png";
 import WhatsAppButton from "@/components/WhatsAppButton";
 import ExcellenteParaSection from "@/components/landing-nova/ExcellenteParaSection";
-import { supabase } from "@/integrations/supabase/client";
-import { toast } from "sonner";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 30 },
@@ -53,26 +51,6 @@ const LandingNova = () => {
   const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [videoModalUrl, setVideoModalUrl] = useState<string | null>(null);
-  const [isCheckoutLoading, setIsCheckoutLoading] = useState(false);
-
-  const handlePessoaFisicaClick = async () => {
-    setIsModalOpen(false);
-    await handleCTAClick();
-  };
-
-  const handleCTAClick = async () => {
-    setIsCheckoutLoading(true);
-    try {
-      const { data, error } = await supabase.functions.invoke("create-checkout");
-      if (error) throw error;
-      if (data?.url) window.location.href = data.url;
-    } catch (err) {
-      console.error("Checkout error:", err);
-      toast.error("Erro ao iniciar checkout. Tente novamente.");
-    } finally {
-      setIsCheckoutLoading(false);
-    }
-  };
 
   return (
     <div className="min-h-screen bg-[#1a1a1a]">
@@ -96,35 +74,18 @@ const LandingNova = () => {
             <p className="text-base sm:text-lg text-gray-400 mb-8 sm:mb-10 max-w-3xl mx-auto leading-relaxed">
               Elimine excessos e distrações e comece a executar o que realmente gera resultados pra você.
             </p>
-            {/* Video Section */}
-            <div className="w-full max-w-none sm:max-w-3xl mx-auto mb-10 -mx-4 sm:mx-auto px-0 sm:px-0">
-              <div
-                className="relative w-full overflow-hidden shadow-2xl border-y sm:border border-gray-700 bg-black sm:rounded-xl"
-                style={{ paddingBottom: "56.25%" }}
-              >
-                <iframe
-                  className="absolute top-0 left-0 w-full h-full border-0"
-                  src="https://www.youtube-nocookie.com/embed/QY6Z1Mb2IDM?rel=0&controls=1&modestbranding=1&playsinline=1"
-                  title="PDI - Carreira e Vida"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                  referrerPolicy="strict-origin-when-cross-origin"
-                  allowFullScreen
-                />
-              </div>
-            </div>
-
             {/* CTA Principal */}
             <div className="flex flex-col items-center gap-4">
               <Button 
                 size="lg" 
-                onClick={handleCTAClick}
+                onClick={() => navigate("/signup")}
                 className="text-base sm:text-lg px-6 sm:px-8 py-5 sm:py-6 bg-[#d4a853] hover:bg-[#c49843] text-[#1a1a1a] font-bold uppercase tracking-wide"
               >
-                {isCheckoutLoading ? "Processando..." : "Começar"}
-                {!isCheckoutLoading && <ArrowRight className="ml-2 h-5 w-5" />}
+                Criar minha conta grátis
+                <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
               <p className="text-sm text-gray-500">
-                R$ 67/ano • Acesso completo • Cancele quando quiser
+                Acesso gratuito • Sem cartão de crédito
               </p>
             </div>
           </div>
@@ -337,14 +298,14 @@ const LandingNova = () => {
           <div className="text-center mt-10 px-4 sm:px-0">
             <Button 
               size="lg" 
-              onClick={handleCTAClick}
+              onClick={() => navigate("/signup")}
               className="text-base sm:text-lg px-6 sm:px-8 py-5 sm:py-6 bg-[#d4a853] hover:bg-[#c49843] text-[#1a1a1a] font-semibold"
             >
-              {isCheckoutLoading ? "Processando..." : "Começar"}
-              {!isCheckoutLoading && <ArrowRight className="ml-2 h-5 w-5" />}
+              Criar minha conta grátis
+              <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
             <p className="text-sm text-gray-500 mt-4">
-              R$ 67/ano • Acesso completo • Cancele quando quiser
+              Acesso gratuito • Sem cartão de crédito
             </p>
           </div>
         </div>
@@ -514,7 +475,7 @@ const LandingNova = () => {
             <Button
               variant="outline"
               className="h-auto py-6 flex flex-col items-center gap-3 hover:border-primary hover:bg-primary/5"
-              onClick={handlePessoaFisicaClick}
+              onClick={() => { setIsModalOpen(false); navigate("/signup"); }}
             >
               <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
                 <User className="h-6 w-6 text-primary" />
