@@ -14,20 +14,9 @@ import {
   User, 
   Target, 
   Rocket, 
-  BookOpen, 
   Feather, 
-  GraduationCap, 
-  MessageCircle, 
-  PlayCircle,
-  Wrench,
-  TrendingUp,
-  Link2,
-  HelpCircle,
-  FileText,
-  Camera,
   Sparkles,
   Zap,
-  LogOut,
   Compass
 } from "lucide-react";
 import { motion } from "framer-motion";
@@ -46,7 +35,7 @@ import { AchievementNotification } from "@/components/gamification/AchievementNo
 import { useGamification } from "@/hooks/useGamification";
 import { SatisfactionSurveyModal } from "@/components/SatisfactionSurveyModal";
 import { useSatisfactionSurvey } from "@/hooks/useSatisfactionSurvey";
-import { useDailyQuote } from "@/hooks/useDailyQuote";
+
 import { useSubscription } from "@/hooks/useSubscription";
 import { HubCard } from "@/components/home/HubCard";
 import { HubSection } from "@/components/home/HubSection";
@@ -71,7 +60,6 @@ const Home = () => {
   });
   const { newAchievement, dismissNewAchievement, checkAndUnlockAchievements } = useGamification();
   const { showSurvey, setShowSurvey, completedSection, markSectionCompleted } = useSatisfactionSurvey();
-  const { quote: dailyQuote } = useDailyQuote();
   const { status: subscriptionStatus, plan: subscriptionPlan } = useSubscription();
   const isMobile = useIsMobile();
   
@@ -190,6 +178,20 @@ const Home = () => {
           <TrialStatusBanner />
 
           {/* ============================================================ */}
+          {/* PAINEL - Card único no topo */}
+          {/* ============================================================ */}
+          <HubCard
+            title="Painel"
+            description={!isMobile ? "Acesse o painel completo com agenda, objetivos, metas e ações do dia." : undefined}
+            icon={<LayoutDashboard className="w-full h-full" />}
+            to="/control-panel"
+            variant="compact"
+            isLocked={isInitiationMode}
+            lockMessage="Complete a Base Pessoal primeiro"
+            tooltipContent="Acesse o painel completo com agenda, objetivos, metas e ações do dia."
+          />
+
+          {/* ============================================================ */}
           {/* SECTION 1: Estrutura do Sistema */}
           {/* ============================================================ */}
           <HubSection 
@@ -209,7 +211,7 @@ const Home = () => {
               </motion.p>
             )}
 
-            <div className="grid grid-cols-3 lg:grid-cols-6 gap-2 sm:gap-3">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 sm:gap-3">
               {/* Base Pessoal - Highlighted in initiation mode */}
               <div className="col-span-1">
                 <HubCard
@@ -266,34 +268,6 @@ const Home = () => {
                   className="aspect-square sm:aspect-auto"
                 />
               </div>
-
-              {/* Desafio - Premium Black style */}
-              <div className="col-span-1">
-                <HubCard
-                  title="Desafio"
-                  icon={<Zap className="w-full h-full" />}
-                  to="/desafio-30-dias"
-                  variant="premium-black"
-                  isLocked={isInitiationMode || !hasBlackSubscription}
-                  lockMessage={isInitiationMode ? "Requer Base Pessoal" : "Exclusivo Plano Black"}
-                  tooltipContent="Participe do Desafio do Código Essencial - 21 dias de transformação. Exclusivo Plano Black."
-                  className="aspect-square sm:aspect-auto"
-                />
-              </div>
-
-              {/* Painel de Controle */}
-              <div className="col-span-1">
-                <HubCard
-                  title="Painel"
-                  icon={<LayoutDashboard className="w-full h-full" />}
-                  to="/control-panel"
-                  variant="compact"
-                  isLocked={isInitiationMode}
-                  lockMessage="Complete a Base Pessoal primeiro"
-                  tooltipContent="Acesse o painel completo com agenda, objetivos, metas e ações do dia."
-                  className="aspect-square sm:aspect-auto"
-                />
-              </div>
             </div>
           </HubSection>
 
@@ -304,119 +278,42 @@ const Home = () => {
             icon={<Feather className="w-3.5 h-3.5 text-primary" />} 
             title="Dedique 5 minutos por dia"
           >
-            {/* Mobile: 3 square cards */}
+            {/* Mobile: square cards */}
             {isMobile ? (
-              <div className="grid grid-cols-3 gap-2">
+              <div className="grid grid-cols-2 gap-2">
                 <StoicSquareCard />
                 <DiarySquareCard />
                 <AgendaSquareCard isLocked={isInitiationMode} />
+                <HubCard
+                  title="Desafio"
+                  icon={<Zap className="w-full h-full" />}
+                  to="/desafio-30-dias"
+                  variant="premium-black"
+                  isLocked={isInitiationMode || !hasBlackSubscription}
+                  lockMessage={isInitiationMode ? "Requer Base Pessoal" : "Exclusivo Plano Black"}
+                  tooltipContent="Desafio do Código Essencial - 21 dias de transformação."
+                  className="aspect-square"
+                />
               </div>
             ) : (
-              /* Desktop: original full cards */
-              <div className="grid grid-cols-2 lg:grid-cols-3 gap-3">
+              /* Desktop: full cards */
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
                 <StoicQuickCard />
                 <DiaryQuickCard />
                 {isInitiationMode && <AgendaLockedCard />}
+                <HubCard
+                  title="Desafio"
+                  description="Desafio do Código Essencial - 21 dias de transformação."
+                  icon={<Zap className="w-full h-full" />}
+                  to="/desafio-30-dias"
+                  variant="premium-black"
+                  isLocked={isInitiationMode || !hasBlackSubscription}
+                  lockMessage={isInitiationMode ? "Requer Base Pessoal" : "Exclusivo Plano Black"}
+                  tooltipContent="Participe do Desafio do Código Essencial - 21 dias de transformação. Exclusivo Plano Black."
+                />
               </div>
             )}
           </HubSection>
-
-          {/* ============================================================ */}
-          {/* SECTION 3: Base de Conhecimento */}
-          {/* ============================================================ */}
-          <HubSection 
-            icon={<GraduationCap className="w-3.5 h-3.5 text-primary" />} 
-            title="Base de Conhecimento"
-          >
-            <div className="grid grid-cols-3 lg:grid-cols-4 gap-2 sm:gap-3">
-              {/* Trilha PDI - Featured */}
-              <HubCard
-                title="Trilha PDI"
-                description={window.innerWidth >= 640 ? "Construa seu Plano de Desenvolvimento Individual completo." : undefined}
-                icon={<GraduationCap className="w-full h-full" />}
-                to="/construcao-guiada"
-                variant="compact"
-                className="aspect-square sm:aspect-auto"
-                tooltipContent="Aprenda os fundamentos do PDI com vídeos educativos e exercícios práticos."
-              />
-
-              {/* Ferramentas */}
-              <HubCard
-                title="Ferramentas"
-                description={window.innerWidth >= 640 ? "Ferramentas de autoconhecimento: SWOT, SMART, Eisenhower." : undefined}
-                icon={<Wrench className="w-full h-full" />}
-                to="/ferramentas"
-                variant="compact"
-                className="aspect-square sm:aspect-auto"
-                tooltipContent="Acesse todas as ferramentas de autoconhecimento: SWOT, SMART, Eisenhower e mais."
-              />
-
-              {/* Suporte */}
-              <HubCard
-                title="Suporte"
-                description={window.innerWidth >= 640 ? "Tire suas dúvidas sobre o sistema." : undefined}
-                icon={<MessageCircle className="w-full h-full" />}
-                to="/suporte"
-                variant="compact"
-                className="aspect-square sm:aspect-auto"
-                tooltipContent="Entre em contato com nossa equipe para tirar dúvidas."
-              />
-
-              {/* Tutoriais */}
-              <HubCard
-                title="Tutoriais"
-                description={window.innerWidth >= 640 ? "Guia de todas as funcionalidades do PDI." : undefined}
-                icon={<PlayCircle className="w-full h-full" />}
-                to="/tutorial"
-                variant="compact"
-                className="aspect-square sm:aspect-auto"
-                tooltipContent="Vídeos e guias passo a passo para dominar o sistema."
-              />
-            </div>
-          </HubSection>
-
-          {/* ============================================================ */}
-          {/* SECTION 4: Recursos Adicionais */}
-          {/* ============================================================ */}
-          <HubSection 
-            icon={<Zap className="w-3.5 h-3.5 text-primary" />} 
-            title="Recursos Adicionais"
-          >
-            <div className="grid grid-cols-3 sm:flex sm:flex-wrap gap-2">
-              {/* Quick Links as square cards on mobile */}
-              {[
-                { icon: <TrendingUp className="w-5 h-5" />, label: "Progresso", to: "/progresso" },
-                { icon: <Link2 className="w-5 h-5" />, label: "Integrações", to: "/integracoes" },
-                { icon: <HelpCircle className="w-5 h-5" />, label: "FAQ", to: "/faq" },
-                { icon: <FileText className="w-5 h-5" />, label: "Relatórios", to: "/relatorios" },
-                { icon: <User className="w-5 h-5" />, label: "Minha Conta", to: "/perfil" },
-              ].map((item) => (
-                <Button
-                  key={item.to}
-                  variant="outline"
-                  className="flex flex-col items-center justify-center gap-2 h-auto py-4 sm:flex-row sm:h-9 sm:py-1.5 sm:px-3 sm:gap-2 aspect-square sm:aspect-auto text-sm font-normal"
-                  onClick={() => navigate(item.to)}
-                >
-                  {item.icon}
-                  <span className="text-xs sm:text-sm">{item.label}</span>
-                </Button>
-              ))}
-            </div>
-          </HubSection>
-
-          {/* Footer Quote - Daily rotation */}
-          {dailyQuote && (
-            <motion.div 
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.3 }}
-              className="text-center py-8"
-            >
-              <p className="text-lg font-semibold text-foreground">
-                {dailyQuote}
-              </p>
-            </motion.div>
-          )}
         </main>
       </div>
     </TooltipProvider>
