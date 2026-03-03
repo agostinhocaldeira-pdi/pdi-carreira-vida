@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import { PLAN_MODEL, TRIAL_BLOCKS_ACCESS } from '@/config/planModel';
 
 export type SubscriptionStatus = 'loading' | 'active' | 'trial' | 'expired';
 
@@ -144,7 +145,7 @@ export const useSubscription = () => {
 
     // No active Stripe subscription - check trial period based on user creation date
     const userCreatedAt = user.created_at;
-    console.log('[useSubscription] Checking trial period:', { userCreatedAt });
+    console.log('[useSubscription] Checking trial period:', { userCreatedAt, planModel: PLAN_MODEL });
     
     if (userCreatedAt) {
       const daysRemaining = calculateTrialDaysRemaining(userCreatedAt);
@@ -155,7 +156,7 @@ export const useSubscription = () => {
         console.log('[useSubscription] User is in trial period');
         setState({
           status: 'trial',
-          plan: 'gratuito',
+          plan: PLAN_MODEL === 'vip2026' ? 'completo' : 'gratuito',
           daysRemaining,
           canEdit: true,
           subscriptionEnd: null,
@@ -164,7 +165,21 @@ export const useSubscription = () => {
       }
     }
 
-    // Trial expired and no subscription - user must pay
+    // Trial expired and no subscription
+    if (!TRIAL_BLOCKS_ACCESS) {
+      // VIP2026 model: never block access, treat as active
+      console.log('[useSubscription] VIP2026 mode - granting full access despite trial expiration');
+      setState({
+        status: 'active',
+        plan: 'completo',
+        daysRemaining: 0,
+        canEdit: true,
+        subscriptionEnd: null,
+      });
+      return;
+    }
+
+    // Paid model: user must pay
     console.log('[useSubscription] Trial expired - showing payment modal');
     setState({
       status: 'expired',

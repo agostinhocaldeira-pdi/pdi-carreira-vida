@@ -10,6 +10,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Sparkles, CreditCard, X } from 'lucide-react';
 import type { AIFeatureType } from '@/hooks/useAIUsage';
+import { AI_USAGE_PRICE } from '@/config/planModel';
 
 interface AIUsageLimitModalProps {
   isOpen: boolean;
@@ -56,7 +57,7 @@ export const AIUsageLimitModal: React.FC<AIUsageLimitModalProps> = ({
         </DialogHeader>
 
         <div className="my-4 rounded-lg bg-muted/50 p-4 text-center">
-          <div className="text-3xl font-bold text-primary">R$ 10,00</div>
+          <div className="text-3xl font-bold text-primary">{AI_USAGE_PRICE}</div>
           <div className="text-sm text-muted-foreground mt-1">
             Pagamento único • Uso imediato
           </div>

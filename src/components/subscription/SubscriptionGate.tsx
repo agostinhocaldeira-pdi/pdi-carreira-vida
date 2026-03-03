@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Crown } from "lucide-react";
+import { PLAN_MODEL } from "@/config/planModel";
 
 interface SubscriptionGateProps {
   children: ReactNode;
@@ -25,8 +26,8 @@ export const SubscriptionGate = ({ children, featureName }: SubscriptionGateProp
   const { status } = useSubscriptionContext();
   const navigate = useNavigate();
 
-  // 'active' means paid subscription; 'loading' we let through to avoid flash
-  const hasAccess = status === 'active' || status === 'loading';
+  // VIP2026: always grant access. Paid model: require active subscription.
+  const hasAccess = PLAN_MODEL === 'vip2026' || status === 'active' || status === 'loading';
 
   if (hasAccess) {
     return <>{children}</>;

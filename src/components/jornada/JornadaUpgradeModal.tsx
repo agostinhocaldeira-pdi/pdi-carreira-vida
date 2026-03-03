@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Sparkles, Star, Target, CreditCard, Loader2, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { PLAN_MODEL, AI_USAGE_PRICE, PDISMART_REQUIRES_PAYMENT } from "@/config/planModel";
 
 interface Props {
   open: boolean;
@@ -70,53 +71,58 @@ export default function JornadaUpgradeModal({
         </DialogHeader>
 
         <div className="space-y-3 pt-2">
-          {/* Option 1: PDI Básico */}
-          <button
-            onClick={() => handleCheckout("basico")}
-            disabled={!!loading}
-            className="w-full rounded-xl border-2 border-blue-200 bg-blue-50/50 p-4 text-left hover:border-blue-400 transition-colors disabled:opacity-50"
-          >
-            <div className="flex items-start gap-3">
-              <div className="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center shrink-0">
-                <Star className="w-5 h-5 text-white" />
-              </div>
-              <div className="flex-1">
-                <div className="flex items-center justify-between">
-                  <span className="font-semibold text-slate-800 text-sm">PDI Acesso Completo</span>
-                  <span className="text-blue-600 font-bold text-sm">R$ 67<span className="text-xs font-normal">/ano</span></span>
+          {/* Only show subscription options in paid model */}
+          {PDISMART_REQUIRES_PAYMENT && (
+            <>
+              {/* Option 1: PDI Básico */}
+              <button
+                onClick={() => handleCheckout("basico")}
+                disabled={!!loading}
+                className="w-full rounded-xl border-2 border-blue-200 bg-blue-50/50 p-4 text-left hover:border-blue-400 transition-colors disabled:opacity-50"
+              >
+                <div className="flex items-start gap-3">
+                  <div className="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center shrink-0">
+                    <Star className="w-5 h-5 text-white" />
+                  </div>
+                  <div className="flex-1">
+                    <div className="flex items-center justify-between">
+                      <span className="font-semibold text-slate-800 text-sm">PDI Acesso Completo</span>
+                      <span className="text-blue-600 font-bold text-sm">R$ 67<span className="text-xs font-normal">/ano</span></span>
+                    </div>
+                    <p className="text-xs text-slate-500 mt-0.5">
+                      Todas as ferramentas, IA, relatórios, diário e progresso.
+                    </p>
+                  </div>
+                  {loading === "basico" && <Loader2 className="w-4 h-4 animate-spin text-blue-500 mt-1" />}
                 </div>
-                <p className="text-xs text-slate-500 mt-0.5">
-                  Todas as ferramentas, IA, relatórios, diário e progresso.
-                </p>
-              </div>
-              {loading === "basico" && <Loader2 className="w-4 h-4 animate-spin text-blue-500 mt-1" />}
-            </div>
-          </button>
+              </button>
 
-          {/* Option 2: PDI Smart */}
-          <button
-            onClick={() => handleCheckout("pdismart")}
-            disabled={!!loading}
-            className="w-full rounded-xl border-2 border-emerald-200 bg-emerald-50/50 p-4 text-left hover:border-emerald-400 transition-colors disabled:opacity-50"
-          >
-            <div className="flex items-start gap-3">
-              <div className="w-10 h-10 bg-emerald-500 rounded-lg flex items-center justify-center shrink-0">
-                <Target className="w-5 h-5 text-white" />
-              </div>
-              <div className="flex-1">
-                <div className="flex items-center justify-between">
-                  <span className="font-semibold text-slate-800 text-sm">PDI Smart</span>
-                  <span className="text-emerald-600 font-bold text-sm">R$ 47</span>
+              {/* Option 2: PDI Smart */}
+              <button
+                onClick={() => handleCheckout("pdismart")}
+                disabled={!!loading}
+                className="w-full rounded-xl border-2 border-emerald-200 bg-emerald-50/50 p-4 text-left hover:border-emerald-400 transition-colors disabled:opacity-50"
+              >
+                <div className="flex items-start gap-3">
+                  <div className="w-10 h-10 bg-emerald-500 rounded-lg flex items-center justify-center shrink-0">
+                    <Target className="w-5 h-5 text-white" />
+                  </div>
+                  <div className="flex-1">
+                    <div className="flex items-center justify-between">
+                      <span className="font-semibold text-slate-800 text-sm">PDI Smart</span>
+                      <span className="text-emerald-600 font-bold text-sm">R$ 47</span>
+                    </div>
+                    <p className="text-xs text-slate-500 mt-0.5">
+                      Acesso completo à Jornada com IA e PDF ilimitados.
+                    </p>
+                  </div>
+                  {loading === "pdismart" && <Loader2 className="w-4 h-4 animate-spin text-emerald-500 mt-1" />}
                 </div>
-                <p className="text-xs text-slate-500 mt-0.5">
-                  Acesso completo à Jornada com IA e PDF ilimitados.
-                </p>
-              </div>
-              {loading === "pdismart" && <Loader2 className="w-4 h-4 animate-spin text-emerald-500 mt-1" />}
-            </div>
-          </button>
+              </button>
+            </>
+          )}
 
-          {/* Option 3: Avulso */}
+          {/* Option 3: Avulso - always shown */}
           <button
             onClick={() => handleCheckout("avulso")}
             disabled={!!loading}
@@ -129,7 +135,7 @@ export default function JornadaUpgradeModal({
               <div className="flex-1">
                 <div className="flex items-center justify-between">
                   <span className="font-semibold text-slate-800 text-sm">Uso Avulso</span>
-                  <span className="text-slate-600 font-bold text-sm">R$ 10</span>
+                  <span className="text-slate-600 font-bold text-sm">{AI_USAGE_PRICE}</span>
                 </div>
                 <p className="text-xs text-slate-500 mt-0.5">
                   Pagamento único para uso imediato desta funcionalidade.

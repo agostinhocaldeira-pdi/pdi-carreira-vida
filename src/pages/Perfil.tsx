@@ -12,6 +12,7 @@ import { LGPDDataSection } from "@/components/lgpd/LGPDDataSection";
 import { supabase } from "@/integrations/supabase/client";
 import { useSubscription } from "@/hooks/useSubscription";
 import { ProfilePictureEditor } from "@/components/profile/ProfilePictureEditor";
+import { PLAN_MODEL, FREE_PLAN_NAME } from "@/config/planModel";
 
 
 interface UserData {
@@ -425,37 +426,37 @@ const Perfil = () => {
             </CardHeader>
             <CardContent>
               <div className="grid gap-4 sm:grid-cols-3">
-                {/* Período de Teste Gratuito */}
-                <Card className={`border-2 transition-colors ${subscription.status === 'trial' ? 'border-primary ring-2 ring-primary/20' : 'border-muted'}`}>
+                {/* Plano VIP2026 / Teste Gratuito */}
+                <Card className={`border-2 transition-colors ${(subscription.status === 'trial' || (PLAN_MODEL === 'vip2026' && subscription.status !== 'active')) ? 'border-primary ring-2 ring-primary/20' : 'border-muted'}`}>
                   <CardHeader className="pb-3">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
                         <Star className="h-5 w-5 text-muted-foreground" />
-                        <CardTitle className="text-base">Teste Gratuito</CardTitle>
+                        <CardTitle className="text-base">{FREE_PLAN_NAME}</CardTitle>
                       </div>
-                      {subscription.status === 'trial' && (
+                      {(subscription.status === 'trial' || (PLAN_MODEL === 'vip2026' && !['basico', 'completo', 'black'].includes(subscription.plan || ''))) && (
                         <Badge variant="secondary" className="text-xs">Atual</Badge>
                       )}
                     </div>
-                    <div className="text-2xl font-bold">R$ 0<span className="text-sm font-normal text-muted-foreground"> / 30 dias</span></div>
-                    <p className="text-xs text-muted-foreground">Experimente sem compromisso</p>
+                    <div className="text-2xl font-bold">R$ 0<span className="text-sm font-normal text-muted-foreground">{PLAN_MODEL === 'vip2026' ? ' / ilimitado' : ' / 30 dias'}</span></div>
+                    <p className="text-xs text-muted-foreground">{PLAN_MODEL === 'vip2026' ? 'Acesso completo até dez/2026' : 'Experimente sem compromisso'}</p>
                   </CardHeader>
                   <CardContent className="space-y-2 text-sm">
                     <div className="space-y-1.5 text-muted-foreground">
                       <div className="flex items-start gap-2">
                         <Check className="h-4 w-4 mt-0.5 flex-shrink-0" />
-                        <span>Acesso por 30 dias</span>
+                        <span>{PLAN_MODEL === 'vip2026' ? 'Todas as ferramentas liberadas' : 'Acesso por 30 dias'}</span>
                       </div>
                       <div className="flex items-start gap-2">
                         <Check className="h-4 w-4 mt-0.5 flex-shrink-0" />
-                        <span>Todas as ferramentas liberadas</span>
+                        <span>{PLAN_MODEL === 'vip2026' ? 'IA avulsa por R$ 4,99' : 'Todas as ferramentas liberadas'}</span>
                       </div>
                       <div className="flex items-start gap-2">
                         <Check className="h-4 w-4 mt-0.5 flex-shrink-0" />
                         <span>Sem cartão de crédito</span>
                       </div>
                     </div>
-                    {subscription.status === 'trial' && (
+                    {PLAN_MODEL !== 'vip2026' && subscription.status === 'trial' && (
                       <div className="mt-4 p-2 bg-primary/10 rounded-lg text-center">
                         <p className="text-xs text-primary font-medium">
                           {subscription.daysRemaining !== undefined 
@@ -647,7 +648,7 @@ const Perfil = () => {
                 </Card>
               </div>
 
-              {subscription.status === 'trial' && (
+              {PLAN_MODEL !== 'vip2026' && subscription.status === 'trial' && (
                 <div className="bg-accent/10 border border-accent/20 rounded-lg p-3 text-center mt-4">
                   <p className="text-sm font-medium text-accent">
                     Aproveite seu teste gratuito! Após 30 dias, assine por apenas R$ 67/ano para continuar.

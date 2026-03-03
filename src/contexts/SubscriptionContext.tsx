@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { useSubscription, SubscriptionStatus } from '@/hooks/useSubscription';
 import { TrialExpiredModal } from '@/components/subscription/TrialExpiredModal';
+import { TRIAL_BLOCKS_ACCESS } from '@/config/planModel';
 
 interface SubscriptionContextType {
   status: SubscriptionStatus;
@@ -20,8 +21,9 @@ export const SubscriptionProvider = ({ children }: { children: ReactNode }) => {
   const [forceModal, setForceModal] = useState(false);
 
   // Show modal when trial expires - force it open and prevent closing
+  // Only in 'paid' model — VIP2026 never blocks
   useEffect(() => {
-    if (subscription.status === 'expired') {
+    if (TRIAL_BLOCKS_ACCESS && subscription.status === 'expired') {
       setShowModal(true);
       setForceModal(true);
     } else {

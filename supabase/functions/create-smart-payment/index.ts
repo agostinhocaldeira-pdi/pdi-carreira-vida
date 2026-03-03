@@ -12,8 +12,10 @@ const logStep = (step: string, details?: any) => {
   console.log(`[CREATE-SMART-PAYMENT] ${step}${detailsStr}`);
 };
 
-// Price ID for SMART AI additional usage (R$1.00)
-const SMART_AI_PRICE_ID = "price_1Sjlb2KNmFxHHoXqs9HDqJmO";
+// Price ID for SMART AI usage
+// VIP2026: R$4.99 (price_1T6sA73aJLvyiewRDhtqH2Zf) | Paid model: R$1.00 (price_1Sjlb2KNmFxHHoXqs9HDqJmO)
+// To revert: change to price_1Sjlb2KNmFxHHoXqs9HDqJmO
+const SMART_AI_PRICE_ID = "price_1T6sA73aJLvyiewRDhtqH2Zf";
 
 serve(async (req) => {
   if (req.method === "OPTIONS") {
