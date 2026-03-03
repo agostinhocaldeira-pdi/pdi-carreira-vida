@@ -426,8 +426,8 @@ const LandingExperiencia = () => {
         <div className="container mx-auto max-w-3xl text-center">
           <Zap className="h-12 w-12 text-[#d4a853] mx-auto mb-6" />
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 text-white">
-            Organize sua vida nos próximos 30 dias,{" "}
-            <span className="text-[#d4a853]">de graça.</span>
+            Utilize nossa plataforma para organizar sua vida em 2026,{" "}
+            <span className="text-[#d4a853]">gratuitamente.</span>
           </h2>
           <p className="text-gray-400 mb-8 text-base sm:text-lg max-w-2xl mx-auto">
             Acesse a plataforma completa. Se em um mês você não sentir que recuperou o controle do seu tempo, 

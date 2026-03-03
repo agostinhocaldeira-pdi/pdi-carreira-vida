@@ -41,16 +41,10 @@ import lucasSa from "@/assets/testimonials/lucas-sa.jpg";
 
 const Landing = () => {
   const navigate = useNavigate();
-  const [videoPlaying, setVideoPlaying] = useState(false);
   const [videoModalUrl, setVideoModalUrl] = useState<string | null>(null);
 
   const scrollToSection = (id: string) => {
     document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
-  };
-
-  const handlePlayVideo = () => {
-    setVideoPlaying(true);
-    document.getElementById("video-section")?.scrollIntoView({ behavior: "smooth" });
   };
 
   const platformFeatures = [
@@ -106,7 +100,7 @@ const Landing = () => {
       {/* ============================================================ */}
       {/* 1) HERO SECTION - ABERTURA REFLEXIVA */}
       {/* ============================================================ */}
-      <section className="pt-28 sm:pt-36 pb-4 sm:pb-6 px-4 relative overflow-hidden">
+      <section className="pt-28 sm:pt-36 pb-8 sm:pb-12 px-4 relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-muted/10" />
         <div className="absolute top-20 right-0 w-96 h-96 bg-primary/5 rounded-full blur-3xl" />
         <div className="absolute bottom-0 left-0 w-80 h-80 bg-accent/5 rounded-full blur-3xl" />
@@ -116,70 +110,22 @@ const Landing = () => {
             Conquiste a vida que faz sentido para você, com método, ferramentas e suporte personalizado.
           </h1>
           
-          <p className="text-base sm:text-xl md:text-2xl text-muted-foreground mb-6 font-light">
+          <p className="text-base sm:text-xl md:text-2xl text-muted-foreground mb-8 font-light">
             Você vai saber para onde vai, o que fazer, ter paz no caminho, e conquistar seus objetivos.
           </p>
           
-          <p className="text-base sm:text-lg text-muted-foreground/80 mt-8 mb-0">
-            entenda como o Sistema PDI funciona
-          </p>
+          <Button 
+            size="lg" 
+            className="text-base sm:text-lg px-8 py-6 bg-primary hover:bg-primary/90 transition-all duration-300"
+            onClick={() => navigate("/signup")}
+          >
+            Criar minha conta grátis
+            <ArrowRight className="ml-2 h-5 w-5" />
+          </Button>
           
-        </div>
-      </section>
-
-      {/* ============================================================ */}
-      {/* SEÇÃO DE VÍDEO */}
-      {/* ============================================================ */}
-      <section id="video-section" className="pt-0 pb-4 sm:pb-6 px-4">
-        <div className="container mx-auto max-w-4xl">
-          <div className="aspect-video rounded-xl overflow-hidden shadow-2xl border border-border/30 bg-muted/50">
-            <iframe
-              className="w-full h-full"
-              src={`https://www.youtube.com/embed/R4oKexScqXU${videoPlaying ? '?autoplay=1' : ''}`}
-              title="Apresentação PDI"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-              allowFullScreen
-            />
-          </div>
-          <p className="text-center text-base sm:text-lg text-muted-foreground mt-4 italic">
-            Finalmente dê vida àquele objetivo que você engavetou, começou, parou — e quase esqueceu que ainda importava.
+          <p className="text-sm text-muted-foreground mt-4">
+            Acesso gratuito • Sem cartão de crédito
           </p>
-          
-          {/* CTA após vídeo */}
-          <div className="text-center mt-10">
-            <div className="mb-4">
-              <span className="text-2xl sm:text-3xl font-bold text-foreground">R$ 67,00</span>
-              <span className="text-muted-foreground">/ano</span>
-            </div>
-            <Button 
-              size="lg" 
-              className="text-base sm:text-lg px-8 py-6 bg-primary hover:bg-primary/90 transition-all duration-300"
-              onClick={() => navigate("/signup")}
-            >
-              Quero experimentar
-              <ArrowRight className="ml-2 h-5 w-5" />
-            </Button>
-            <div className="mt-6 p-6 rounded-xl border border-border/50 bg-muted/20">
-              <p className="text-sm sm:text-base text-muted-foreground">
-                <strong>Você não precisa pagar agora.</strong><br />
-                Use o sistema por 30 dias e veja como ele se encaixa na sua rotina.
-              </p>
-              <div className="mt-4 flex flex-wrap justify-center gap-4 text-xs sm:text-sm text-muted-foreground">
-                <span className="flex items-center gap-2">
-                  <CheckCircle2 className="h-4 w-4 text-primary" />
-                  30 dias de uso real
-                </span>
-                <span className="flex items-center gap-2">
-                  <CheckCircle2 className="h-4 w-4 text-primary" />
-                  cancelamento livre
-                </span>
-                <span className="flex items-center gap-2">
-                  <CheckCircle2 className="h-4 w-4 text-primary" />
-                  cobrança só após esse período
-                </span>
-              </div>
-            </div>
-          </div>
         </div>
       </section>
 
@@ -542,31 +488,22 @@ const Landing = () => {
               </div>
               
               <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-6 text-foreground">
-                Experimente Gratuitamente
+                Acesso 100% Gratuito
               </h2>
               
               <p className="text-base sm:text-lg text-muted-foreground leading-relaxed mb-8 max-w-2xl mx-auto">
-                Confiamos no poder transformador do PDI. Por isso, oferecemos a você a oportunidade de{" "}
-                <strong className="text-foreground">usar o sistema completo por 30 dias, sem qualquer risco</strong>. 
-                Você entra agora. Usa o sistema por 30 dias.
-                <br />
-                <strong className="text-foreground">A cobrança só acontece após esse período.</strong>
+                Utilize nossa plataforma para organizar sua vida em 2026, gratuitamente.{" "}
+                <strong className="text-foreground">Crie sua conta e comece agora mesmo.</strong>
               </p>
 
-              <div className="flex flex-wrap justify-center gap-6 text-sm text-muted-foreground">
-                <div className="flex items-center gap-2">
-                  <CheckCircle2 className="w-5 h-5 text-primary" />
-                  <span>30 dias grátis</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <CheckCircle2 className="w-5 h-5 text-primary" />
-                  <span>Cancele quando quiser</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <CheckCircle2 className="w-5 h-5 text-primary" />
-                  <span>Sem burocracia</span>
-                </div>
-              </div>
+              <Button 
+                size="lg" 
+                className="text-base sm:text-lg px-8 py-6 bg-primary hover:bg-primary/90 transition-all duration-300"
+                onClick={() => navigate("/signup")}
+              >
+                Criar minha conta grátis
+                <ArrowRight className="ml-2 h-5 w-5" />
+              </Button>
             </CardContent>
           </Card>
         </div>
@@ -787,27 +724,6 @@ const Landing = () => {
       )}
 
       {/* ============================================================ */}
-      {/* 7) APRESENTAÇÃO DO LABORATÓRIO DE FUNDADORES */}
-      {/* ============================================================ */}
-      <section className="py-8 sm:py-12 px-4">
-        <div className="container mx-auto max-w-4xl">
-          <div className="text-center mb-4">
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 text-foreground">
-              Convite Especial
-            </h2>
-          </div>
-
-          <Card className="border border-accent/30 shadow-lg bg-gradient-to-br from-card to-accent/5">
-            <CardContent className="p-6 sm:p-8">
-              <p className="text-base sm:text-lg text-muted-foreground leading-relaxed text-center">
-                Estamos mantendo o valor de lançamento do produto (R$ 67,00), para tornar o produto acessível. Além de você ter 30 dias para usar e testar. Essas condições são por pouco tempo.
-              </p>
-            </CardContent>
-          </Card>
-        </div>
-      </section>
-
-      {/* ============================================================ */}
       {/* 8) CTA FINAL */}
       {/* ============================================================ */}
       <section className="py-16 sm:py-24 px-4 bg-gradient-to-t from-primary/5 to-background">
@@ -817,25 +733,20 @@ const Landing = () => {
           </h2>
           
           <p className="text-base sm:text-lg text-muted-foreground mb-8 max-w-2xl mx-auto leading-relaxed">
-            Comece hoje a construir a organização e a clareza que sua vida e carreira merecem. 
-            Lembre-se: você tem <strong className="text-foreground">30 dias para experimentar o PDI sem risco</strong>.
+            Utilize nossa plataforma para organizar sua vida em 2026, gratuitamente.
           </p>
 
-          <div className="mb-4">
-            <span className="text-2xl sm:text-3xl font-bold text-foreground">R$ 67,00</span>
-            <span className="text-muted-foreground">/ano</span>
-          </div>
           <Button 
             size="lg" 
             className="text-base sm:text-lg px-8 sm:px-12 py-6 sm:py-8 bg-primary hover:bg-primary/90 shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
             onClick={() => navigate("/signup")}
           >
-            Experimentar agora
+            Criar minha conta grátis
             <Sparkles className="ml-3 w-5 h-5" />
           </Button>
 
           <p className="text-sm text-muted-foreground mt-6">
-            Acesso imediato • Cancele quando quiser
+            Acesso gratuito • Sem cartão de crédito
           </p>
         </div>
       </section>
@@ -993,15 +904,15 @@ const Landing = () => {
               </p>
             </div>
             <div className="p-4 rounded-lg bg-muted/30">
-              <p className="font-medium mb-2 text-sm sm:text-base text-foreground">Posso cancelar a qualquer momento?</p>
+              <p className="font-medium mb-2 text-sm sm:text-base text-foreground">Preciso pagar algo?</p>
               <p className="text-muted-foreground text-xs sm:text-sm">
-                Sim. Sem burocracia, sem perguntas. Mas apostamos que você vai querer ficar.
+                Não! O acesso ao PDI é 100% gratuito. Crie sua conta e comece a usar agora mesmo.
               </p>
             </div>
             <div className="p-4 rounded-lg bg-muted/30">
-              <p className="font-medium mb-2 text-sm sm:text-base text-foreground">Como funciona o período de teste?</p>
+              <p className="font-medium mb-2 text-sm sm:text-base text-foreground">O PDI é realmente gratuito?</p>
               <p className="text-muted-foreground text-xs sm:text-sm">
-                Você tem 30 dias para usar o sistema completo. Se não gostar, basta não continuar — você não paga nada.
+                Sim! Você pode usar todas as funcionalidades do sistema sem pagar nada.
               </p>
             </div>
             <div className="p-4 rounded-lg bg-muted/30">
