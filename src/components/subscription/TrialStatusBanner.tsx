@@ -2,9 +2,13 @@ import { useSubscriptionContext } from '@/contexts/SubscriptionContext';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Clock, AlertTriangle, Crown } from 'lucide-react';
+import { PLAN_MODEL } from '@/config/planModel';
 
 export const TrialStatusBanner = () => {
   const { status, daysRemaining, showUpgradeModal } = useSubscriptionContext();
+
+  // VIP2026: never show trial/expired banners
+  if (PLAN_MODEL === 'vip2026') return null;
 
   if (status === 'loading' || status === 'active') {
     return null;

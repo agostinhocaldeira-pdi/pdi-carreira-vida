@@ -7,6 +7,7 @@ import { Link, useNavigate } from "react-router-dom";
 import LogoutButton from "@/components/LogoutButton";
 import { useRoleProtection } from "@/hooks/useRoleProtection";
 import { useSubscriptionContext } from "@/contexts/SubscriptionContext";
+import { PLAN_MODEL } from "@/config/planModel";
 import {
   Dialog,
   DialogContent,
@@ -28,8 +29,8 @@ const ConstrucaoGuiada = () => {
   const { status } = useSubscriptionContext();
   const navigate = useNavigate();
   const [showGateDialog, setShowGateDialog] = useState(false);
-  // Modules 3+ require paid subscription (not trial)
-  const hasAccess = status === 'active';
+  // VIP2026: all modules accessible. Paid: modules 3+ require subscription.
+  const hasAccess = PLAN_MODEL === 'vip2026' || status === 'active';
   
   const modulos = [
     {

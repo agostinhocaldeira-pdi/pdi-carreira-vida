@@ -12,8 +12,10 @@ const logStep = (step: string, details?: any) => {
   console.log(`[CREATE-AI-PURCHASE] ${step}${detailsStr}`);
 };
 
-// Price ID for IA - Uso Avulso (R$10.00)
-const AI_USAGE_PRICE_ID = "price_1Sjocq3aJLvyiewR9a35YpM8";
+// Price ID for IA - Uso Avulso
+// VIP2026: R$4.99 (price_1T6sA73aJLvyiewRDhtqH2Zf) | Paid model: R$10.00 (price_1Sjocq3aJLvyiewR9a35YpM8)
+// To revert: change to price_1Sjocq3aJLvyiewR9a35YpM8
+const AI_USAGE_PRICE_ID = "price_1T6sA73aJLvyiewRDhtqH2Zf";
 
 serve(async (req) => {
   if (req.method === "OPTIONS") {

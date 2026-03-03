@@ -7,6 +7,7 @@ import { Progress } from "@/components/ui/progress";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { PLAN_MODEL } from "@/config/planModel";
 import JornadaVVD from "@/components/jornada/JornadaVVD";
 import JornadaVidaNaoQuero from "@/components/jornada/JornadaVidaNaoQuero";
 import JornadaAutoReflexao from "@/components/jornada/JornadaAutoReflexao";
@@ -95,33 +96,38 @@ export default function Jornada() {
         .limit(1);
 
       if (completion && completion.length > 0) {
-        // Already completed — check if they have paid access to use again
-        const { data: roles } = await supabase
-          .from('user_roles')
-          .select('role')
-          .eq('user_id', user.id);
-
-        const userRoles = roles?.map(r => r.role) || [];
-        const hasPdismartAccess = userRoles.includes('pdismart');
-
-        let hasSubscription = false;
-        try {
-          const { data: session } = await supabase.auth.getSession();
-          if (session?.session?.access_token) {
-            const { data } = await supabase.functions.invoke('check-subscription', {
-              headers: { Authorization: `Bearer ${session.session.access_token}` },
-            });
-            hasSubscription = data?.subscribed === true;
-          }
-        } catch (err) {
-          console.error('Error checking subscription:', err);
-        }
-
-        if (hasPdismartAccess || hasSubscription) {
+        // Already completed — in VIP2026, always allow re-use
+        if (PLAN_MODEL === 'vip2026') {
           setIsAuthorized(true);
         } else {
-          setHasCompleted(true);
-          setShowCompletedModal(true);
+          // Paid model: check if they have paid access to use again
+          const { data: roles } = await supabase
+            .from('user_roles')
+            .select('role')
+            .eq('user_id', user.id);
+
+          const userRoles = roles?.map(r => r.role) || [];
+          const hasPdismartAccess = userRoles.includes('pdismart');
+
+          let hasSubscription = false;
+          try {
+            const { data: session } = await supabase.auth.getSession();
+            if (session?.session?.access_token) {
+              const { data } = await supabase.functions.invoke('check-subscription', {
+                headers: { Authorization: `Bearer ${session.session.access_token}` },
+              });
+              hasSubscription = data?.subscribed === true;
+            }
+          } catch (err) {
+            console.error('Error checking subscription:', err);
+          }
+
+          if (hasPdismartAccess || hasSubscription) {
+            setIsAuthorized(true);
+          } else {
+            setHasCompleted(true);
+            setShowCompletedModal(true);
+          }
         }
       } else {
         setIsAuthorized(true);

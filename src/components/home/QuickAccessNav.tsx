@@ -6,6 +6,7 @@ import { useSubscriptionContext } from "@/contexts/SubscriptionContext";
 import { cn } from "@/lib/utils";
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { PLAN_MODEL } from "@/config/planModel";
 
 interface QuickAccessNavProps {
   isGestor?: boolean;
@@ -117,8 +118,8 @@ const gestorItem = {
 export const QuickAccessNav = ({ isGestor = false }: QuickAccessNavProps) => {
   const { status, plan } = useSubscriptionContext();
   
-  // User has active subscription if status is 'active' (paid) - trial doesn't count for premium features
-  const hasActiveSubscription = status === 'active';
+  // VIP2026: all features unlocked. Paid: require active subscription for premium features.
+  const hasActiveSubscription = PLAN_MODEL === 'vip2026' || status === 'active';
   
   // Jornada access: completo/black OR pdismart role
   const [hasJornadaAccess, setHasJornadaAccess] = useState(false);
@@ -133,7 +134,8 @@ export const QuickAccessNav = ({ isGestor = false }: QuickAccessNavProps) => {
         .eq('user_id', user.id);
       const hasPdismart = roles?.some(r => r.role === 'pdismart');
       const hasCompleteOrBlack = status === 'active' && (plan === 'completo' || plan === 'black');
-      setHasJornadaAccess(hasPdismart || hasCompleteOrBlack);
+      // VIP2026: jornada always accessible
+      setHasJornadaAccess(PLAN_MODEL === 'vip2026' || hasPdismart || hasCompleteOrBlack);
     };
     checkAccess();
   }, [status, plan]);
