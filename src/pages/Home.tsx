@@ -36,6 +36,7 @@ import { SatisfactionSurveyModal } from "@/components/SatisfactionSurveyModal";
 import { useSatisfactionSurvey } from "@/hooks/useSatisfactionSurvey";
 
 import { useSubscription } from "@/hooks/useSubscription";
+import { DESAFIO_REQUIRES_BLACK } from "@/config/planModel";
 import { HubCard } from "@/components/home/HubCard";
 import { HubSection } from "@/components/home/HubSection";
 import { DiaryQuickCard } from "@/components/home/DiaryQuickCard";
@@ -62,8 +63,8 @@ const Home = () => {
   const { status: subscriptionStatus, plan: subscriptionPlan } = useSubscription();
   const isMobile = useIsMobile();
   
-  // Desafio requires Black plan specifically
-  const hasBlackSubscription = subscriptionStatus === 'active' && subscriptionPlan === 'black';
+  // Desafio: free in VIP2026, requires Black in paid model
+  const hasDesafioAccess = !DESAFIO_REQUIRES_BLACK || (subscriptionStatus === 'active' && subscriptionPlan === 'black');
 
   // Determine mode
   const isInitiationMode = !hasCompletedBase;
@@ -251,7 +252,7 @@ const Home = () => {
                   icon={<Zap className="w-full h-full" />}
                   to="/desafio-30-dias"
                   variant="premium-black"
-                  isLocked={isInitiationMode || !hasBlackSubscription}
+                  isLocked={isInitiationMode || !hasDesafioAccess}
                   lockMessage={isInitiationMode ? "Requer Base Pessoal" : "Exclusivo Plano Black"}
                   tooltipContent="Desafio do Código Essencial - 21 dias de transformação."
                   className="aspect-square"
@@ -269,7 +270,7 @@ const Home = () => {
                   icon={<Zap className="w-full h-full" />}
                   to="/desafio-30-dias"
                   variant="premium-black"
-                  isLocked={isInitiationMode || !hasBlackSubscription}
+                  isLocked={isInitiationMode || !hasDesafioAccess}
                   lockMessage={isInitiationMode ? "Requer Base Pessoal" : "Exclusivo Plano Black"}
                   tooltipContent="Participe do Desafio do Código Essencial - 21 dias de transformação. Exclusivo Plano Black."
                 />
