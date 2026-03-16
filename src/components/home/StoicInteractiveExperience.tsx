@@ -40,8 +40,8 @@ const StoicInteractiveExperience = ({
   const [showQuestion, setShowQuestion] = useState(false);
   const [preloadedAudio, setPreloadedAudio] = useState<HTMLAudioElement | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
-  const textAnimationRef = useRef<NodeJS.Timeout | null>(null);
-  const questionAnimationRef = useRef<NodeJS.Timeout | null>(null);
+  const textAnimationRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const questionAnimationRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const isPreloadingRef = useRef(false);
 
   const dateKey = format(date, "MM-dd");
