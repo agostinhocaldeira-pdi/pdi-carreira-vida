@@ -1,0 +1,24 @@
+REVOKE EXECUTE ON FUNCTION public.has_role(uuid, app_role) FROM PUBLIC;
+REVOKE EXECUTE ON FUNCTION public.export_user_data(uuid) FROM PUBLIC;
+REVOKE EXECUTE ON FUNCTION public.is_company_employee(uuid) FROM PUBLIC;
+REVOKE EXECUTE ON FUNCTION public.is_company_manager(uuid) FROM PUBLIC;
+REVOKE EXECUTE ON FUNCTION public.is_company_owner(uuid, uuid) FROM PUBLIC;
+REVOKE EXECUTE ON FUNCTION public.get_employee_company_id(uuid) FROM PUBLIC;
+REVOKE EXECUTE ON FUNCTION public.get_manager_company_id(uuid) FROM PUBLIC;
+REVOKE EXECUTE ON FUNCTION public.get_manager_employee_user_ids(uuid) FROM PUBLIC;
+REVOKE EXECUTE ON FUNCTION public.user_owns_employee_company(uuid, uuid) FROM PUBLIC;
+REVOKE EXECUTE ON FUNCTION public.ensure_single_principal_objective() FROM PUBLIC;
+REVOKE EXECUTE ON FUNCTION public.handle_new_user_role() FROM PUBLIC;
+REVOKE EXECUTE ON FUNCTION public.handle_updated_at() FROM PUBLIC;
+REVOKE EXECUTE ON FUNCTION public.update_updated_at_column() FROM PUBLIC;
+REVOKE EXECUTE ON FUNCTION public.mark_cache_dirty() FROM PUBLIC;
+
+GRANT EXECUTE ON FUNCTION public.has_role(uuid, app_role) TO authenticated, service_role;
+GRANT EXECUTE ON FUNCTION public.export_user_data(uuid) TO authenticated, service_role;
+GRANT EXECUTE ON FUNCTION public.is_company_employee(uuid) TO authenticated, service_role;
+GRANT EXECUTE ON FUNCTION public.is_company_manager(uuid) TO authenticated, service_role;
+GRANT EXECUTE ON FUNCTION public.is_company_owner(uuid, uuid) TO authenticated, service_role;
+GRANT EXECUTE ON FUNCTION public.get_employee_company_id(uuid) TO authenticated, service_role;
+GRANT EXECUTE ON FUNCTION public.get_manager_company_id(uuid) TO authenticated, service_role;
+GRANT EXECUTE ON FUNCTION public.get_manager_employee_user_ids(uuid) TO authenticated, service_role;
+GRANT EXECUTE ON FUNCTION public.user_owns_employee_company(uuid, uuid) TO authenticated, service_role;
