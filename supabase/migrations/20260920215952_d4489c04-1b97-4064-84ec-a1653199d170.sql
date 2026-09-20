@@ -1,0 +1,1 @@
+DROP POLICY IF EXISTS "Authenticated users can upload stoic audio" ON storage.objects;
